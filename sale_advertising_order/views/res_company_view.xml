@@ -6,12 +6,14 @@
         <field name="type">form</field>
         <field name="inherit_id" ref="base.view_company_form"/>
         <field name="arch" type="xml">
-                <page string="Configuration" position="inside">
+            <notebook position="inside">
+                <page string="Sale Configuration" >
                     <group string="Sale Order Treshold">
                         <field name="verify_order_setting"/>
                         <field name="verify_discount_setting"/>
                     </group>
                 </page>
+            </notebook>
         </field>
     </record>
     </data>

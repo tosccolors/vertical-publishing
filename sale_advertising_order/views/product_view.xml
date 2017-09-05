@@ -33,7 +33,7 @@
 				<field name="priority">5</field>
 				<field name="inherit_id" ref="account.product_template_form_view"/>
 				<field name="arch" type="xml">
-					<page string="Invoicing" position="attributes">
+					<page name="invoicing" position="attributes">
 						<attribute name="groups">account.group_account_invoice,sale_advertising.group_traffic_user</attribute>
 					</page>
 				</field>

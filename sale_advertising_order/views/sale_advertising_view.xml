@@ -79,14 +79,14 @@
                             attrs="{'invisible': [('invoice_count', '=', 0)]}">
                             <field name="invoice_count" widget="statinfo" string="Invoices"/>
                         </button>
-						<field name="picking_ids" invisible="1"/>
-						<button type="object"
+						<!--field name="picking_ids" invisible="1"/-->
+						<!--button type="object"
 							name="action_view_delivery"
 							class="oe_stat_button"
 							icon="fa-truck"
 							attrs="{'invisible': [('delivery_count', '=', 0)]}" groups="base.group_user">
 							<field name="delivery_count" widget="statinfo" string="Delivery"/>
-						</button>
+						</button-->
                     </div>
                     <div class="oe_title">
                         <h1>
@@ -173,7 +173,7 @@
                                             <div invisible="context.get('hide_sale')">
                                                 <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
                                             </div>
-											<field name="route_id" groups="sale_stock.group_route_so_lines"/>
+											<!--field name="route_id" groups="sale_stock.group_route_so_lines"/-->
                                             <!--<field name="price_unit" />-->
 
                                             <!--<label for="discount" groups="sale.group_discount_per_so_line"/>-->
@@ -191,8 +191,8 @@
                                             </field>
                                         </group>
                                         <group>
-											<field name="product_tmpl_id" invisible="1"/>
-                    						<field name="product_packaging" context="{'default_product_tmpl_id': product_tmpl_id, 'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}" domain="[('product_tmpl_id','=',product_tmpl_id)]" groups="product.group_stock_packaging" />
+											<!--field name="product_tmpl_id" invisible="1"/>
+                    						<field name="product_packaging" context="{'default_product_tmpl_id': product_tmpl_id, 'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}" domain="[('product_tmpl_id','=',product_tmpl_id)]" groups="product.group_stock_packaging" /-->
                                             <field name="tax_id" widget="many2many_tags"
                                                 domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
                                                 groups="sale_advertising_order.group_traffic_user"
@@ -299,7 +299,7 @@
                                         context="{'company_id': parent.company_id}"
                                         groups="product.group_uom" options='{"no_open": True}'/>
                                     <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" widget="many2many_tags"/>
-                                    <field name="route_id" groups="sale_stock.group_route_so_lines"/>
+                                    <!--field name="route_id" groups="sale_stock.group_route_so_lines"/-->
 
 									<field name="price_unit"
                                         attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
@@ -364,9 +364,9 @@
                         <page string="Other Information">
                             <group>
 								<group string="Shipping Information" name="sale_shipping">
-									<field name="warehouse_id" options="{'no_create': True}" groups="stock.group_stock_multi_locations"/>
-									<field name="incoterm" widget="selection" groups="base.group_user"/>
-									<field name="picking_policy" required="True"/>
+									<!--field name="warehouse_id" options="{'no_create': True}" groups="stock.group_stock_multi_locations"/-->
+									<!--field name="incoterm" widget="selection" groups="base.group_user"/-->
+									<!--field name="picking_policy" required="True"/-->
 								</group>
                                 <group string="Sales Information" name="sales_person">
                                     <field name="user_id"/>
@@ -460,7 +460,7 @@
                     <field name="date_from" string="Traffic Date From" filter_domain="[('traffic_appr_date','&gt;=',self)]"/>
                     <field name="date_to" string="Traffic Date To" filter_domain="[('traffic_appr_date','&lt;=',self)]"/>
                 </field>
-                <filter string="Salesperson" position="after" >
+                <filter name="customer" position="before" >
                     <filter string="Account Manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
                 </filter>
             </field>
@@ -559,7 +559,7 @@
                     <field name="date_from" string="Traffic Date From" filter_domain="[('traffic_appr_date','&gt;=',self)]"/>
                     <field name="date_to" string="Traffic Date To" filter_domain="[('traffic_appr_date','&lt;=',self)]"/>
                 </field>
-                <filter string="Salesperson" position="after" >
+                <filter name="customer" position="before" >
                     <filter string="Account Manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
                 </filter>
             </field>
