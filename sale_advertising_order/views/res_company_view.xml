@@ -1,0 +1,18 @@
+<openerp>
+    <data>
+    <record id="view_nsm_res_company_form_sale_adv" model="ir.ui.view">
+        <field name="name">res.company.form</field>
+        <field name="model">res.company</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+                <page string="Configuration" position="inside">
+                    <group string="Sale Order Treshold">
+                        <field name="verify_order_setting"/>
+                        <field name="verify_discount_setting"/>
+                    </group>
+                </page>
+        </field>
+    </record>
+    </data>
+</openerp>

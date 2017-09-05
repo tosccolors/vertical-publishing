@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+
+        <record id="view_crm_lead2opportunity_partner_adv" model="ir.ui.view">
+            <field name="name">crm.lead2opportunity.partner.form</field>
+            <field name="model">crm.lead2opportunity.partner</field>
+            <field name="priority">200</field>
+            <field name="arch" type="xml">
+                <form string="Convert to Opportunity">
+                    <group name="name">
+                        <field name="name" widget="radio"/>
+                    </group>
+                    <group string="Assign this opportunity to">
+                        <field name="user_id" domain="[('share', '=', False)]"/>
+                        <field name="team_id" widget="selection"/>
+                    </group>
+                    <group string="Opportunities" attrs="{'invisible': [('name', '!=', 'merge')]}">
+                        <field name="opportunity_ids" nolabel="1">
+                            <tree>
+                                <field name="create_date"/>
+                                <field name="name"/>
+                                <field name="type"/>
+                                <field name="contact_name"/>
+                                <field name="country_id" invisible="context.get('invisible_country', True)"/>
+                                <field name="email_from"/>
+                                <field name="phone"/>
+                                <field name="stage_id"/>
+                                <field name="user_id"/>
+                                <field name="team_id"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group name="action" attrs="{'invisible': [('name', '!=', 'convert')]}" string="Customers" col="1">
+                        <field name="action" nolabel="1" widget="radio"/>
+                        <group col="2">
+                            <!--<field name="partner_id" domain="[('customer', '=', True)]" context="{'search_default_customer': 1}" attrs="{'required': [('action', '=', 'exist')], 'invisible':[('action','!=','exist')]}"/>-->
+                            <field name="update1" />
+                            <field name="advertiser" attrs="{'required': [('action', '=', 'exist')],
+                                                            'invisible':[('action','!=','exist')],'readonly': [('update1','=',False)]}"
+                                   domain="[('is_ad_agency','!=', True),('is_company','=', True),('customer','=', True)]"
+                                   class="oe_inline" />
+                            <field name="partner_id" string="Payer" invisible="True"/>
+                            <field name="partner_dummy" string="Payer"/>
+                            <field name="agent"  class="oe_inline"
+                                   domain="[('is_ad_agency','=', True),('customer','=',True), ('is_company','=', True)]"
+                                   attrs="{'readonly': [('update1','=',False)],'invisible':[('action','!=','exist')]}"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_apply" string="Create Opportunity" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_crm_lead2opportunity_partner_adv" model="ir.actions.act_window">
+            <field name="name">Convert to opportunity</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">crm.lead2opportunity.partner</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_crm_lead2opportunity_partner_adv"/>
+            <field name="target">new</field>
+        </record>
+
+
+    </data>
+</openerp>
