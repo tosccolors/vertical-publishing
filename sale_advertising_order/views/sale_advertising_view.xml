@@ -105,8 +105,9 @@
 
                             <field name="partner_invoice_id" string="Payer Invoice Address" groups="sale.group_delivery_invoice_address"
                                    context="{'default_type':'invoice', 'show_address': 1}" domain="[('id','child_of',partner_id)]"/>
-                            <field name="partner_shipping_id" groups="base.group_no_one" context="{'default_type':'delivery'}"/>
-
+                            <field name="customer_contact" required="True" context="{'default_parent_id': partner_id, 'show_email': 1}"
+							        domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"
+							        options='{"always_reload": True}'/>
                             <field name="advertising_agency"
                                domain="[('is_ad_agency','=', True),('customer','=',True), ('is_company','=', True)]"
                                attrs="{'readonly':[('state','not in','draft')]}"/>
