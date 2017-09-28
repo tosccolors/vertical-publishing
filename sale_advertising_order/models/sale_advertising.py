@@ -320,7 +320,7 @@ class SaleOrderLine(models.Model):
     ad_number = fields.Char('Advertising Reference', size=32)
     from_date = fields.Date('Start of Validity')
     to_date = fields.Date('End of Validity')
-
+    partner_acc_mgr = fields.Many2one(related='order_id.partner_acc_mgr', store=True, string='Account Manager', readonly=True)
     order_partner_id = fields.Many2one(related='order_id.partner_id', relation='res.partner', string='Customer')
 
     discount_dummy = fields.Float(compute='_compute_amount', string='Agency Commission (%)',readonly=True )
