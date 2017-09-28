@@ -432,6 +432,70 @@
             </field>
         </record>
 
+        <record id="view_adv_order_line_tree" model="ir.ui.view">
+            <field name="name">sale.adv.order.line.tree</field>
+            <field name="model">sale.order.line</field>
+            <!--field name="priority">20</field-->
+            <field name="arch" type="xml">
+                <tree string="Sales Order Lines" >
+                    <field name="sequence" widget="handle"/>
+                    <field name="order_partner_id" />
+                    <field name="title" />
+                    <field name="adv_issue" />
+                    <field name="ad_class" required="1"/>
+                    <field name="product_id"
+                        attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
+                        context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
+                       />
+                    <field name="layout_category_id" groups="sale.group_sale_layout"/>
+                    <field name="name"/>
+                    <field name="ad_number"/>
+                    <field name="page_reference"/>
+                    <field name="qty_delivered" invisible="context.get('hide_sale')"
+                        attrs="{'readonly': [('qty_delivered_updateable', '=', False)]}"/>
+                    <field name="qty_invoiced"
+                        invisible="context.get('hide_sale')"/>
+                    <field name="qty_to_invoice" invisible="1"/>
+                    <field name="product_uom"
+                        attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
+                        context="{'company_id': parent.company_id}"
+                        groups="product.group_uom" options='{"no_open": True}'/>
+                    <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" widget="many2many_tags"/>
+                    <field name="price_unit"
+                        attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
+                    <field name="product_uom_qty"/>
+                    <field name="actual_unit_price"/>
+                    <field name="computed_discount" />
+                    <field name="subtotal_before_agency_disc" />
+                    <field name="discount_dummy" />
+                    <field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
+                        attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
+                        groups="account.group_account_invoice, sale_advertising_order.group_traffic_user"/>
+                    <field name="discount" groups="sale.group_discount_per_so_line" invisible="1"/>
+                    <field name="price_subtotal" widget="monetary" groups="sale.group_show_price_subtotal"/>
+                    <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
+                    <field name="qty_delivered_updateable" invisible="1"/>
+                    <field name="procurement_ids" invisible="1"/>
+                    <field name="state" invisible="1"/>
+                    <field name="invoice_status" invisible="1"/>
+                    <field name="customer_lead" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_adv_order_line_pivot">
+            <field name="name">sale.adv.order.line.pivot</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <pivot string="Advertising Order Lines" display_quantity="true">
+                    <field name="title"/>
+                    <field name="price_total" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+
 
         <record id="advertising_order_view_search_inherit_sale" model="ir.ui.view">
             <field name="name">advertising.sale.order.search.inherit.sale</field>
@@ -623,7 +687,7 @@
 							<field name="name" string="Name"/>
 							<field name="parent_id" string="Title"/>
 							<field name="analytic_account_id" string="Related Analytic Account"/>
-							<field name="issue_date" string="Issue Date" readonly="True"/>
+							<field name="issue_date" string="Issue Date"/>
 							<field name="medium" string="Medium"/>
 							<field name="default_note" string="Default Note" />
 							<field name="state" string="State" />
@@ -658,9 +722,9 @@
 			<field name="view_id" ref="sale_advertising_issue_tree"/>
 		</record>
 
-		<menuitem name="Advertising" id="menu_sale_advertising"
-				  parent="menu_advsales"/>
-		<menuitem name="Advertising Issue" id="menu_sale_advertising_issue" parent="menu_sale_advertising" action="action_sale_advertising_issue"/>
+		<!--menuitem name="Advertising" id="menu_sale_advertising"
+				  parent="menu_advsales"/-->
+		<menuitem name="Advertising Issue" id="menu_sale_advertising_issue" parent="menu_advsales" action="action_sale_advertising_issue"/>
 
 <!-- View for sale.advertising.proof object -->
 		<record model="ir.ui.view" id="sale_advertising_proof_form">
@@ -703,7 +767,7 @@
 		</record>
 
 		<menuitem name="Advertising Proof" id="menu_sale_advertising_proof"
-				  parent="menu_sale_advertising" action="action_sale_advertising_proof"/>
+				  parent="menu_advsales" action="action_sale_advertising_proof"/>
 
 <!-- New Menuitem -->
 
@@ -716,6 +780,7 @@
 			<field name="domain">[('advertising','=',True),('published_customer','&lt;&gt;', False)]</field>
             <field name="context">{'default_advertising' : True}</field>
 		</record>
+
 
         <record id="all_advertising_orders_action_form" model="ir.actions.act_window.view">
             <field eval="2" name="sequence"/>
@@ -730,10 +795,6 @@
             <field name="view_id" ref="view_order_advertising_tree"/>
             <field name="act_window_id" ref="all_advertising_orders_action"/>
         </record>
-
-		<menuitem name="All Advertising Sale Orders" id="menu_sale_advertising_sale_order"
-				  parent="menu_sale_advertising" action="all_advertising_orders_action"/>
-
 
 
         <record id="sale_action_quotations_new_adv" model="ir.actions.act_window">
@@ -778,6 +839,33 @@
             <field name="view_id" ref="view_quotation_advertising_tree"/>
             <field name="act_window_id" ref="sale_action_quotations_adv"/>
         </record>
+
+        <record model="ir.actions.act_window" id="all_advertising_order_lines_action">
+			<field name="name">All Advertising Sale Order Lines</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">sale.order.line</field>
+			<field name="view_type">tree</field>
+			<field name="view_mode">tree,form, pivot</field>
+			<field name="domain">[('title','!=',False)]</field>
+            <!--field name="context">{'default_advertising' : True}</field-->
+		</record>
+
+        <record id="all_advertising_order_lines_action_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_adv_order_line_tree"/>
+            <field name="act_window_id" ref="all_advertising_order_lines_action"/>
+        </record>
+
+        <record id="all_advertising_order_lines_action_tree_view2" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">pivot</field>
+            <!--field name="view_id" ref="view_adv_order_line_pivot"/-->
+            <field name="act_window_id" ref="all_advertising_order_lines_action"/>
+        </record>
+
+		<menuitem name="All Advertising Sale Order Lines" id="menu_sale_advertising_order_lines"
+				  parent="menu_advsales" action="all_advertising_order_lines_action"/>
 
 
         <!--

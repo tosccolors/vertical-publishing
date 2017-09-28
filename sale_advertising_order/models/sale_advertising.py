@@ -242,7 +242,7 @@ class AdvertisingIssue(models.Model):
     analytic_account_id = fields.Many2one('account.analytic.account', required=True,
                                       string='Related Analytic Account', ondelete='restrict',
                                       help='Analytic-related data of the issue')
-    issue_date = fields.Date(related='analytic_account_id.date_publish', string='Issue Date',)
+    issue_date = fields.Date('Issue Date')
     medium = fields.Many2one('product.category','Medium', required=True)
     state = fields.Selection([('open','Open'),('close','Close')], 'State', default='open')
     default_note = fields.Text('Default Note')
