@@ -6,9 +6,8 @@
             Menu: Advertising Sales
         -->
 
-        <menuitem name="Advertising Sales"
-            id="menu_base_advsales"
-            groups="sales_team.group_sale_salesman,sales_team.group_sale_manager" sequence="7"/>
+        <menuitem id="menu_base_advsales" name="Advertising Sales"
+                  groups="sales_team.group_sale_salesman,sales_team.group_sale_manager" sequence="7"/>
 
         <menuitem id="menu_advsales" name="Advertising Sales" parent="menu_base_advsales"
                   sequence="1"/>
@@ -16,16 +15,11 @@
         <menuitem id="menu_partner_form1" parent="menu_advsales"
                   action="action_partner_form_crm" sequence="2"/>
 
-        <menuitem
-            id="crm_lead_menu_activities2"
-            name="Next Activities"
-            parent="menu_advsales"
-            sequence="5"
-            action="crm.crm_lead_action_activities" />
+        <menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_advsales"
+                  action="crm.crm_lead_action_activities" sequence="5" />
 
-
-		<menuitem action="product.product_template_action" id="menu_product_template_action2"
-				  parent="menu_advsales" sequence="13" />
+		<menuitem id="menu_product_template_action2" parent="menu_advsales"
+                  action="product.product_template_action" sequence="13" />
 
 
         <record id="view_order_form_advertising" model="ir.ui.view">
@@ -407,8 +401,6 @@
             </field>
         </record>
 
-
-
         <record id="view_order_advertising_tree" model="ir.ui.view">
             <field name="name">sale.order.advertising.tree</field>
             <field name="model">sale.order</field>
@@ -431,7 +423,6 @@
                 </tree>
             </field>
         </record>
-
 
         <record id="advertising_order_view_search_inherit_sale" model="ir.ui.view">
             <field name="name">advertising.sale.order.search.inherit.sale</field>
@@ -490,6 +481,7 @@
               </p>
             </field>
         </record>
+
         <record id="action_orders_advertising_form" model="ir.actions.act_window.view">
             <field eval="2" name="sequence"/>
             <field name="view_mode">form</field>
@@ -504,12 +496,9 @@
             <field name="act_window_id" ref="action_orders_advertising"/>
         </record>
 
-
-        <menuitem action="action_orders_advertising"
-            id="menu_sale_order2" parent="menu_advsales"
-            sequence="12" groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"/>
-
-
+        <menuitem id="menu_sale_order2" name="Advertising Sales Orders" parent="menu_advsales"
+                  action="action_orders_advertising"
+                  groups="sales_team.group_sale_salesman,sales_team.group_sale_manager" sequence="12" />
 
         <record id="view_quotation_advertising_tree" model="ir.ui.view">
             <field name="name">sale.order.advertising.tree</field>
@@ -566,8 +555,6 @@
             </field>
         </record>
 
-
-
         <record id="action_quotations_advertising" model="ir.actions.act_window">
             <field name="name">Quotations </field>
             <field name="type">ir.actions.act_window</field>
@@ -590,6 +577,7 @@
               </p>
             </field>
         </record>
+
         <record id="action_quotations_advertising_form" model="ir.actions.act_window.view">
             <field eval="2" name="sequence"/>
             <field name="view_mode">form</field>
@@ -605,9 +593,8 @@
         </record>
 
 
-        <menuitem id="menu_sale_quotations2"
-                action="action_quotations_advertising" parent="menu_advsales"
-                sequence="11"/>
+        <menuitem id="menu_sale_quotations2" parent="menu_advsales"
+                  action="action_quotations_advertising" sequence="11"/>
 
 
 
@@ -623,7 +610,6 @@
             <field name="context">{'default_advertising' : True}</field>
 		</record>
 
-
         <record id="all_advertising_orders_action_form" model="ir.actions.act_window.view">
             <field eval="2" name="sequence"/>
             <field name="view_mode">form</field>
@@ -638,7 +624,6 @@
             <field name="act_window_id" ref="all_advertising_orders_action"/>
         </record>
 
-
         <record id="sale_action_quotations_new_adv" model="ir.actions.act_window">
             <field name="name">Quotation</field>
             <field name="res_model">sale.order</field>
@@ -647,6 +632,7 @@
             <field name="context">{'search_default_opportunity_id': active_id,
                 'default_opportunity_id': active_id, 'default_advertising':True}</field>
         </record>
+
         <record id="sale_action_quotations_new_adv_form" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">form</field>
@@ -668,6 +654,7 @@
             <field name="context">{'search_default_opportunity_id': [active_id],
                 'default_opportunity_id': active_id, 'default_advertising':True}</field>
         </record>
+
         <record id="sale_action_quotations_adv_form" model="ir.actions.act_window.view">
             <field eval="2" name="sequence"/>
             <field name="view_mode">form</field>
@@ -692,34 +679,29 @@
                     <field name="title" />
                     <field name="adv_issue" />
                     <field name="ad_class" required="1"/>
-                    <field name="product_id"
-                        attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
-                        context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
-                       />
+                    <field name="product_id" attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
+                           context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id,
+                                   'uom':product_uom, 'company_id': parent.company_id}"/>
                     <field name="layout_category_id" groups="sale.group_sale_layout"/>
                     <field name="name"/>
                     <field name="ad_number"/>
                     <field name="page_reference"/>
-                    <field name="qty_delivered" invisible="context.get('hide_sale')"
-                        attrs="{'readonly': [('qty_delivered_updateable', '=', False)]}"/>
-                    <field name="qty_invoiced"
-                        invisible="context.get('hide_sale')"/>
+                    <field name="qty_delivered" invisible="context.get('hide_sale')" attrs="{'readonly': [('qty_delivered_updateable', '=', False)]}"/>
+                    <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
                     <field name="qty_to_invoice" invisible="1"/>
-                    <field name="product_uom"
-                        attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
-                        context="{'company_id': parent.company_id}"
-                        groups="product.group_uom" options='{"no_open": True}'/>
+                    <field name="product_uom" attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
+                           context="{'company_id': parent.company_id}"
+                           groups="product.group_uom" options='{"no_open": True}'/>
                     <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" widget="many2many_tags"/>
-                    <field name="price_unit"
-                        attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
+                    <field name="price_unit" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
                     <field name="product_uom_qty"/>
                     <field name="actual_unit_price"/>
                     <field name="computed_discount" />
                     <field name="subtotal_before_agency_disc" />
                     <field name="discount_dummy" />
                     <field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
-                        attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
-                        groups="account.group_account_invoice, sale_advertising_order.group_traffic_user"/>
+                           attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
+                           groups="account.group_account_invoice, sale_advertising_order.group_traffic_user"/>
                     <field name="discount" groups="sale.group_discount_per_so_line" invisible="1"/>
                     <field name="price_subtotal" widget="monetary" groups="sale.group_show_price_subtotal"/>
                     <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
@@ -757,11 +739,10 @@
                                 <field name="ad_class"  required="1"
                                        domain="[('type','!=', 'view'), ('id','child_of', medium)]" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
                                 <field name="product_id"
-                                    context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
-                                    attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
-                                    domain="[('categ_id','=', ad_class)]"
-                                    options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-
+                                       context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
+                                       attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
+                                       domain="[('categ_id','=', ad_class)]"
+                                       options="{'limit': 10, 'create': false, 'create_edit': false}"/>
                                 <field name="layout_category_id" groups="sale.group_sale_layout"/>
                                 <field name="invoice_status" invisible="1"/>
                                 <field name="qty_to_invoice" invisible="1"/>
