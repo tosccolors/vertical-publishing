@@ -262,7 +262,7 @@
                             <group>
                                 <field name="priority" widget="priority" grousps="base.groups_no_one"/>
                                 <field name="tag_ids" string='Sales Projects' widget="many2many_tags"
-                                       options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                                       options="{'no_create': True, 'no_create_edit': True}"/>
                                 <field name="lost_reason" attrs="{'invisible': [('active', '=', True)]}"/>
                                 <field name="date_conversion" invisible="1"/>
                             </group>
@@ -284,7 +284,7 @@
                                         <field name="state_id" class="o_address_state" placeholder="State" options='{"no_open": True}'/>
                                         <field name="zip" placeholder="ZIP" class="o_address_zip"/>
                                         <field name="country_id" placeholder="Country" class="o_address_country"
-                                               options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                                               options="{'no_create': True, 'no_create_edit': True}"/>
                                     </div>
                                 </group>
 
@@ -293,7 +293,7 @@
                                     <div class="o_row">
                                         <field name="contact_name"/>
                                         <field name="title" placeholder="Title" domain="[]"
-                                               options="{'limit': 10, 'create': false, 'create_edit': false}"/>
+                                               options="{'no_create': True, 'no_create_edit': True}"/>
                                     </div>
                                     <field name="function"/>
                                     <field name="mobile"/>

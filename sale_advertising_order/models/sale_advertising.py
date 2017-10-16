@@ -106,11 +106,14 @@ class SaleOrder(models.Model):
         - Invoice address
         - Delivery address
         """
-        if self.published_customer:
-            self.partner_id = self.published_customer.id
 
-        if self.advertising_agency:
-            self.partner_id = self.advertising_agency
+        # Advertiser:
+        if self.advertising:
+            if self.published_customer:
+                self.partner_id = self.published_customer.id
+
+            if self.advertising_agency:
+                self.partner_id = self.advertising_agency
 
         if not self.partner_id:
             self.update({
@@ -165,7 +168,6 @@ class SaleOrder(models.Model):
         for o in self:
             if not o.order_line:
                 raise UserError(_('You cannot submit a quotation/sales order which has no line.'))
-        # return True
         return self.write({'state':'submitted'})
 
     @api.multi
@@ -248,7 +250,6 @@ class AdvertisingIssue(models.Model):
     default_note = fields.Text('Default Note')
 
 
-
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
@@ -273,22 +274,22 @@ class SaleOrderLine(models.Model):
                 discount = 0.0
             product_uom = line.product_uom and line.product_uom.id or False
 
-            if product_id:
-                unit_price = self.env['account.tax']._fix_tax_included_price(line._get_display_price(line.product_id), line.product_id.taxes_id, line.tax_id)
+            price_unit = line.price_unit
 
-                # unit_price = self.pool.get('product.pricelist').price_get(self._cr, self._uid, [pricelist],
-                #             product_id, line.product_uom_qty or 1.0, order_partner_id, context={'uom': product_uom, 'date': date_order,})[pricelist]
+            if line.advertising:
+                price_unit = line.actual_unit_price
+                if product_id:
+                    unit_price = self.env['account.tax']._fix_tax_included_price(line._get_display_price(line.product_id), line.product_id.taxes_id, line.tax_id)
 
-            else: unit_price = 0.0
-            if unit_price > 0.0:
-                comp_discount = (unit_price - line.actual_unit_price)/unit_price * 100.0
+                else: unit_price = 0.0
+                if unit_price > 0.0:
+                    comp_discount = (unit_price - line.actual_unit_price)/unit_price * 100.0
 
-            price = line.actual_unit_price * (1 - discount / 100.0)
-            subtotal_bad = line.actual_unit_price * line.product_uom_qty
+            price = price_unit * (1 - discount / 100.0)
+            subtotal_bad = price_unit * line.product_uom_qty
             taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id, partner=line.order_id.partner_id)
 
             line.update({
-                'price_unit': unit_price,
                 'price_tax': taxes['total_included'] - taxes['total_excluded'],
                 'price_total': taxes['total_included'],
                 'price_subtotal': taxes['total_excluded'],
@@ -329,11 +330,12 @@ class SaleOrderLine(models.Model):
                                      digits=dp.get_precision('Actual Unit Price'), readonly=True, states={'draft': [('readonly', False)]})
 
 
-    price_unit = fields.Monetary(compute='_compute_amount', string='Unit Price', required=True, digits=dp.get_precision('Product Price'), default=0.0, store=True)
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', readonly=True, store=True)
 
     computed_discount = fields.Monetary(compute='_compute_amount', string='Discount (%)', digits=dp.get_precision('Account'), store=True)
     subtotal_before_agency_disc = fields.Monetary(compute='_compute_amount', string='Subtotal before Commission', digits=dp.get_precision('Account'), store=True)
+
+    advertising = fields.Boolean(related='order_id.advertising', string='Advertising', default=False, store=True)
 
 
 
@@ -400,7 +402,7 @@ class SaleOrderLine(models.Model):
         return {'value': vals, 'domain' : data, 'warning': result}
 
 
-    @api.onchange('date_type', 'dates', 'dateperiods', 'adv_issue_ids')
+    @api.onchange('date_type')
     def onchange_date_type(self):
         vals = {}
         date_type = self.date_type
@@ -430,6 +432,9 @@ class SaleOrderLine(models.Model):
     @api.onchange('actual_unit_price', 'price_unit', 'product_uom_qty', 'discount')
     def onchange_actualup(self):
         result = {}
+        if not self.advertising:
+            return {'value': result}
+
         qty = self.product_uom_qty
         actual_unit_price = self.actual_unit_price
         price_unit = self.price_unit
@@ -457,6 +462,9 @@ class SaleOrderLine(models.Model):
     @api.onchange('discount', 'product_uom_qty', 'subtotal_before_agency_disc')
     def onchange_price_subtotal(self):
         result = {}
+        if not self.advertising:
+            return {'value': result}
+
         subtotal_before_agency_disc = self.subtotal_before_agency_disc
         qty = self.product_uom_qty
 
@@ -474,24 +482,18 @@ class SaleOrderLine(models.Model):
     @api.onchange('price_unit')
     def onchange_price_unit(self):
         vals = {}
+        if not self.advertising:
+            return {'value': vals}
+
         if self.price_unit > 0.0:
             vals['actual_unit_price'] = self.price_unit
         return {'value': vals}
 
 
-    def _prepare_order_line_invoice_line(self, cr, uid, line, account_id=False, context=None):
-        """Prepare the dict of values to create the new invoice line for a
-           sales order line. This method may be overridden to implement custom
-           invoice generation (making sure to call super() to establish
-           a clean extension chain).
-
-           :param browse_record line: sale.order.line record to invoice
-           :param int account_id: optional ID of a G/L account to force
-               (this is used for returning products including service)
-           :return: dict of values to create() the invoice line
-        """
-        res = super(sale_order_line,self)._prepare_order_line_invoice_line(cr, uid, line, account_id=account_id, context=context)
-        res['account_analytic_id'] = line.adv_issue.analytic_account_id and line.adv_issue.analytic_account_id.id or False
+    @api.multi
+    def _prepare_invoice_line(self, qty):
+        res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
+        res['account_analytic_id'] = self.adv_issue.analytic_account_id.id
         return res
 
     @api.onchange('adv_issue', 'adv_issue_ids', 'dates')
@@ -551,7 +553,7 @@ class SaleOrderLine(models.Model):
         return res
 
 
-class sale_order_line_date(models.Model):
+class OrderLineDate(models.Model):
 
     _name = "sale.order.line.date"
     _description= "Advertising Order Line Dates"
@@ -565,7 +567,7 @@ class sale_order_line_date(models.Model):
     ad_number = fields.Char('Advertising Reference', size=32)
 
 
-class sale_order_line_dateperiod(models.Model):
+class OrderLineDateperiod(models.Model):
 
     _name = "sale.order.line.dateperiod"
     _description= "Advertising Order Line Date Periods"
@@ -581,7 +583,7 @@ class sale_order_line_dateperiod(models.Model):
 
 
 
-class sale_advertising_proof(models.Model):
+class AdvertisingProof(models.Model):
     _name = "sale.advertising.proof"
     _description="Sale Advertising Proof"
 

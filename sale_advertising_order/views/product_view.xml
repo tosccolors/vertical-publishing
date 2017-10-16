@@ -33,22 +33,11 @@
 				<field name="priority">5</field>
 				<field name="inherit_id" ref="account.product_template_form_view"/>
 				<field name="arch" type="xml">
-					<page string="Invoicing" position="attributes">
+					<page name="invoicing" position="attributes">
 						<attribute name="groups">account.group_account_invoice,sale_advertising.group_traffic_user</attribute>
 					</page>
 				</field>
 		 </record>
-
-		<!--<record id="view_account_analytic_account_form_nsm" model="ir.ui.view">-->
-            <!--<field name="name">analytic.analytic.account.form.nsm</field>-->
-            <!--<field name="model">account.analytic.account</field>-->
-            <!--<field name="inherit_id" ref="analytic.view_account_analytic_account_form"/>-->
-            <!--<field name="arch" type="xml">-->
-                    <!--<field name="partner_id" position="after">-->
-						<!--<field name="date_publish"  />-->
-					<!--</field>-->
-            <!--</field>-->
-        <!--</record>-->
 
 	</data>
 </odoo>

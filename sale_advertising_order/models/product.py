@@ -57,9 +57,9 @@ class productCategory(models.Model):
 
 
 
-class AnalyticAccount(models.Model):
-    _inherit = "account.analytic.account"
-
-    date_publish = fields.Date('Publishing Date')
+# class AnalyticAccount(models.Model):
+#     _inherit = "account.analytic.account"
+#
+#     date_publish = fields.Date('Publishing Date')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
