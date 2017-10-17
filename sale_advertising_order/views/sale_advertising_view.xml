@@ -174,7 +174,7 @@
                                             <div invisible="context.get('hide_sale')">
                                                 <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
                                             </div>
-											<!--<field name="route_id" groups="sale_stock.group_route_so_lines"/>-->
+											<!--field name="route_id" groups="sale_stock.group_route_so_lines"/-->
                                             <!--<field name="price_unit" />-->
 
                                             <!--<label for="discount" groups="sale.group_discount_per_so_line"/>-->
