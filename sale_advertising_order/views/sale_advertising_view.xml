@@ -73,14 +73,6 @@
                             attrs="{'invisible': [('invoice_count', '=', 0)]}">
                             <field name="invoice_count" widget="statinfo" string="Invoices"/>
                         </button>
-						<!--<field name="picking_ids" invisible="1"/>-->
-						<!--<button type="object"-->
-							<!--name="action_view_delivery"-->
-							<!--class="oe_stat_button"-->
-							<!--icon="fa-truck"-->
-							<!--attrs="{'invisible': [('delivery_count', '=', 0)]}" groups="base.group_user">-->
-							<!--<field name="delivery_count" widget="statinfo" string="Delivery"/>-->
-						<!--</button>-->
                     </div>
                     <div class="oe_title">
                         <h1>

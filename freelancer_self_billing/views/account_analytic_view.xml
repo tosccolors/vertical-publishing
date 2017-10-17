@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="view_account_analytic_form" model="ir.ui.view">
+            <field name="name">account.analytic.form</field>
+            <field name="model">account.analytic.account</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_account_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='//div[@name="project"]' position='inside'>
+                    <field name="is_hon" />
+                    <label for="is_hon"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_account_analytic_account_tree_nsm_portal" model="ir.ui.view">
+            <field name="name">account.analytic.account.tree.nsm.portal</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_account_list"/>
+            <field name="arch" type="xml">
+                    <field name="code" position="before">
+                        <field name="is_hon" />
+                    </field>
+            </field>
+        </record>
+    </data>
+</openerp>

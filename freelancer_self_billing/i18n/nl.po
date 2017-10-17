@@ -1,0 +1,944 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* freelancer_self_billing
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-09-15 06:52+0000\n"
+"PO-Revision-Date: 2017-09-15 06:52+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,help:freelancer_self_billing.field_hon_issue_state
+msgid " * The 'Draft' status is used when a user is encoding a new and unconfirmed Honorarium Issue.         \n"
+"* The 'Open' status is used when user create invoice.        \n"
+"* The 'Cancelled' status is used when user cancel Honorarium Issue."
+msgstr ""
+"* De status \"Concept\" wordt gebruikt als de gebruiker een nieuwe en nog niet bevestigde Honorarium Editie invult. \n"
+"* De status \"Open\" wordt gebruikt als de gebruiker de facturen genereert. \n"
+"* De status \"Geannuleerd\" betekent, dat de gebruiker de Honorarium Editie heeft geannuleerd."
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_nr_of_columns
+msgid "#Cols"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:mail.template,subject:freelancer_self_billing.email_template_hon_invoice
+msgid "${object.company_id.name|safe} Invoice (Ref ${object.number or 'n/a'})"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,help:freelancer_self_billing.field_hon_issue_line_state
+msgid "* The 'Draft' status is set when the related hon issue in draft status.                     \n"
+"* The 'Confirmed' status is set when the related hon issue is confirmed.                     \n"
+"* The 'Exception' status is set when the related hon issue is set as exception.                     \n"
+"* The 'Done' status is set when the hon line has been picked.                     \n"
+"* The 'Cancelled' status is set when a user cancel the hon issue related."
+msgstr ""
+"* De ‘Concept’ status wordt gezet wanneer hon editie in concept status is. \n"
+"* De ‘Bevestigd’ status wordt gezet wanneer hon editie in Open status is. \n"
+"* The 'Done' status is set when the hon line has been picked.                         \n"
+"* De ‘Geannuleerd’ status wordt gezet wanneer de gebruiker de betreffende hon editie annuleert."
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_account_id
+msgid "Account"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_account_invoice_line_activity_id
+msgid "Activity"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_comment
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_partner_product_price_comment
+msgid "Additional Information"
+msgstr "Extra Informatie"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_tree_view
+msgid "All Lines Invoiced"
+msgstr "Alle regels gefactureerd"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_make_invoice
+msgid "All eligible items in these issues will be invoiced."
+msgstr "Alle daarvoor in aanmerking komende regels in deze edities zullen gefactureerd worden"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_make_invoice
+msgid "All selected and eligible issue lines will be invoiced."
+msgstr "Alle geselecteerde en daarvoor in aanmerking komende regels in deze edities zullen gefactureerd worden."
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_price_subtotal
+msgid "Amount"
+msgstr "Bedrag"
+
+#. module: freelancer_self_billing
+#: model:ir.model,name:freelancer_self_billing.model_account_analytic_account
+msgid "Analytic Account"
+msgstr "Kostenplaats"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_res_company_report_background_image_hon2
+msgid "Background Image for HON Following Pages"
+msgstr "Achtergrond voor HON-Volgpagina"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_res_company_report_background_image_hon1
+msgid "Background Image for HON Frontpage"
+msgstr "Achtergrond voor HON-Voorpagina"
+
+#. module: freelancer_self_billing
+#: model:product.category,name:freelancer_self_billing.hon_categoryB
+msgid "Beeld HON"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.account_invoice_portalback_view
+msgid "Cancel"
+msgstr "Annuleer"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_form
+msgid "Cancel Issue"
+msgstr "Annuleer Editie"
+
+#. module: freelancer_self_billing
+#: selection:hon.issue,state:0
+#: selection:hon.issue.line,state:0
+msgid "Cancelled"
+msgstr "Geannuleerd"
+
+#. module: freelancer_self_billing
+#: code:addons/freelancer_self_billing/models/hon.py:217
+#, python-format
+msgid "Cannot cancel this issue!, First cancel all invoices attached to this issue."
+msgstr "Deze Editie kan niet geannuleerd worden! Annuleer eerst alle facturen voor deze Editie."
+
+#. module: freelancer_self_billing
+#: code:addons/freelancer_self_billing/models/hon.py:389
+#, python-format
+msgid "Cannot delete a hon line which is in state '%s'."
+msgstr "Een HON-regel met status '%s' kan niet geannuleerd worden."
+
+#. module: freelancer_self_billing
+#: code:addons/freelancer_self_billing/models/hon.py:234
+#, python-format
+msgid "Cannot finalise this issue!, First invoice all hon_lines attached to this issue."
+msgstr "Deze Editie kan niet afgerond worden! Factureer eerst alle regels voor deze Editie."
+
+#. module: freelancer_self_billing
+#: model:ir.actions.act_window,help:freelancer_self_billing.action_invoice_tree_hon
+msgid "Click to record a new supplier invoice."
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model,name:freelancer_self_billing.model_res_company
+msgid "Companies"
+msgstr "Bedrijven"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_company_id
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_company_id
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_partner_product_price_company_id
+msgid "Company"
+msgstr "Bedrijf"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_company_form_hon
+msgid "Configuration"
+msgstr "Instellingen"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_form
+msgid "Confirm Hon Issue"
+msgstr "Bevestig Hon Editie"
+
+#. module: freelancer_self_billing
+#: selection:hon.issue.line,state:0
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Confirmed"
+msgstr "Bevestigd"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Confirmed Issue Lines"
+msgstr "Bevestigde Editie-regels"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_filter
+msgid "Confirmed issues"
+msgstr "Bevestigde Edities"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_form
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_make_invoice
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_make_invoice
+msgid "Create Invoices"
+msgstr "Maak Facturen"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_make_invoice
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_make_invoice
+msgid "Create invoices"
+msgstr "Maak Facturen"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_account_invoice_portalback_create_uid
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_create_uid
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_create_uid
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_make_invoice_create_uid
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_make_invoice_create_uid
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_partner_product_price_create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_account_invoice_portalback_create_date
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_create_date
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_create_date
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_make_invoice_create_date
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_make_invoice_create_date
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_partner_product_price_create_date
+msgid "Created on"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_name
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_partner_product_price_name
+msgid "Description"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_account_invoice_portalback_display_name
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_display_name
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_display_name
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_make_invoice_display_name
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_make_invoice_display_name
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_partner_product_price_display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: selection:hon.issue,state:0
+#: selection:hon.issue.line,state:0
+msgid "Done"
+msgstr "Afgerond"
+
+#. module: freelancer_self_billing
+#: selection:hon.issue,state:0
+#: selection:hon.issue.line,state:0
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Draft"
+msgstr "Concept"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Draft Issue Lines"
+msgstr "Concept Editieregels"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_filter
+msgid "Draft issues"
+msgstr "Concept Edities"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_employee
+msgid "Employee"
+msgstr "Werknemer"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Employee Issue Lines"
+msgstr "Werknemer Editieregels"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Employee Lines"
+msgstr "Werknemer Editieregels"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_estimated_price
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_line_tree_view
+msgid "Estimate"
+msgstr "Schatting"
+
+#. module: freelancer_self_billing
+#: selection:hon.issue.line,state:0
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Exception"
+msgstr "Uitzondering"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_form
+msgid "Finalise Issue"
+msgstr "Rond Editie af"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_filter
+msgid "Finalised issues"
+msgstr "Afgeronde Edities"
+
+#. module: freelancer_self_billing
+#: report:account.invoice.hon:0
+msgid "Fotoredactie."
+msgstr ""
+
+#. module: freelancer_self_billing
+#: report:account.invoice.hon:0
+msgid "Geachte"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,help:freelancer_self_billing.field_hon_issue_line_sequence
+msgid "Gives the sequence of this line when displaying the honorarium issue."
+msgstr "Geeft de positie van deze regel als de Honorarium Editie wordt getoond."
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_gratis
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Gratis"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Gratis Issue Lines"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Group By"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_account_invoice_hon
+msgid "HON"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:res.partner.category,name:freelancer_self_billing.hon_partner_category
+msgid "HON Crediteur"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.actions.act_window,name:freelancer_self_billing.action_invoice_tree_hon
+#: model:ir.actions.report.xml,name:freelancer_self_billing.account_invoices_hon
+msgid "HON Invoices"
+msgstr "HON Facturen"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_account_analytic_account_is_hon
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_project_project_is_hon
+msgid "HON Issue"
+msgstr "HON Editie"
+
+#. module: freelancer_self_billing
+#: model:res.groups,name:freelancer_self_billing.group_module_hon_user
+msgid "HON User"
+msgstr "HON Gebruiker"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_company_form_hon
+msgid "HON configuration"
+msgstr "HON instelling"
+
+#. module: freelancer_self_billing
+#: report:account.invoice.hon:0
+msgid "Hierbij verzoeken wij u ons een rekening te zenden voor de hieronder vermelde foto('s)/illustratie(s)"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.ui.menu,name:freelancer_self_billing.menu_action_hon
+#: model:ir.ui.menu,name:freelancer_self_billing.menu_action_hon_main
+msgid "Hon"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.ui.menu,name:freelancer_self_billing.menu_action_invoice_tree
+msgid "Hon Invoices"
+msgstr "Hon Facturen"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_form
+msgid "Hon Issue"
+msgstr "Hon Editie"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_account_invoice_line_hon_issue_line_id
+msgid "Hon Issue Line"
+msgstr "Hon Editieregel"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.menu,name:freelancer_self_billing.menu_action_issue_line_tree
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_line_tree_view
+msgid "Hon Issue Lines"
+msgstr "Hon Editieregels"
+
+#. module: freelancer_self_billing
+#: model:ir.actions.act_window,name:freelancer_self_billing.action_hon_issue_line
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_form
+msgid "Hon Issue lines"
+msgstr "Hon Editieregels"
+
+#. module: freelancer_self_billing
+#: model:ir.actions.act_window,name:freelancer_self_billing.action_hon_issue
+#: model:ir.ui.menu,name:freelancer_self_billing.menu_action_hon_detail
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_tree_view
+msgid "Hon Issues"
+msgstr "Hon Edities"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_hon_issue_line
+msgid "Hon Lines"
+msgstr "Hon Regels"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_form
+msgid "Honoraria Editie"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_company_form_hon
+msgid "Honorarium App"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model,name:freelancer_self_billing.model_hon_issue_line_make_invoice
+msgid "Honorarium Issue Line Make_invoice"
+msgstr "Honorarium Editieregel Maak_factuur"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_form
+msgid "Honorarium Issue Lines"
+msgstr "Honorarium Editieregels"
+
+#. module: freelancer_self_billing
+#: model:ir.model,name:freelancer_self_billing.model_hon_issue_make_invoice
+msgid "Honorarium Issue Make_invoice"
+msgstr "Honorarium Editie Maak_factuur"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_res_company_hon_journal
+msgid "Honorarium Journal"
+msgstr "Honorarium Dagboek"
+
+#. module: freelancer_self_billing
+#: model:ir.module.category,name:freelancer_self_billing.module_hon
+msgid "Honorarium Module"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: report:account.invoice.hon:0
+msgid "Hoogachtend,"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_account_invoice_portalback_id
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_id
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_id
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_make_invoice_id
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_make_invoice_id
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_partner_product_price_id
+msgid "ID"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: code:addons/freelancer_self_billing/models/hon.py:242
+#, python-format
+msgid "In order to delete a confirmed issue, you must cancel it before!"
+msgstr "Om een bevestigde editie te kunnen verwijderen moet u hem eerst annuleren!"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.account_invoice_portalback_view
+msgid "In the Supplier Portal suppliers can upload their pdf-invoice into the document"
+msgstr "In het Leveranciers-portal kunnen leveranciers hun pdf-factuur in het Odoo-document uploaden"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,help:freelancer_self_billing.field_product_category_hon_type
+msgid "Indicator that determines the print layout of the invoice based on products in this category."
+msgstr "Deze parameter bepaalt de afdruk-layout van de factuur op basis van de producten in deze categorie."
+
+#. module: freelancer_self_billing
+#: code:addons/freelancer_self_billing/models/hon.py:365
+#: code:addons/freelancer_self_billing/models/hon.py:389
+#, python-format
+msgid "Invalid Action!"
+msgstr "Ongeldige Handeling!"
+
+#. module: freelancer_self_billing
+#: model:ir.model,name:freelancer_self_billing.model_account_invoice
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_invoice_id
+msgid "Invoice"
+msgstr "Factuur"
+
+#. module: freelancer_self_billing
+#: model:ir.model,name:freelancer_self_billing.model_account_invoice_line
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_invoice_line_id
+msgid "Invoice Line"
+msgstr "Factuurregel"
+
+#. module: freelancer_self_billing
+#: code:addons/freelancer_self_billing/wizard/hon_line_invoice.py:138
+#, python-format
+msgid "Invoice cannot be created for this Honorarium Issue Line due to one of the following reasons:\n"
+"1.The state of this hon issue line is either \"draft\" or \"cancel\"!\n"
+"2.The Honorarium Issue Line is Invoiced!\n"
+"3.The Honorarium Issue Line is marked \"gratis\"\n"
+"4.The Honorarium Issue Line has an Employee as Creditor\n"
+""
+msgstr ""
+"Factuur voor deze Honorarium Editieregel kan niet worden gemaakt vanwege een van de volgende redenen:\n"
+"1.De status van deze editieregel is “concept” of “geannuleerd”!\n"
+"2.De Editieregel is al gefactureerd!\n"
+"3.De Editieregel is als \"gratis\" aangemerkt\n"
+"4.De Editieregel heeft een werknemer als Crediteur\n"
+
+#. module: freelancer_self_billing
+#: model:mail.template,report_name:freelancer_self_billing.email_template_hon_invoice
+msgid "Invoice_${(object.number or '').replace('/','_')}_${object.state == 'draft' and 'draft' or ''}"
+msgstr "Factuur_${(object.number or '').replace('/','_')}_${object.state == 'draft' and 'draft' or ''}"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_invoice_exists
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_invoiced
+msgid "Invoiced"
+msgstr "Gefactureerd"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_invoiced_rate
+msgid "Invoiced Ratio"
+msgstr "Facturatie Ratio"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_invoice_ids
+msgid "Invoices"
+msgstr "Facturen"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_account_analytic_id
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_account_invoice_filter_hon
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_filter
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Issue"
+msgstr "Editie"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Issue Exception"
+msgstr "Editie Uitzondering"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_issue_id
+msgid "Issue Reference"
+msgstr "Editie Referentie"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,help:freelancer_self_billing.field_hon_issue_invoiced
+msgid "It indicates that all issue lines have been invoiced."
+msgstr "Dit geeft aan dat alle editieregels gefactureerd zijn."
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,help:freelancer_self_billing.field_hon_issue_invoice_exists
+msgid "It indicates that hon issue has at least one invoice."
+msgstr "Dit geeft aan dat de Editie minstens één factuur heeft."
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,help:freelancer_self_billing.field_hon_issue_line_gratis
+msgid "It indicates that no letter/invoice is generated."
+msgstr "Dit geeft aan dat er geen brief/factuur is aangemaakt."
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,help:freelancer_self_billing.field_account_invoice_hon
+msgid "It indicates that the invoice is a Hon Invoice."
+msgstr "Dit geeft aan dat het om een HON-factuur gaat."
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,help:freelancer_self_billing.field_hon_issue_line_employee
+msgid "It indicates that the partner is an employee."
+msgstr "Dit geeft aan dat de relatie/crediteur een werknemer is."
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_account_invoice_portalback___last_update
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue___last_update
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line___last_update
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_make_invoice___last_update
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_make_invoice___last_update
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_partner_product_price___last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_account_invoice_portalback_write_uid
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_make_invoice_write_uid
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_write_uid
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_make_invoice_write_uid
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_write_uid
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_partner_product_price_write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_account_invoice_portalback_write_date
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_make_invoice_write_date
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_write_date
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_make_invoice_write_date
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_write_date
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_partner_product_price_write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_product_category_hon_type
+msgid "Letter Type"
+msgstr "Type Brief"
+
+#. module: freelancer_self_billing
+#: selection:product.category,hon_type:0
+msgid "Letter declaring Payment"
+msgstr "Brief die betaling aankondigt"
+
+#. module: freelancer_self_billing
+#: selection:product.category,hon_type:0
+msgid "Letter requiring Invoice"
+msgstr "Brief die om facturatie verzoekt"
+
+#. module: freelancer_self_billing
+#: model:ir.actions.act_window,name:freelancer_self_billing.action_view_hon_issue_line_make_invoice
+#: model:ir.actions.act_window,name:freelancer_self_billing.action_view_hon_issue_make_invoice
+msgid "Make Invoices"
+msgstr "Maak facturen"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_name
+msgid "Name"
+msgstr "Omschrijving"
+
+#. module: freelancer_self_billing
+#: code:addons/freelancer_self_billing/wizard/hon_line_invoice.py:108
+#, python-format
+msgid "No Issue lines are selected for invoicing:\n"
+""
+msgstr "Er zijn geen editieregels geselecteerd om te factureren:\n"
+
+#. module: freelancer_self_billing
+#: report:account.invoice.hon:0
+msgid "Omschrijving"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: selection:hon.issue,state:0
+msgid "Open"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_form
+msgid "Other Info"
+msgstr "Overige Informatie"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_activity_id
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Page Type"
+msgstr "Type Pagina"
+
+#. module: freelancer_self_billing
+#: model:ir.model,name:freelancer_self_billing.model_res_partner
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_partner_id
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Partner"
+msgstr "Relatie"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_page_number
+msgid "Pgnr"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: code:addons/freelancer_self_billing/models/hon.py:318
+#, python-format
+msgid "Please define expense account for this product: \"%s\" (id:%d)."
+msgstr "Vul aub een kostenrekening in voor dit product: \"%s\" (id:%d)."
+
+#. module: freelancer_self_billing
+#: code:addons/freelancer_self_billing/wizard/hon_line_invoice.py:67
+#, python-format
+msgid "Please map \"Honorarium Journal\" in the Company master."
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_product_id
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_partner_product_price_product_id
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Product"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model,name:freelancer_self_billing.model_product_category
+msgid "Product Category"
+msgstr "Productcategorie"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_res_partner_product_price_ids
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_res_users_product_price_ids
+msgid "Product Price for this Supplier"
+msgstr "Prijs voor dit product voor deze Leverancier"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_nsm_res_partner_form_hon
+msgid "Product Prices per Vendor"
+msgstr "Prijzen per Leverancier"
+
+#. module: freelancer_self_billing
+#: report:account.invoice.hon:0
+msgid "Publicatie rechten"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_account_invoice_date_publish
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_date_publish
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_date_publish
+msgid "Publishing Date"
+msgstr "Publicatie Datum"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_quantity
+msgid "Quantity"
+msgstr "Hoeveelheid"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_filter
+msgid "Search Issue"
+msgstr "Zoek Editie"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Search Issue Lines"
+msgstr "Zoek Editieregels"
+
+#. module: freelancer_self_billing
+#: code:addons/freelancer_self_billing/wizard/wizard.py:45
+#, python-format
+msgid "Selected invoice(s) cannot be sent to portal as they are not in 'Draft' state."
+msgstr "De geselecteerde facturen kunnen niet naar het Portal worden gestuurd, omdat ze niet allemaal in de status “Concept” staan."
+
+#. module: freelancer_self_billing
+#: code:addons/freelancer_self_billing/wizard/wizard.py:48
+#, python-format
+msgid "Selected invoice(s) cannot be sent to portal as they have HON Tekst Category."
+msgstr "De geselecteerde facturen kunnen niet naar het Portal worden gestuurd, omdat ze van de categorie “HON tekst” zijn."
+
+#. module: freelancer_self_billing
+#: model:ir.actions.act_window,name:freelancer_self_billing.action_account_invoice_portalback
+#: model:ir.ui.view,arch_db:freelancer_self_billing.account_invoice_portalback_view
+msgid "Send Draft Invoices to Portal"
+msgstr "Stuur Concept Facturen naar het Portal"
+
+#. module: freelancer_self_billing
+#: model:ir.model,name:freelancer_self_billing.model_account_invoice_portalback
+msgid "Send the selected invoices to supplier portal"
+msgstr "Stuur de geselecteerde facturen naar het leveranciersportal"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_sequence
+msgid "Sequence"
+msgstr "Volgorde"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,help:freelancer_self_billing.field_res_company_report_background_image_hon2
+msgid "Set Background Image for HON Following Pages"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,help:freelancer_self_billing.field_res_company_report_background_image_hon1
+msgid "Set Background Image for HON Frontpage"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_form
+msgid "Set to Draft"
+msgstr "Zet op Concept"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_filter
+msgid "State"
+msgstr "Status"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_state
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_state
+msgid "Status"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_product_category_id
+msgid "T/B"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:product.category,name:freelancer_self_billing.hon_categoryT
+msgid "Tekst HON"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.view_hon_issue_line_filter
+msgid "Tekst/Beeld"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.invoice_supplier_form_NSM_HON
+msgid "Terug Portal"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: sql_constraint:hon.issue:0
+msgid "The Issue must be unique per company !"
+msgstr "De Editie moet uniek zijn per Bedrijf!"
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,help:freelancer_self_billing.field_hon_issue_line_account_id
+msgid "The income or expense account related to the selected product."
+msgstr "De Omzet- of Kostenrekening voor het geselecteerde product."
+
+#. module: freelancer_self_billing
+#: code:addons/freelancer_self_billing/models/hon.py:329
+#, python-format
+msgid "There is no Fiscal Position defined or Expense category account defined for default properties of Product categories."
+msgstr "Er is geen Fiscale Positie of geen Kosten categorie rekening gedefinieerd of voor de standaard eigenschappen van product categorieën."
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,help:freelancer_self_billing.field_hon_issue_invoice_ids
+msgid "This is the list of invoices that have been generated for this issue. The same issue may have been invoiced several times (by line for example)."
+msgstr "Dit is de lijst facturen, die zijn aangemaakt voor deze editie. Dezelfde Editie kan meermaals gefactureerd worden, bijvoorbeeld per regel."
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_account_analytic_id
+msgid "Title/Issue"
+msgstr "Titel/Editie"
+
+#. module: freelancer_self_billing
+#: report:account.invoice.hon:0
+msgid "Totaal"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_line_tree_view
+msgid "Total"
+msgstr "Totaal"
+
+#. module: freelancer_self_billing
+#: report:account.invoice.hon:0
+msgid "U wordt verzocht deze originele brief tegelijk met de rekening terug te zenden. Zonder deze brief kan niet tot betaling worden overgegaan."
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_price_unit
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_partner_product_price_price_unit
+msgid "Unit Price"
+msgstr "Prijs/stuk"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.invoice_supplier_form_NSM_HON2
+msgid "Validate"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model.fields,field_description:freelancer_self_billing.field_partner_product_price_partner_id
+msgid "Vendor"
+msgstr "Leverancier"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_form
+msgid "View Invoice"
+msgstr "Bekijk Factuur"
+
+#. module: freelancer_self_billing
+#: report:account.invoice.hon:0
+msgid "Voor onderstaand(e) artikel(en), gepubliceerd in"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.actions.act_window,help:freelancer_self_billing.action_invoice_tree_hon
+msgid "You can control the invoice from your supplier according to\n"
+"                what you purchased or received. OpenERP can also generate\n"
+"                draft invoices automatically from purchase orders or receipts."
+msgstr ""
+
+#. module: freelancer_self_billing
+#: code:addons/freelancer_self_billing/models/hon.py:365
+#, python-format
+msgid "You cannot cancel a Hon line that has already been invoiced."
+msgstr "U kunt geen HON-regel annuleren, die al gefactureerd is."
+
+#. module: freelancer_self_billing
+#: code:addons/freelancer_self_billing/models/hon.py:198
+#, python-format
+msgid "You cannot confirm a hon issue which has no line."
+msgstr "U kunt geen editie bevestigen die geen regels heeft."
+
+#. module: freelancer_self_billing
+#: code:addons/freelancer_self_billing/models/hon.py:208
+#, python-format
+msgid "You cannot unconfirm a hon issue which has no line."
+msgstr "U kunt geen Editie naar concept terugzetten die geen regels heeft."
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_form
+msgid "back to Draft"
+msgstr "terug naar Concept"
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.hon_issue_line_tree_view
+msgid "columns"
+msgstr "kolommen"
+
+#. module: freelancer_self_billing
+#: report:account.invoice.hon:0
+msgid "d.d."
+msgstr ""
+
+#. module: freelancer_self_billing
+#: report:account.invoice.hon:0
+msgid "het volgende bedrag:"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model,name:freelancer_self_billing.model_hon_issue
+msgid "hon.issue"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model,name:freelancer_self_billing.model_hon_issue_line
+msgid "hon.issue.line"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: report:account.invoice.hon:0
+msgid "ontvangt u op uw IBAN nummer"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.account_invoice_portalback_view
+msgid "or"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.model,name:freelancer_self_billing.model_partner_product_price
+msgid "partner.product.price"
+msgstr ""
+
+#. module: freelancer_self_billing
+#: model:ir.ui.view,arch_db:freelancer_self_billing.account_invoice_portalback_view
+msgid "to Portal"
+msgstr "naar Portal"
+

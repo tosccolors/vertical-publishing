@@ -1,0 +1,32 @@
+<openerp>
+    <data>
+
+        <record id="account_invoice_portalback_view" model="ir.ui.view">
+            <field name="name">account.invoice.portalback.form</field>
+            <field name="model">account.invoice.portalback</field>
+            <field name="arch" type="xml">
+                <form string="Send Draft Invoices to Portal" version="7.0">
+                    <p class="oe_grey">
+                        In the Supplier Portal suppliers can upload their pdf-invoice into the document
+                    </p>
+                    <footer>
+                        <button string="to Portal" name="invoice_portalback" type="object" default_focus="1" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_account_invoice_portalback"
+            multi="True"
+            key2="client_action_multi" name="Send Draft Invoices to Portal"
+            res_model="account.invoice.portalback" src_model="account.invoice"
+            view_mode="form" target="new" view_type="form"
+            view_id="account_invoice_portalback_view"
+            groups="freelancer_self_billing.group_module_hon_user"/>
+
+        
+
+    </data>
+</openerp>

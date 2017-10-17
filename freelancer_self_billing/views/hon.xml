@@ -1,0 +1,284 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <!-- TODO: put here a reminder on what to do at the first edition -->
+        <record id="hon_issue_tree_view" model="ir.ui.view">
+            <field name="name">hon.tree.view</field>
+            <field name="model">hon.issue</field>
+            <field name="arch" type="xml">
+                <tree string="Hon Issues">
+                    <field name="account_analytic_id"/>
+                    <field name="date_publish"/>
+                    <field name="invoiced" string="All Lines Invoiced"/>
+                    <field name="state" invisible="0"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hon_issue_form" model="ir.ui.view">
+            <field name="name">hon_issue.form</field>
+            <field name="model">hon.issue</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <form string="Hon Issue" version="7.0">
+                    <header>
+                        <button name="action_issue_confirm" states="draft" string="Confirm Hon Issue" type="object" groups="base.group_user"/>
+                        <button name="action_view_invoice" string="View Invoice" type="object" class="oe_highlight"
+                                attrs="{'invisible': [('invoice_exists', '=', False)]}" groups="base.group_user"/>
+                        <button name="action_invoice_create" string="Create Invoices" type="object"  class="oe_highlight"
+                                attrs="{'invisible': ['|',('invoiced', '=', True),('state', '!=', 'open')]}" groups="base.group_user"/>
+                        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" groups="base.group_user"/>
+                        <button name="action_cancel" states="draft,open" string="Cancel Issue" type="object" groups="base.group_user"/>
+                        <button name="action_back_draft" states="open" string="back to Draft" type="object" groups="base.group_user"/>
+                        <button name="action_done" string="Finalise Issue" type="object" class="oe_highlight"
+                                attrs="{'invisible': ['|',('invoiced', '=', False),('state', '!=', 'open')]}" groups="base.group_user"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,open,done" statusbar_colors='{"draft":"blue", "open":"red","done":"blue"}'/>
+                    </header>
+
+                    <h1>
+                        <label string="Honoraria Editie " />
+                        <field name="name" class="oe_inline" readonly="1"/>
+                    </h1>
+                    <!--sheet string="Hon Issue"-->
+                        <group>
+                            <group col="2" colspan="2" >
+                                <field name="company_id" invisible="1"/>
+                                <field name="account_analytic_id" />
+                                <field name="date_publish"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Honorarium Issue Lines">
+                                <field name="hon_issue_line">
+                                    <tree string="Hon Issue lines" editable="bottom">
+                                        <field name="company_id" invisible="1"/>
+                                        <field name="sequence" widget="handle" />
+                                        <field name="partner_id"  domain="['|',('employee','=', True),('category_id', '=',  %(freelancer_self_billing.hon_partner_category)d)]"
+                                               />
+                                        <field name="product_category_id"
+                                               domain="['|',('id', '=',  %(freelancer_self_billing.hon_categoryT)d),('id', '=',  %(freelancer_self_billing.hon_categoryB)d)]"/>
+                                        <field name="page_number"/>
+                                        <field name="activity_id" invisible="0"  />
+                                        <field name="product_id"
+                                               domain="[('categ_id', '=', product_category_id)]"/>
+                                        <field name="quantity"
+                                               attrs="{'invisible': [('employee','=',True)]}"/>
+                                        <field name="nr_of_columns"/>
+                                        <field name="employee" invisible="1"/>
+                                        <field name="account_analytic_id" invisible="1"/>
+                                        <field name="account_id" invisible="1"/>
+                                        <field name="price_unit"
+                                               attrs="{'invisible': [('employee','=',True)]}"/>
+                                        <field name="name"/>
+                                        <field name="gratis" attrs="{'invisible': [('employee','=',True)]}"/>
+                                        <field name="estimated_price" attrs="{'invisible': [('employee','=',True)]}"/>
+                                        <field name="price_subtotal" attrs="{'invisible': [('employee','=',True)]}"/>
+                                        <field name="invoice_id" attrs="{'invisible': [('employee','=',True)]}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Other Info">
+                                <div class="oe_clear">
+                                    <label for="comment"/>
+                                </div>
+                                <field name="comment"/>
+                                <group>
+                                    <field name="invoiced"/>
+                                    <field name="invoice_exists" invisible="1"/>
+                                </group>
+                            </page>
+
+                        </notebook>
+                    <!--/sheet-->
+                </form>
+            </field>
+        </record>
+
+        <record id="view_hon_issue_filter" model="ir.ui.view">
+            <field name="name">hon.issue</field>
+            <field name="model">hon.issue</field>
+            <field name="arch" type="xml">
+                <search string="Search Issue">
+                    <field name="account_analytic_id" string="Issue" filter_domain="[ ('account_analytic_id','ilike',self)]"/>
+                    <filter name="state" string="Draft" domain="[('state','=','draft')]" help="Draft issues"/>
+                    <filter name="state" string="Confirmed" domain="[('state','=','open')]" help="Confirmed issues"/>
+                    <filter name="state" string="Finalised" domain="[('state','=','done')]" help="Finalised issues"/>
+                    <separator/>
+                    <field name="account_analytic_id" operator="child_of"/>
+                    <separator/>
+               </search>
+            </field>
+        </record>
+
+        <record id="hon_issue_line_tree_view" model="ir.ui.view">
+            <field name="name">hon.line.tree.view</field>
+            <field name="model">hon.issue.line</field>
+            <field name="arch" type="xml">
+                <tree string="Hon Issue Lines"  editable="top" create="false" default_order="issue_id" >
+                    <field name="account_analytic_id" invisible="0"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="partner_id"
+                           attrs="{'readonly': [('state','!=','draft')]}"
+                           domain="['|',('employee','=', True),('category_id', '=',  %(freelancer_self_billing.hon_partner_category)d)]"/>
+                    <field name="product_category_id"
+                           attrs="{'readonly': [('state','!=','draft')]}"
+                           domain="[('id','in', [ %(freelancer_self_billing.hon_categoryT)d, %(freelancer_self_billing.hon_categoryB)d])]"/>
+                    <field name="page_number"/>
+                    <field name="activity_id" invisible="0"  attrs="{'readonly': [('state','!=','draft')]}"/>
+                    <field name="product_id"
+                           attrs="{'readonly': [('state','!=','draft')]}"
+                           domain="[('categ_id', '=', product_category_id)]"/>
+                    <field name="quantity"
+                           attrs="{'invisible': [('employee','=',True)], 'readonly': [('state','!=','draft')]}"/>
+                    <field name="nr_of_columns" sum="columns"/>
+                    <field name="price_unit" attrs="{'invisible': [('employee','=',True)], 'readonly': [('state','!=','draft')]}"/>
+                    <field name="employee" invisible="1"/>
+                    <field name="name"/>
+                    <field name="account_id" invisible="1"/>
+                    <field name="gratis" attrs="{'invisible': [('employee','=',True)]}"/>
+                    <field name="estimated_price" attrs="{'invisible': [('employee','=',True)]}" sum="Estimate"/>
+                    <field name="price_subtotal" attrs="{'invisible': [('employee','=',True)]}" sum="Total"/>
+                    <field name="invoice_id"/>
+                    <field name="state" invisible="0"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_hon_issue_line_filter" model="ir.ui.view">
+            <field name="name">hon.issue.line</field>
+            <field name="model">hon.issue.line</field>
+            <field name="arch" type="xml">
+                <search string="Search Issue Lines">
+                    <field name="account_analytic_id" string="Issue" filter_domain="[ ('account_analytic_id','ilike',self)]"/>
+                    <field name="partner_id" />
+                    <field name="activity_id" />
+                    <field name="product_category_id" />
+                    <filter name="state" string="Draft" domain="[('state','=','draft')]" help="Draft Issue Lines"/>
+                    <filter name="state" string="Confirmed" domain="[('state','=','confirmed')]" help="Confirmed Issue Lines"/>
+                    <filter name="gratis" string="Gratis" domain="[('gratis','=',True)]" help="Gratis Issue Lines"/>
+                    <filter name="state" string="Exception" domain="[('state','=','exception')]" help="Issue Exception"/>
+                    <filter name="employee" string="Employee Lines" domain="[('employee','=',True)]" help="Employee Issue Lines"/>
+                    <separator/>
+                    <field name="account_analytic_id" operator="child_of"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                    	<filter name="group_by_issue" string="Issue" context="{'group_by':'account_analytic_id'}"/>
+                        <filter name="group_by_product_category_id" string="Tekst/Beeld" context="{'group_by':'product_category_id'}"/>
+                        <filter name="group_by_product_id" string="Product" context="{'group_by':'product_id'}"/>
+                        <filter name="group_by_activity_id" string="Page Type" context="{'group_by':'activity_id'}"/>
+                        <filter name="group_by_partner" string="Partner" context="{'group_by':'partner_id'}"/>
+                    <separator/>
+                    </group>
+               </search>
+            </field>
+        </record>
+
+        <record id="action_hon_issue" model="ir.actions.act_window">
+            <field name="name">Hon Issues</field>
+            <field name="res_model">hon.issue</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field eval="False" name="view_id"/>
+            <field name="search_view_id" ref="view_hon_issue_filter"/>
+        </record>
+
+        <record id="action_hon_issue_line" model="ir.actions.act_window">
+            <field name="name">Hon Issue lines</field>
+            <field name="res_model">hon.issue.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field eval="False" name="view_id"/>
+            <field name="search_view_id" ref="view_hon_issue_line_filter"/>
+        </record>
+
+        <record id="action_hon_issue_view" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="action_hon_issue"/>
+        </record>
+
+        <record id="action_hon_issue_view1" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hon_issue_form"/>
+            <field name="act_window_id" ref="action_hon_issue"/>
+        </record>
+
+        <menuitem name="Hon"
+                  id="menu_action_hon_main"
+                  sequence="20"
+                  groups="freelancer_self_billing.group_module_hon_user"
+                  />
+        <menuitem name="Hon"
+                  id="menu_action_hon"
+                  parent="menu_action_hon_main"
+                  sequence="10"
+                  groups="freelancer_self_billing.group_module_hon_user"
+                  />
+        <menuitem action="action_hon_issue"
+                  name="Hon Issues"
+                  id="menu_action_hon_detail"
+                  parent="menu_action_hon"
+                  sequence="1"
+                  groups="freelancer_self_billing.group_module_hon_user"
+                  />
+
+
+        <record id="action_invoice_tree_hon" model="ir.actions.act_window">
+            <field name="name">HON Invoices</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field eval="False" name="view_id"/>
+            <field name="domain">[('type','=','in_invoice'),('hon','=',True)]</field>
+            <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}</field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to record a new supplier invoice.
+              </p><p>
+                You can control the invoice from your supplier according to
+                what you purchased or received. OpenERP can also generate
+                draft invoices automatically from purchase orders or receipts.
+              </p>
+            </field>
+        </record>
+
+        <menuitem action="action_invoice_tree_hon"
+                  name="Hon Invoices"
+                  id="menu_action_invoice_tree"
+                  parent="menu_action_hon"
+                  sequence="1"
+                  groups="freelancer_self_billing.group_module_hon_user"
+                  />
+
+        <menuitem action="action_hon_issue_line"
+                  name="Hon Issue Lines"
+                  id="menu_action_issue_line_tree"
+                  parent="menu_action_hon"
+                  sequence="1"
+                  groups="freelancer_self_billing.group_module_hon_user"
+                  />
+
+        <record id="account.action_invoice_tree2" model="ir.actions.act_window">
+            <field name="name">Supplier Invoices</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field eval="False" name="view_id"/>
+            <field name="domain">[('type','=','in_invoice'), ('state', '!=', 'portalcreate'),'|',('hon','=',False),'&amp;',('state','not in',['draft','open']),('hon','!=',False)]</field>
+            <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}</field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to record a new supplier invoice.
+              </p><p>
+                You can control the invoice from your supplier according to
+                what you purchased or received. OpenERP can also generate
+                draft invoices automatically from purchase orders or receipts.
+              </p>
+            </field>
+        </record>
+
+    </data>
+</openerp>
