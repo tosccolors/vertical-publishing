@@ -1,0 +1,7 @@
+---Fields in module 'publishing_accounts'---
+publishing_accounts / account.analytic.account / date_publish (date)           : previously in module nsm_analytic
+publishing_accounts / account.analytic.account / section_ids (many2many)       : previously in module nsm_analytic_2
+---XML records in module 'publishing_accounts'---
+NEW ir.ui.view: publishing_accounts.view_account_analytic_account_tree_inherit
+NEW ir.ui.view: publishing_accounts.view_account_analytic_form
+NEW ir.ui.view: publishing_accounts.view_company_form_inherit
