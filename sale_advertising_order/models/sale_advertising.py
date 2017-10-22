@@ -302,6 +302,8 @@ class SaleOrderLine(models.Model):
 
     layout_remark = fields.Text('Layout Remark')
     title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)])
+    title_ids = fields.Many2many('sale.advertising.issue', 'sale_order_line_adv_issue_rel', 'order_line_id',
+                                     'adv_issue_id', 'Advertising Issues')
     adv_issue_ids = fields.Many2many('sale.advertising.issue','sale_order_line_adv_issue_rel', 'order_line_id',
                                       'adv_issue_id',  'Advertising Issues')
     dates = fields.One2many('sale.order.line.date', 'order_line_id', 'Advertising Dates')
@@ -336,7 +338,7 @@ class SaleOrderLine(models.Model):
     subtotal_before_agency_disc = fields.Monetary(compute='_compute_amount', string='Subtotal before Commission', digits=dp.get_precision('Account'), store=True)
 
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', default=False, store=True)
-
+    magazine = fields.Boolean('Magazine Ad', default=False )
 
 
     @api.onchange('title')

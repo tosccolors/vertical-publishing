@@ -126,11 +126,31 @@
                                 <form string="Sales Order Lines">
                                     <group>
                                         <group>
-                                            <field name="title" string="Title" domain="[('child_ids','!=', False)]" required="True"
+                                            <field name="magazine" />
+                                            <field name="title" string="Title" domain="[('child_ids','!=', False)]"
+                                                   attrs="{'invisible':[('magazine','=',False)], 'required':[('magazine','=',True)]}"
                                                    options="{'no_create': True, 'no_create_edit': True}"/>
+                                            <field name="title_ids" string="Titles" attrs="{'invisible':[ ('magazine','=',True)], 'required':[('magazine','=',False)]}"
+                                                   domain="[('parent_id','=', False)]"
+                                                   options="{'no_create': True, 'no_create_edit': True}">
+                                                    <tree >
+                                                        <field name="name" string="Name"/>
+                                                    </tree>
+                                            </field>
+                                            <field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible':[ ('magazine','=',True)], 'required':[('magazine','=',False)]}"
+                                                   domain="[('parent_id','in', title_ids and title_ids[0][2])]"
+                                                   options="{'no_create': True, 'no_create_edit': True}">
+                                                    <tree >
+                                                        <field name="name" string="Name"/>
+                                                    </tree>
+                                            </field>
+
                                             <field name="medium" invisible="1" />
-                                            <field name="ad_class"  required="1"
+                                            <field name="ad_class"  attrs="{'invisible':[('magazine','=',False)], 'required':[('magazine','=',True)]}"
                                                    domain="[('type','!=', 'view'), ('id','child_of', medium)]"
+                                                   options="{'no_create': True, 'no_create_edit': True}"/>
+                                            <field name="ad_class"  attrs="{'invisible':[('magazine','=',True)], 'required':[('magazine','=',False)]}"
+                                                   domain="[('type','!=', 'view')]"
                                                    options="{'no_create': True, 'no_create_edit': True}"/>
                                             <field name="product_id"
                                                 context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
