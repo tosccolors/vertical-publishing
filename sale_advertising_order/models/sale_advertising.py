@@ -237,10 +237,17 @@ class AdvertisingIssue(models.Model):
     }
     _description="Sale Advertising Issue"
 
+    @api.model
+    def _get_attribute_domain(self):
+        id = self.env.ref('sale_advertising_order.attribute_title').id
+#        attribute_value = self.env('product.attribute.value')
+        return [('attribute_id', '=', id)]
 
     name = fields.Char('Name', size=64, required=True)
     child_ids = fields.One2many('sale.advertising.issue', 'parent_id', 'Issues',)
     parent_id = fields.Many2one('sale.advertising.issue', 'Title', index=True)
+    product_attribute_value_id = fields.Many2one('product.attribute.value', string='Variant Title',
+                                                 domain=_get_attribute_domain)
     analytic_account_id = fields.Many2one('account.analytic.account', required=True,
                                       string='Related Analytic Account', ondelete='restrict',
                                       help='Analytic-related data of the issue')
@@ -306,6 +313,7 @@ class SaleOrderLine(models.Model):
                                      'adv_issue_id', 'Advertising Issues')
     adv_issue_ids = fields.Many2many('sale.advertising.issue','sale_order_line_adv_issue_rel', 'order_line_id',
                                       'adv_issue_id',  'Advertising Issues')
+    issue_product_ids = fields.One2many('sale.order.line.issues.products', 'order_line_id', 'Adv. Issues with Product Prices')
     dates = fields.One2many('sale.order.line.date', 'order_line_id', 'Advertising Dates')
     dateperiods = fields.One2many('sale.order.line.dateperiod', 'order_line_id', 'Advertising Date Periods')
     date_type = fields.Selection(related='ad_class.date_type', type='selection',
@@ -319,6 +327,8 @@ class SaleOrderLine(models.Model):
     adv_issue = fields.Many2one('sale.advertising.issue','Advertising Issue')
     medium = fields.Many2one(related='title.medium', relation='product.category',string='Medium', readonly=True )
     ad_class = fields.Many2one('product.category', 'Advertising Class')
+    product_template_id = fields.Many2one('product.template', string='Generic Product', domain=[('sale_ok', '=', True)],
+                                 change_default=True, ondelete='restrict', required=True)
     page_reference = fields.Char('Reference of the Page', size=32)
     ad_number = fields.Char('Advertising Reference', size=32)
     from_date = fields.Date('Start of Validity')
@@ -553,6 +563,20 @@ class SaleOrderLine(models.Model):
         res2 = self.onchange_actualup()
         self.update(res2['value'])
         return res
+
+class OrderLineAdvIssuesProducts(models.Model):
+
+    _name = "sale.order.line.issues.products"
+    _description= "Advertising Order Line Advertising Issues"
+    _order = "order_line_id,sequence,id"
+
+    sequence = fields.Integer('Sequence', help="Gives the sequence of this line .", default=10)
+    order_line_id = fields.Many2one('sale.order.line', 'Line', ondelete='cascade', index=True, required=True)
+    adv_issue_id = fields.Many2one('sale.advertising.issue', 'Issue', ondelete='cascade', index=True, required=True)
+#    issue_date = fields.Date('Date of Issue')
+#    name = fields.Char('Name', size=64)
+    product_id = fields.Many2one('product.product', 'Product', ondelete='cascade', index=True, )
+    price_unit = fields.Float('Unit Price', required=True, digits=dp.get_precision('Product Price'), default=0.0)
 
 
 class OrderLineDate(models.Model):

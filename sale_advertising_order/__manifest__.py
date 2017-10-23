@@ -34,9 +34,10 @@ This module allows you to use both CRM and Sales Management to run your advertis
     'depends': [
                 'sale_crm',
                 'publishing_accounts',
+                'product_variant_template_categ_id'
                 ],
     'data': [
-
+             "data/sale_advertising_data.xml",
              "security/ir.model.access.csv",
              "security/security.xml",
              "wizard/sale_line_create_multi_view.xml",
