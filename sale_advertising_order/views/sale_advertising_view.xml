@@ -364,9 +364,7 @@
                                     <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
                                     <field name="project_id" attrs="{'invisible':[('state','=','sale')]}"  invisible="[('published_customer','!=', False)]"
                                            context="{'default_partner_id':partner_invoice_id, 'default_name':name}" groups="analytic.group_analytic_accounting"/>
-                                    <field name="customer_contact" required="True" context="{'default_parent_id': partner_id, 'show_email': 1}"
-                                           domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"
-                                           options='{"always_reload": True}'/>
+
 
                                 </group>
                                 <group name="sale_pay" string="Invoicing">
