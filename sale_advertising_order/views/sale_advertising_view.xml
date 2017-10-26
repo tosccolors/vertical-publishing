@@ -131,15 +131,29 @@
                                             <field name="title" string="Title" domain="[('child_ids','!=', False)]"
                                                    attrs="{'invisible':[('magazine','=',False)], 'required':[('magazine','=',True)]}"
                                                    options="{'no_create': True, 'no_create_edit': True}"/>
-
-                                            <!--field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible':[ ('magazine','=',True)], 'required':[('magazine','=',False)]}"
+                                            <field name="title_ids" string="Titles" attrs="{'invisible':[ ('magazine','=',True)], 'required':[('magazine','=',False)]}"
+                                                   domain="[('parent_id','=', False)]"
+                                                   options="{'no_create': True, 'no_create_edit': True}">
+                                                    <tree >
+                                                        <field name="name" string="Name"/>
+                                                    </tree>
+                                            </field>
+                                            <field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible':[ ('magazine','=',True)], 'required':[('magazine','=',False)]}"
                                                    domain="[('parent_id','in', title_ids and title_ids[0][2])]"
                                                    options="{'no_create': True, 'no_create_edit': True}">
                                                     <tree >
                                                         <field name="name" string="Name"/>
                                                     </tree>
-                                            </field-->
-
+                                            </field>
+                                            <field name="issue_product_ids" string="Adv.Issues with Products and Prices" attrs="{'invisible':[ '|',('product_template_id','=', False),('magazine','=',True)], 'required':[('magazine','=',False)]}"
+                                                   options="{'no_create': True, 'no_create_edit': True}">
+                                                    <tree string="Issues Products Prices" editable="bottom">
+                                                        <field name="adv_issue_id" string="Issue" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
+                                                        <field name="product_attribute_value_id" invisible="True" />
+                                                        <field name="product_id" string="Product" domain="[('product_tmpl_id','=', parent.product_template_id), ('attribute_value_ids','in', product_attribute_value_id)]"/>
+                                                        <field name="price_unit" string="Price"/>
+                                                    </tree>
+                                            </field>
 
                                             <field name="medium" invisible="1" />
                                             <field name="ad_class"  attrs="{'invisible':[('magazine','=',False)], 'required':[('magazine','=',True)]}"
@@ -158,22 +172,6 @@
                                                 attrs="{'invisible':[ ('magazine','=',True)],'required':[('magazine','=',False)],'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
                                                 domain="[('categ_id','=', ad_class)]"
                                                 options="{'no_create': True, 'no_create_edit': True}"/>
-                                            <field name="title_ids" string="Titles" attrs="{'invisible':[ ('magazine','=',True)], 'required':[('magazine','=',False)]}"
-                                                   domain="[('parent_id','=', False)]"
-                                                   options="{'no_create': True, 'no_create_edit': True}">
-                                                    <tree >
-                                                        <field name="name" string="Name"/>
-                                                    </tree>
-                                            </field>
-                                            <field name="issue_product_ids" string="Adv.Issues with Products and Prices" attrs="{'invisible':[ '|',('product_template_id','=', False),
-                                                        ('magazine','=',True)], 'required':[('magazine','=',False)]}" widget="many2many" >
-                                                    <tree string="Issues Products Prices">
-                                                        <field name="adv_issue_id" string="Issue" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
-                                                        <!--field name="product_attribute_value_id" invisible="True" />
-                                                        <field name="product_id" string="Product" domain="[('product_tmpl_id','=', parent.product_template_id), ('attribute_value_ids','in', product_attribute_value_id)]"/>
-                                                        <field name="price_unit" string="Price"/-->
-                                                    </tree>
-                                            </field>
 
                                             <field name="layout_category_id" groups="sale.group_sale_layout"/>
                                             <field name="invoice_status" invisible="1"/>
@@ -207,13 +205,13 @@
                                             <!--</div>-->
                                             <field name="adv_issue" domain="[('parent_id','=', title)]" attrs="{'invisible':['|',('adv_issue','=',False),('title','=',False)]}"
                                                    options="{'no_create': True, 'no_create_edit': True}"/>
-                                            <field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible':['|','|',('adv_issue','!=',False), ('magazine','=',False),('title','=',False)]}"
+                                            <!--field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible':['|','|',('adv_issue','!=',False), ('magazine','=',False),('title','=',False)]}"
                                                    domain="[('id','child_of', title)]"
                                                    options="{'no_create': True, 'no_create_edit': True}">
                                                     <tree >
                                                         <field name="name" string="Name"/>
                                                     </tree>
-                                            </field>
+                                            </field-->
                                         </group>
                                         <group>
                                             <field name="tax_id" widget="many2many_tags"
