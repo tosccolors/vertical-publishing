@@ -2,34 +2,42 @@
 <odoo>
 	<data noupdate="1">
 
-	<!-- Product Categories (Media) Demo Data -->
-		<!--record id="product_category_advertisingmedium0" model="product.category"-->
-			<!--field name="property_account_expense_categ" ref="account.a_expense"/-->
-			<!--field name="property_stock_journal" ref="stock.stock_journal"/-->
-			<!--field eval="&quot;Advertising Medium&quot;" name="name"/>
-			<field name="parent_id" ref="product.product_category_1"/-->
-			<!--field name="property_account_income_categ" ref="account.a_sale"/>
-		</record-->
-		<!--record id="product_category_website0" model="product.category"-->
-			<!--field name="property_account_expense_categ" ref="account.a_expense"/-->
-			<!--field name="property_stock_journal" ref="stock.stock_journal"/>
-			<field eval="&quot;Website&quot;" name="name"/>
-			<field name="parent_id" ref="product_category_advertisingmedium0"/>
-			<field name="property_account_income_categ" ref="account.a_sale"/>
-		</record-->
-		<!--record id="product_category_magazine0" model="product.category"-->
-			<!--field name="property_account_expense_categ" ref="account.a_expense"/-->
-			<!--field name="property_stock_journal" ref="stock.stock_journal"/>
-			<field eval="&quot;Press Review&quot;" name="name"/>
-			<field name="parent_id" ref="product_category_advertisingmedium0"/-->
-			<!--field name="property_account_income_categ" ref="account.a_sale"/>
-		</record-->
-
 
 	<!-- Products Data -->
 		<record id="attribute_title" model="product.attribute">
 			<field name="name">title</field>
 			<field name="create_variant">True</field>
+		</record>
+		<record id="advertising_category" model="product.category">
+			<field name="name">Ads</field>
+            <field name="type">view</field>
+			<field name="date_type">date</field>
+		</record>
+
+		<record id="newspaper_advertising_category" model="product.category">
+			<field name="name">Newspapers/Specials</field>
+            <field name="type">view</field>
+			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
+			<field name="date_type">date</field>
+		</record>
+
+		<record id="magazine_advertising_category" model="product.category">
+			<field name="name">Magazines</field>
+            <field name="type">view</field>
+			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
+			<field name="date_type">date</field>
+		</record>
+
+		<record id="online_advertising_category" model="product.category">
+			<field name="name">Online</field>
+            <field name="type">view</field>
+			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
+			<field name="date_type">validity</field>
+		</record>
+
+		<record id="title_pricelist_category" model="product.category">
+			<field name="name">Title Pricelist</field>
+            <field name="type">view</field>
 		</record>
 
 	</data>

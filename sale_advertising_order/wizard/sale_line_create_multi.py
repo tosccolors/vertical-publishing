@@ -38,7 +38,7 @@ class sale_order_line_create_multi_lines(models.TransientModel):
         if model and model == 'sale.order':
             order_ids = context.get('active_ids', [])
 
-            for so in self.env['sale.order'].browse(order_ids):
+            for so in self.env['sale.order'].search([('id','in', order_ids)]):
                 olines = so.order_line.filtered(lambda x: not x.adv_issue)
 
                 if not olines: continue
@@ -53,18 +53,16 @@ class sale_order_line_create_multi_lines(models.TransientModel):
         elif model and model == 'sale.order.line':
             orders = []
             line_ids = context.get('active_ids', [])
-            for line in self.pool['sale.order.line'].browse(cr, uid, line_ids, context):
-                if line.order_id.id not in orders:
-                    orders.append(line.order_id.id)
+            for line in self.env['sale.order.line'].search([('id','in', line_ids)]):
+                orders.append(line.order_id.id)
 
             for oid in orders:
-                lines = self.pool['sale.order.line'].search(cr, uid, [('order_id','=', oid),('id','in', line_ids),
-                                                                      ('adv_issue','=', False)], context=context)
+                lines = self.env['sale.order.line'].search([('order_id','=', oid),('id','in', line_ids),
+                                                                      ('adv_issue','=', False)])
                 if not lines:
                     continue
                 n += 1
-                olines = self.pool['sale.order.line'].browse(cr, uid, lines, context=context)
-                self.create_multi_from_order_lines(cr, uid, olines, context)
+                self.create_multi_from_order_lines(orderlines=lines)
             if n == 0:
                 raise UserError(_('There are no Sales Order Lines without Advertising Issues in the selection.'))
         return

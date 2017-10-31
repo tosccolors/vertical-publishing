@@ -79,9 +79,6 @@
                    <separator/>
                    <filter string="Customers" name="customer" domain="[('customer','=',1)]" help="Customer Partners"/>
                    <separator/>
-                   <filter string="Non-aProfit" name="aprofit" domain="['|','&amp;',('aprofit_nummer','=', False),'|',('parent_id','=', False),('is_company','!=', False),'&amp;',('parent_id','!=', False),('parent_id.aprofit_nummer','=', False)]" help="Niet aProfit Customers"/>
-                   <filter string="aProfit" name="aprofit" domain="['|','&amp;',('aprofit_nummer','!=', False),'|',('parent_id','=', False),('is_company','!=', False),'&amp;',('parent_id','!=', False),('parent_id.aprofit_nummer','!=', False)]" help="Niet aProfit Customers"/>
-                   <separator/>
                    <filter string="Ad Agencies" name="agency" domain="[('is_ad_agency','=',1)]" help="Ad Agency Partners"/>
                    <separator/>
                    <field name="category_id" string="Tag" filter_domain="[('category_id','ilike', self)]"/>

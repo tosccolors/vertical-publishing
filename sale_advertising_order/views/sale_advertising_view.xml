@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
+<odoo>
 	<data>
 
 		<!--
@@ -127,50 +127,37 @@
                                 <form string="Sales Order Lines">
                                     <group>
                                         <group>
-                                            <field name="magazine" />
-                                            <field name="title" string="Title" domain="[('child_ids','!=', False)]"
-                                                   attrs="{'invisible':[('magazine','=',False)], 'required':[('magazine','=',True)]}"
-                                                   options="{'no_create': True, 'no_create_edit': True}"/>
-                                            <field name="title_ids" string="Titles" attrs="{'invisible':[ ('magazine','=',True)], 'required':[('magazine','=',False)]}"
-                                                   domain="[('parent_id','=', False)]"
+                                            <field name="medium" required="True"/>
+                                            <field name="title" string="Title" domain="[('child_ids','!=', False),('medium','=', medium)]"
+                                                   options="{'no_create': True, 'no_create_edit': True}" attrs="{'invisible': [('medium','=', %(sale_advertising_order.newspaper_advertising_category)d)]}"/>
+                                            <field name="title_product_attr_value_id" invisible="0" />
+                                            <field name="title_ids" string="Titles" attrs="{'invisible': [('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
+                                                   domain="[('parent_id','=', False),('medium','=', medium)]"
                                                    options="{'no_create': True, 'no_create_edit': True}">
                                                     <tree >
                                                         <field name="name" string="Name"/>
                                                     </tree>
                                             </field>
-                                            <field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible':[ ('magazine','=',True)], 'required':[('magazine','=',False)]}"
-                                                   domain="[('parent_id','in', title_ids and title_ids[0][2])]"
+                                            <field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible': [('medium','=', %(sale_advertising_order.online_advertising_category)d)]}"
+                                                   domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),('parent_id','!=', False)]"
                                                    options="{'no_create': True, 'no_create_edit': True}">
                                                     <tree >
                                                         <field name="name" string="Name"/>
                                                     </tree>
                                             </field>
-                                            <field name="issue_product_ids" string="Adv.Issues with Products and Prices" attrs="{'invisible':[ '|',('product_template_id','=', False),('magazine','=',True)], 'required':[('magazine','=',False)]}"
-                                                   options="{'no_create': True, 'no_create_edit': True}">
-                                                    <tree string="Issues Products Prices" editable="bottom">
-                                                        <field name="adv_issue_id" string="Issue" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
-                                                        <field name="product_attribute_value_id" invisible="True" />
-                                                        <field name="product_id" string="Product" domain="[('product_tmpl_id','=', parent.product_template_id), ('attribute_value_ids','in', product_attribute_value_id)]"/>
-                                                        <field name="price_unit" string="Price"/>
-                                                    </tree>
-                                            </field>
-
-                                            <field name="medium" invisible="1" />
-                                            <field name="ad_class"  attrs="{'invisible':[('magazine','=',False)], 'required':[('magazine','=',True)]}"
+                                            <field name="ad_class"
                                                    domain="[('type','!=', 'view'), ('id','child_of', medium)]"
                                                    options="{'no_create': True, 'no_create_edit': True}"/>
-                                            <field name="ad_class"  attrs="{'invisible':[('magazine','=',True)], 'required':[('magazine','=',False)]}"
-                                                   domain="[('type','!=', 'view')]"
-                                                   options="{'no_create': True, 'no_create_edit': True}"/>
-                                            <field name="product_id"
-                                                context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
-                                                attrs="{'invisible':[ ('magazine','=',False)],'required':[('magazine','=',True)],'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
-                                                domain="[('categ_id','=', ad_class)]"
-                                                options="{'no_create': True, 'no_create_edit': True}"/>
                                             <field name="product_template_id"
                                                 context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
-                                                attrs="{'invisible':[ ('magazine','=',True)],'required':[('magazine','=',False)],'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
+                                                attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])],'invisible': [('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)],
+                                                'required': [('medium','=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
                                                 domain="[('categ_id','=', ad_class)]"
+                                                options="{'no_create': True, 'no_create_edit': True}"/>
+                                            <field name="product_id"
+                                                context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
+                                                attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])],'invisible': [('medium','=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
+                                                domain="['|','&amp;',('categ_id','=', ad_class),('attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id), ('attribute_value_ids','in', title_product_attr_value_id)]"
                                                 options="{'no_create': True, 'no_create_edit': True}"/>
 
                                             <field name="layout_category_id" groups="sale.group_sale_layout"/>
@@ -181,9 +168,9 @@
                                             <field name="price_subtotal" invisible="1"/>
                                             <label for="product_uom_qty" string="Ordered Quantity"/>
                                             <div>
-                                                <field
-                                                    context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"
-                                                    name="product_uom_qty" class="oe_inline"/>
+                                                <field name="product_uom_qty" class="oe_inline"
+                                                        context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id,
+                                                                    'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"/>
                                                 <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"
                                                     attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
                                                     invisible="0"/>
@@ -203,15 +190,9 @@
                                             <!--<div name="discount" groups="sale.group_discount_per_so_line">-->
                                                 <!--<field name="discount" class="oe_inline"/> %%-->
                                             <!--</div>-->
-                                            <field name="adv_issue" domain="[('parent_id','=', title)]" attrs="{'invisible':['|',('adv_issue','=',False),('title','=',False)]}"
-                                                   options="{'no_create': True, 'no_create_edit': True}"/>
-                                            <!--field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible':['|','|',('adv_issue','!=',False), ('magazine','=',False),('title','=',False)]}"
-                                                   domain="[('id','child_of', title)]"
-                                                   options="{'no_create': True, 'no_create_edit': True}">
-                                                    <tree >
-                                                        <field name="name" string="Name"/>
-                                                    </tree>
-                                            </field-->
+                                            <field name="adv_issue" domain="[('parent_id','=', title)]"
+                                                   options="{'no_create': True, 'no_create_edit': True}"
+                                                   attrs="{'invisible': [('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"/>
                                         </group>
                                         <group>
                                             <field name="tax_id" widget="many2many_tags"
@@ -264,10 +245,20 @@
                                                 <field name="ad_number" string="Ad No." />
                                             </tree>
                                         </field>
+                                        <field name="issue_product_ids" string="Adv.Issues with Products and Prices" attrs="{'invisible':['|',('issue_product_ids','=', []),('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
+                                                   options="{'no_create': True, 'no_create_edit': True}" readonly="True">
+                                                    <tree string="Issues Products Prices" >
+                                                        <field name="adv_issue_id" string="Issue" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
+                                                        <field name="product_attribute_value_id" invisible="True" />
+                                                        <field name="product_id" string="Product" domain="[('product_tmpl_id','=', parent.product_template_id), ('attribute_value_ids','in', product_attribute_value_id)]"/>
+                                                        <field name="price_unit" string="Price"/>
+                                                    </tree>
+                                        </field>
 
                                         <group attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}">
                                             <field name="ad_number" attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}"/>
                                             <field name="page_reference" attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}"/>
+                                            <field name="url_to_material" widget="url"/>
                                         </group>
                                         <group attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}">
                                             <field name="from_date" attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}"/>
@@ -293,6 +284,7 @@
                                     </div>
                                     <field name="state" invisible="1"/>
                                 </form>
+
                                 <tree string="Sales Order Lines"  decoration-info="invoice_status=='to invoice'">
                                     <field name="sequence" widget="handle"/>
                                     <field name="title" />
@@ -399,7 +391,7 @@
                                     <field name="fiscal_position_id" options="{'no_create': True}"/>
                                     <field name="invoice_status"
                                         attrs="{'invisible': [('state', 'not in', ('sale','done'))]}"/>
-                                    <field name="advertising" invisible="1"/>
+                                    <field name="advertising" invisible="0"/>
                                 </group>
                                 <group string="Reporting" name="technical" groups="base.group_no_one">
                                     <field groups="base.group_no_one" name="origin"/>
@@ -692,44 +684,36 @@
             <field name="name">sale.adv.order.line.tree</field>
             <field name="model">sale.order.line</field>
             <field name="arch" type="xml">
+                <!--header>
+                    <button name="%(sale_advertising_order.action_view_ad_order_line_make_invoice)d"
+                            string="Create Invoices from selected Order Lines" type="action"  class="btn-primary"
+                            attrs="{'invisible': [('state','in',['cancel','draft'])]}"
+                            groups="sale_advertising_order.group_traffic_user"/>
+                </header-->
                 <tree string="Sales Order Lines" create="false">
                     <field name="id"/>
                     <field name="order_partner_id" />
                     <field name="title" />
                     <field name="adv_issue" />
-                    <field name="ad_class" required="1"/>
-                    <field name="product_id" attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
-                           context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id,
-                                   'uom':product_uom, 'company_id': parent.company_id}"/>
+                    <field name="ad_class" />
+                    <field name="product_id" />
                     <field name="layout_category_id" groups="sale.group_sale_layout"/>
                     <field name="name"/>
                     <field name="ad_number"/>
                     <field name="page_reference"/>
-                    <field name="qty_delivered" invisible="context.get('hide_sale')" attrs="{'readonly': [('qty_delivered_updateable', '=', False)]}"/>
-                    <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
-                    <field name="qty_to_invoice" invisible="1"/>
-                    <field name="product_uom" attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
-                           context="{'company_id': parent.company_id}"
-                           groups="product.group_uom" options='{"no_open": True}'/>
-                    <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" widget="many2many_tags"/>
-                    <field name="price_unit" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
+                    <field name="product_uom" />
+                    <field name="price_unit" />
                     <field name="product_uom_qty"/>
                     <field name="actual_unit_price"/>
                     <field name="computed_discount" />
                     <field name="subtotal_before_agency_disc" />
                     <field name="discount_dummy" />
-                    <field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
-                           attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
-                           groups="account.group_account_invoice, sale_advertising_order.group_traffic_user"/>
+                    <field name="tax_id" />
                     <field name="discount" groups="sale.group_discount_per_so_line" invisible="1"/>
                     <field name="price_subtotal" widget="monetary" groups="sale.group_show_price_subtotal"/>
                     <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
-                    <field name="qty_delivered_updateable" invisible="1"/>
-                    <field name="procurement_ids" invisible="1"/>
-                    <field name="state" invisible="1"/>
+                    <field name="state" invisible="0"/>
                     <field name="invoice_status" invisible="1"/>
-                    <field name="customer_lead" invisible="1"/>
-                    <field name="currency_id" invisible="1"/>
                 </tree>
             </field>
         </record>
@@ -787,7 +771,7 @@
                                 </div>
                                 <field name="adv_issue" domain="[('parent_id','=', title)]" attrs="{'invisible':['|',('adv_issue','=',False),('title','=',False)]}"
                                        options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                                <field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible':['|','|',('adv_issue','!=',False), ('magazine','=',False),('title','=',False)]}"
+                                <field name="adv_issue_ids" string="Advertising Issues"
                                        domain="[('id','child_of', title)]"
                                        options="{'limit': 10, 'create': false, 'create_edit': false}">
                                         <tree >
@@ -904,10 +888,10 @@
 			<field name="name">All Advertising Sale Order Lines</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">sale.order.line</field>
-			<!--field name="view_type">form</field-->
+			<field name="view_type">tree</field>
 			<field name="view_mode">tree,form,pivot</field>
             <field name="search_view_id" ref="view_advertising_sales_order_line_filter"/>
-			<field name="domain">[('title','!=',False)]</field>
+			<field name="domain">[('advertising','!=',False)]</field>
 		</record>
 
         <record id="all_advertising_order_lines_action_tree" model="ir.actions.act_window.view">
@@ -945,11 +929,12 @@
 						<group col="4" colspan="4" >
 							<field name="name" string="Name"/>
 							<field name="parent_id" string="Title"/>
+                            <field name="medium" string="Medium"/>
                             <field name="product_attribute_value_id" string="Variant Title"
-                                   attrs="{'invisible':[('parent_id','!=',False)], 'required':[('parent_id','=',False)]}"/>
+                                   attrs="{'invisible':['|',('parent_id','!=',False),('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)],
+                                           'required':[('parent_id','=',False),('medium','=', %(sale_advertising_order.newspaper_advertising_category)d)]}"/>
 							<field name="analytic_account_id" string="Related Analytic Account"/>
 							<field name="issue_date" string="Issue Date"/>
-							<field name="medium" string="Medium"/>
 							<field name="default_note" string="Default Note" />
 							<field name="state" string="State" />
 						</group>
@@ -1057,4 +1042,4 @@
         </record>
 
 	</data>
-</openerp>
+</odoo>
