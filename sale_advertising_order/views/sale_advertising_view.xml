@@ -192,7 +192,7 @@
                                             <!--</div>-->
                                             <field name="adv_issue" domain="[('parent_id','=', title)]"
                                                    options="{'no_create': True, 'no_create_edit': True}"
-                                                   attrs="{'invisible': [('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"/>
+                                                   attrs="{'invisible': [('adv_issue','=', False)]}"/>
                                         </group>
                                         <group>
                                             <field name="tax_id" widget="many2many_tags"
@@ -245,8 +245,8 @@
                                                 <field name="ad_number" string="Ad No." />
                                             </tree>
                                         </field>
-                                        <field name="issue_product_ids" string="Adv.Issues with Products and Prices" attrs="{'invisible':['|',('issue_product_ids','=', []),('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
-                                                   options="{'no_create': True, 'no_create_edit': True}" readonly="True">
+                                        <field name="issue_product_ids" string="Adv.Issues with Products and Prices" attrs="{'invisible':['|',('adv_issue','!=',False),('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
+                                                   options="{'no_create': True, 'no_create_edit': True}" readonly="0">
                                                     <tree string="Issues Products Prices" >
                                                         <field name="adv_issue_id" string="Issue" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
                                                         <field name="product_attribute_value_id" invisible="True" />
@@ -684,12 +684,11 @@
             <field name="name">sale.adv.order.line.tree</field>
             <field name="model">sale.order.line</field>
             <field name="arch" type="xml">
-                <!--header>
+                <header>
                     <button name="%(sale_advertising_order.action_view_ad_order_line_make_invoice)d"
                             string="Create Invoices from selected Order Lines" type="action"  class="btn-primary"
-                            attrs="{'invisible': [('state','in',['cancel','draft'])]}"
-                            groups="sale_advertising_order.group_traffic_user"/>
-                </header-->
+                            attrs="{'invisible': [('state','in',['cancel','draft'])]}"/>
+                </header>
                 <tree string="Sales Order Lines" create="false">
                     <field name="id"/>
                     <field name="order_partner_id" />

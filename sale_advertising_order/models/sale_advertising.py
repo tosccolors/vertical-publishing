@@ -500,13 +500,20 @@ class SaleOrderLine(models.Model):
 
     @api.onchange('price_unit')
     def onchange_price_unit(self):
-        vals = {}
         if not self.advertising:
-            return {'value': vals}
+            return {'value': {}}
 
+        if self.issue_product_ids and len(self.issue_product_ids) > 1:
+            price = 0
+            count = 0
+            for issue in self.issue_product_ids:
+                price += issue.price_unit
+                count += 1
+            avg_price = price / count
+
+        self.price_unit = avg_price
         if self.price_unit > 0.0:
-            vals['actual_unit_price'] = self.price_unit
-        return {'value': vals}
+            self.actual_unit_price = self.price_unit
 
 
     @api.multi
@@ -644,14 +651,15 @@ class SaleOrderLine(models.Model):
                     self.update({
                         'adv_issue_ids': [(6,0,[])],
                         'issue_product_ids': values,
-                        'price_unit': avg_price,
                         'product_id': product_id.id,
                         'product_uom_qty': issues_count,
                     })
+                self.price_unit = avg_price
 
         elif self.title_ids:
             if len(self.title_ids) == 1:
-                self.update({ 'title' : self.title_ids.id })
+                self.update({ 'title' : self.title_ids.id,
+                              'issue_product_ids': [(6,0,[])]})
             elif len(self.title_ids) > 1:
                 self.update({'title': False})
 
