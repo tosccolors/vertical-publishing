@@ -38,7 +38,7 @@ class sale_order_line_create_multi_lines(models.TransientModel):
         if model and model == 'sale.order':
             order_ids = context.get('active_ids', [])
 
-            for so in self.env['sale.order'].browse(order_ids):
+            for so in self.env['sale.order'].search([('id','in', order_ids)]):
                 olines = so.order_line.filtered(lambda x: not x.adv_issue)
 
                 if not olines: continue
@@ -53,18 +53,16 @@ class sale_order_line_create_multi_lines(models.TransientModel):
         elif model and model == 'sale.order.line':
             orders = []
             line_ids = context.get('active_ids', [])
-            for line in self.pool['sale.order.line'].browse(cr, uid, line_ids, context):
-                if line.order_id.id not in orders:
-                    orders.append(line.order_id.id)
+            for line in self.env['sale.order.line'].search([('id','in', line_ids)]):
+                orders.append(line.order_id.id)
 
             for oid in orders:
-                lines = self.pool['sale.order.line'].search(cr, uid, [('order_id','=', oid),('id','in', line_ids),
-                                                                      ('adv_issue','=', False)], context=context)
+                lines = self.env['sale.order.line'].search([('order_id','=', oid),('id','in', line_ids),
+                                                                      ('adv_issue','=', False)])
                 if not lines:
                     continue
                 n += 1
-                olines = self.pool['sale.order.line'].browse(cr, uid, lines, context=context)
-                self.create_multi_from_order_lines(cr, uid, olines, context)
+                self.create_multi_from_order_lines(orderlines=lines)
             if n == 0:
                 raise UserError(_('There are no Sales Order Lines without Advertising Issues in the selection.'))
         return
@@ -76,22 +74,39 @@ class sale_order_line_create_multi_lines(models.TransientModel):
 
         for ol in orderlines:
             lines = [x.id for x in ol.order_id.order_line]
-            number_ids = len([x.id for x in ol.adv_issue_ids])
-            if number_ids < 1:
-                raise UserError(_('The product Quantity is different from the number of Issues in the multi line.'))
+            if ol.adv_issue_ids and not ol.issue_product_ids:
+                number_ids = len(ol.adv_issue_ids)
+                uom_qty = ol.product_uom_qty / number_ids
+                if uom_qty < 1:
+                    raise UserError(_('The product Quantity is not a multiple of the number of Issues in the multi line.'))
+                for ad_iss in ol.adv_issue_ids:
+                    res = {'adv_issue': ad_iss.id, 'adv_issue_ids': False, 'product_uom_qty': uom_qty,
+                           'order_id': ol.order_id.id or False,
+                           }
+                    vals = ol.copy_data(default=res)[0]
+                    mol_rec = sol_obj.create(vals)
 
-            uom_qty = ol.product_uom_qty / number_ids
+                    try: del context['__copy_data_seen']
+                    except: pass
+                    lines.append(mol_rec.id)
+            elif ol.issue_product_ids:
+                number_ids = len(ol.issue_product_ids)
+                uom_qty = ol.product_uom_qty / number_ids
+                if uom_qty < 1:
+                    raise UserError(_('The product Quantity is different from the number of Issues in the multi line.'))
 
-            for ad_iss in ol.adv_issue_ids:
-                res = {'adv_issue': ad_iss.id, 'adv_issue_ids': False, 'product_uom_qty': uom_qty,
-                       'order_id': ol.order_id.id or False,
-                       }
-                vals = ol.copy_data(default=res)[0]
-                mol_rec = sol_obj.create(vals)
+                for ad_iss in ol.issue_product_ids:
+                    res = {'adv_issue': ad_iss.id, 'product_id': ad_iss.product_id.id, 'price_unit': ad_iss.price_unit,'issue_product_ids': False, 'product_uom_qty': uom_qty,
+                           'order_id': ol.order_id.id or False,
+                           }
+                    vals = ol.copy_data(default=res)[0]
+                    mol_rec = sol_obj.create(vals)
 
-                try: del context['__copy_data_seen']
-                except: pass
-                lines.append(mol_rec.id)
+                    try:
+                        del context['__copy_data_seen']
+                    except:
+                        pass
+                    lines.append(mol_rec.id)
 
             self._cr.execute("delete from sale_order_line where id = %s"%(ol.id))
 

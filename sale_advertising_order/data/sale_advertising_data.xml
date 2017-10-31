@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data noupdate="1">
+
+
+	<!-- Products Data -->
+		<record id="attribute_title" model="product.attribute">
+			<field name="name">title</field>
+			<field name="create_variant">True</field>
+		</record>
+		<record id="advertising_category" model="product.category">
+			<field name="name">Ads</field>
+            <field name="type">view</field>
+			<field name="date_type">date</field>
+		</record>
+
+		<record id="newspaper_advertising_category" model="product.category">
+			<field name="name">Newspapers/Specials</field>
+            <field name="type">view</field>
+			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
+			<field name="date_type">date</field>
+		</record>
+
+		<record id="magazine_advertising_category" model="product.category">
+			<field name="name">Magazines</field>
+            <field name="type">view</field>
+			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
+			<field name="date_type">date</field>
+		</record>
+
+		<record id="online_advertising_category" model="product.category">
+			<field name="name">Online</field>
+            <field name="type">view</field>
+			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
+			<field name="date_type">validity</field>
+		</record>
+
+		<record id="title_pricelist_category" model="product.category">
+			<field name="name">Title Pricelist</field>
+            <field name="type">view</field>
+		</record>
+
+	</data>
+</odoo>

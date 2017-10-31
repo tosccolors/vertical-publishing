@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_ad_order_line_make_invoice" model="ir.ui.view">
+            <field name="name">Advertising Order Line Make Invoice</field>
+            <field name="model">ad.order.line.make.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Create invoices" >
+                    <p class="oe_grey">
+                        All selected and eligible order lines will be invoiced.
+                    </p>
+                    <footer>
+                        <button name="make_invoices_from_lines" string="Create Invoices" type="object" class="oe_highlight"/>
+                        <!--button string="Cancel" class="oe_link" special="cancel" /-->
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="view_ad_order_make_invoice" model="ir.ui.view">
+            <field name="name">Advertising Order Make Invoice</field>
+            <field name="model">ad.order.make.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Create invoices" >
+                    <p class="oe_grey">
+                        All eligible items in these orders will be invoiced.
+                    </p>
+                    <footer>
+                        <button name="make_invoices_from_orders" string="Create Invoices" type="object" class="oe_highlight"/>
+                        <!--button string="Cancel" class="oe_link" special="cancel" /-->
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_view_ad_order_line_make_invoice" model="ir.actions.act_window">
+            <field name="name">Make Invoices</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ad.order.line.make.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_ad_order_line_make_invoice"/>
+            <field name="target">new</field>
+        </record>
+        <record id="action_view_ad_order_make_invoice" model="ir.actions.act_window">
+            <field name="name">Make Invoices</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ad.order.make.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_ad_order_make_invoice"/>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.values" id="ad_order_line_make_invoice">
+            <field name="model_id" ref="model_sale_order_line" />
+            <field name="name">Make Invoices</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('action_view_ad_order_line_make_invoice'))" />
+            <field name="key">action</field>
+            <field name="model">sale.order.line</field>
+        </record>
+
+        <record model="ir.values" id="ad_order_make_invoice">
+            <field name="model_id" ref="model_sale_order" />
+            <field name="name">Make Invoices</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('action_view_ad_order_make_invoice'))" />
+            <field name="key">action</field>
+            <field name="model">sale.order</field>
+        </record>
+    </data>
+</odoo>
