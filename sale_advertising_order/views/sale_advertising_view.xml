@@ -684,11 +684,11 @@
             <field name="name">sale.adv.order.line.tree</field>
             <field name="model">sale.order.line</field>
             <field name="arch" type="xml">
-                <header>
+                <!--header>
                     <button name="%(sale_advertising_order.action_view_ad_order_line_make_invoice)d"
                             string="Create Invoices from selected Order Lines" type="action"  class="btn-primary"
                             attrs="{'invisible': [('state','in',['cancel','draft'])]}"/>
-                </header>
+                </header-->
                 <tree string="Sales Order Lines" create="false">
                     <field name="id"/>
                     <field name="order_partner_id" />
