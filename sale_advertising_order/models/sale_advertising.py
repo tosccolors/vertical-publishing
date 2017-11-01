@@ -84,14 +84,10 @@ class SaleOrder(models.Model):
     traffic_appr_date = fields.Date('Traffic Confirmation Date', index=True, help="Date on which sales order is confirmed bij Traffic.")
     opportunity_subject = fields.Char('Opportunity Subject', size=64,
                           help="Subject of Opportunity from which this Sales Order is derived.")
-
     partner_acc_mgr = fields.Many2one(related='published_customer.user_id', relation='res.users', string='Account Manager', store=True , readonly=True)
-
     date_from = fields.Date(compute=lambda *a, **k: {}, string="Date from")
     date_to = fields.Date(compute=lambda *a, **k: {}, string="Date to")
-
     ver_tr_exc = fields.Boolean(string='Verification Treshold', store=True, readonly=True, compute='_amount_all', track_visibility='always')
-
     advertising = fields.Boolean('Advertising', default=False)
 
 
@@ -176,19 +172,18 @@ class SaleOrder(models.Model):
         return self.write({'state': 'approved2',
                            'traffic_appr_date': fields.Date.context_today(self)})
 
-    @api.one
+    @api.multi
     def update_line_discount(self):
         self.ensure_one()
-        order = self
-        discount = order.partner_id.agency_discount or 0.0
-        if order.nett_nett:
+        discount = self.partner_id.agency_discount or 0.0
+        if self.nett_nett:
             discount = 0.0
-        fiscal_position = order.partner_id.property_account_position_id
+        fiscal_position = self.partner_id.property_account_position_id
 
-        for line in order.order_line:
+        for line in self.order_line:
             tax = []
             if fiscal_position:
-                tax = fiscal_position.map_tax(line.product_id.taxes_id, line.product_id, order.partner_id).ids
+                tax = fiscal_position.map_tax(line.product_id.taxes_id, line.product_id, self.partner_id).ids
             vals = {}
             vals['discount'] = discount
             vals['tax_id'] = [(6,0,tax)]
@@ -219,14 +214,16 @@ class SaleOrder(models.Model):
     @api.multi
     def write(self, vals):
         res = super(SaleOrder, self).write(vals)
-        if 'partner_id' in vals or 'nett_nett' in vals:
-            self.update_line_discount()
+        if self.advertising:
+            if 'partner_id' in vals or 'nett_nett' in vals:
+                self.update_line_discount()
         return res
 
     @api.model
     def create(self, vals):
         res = super(SaleOrder, self).create(vals)
-        res.update_line_discount()
+        if self.advertising:
+            res.update_line_discount()
         return res
 
 
@@ -356,7 +353,7 @@ class SaleOrderLine(models.Model):
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', readonly=True, store=True)
     computed_discount = fields.Monetary(compute='_compute_amount', string='Discount (%)', digits=dp.get_precision('Account'), store=True)
     subtotal_before_agency_disc = fields.Monetary(compute='_compute_amount', string='Subtotal before Commission', digits=dp.get_precision('Account'), store=True)
-    advertising = fields.Boolean(related='order_id.advertising', string='Advertising', default=False, store=True)
+    advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
 
 
     @api.onchange('title')
