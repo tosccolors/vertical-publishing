@@ -106,6 +106,7 @@ class SaleOrder(models.Model):
         - Invoice address
         - Delivery address
         """
+#        res = super(SaleOrder, self).onchange_partner_id()
 
         # Advertiser:
         if self.advertising:
@@ -147,8 +148,8 @@ class SaleOrder(models.Model):
                 contact_id = contact[0]
             else:
                 contact_id = False
-        elif addr['contact'] == addr['default']:
-            contact_id = False
+#        elif addr['contact'] == addr['default']:
+#            contact_id = False
         else: contact_id = addr['contact']
 
         if self.order_line:
@@ -502,7 +503,7 @@ class SaleOrderLine(models.Model):
     def onchange_price_unit(self):
         if not self.advertising:
             return {'value': {}}
-
+        avg_price = 0
         if self.issue_product_ids and len(self.issue_product_ids) > 1:
             price = 0
             count = 0
