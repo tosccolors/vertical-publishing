@@ -254,6 +254,8 @@ class AdvertisingIssue(models.Model):
                                       string='Related Analytic Account', ondelete='restrict',
                                       help='Analytic-related data of the issue')
     issue_date = fields.Date('Issue Date')
+    deadline_gp = fields.Datetime('Deadline General')
+    deadline_fb = fields.Datetime('Deadline Family Matters')
     medium = fields.Many2one('product.category','Medium', domain=_domain_medium, required=True)
     state = fields.Selection([('open','Open'),('close','Close')], 'State', default='open')
     default_note = fields.Text('Default Note')

@@ -32,25 +32,18 @@ class Lead(models.Model):
     published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer', '=', True)], ondelete='set null',
                                         track_visibility='onchange', index=True,
                                         help="Linked Advertiser (optional). ")
-
     partner_id = fields.Many2one('res.partner', 'Payer', ondelete='set null', track_visibility='onchange',
                                         index=True, help="Linked Payer (optional).")
-
     partner_invoice_id = fields.Many2one('res.partner', 'Payer Invoice Address', ondelete='set null',
                                       index=True, help="Linked partner (optional). Usually created when converting the lead.")
-
     partner_shipping_id = fields.Many2one('res.partner', 'Payer Delivery Address', ondelete='set null',
                                           index=True, help="Linked partner (optional). Usually created when converting the lead.")
-
     partner_contact_id = fields.Many2one('res.partner', 'Contact Person', ondelete='set null', track_visibility='onchange',
                                     index=True, help="Linked Contact Person (optional). Usually created when converting the lead.")
-
     ad_agency_id = fields.Many2one('res.partner', 'Agency', ondelete='set null', track_visibility='onchange',
                                   index=True, help="Linked Advertising Agency (optional). Usually created when converting the lead.")
-
     partner_acc_mgr = fields.Many2one(related='partner_id.user_id', relation='res.users',
                                       string='Account Manager', store=True)
-
     advertising = fields.Boolean('Advertising', default=False)
 
 

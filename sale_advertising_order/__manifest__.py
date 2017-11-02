@@ -32,8 +32,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
     'author': 'Magnus - Willem Hulshof',
     'website': 'http://www.magnus.nl',
     'depends': [
-                'sale_crm',
-                'publishing_accounts',
+                'sale_crm', 'sale_operating_unit',
                 'product_variant_template_categ_id'
                 ],
     'data': [

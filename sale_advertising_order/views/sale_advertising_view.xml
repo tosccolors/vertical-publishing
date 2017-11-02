@@ -139,8 +139,9 @@
                                                     </tree>
                                             </field>
                                             <field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible': [('medium','=', %(sale_advertising_order.online_advertising_category)d)]}"
-                                                   domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),('parent_id','!=', False)]"
-                                                   options="{'no_create': True, 'no_create_edit': True}">
+                                                   domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
+                                                                ('parent_id','!=', False),'|',('deadline_gp','&gt;=', datetime.datetime.now()),('deadline_gp','=', False)]"
+                                                   options="{'no_create': True, 'no_create_edit': True}">('date_order',
                                                     <tree >
                                                         <field name="name" string="Name"/>
                                                     </tree>
@@ -939,6 +940,8 @@
                                            'required':[('parent_id','=',False),('medium','=', %(sale_advertising_order.newspaper_advertising_category)d)]}"/>
 							<field name="analytic_account_id" string="Related Analytic Account"/>
 							<field name="issue_date" string="Issue Date"/>
+                            <field name="deadline_gp" />
+                            <field name="deadline_fb" />
 							<field name="default_note" string="Default Note" />
 							<field name="state" string="State" />
 						</group>
