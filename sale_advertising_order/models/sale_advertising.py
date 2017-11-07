@@ -237,10 +237,17 @@ class AdvertisingIssue(models.Model):
     }
     _description="Sale Advertising Issue"
 
+    @api.model
+    def _get_attribute_domain(self):
+        id = self.env.ref('sale_advertising_order.attribute_title').id
+#        attribute_value = self.env('product.attribute.value')
+        return [('attribute_id', '=', id)]
 
     name = fields.Char('Name', size=64, required=True)
     child_ids = fields.One2many('sale.advertising.issue', 'parent_id', 'Issues',)
     parent_id = fields.Many2one('sale.advertising.issue', 'Title', index=True)
+    product_attribute_value_id = fields.Many2one('product.attribute.value', string='Variant Title',
+                                                 domain=_get_attribute_domain)
     analytic_account_id = fields.Many2one('account.analytic.account', required=True,
                                       string='Related Analytic Account', ondelete='restrict',
                                       help='Analytic-related data of the issue')
@@ -302,8 +309,11 @@ class SaleOrderLine(models.Model):
 
     layout_remark = fields.Text('Layout Remark')
     title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)])
+    title_ids = fields.Many2many('sale.advertising.issue', 'sale_order_line_adv_issue_title_rel', 'order_line_id',
+                                     'adv_issue_id', 'Titles')
     adv_issue_ids = fields.Many2many('sale.advertising.issue','sale_order_line_adv_issue_rel', 'order_line_id',
                                       'adv_issue_id',  'Advertising Issues')
+    issue_product_ids = fields.One2many('sale.order.line.issues.products', 'order_line_id', 'Adv. Issues with Product Prices')
     dates = fields.One2many('sale.order.line.date', 'order_line_id', 'Advertising Dates')
     dateperiods = fields.One2many('sale.order.line.dateperiod', 'order_line_id', 'Advertising Date Periods')
     date_type = fields.Selection(related='ad_class.date_type', type='selection',
@@ -317,6 +327,8 @@ class SaleOrderLine(models.Model):
     adv_issue = fields.Many2one('sale.advertising.issue','Advertising Issue')
     medium = fields.Many2one(related='title.medium', relation='product.category',string='Medium', readonly=True )
     ad_class = fields.Many2one('product.category', 'Advertising Class')
+    product_template_id = fields.Many2one('product.template', string='Generic Product', domain=[('sale_ok', '=', True)],
+                                 change_default=True, ondelete='restrict', required=True)
     page_reference = fields.Char('Reference of the Page', size=32)
     ad_number = fields.Char('Advertising Reference', size=32)
     from_date = fields.Date('Start of Validity')
@@ -336,7 +348,7 @@ class SaleOrderLine(models.Model):
     subtotal_before_agency_disc = fields.Monetary(compute='_compute_amount', string='Subtotal before Commission', digits=dp.get_precision('Account'), store=True)
 
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', default=False, store=True)
-
+    magazine = fields.Boolean('Magazine Ad', default=False )
 
 
     @api.onchange('title')
@@ -498,8 +510,9 @@ class SaleOrderLine(models.Model):
 
     @api.onchange('adv_issue', 'adv_issue_ids', 'dates')
     def onchange_getQty(self):
+ #       if not self.magazine:
+ #           return
         qty = 0.00
-
         if not self.adv_issue and self.adv_issue_ids:
             if len(self.adv_issue_ids) >= 1:
                 qty = len(self.adv_issue_ids)
@@ -552,6 +565,46 @@ class SaleOrderLine(models.Model):
         self.update(res2['value'])
         return res
 
+    @api.onchange('product_template_id')
+    def products_uom(self):
+        if self.product_template_id :
+            self.product_uom = self.product_template_id.uom_id
+        return
+
+
+
+class OrderLineAdvIssuesProducts(models.Model):
+
+    _name = "sale.order.line.issues.products"
+    _description= "Advertising Order Line Advertising Issues"
+    _order = "order_line_id,sequence,id"
+
+    sequence = fields.Integer('Sequence', help="Gives the sequence of this line .", default=10)
+    order_line_id = fields.Many2one('sale.order.line', 'Line', ondelete='cascade', index=True, required=True)
+    adv_issue_id = fields.Many2one('sale.advertising.issue', 'Issue', ondelete='cascade', index=True, required=True)
+    product_attribute_value_id = fields.Many2one(related='adv_issue_id.parent_id.product_attribute_value_id', relation='sale.advertising.issue',
+                                      string='Title', readonly=True)
+    product_template_id = fields.Many2one(related='order_line_id.product_template_id', relation='sale.order.line',
+                                      string='Generic Product', readonly=True)
+    issue_date = fields.Date(related='adv_issue_id.issue_date', relation='sale.advertising.issue', string='Date of Issue')
+    product_id = fields.Many2one('product.product', 'Product', ondelete='cascade', index=True, )
+    price_unit = fields.Float('Unit Price', required=True, digits=dp.get_precision('Product Price'), default=0.0)
+
+    @api.onchange('product_template_id', 'adv_issue_id')
+    def issues_products_price(self):
+        if self.product_template_id and self.adv_issue_id:
+#            import pdb;
+#            pdb.set_trace()
+#            adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', issue_ids)])
+#            value = {}
+            product_id = self.env['product.product'].search(
+                    [('product_tmpl_id', '=', self.product_template_id.id), ('attribute_value_ids', '=', self.product_attribute_value_id)])
+            if product_id:
+                if self.order_line_id.order_id.pricelist_id and self.order_line_id.order_id.partner_id:
+                    self.product_id = product_id
+                    self.price_unit = self.env['account.tax']._fix_tax_included_price_company(
+                        self._get_display_price(product_id), product_id.taxes_id, self.tax_id, self.company_id)
+        return
 
 class OrderLineDate(models.Model):
 
