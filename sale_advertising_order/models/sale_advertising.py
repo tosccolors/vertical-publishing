@@ -52,9 +52,12 @@ class SaleOrder(models.Model):
             if cdiscount:
                 max_cdiscount = max(cdiscount)
 
-            if order.company_id.verify_order_setting < amount_untaxed or order.company_id.verify_discount_setting < max_cdiscount:
-                ver_tr_exc = True
-            else: ver_tr_exc = False
+            ver_tr_exc = False
+            DiscThreshold = order.company_id.verify_discount_setting
+
+            if order.advertising:
+                if DiscThreshold < amount_untaxed or DiscThreshold < max_cdiscount:
+                    ver_tr_exc = True
 
             order.update({
                 'amount_untaxed': order.pricelist_id.currency_id.round(amount_untaxed),
@@ -179,6 +182,10 @@ class SaleOrder(models.Model):
     def update_line_discount(self):
         self.ensure_one()
         order = self
+
+        if not order.advertising:
+            return False
+
         discount = order.partner_id.agency_discount or 0.0
         if order.nett_nett:
             discount = 0.0
@@ -250,7 +257,7 @@ class AdvertisingIssue(models.Model):
                                                  domain=_get_attribute_domain)
     analytic_account_id = fields.Many2one('account.analytic.account', required=True,
                                       string='Related Analytic Account', ondelete='restrict',
-                                      help='Analytic-related data of the issue')
+                                      help='Analytic-related data of the issue', auto_join=True)
     issue_date = fields.Date('Issue Date')
     medium = fields.Many2one('product.category','Medium', required=True)
     state = fields.Selection([('open','Open'),('close','Close')], 'State', default='open')
@@ -347,7 +354,7 @@ class SaleOrderLine(models.Model):
     computed_discount = fields.Monetary(compute='_compute_amount', string='Discount (%)', digits=dp.get_precision('Account'), store=True)
     subtotal_before_agency_disc = fields.Monetary(compute='_compute_amount', string='Subtotal before Commission', digits=dp.get_precision('Account'), store=True)
 
-    advertising = fields.Boolean(related='order_id.advertising', string='Advertising', default=False, store=True)
+    advertising = fields.Boolean('Advertising')
     magazine = fields.Boolean('Magazine Ad', default=False )
 
 

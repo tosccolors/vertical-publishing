@@ -123,7 +123,8 @@
                     <notebook>
                         <page string="Order Lines">
                             <field name="order_line" mode="tree,kanban"
-                                attrs="{'readonly': [('state', 'in', ('done','cancel'))]}">
+                                attrs="{'readonly': [('state', 'in', ('done','cancel'))]}"
+                                context="{'default_advertising':advertising}">
                                 <form string="Sales Order Lines">
                                     <group>
                                         <group>
@@ -294,6 +295,7 @@
                                         <field name="invoice_lines"/>
                                     </div>
                                     <field name="state" invisible="1"/>
+                                    <field name="advertising" invisible="1"/>
                                 </form>
                                 <tree string="Sales Order Lines"  decoration-info="invoice_status=='to invoice'">
                                     <field name="sequence" widget="handle"/>
@@ -949,7 +951,8 @@
 							<field name="parent_id" string="Title"/>
                             <field name="product_attribute_value_id" string="Variant Title"
                                    attrs="{'invisible':[('parent_id','!=',False)], 'required':[('parent_id','=',False)]}"/>
-							<field name="analytic_account_id" string="Related Analytic Account"/>
+                            <field name="analytic_account_id" string="Related Analytic Account"
+                                    attrs="{'invisible':[('analytic_account_id','=',False)], 'required':[('analytic_account_id','!=',False)]}"/>
 							<field name="issue_date" string="Issue Date"/>
 							<field name="medium" string="Medium"/>
 							<field name="default_note" string="Default Note" />
