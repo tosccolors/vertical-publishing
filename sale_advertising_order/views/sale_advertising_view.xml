@@ -138,17 +138,18 @@
                                                         <field name="name" string="Name"/>
                                                     </tree>
                                             </field>
+                                            <field name="ad_class" required="True"
+                                                   domain="[('type','!=', 'view'), ('id','child_of', medium)]"
+                                                   options="{'no_create': True, 'no_create_edit': True}"/>
+                                            <field name="deadline_offset" invisible="True" />
                                             <field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible': [('medium','=', %(sale_advertising_order.online_advertising_category)d)]}"
                                                    domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
-                                                                ('parent_id','!=', False),'|',('deadline_gp','&gt;=', datetime.datetime.now()),('deadline_gp','=', False)]"
-                                                   options="{'no_create': True, 'no_create_edit': True}">('date_order',
+                                                                '|',('deadline','&gt;=', datetime.datetime.now()),('deadline','=', False),('issue_date','&gt;=', datetime.datetime.now())]"
+                                                   options="{'no_create': True, 'no_create_edit': True}">
                                                     <tree >
                                                         <field name="name" string="Name"/>
                                                     </tree>
                                             </field>
-                                            <field name="ad_class"
-                                                   domain="[('type','!=', 'view'), ('id','child_of', medium)]"
-                                                   options="{'no_create': True, 'no_create_edit': True}"/>
                                             <field name="product_template_id"
                                                 context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                                 attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])],'invisible': [('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)],
@@ -933,15 +934,15 @@
 					<sheet>
 						<group col="4" colspan="4" >
 							<field name="name" string="Name"/>
-							<field name="parent_id" string="Title"/>
-                            <field name="medium" string="Medium"/>
+							<field name="parent_id" string="Title" domain="[('parent_id','=', False)]"/>
+                            <field name="medium" string="Medium" domain="[('parent_id','=', %(sale_advertising_order.advertising_category)d)]"
+                                   options="{'no_create': True, 'no_create_edit': True}"/>
                             <field name="product_attribute_value_id" string="Variant Title"
                                    attrs="{'invisible':['|',('parent_id','!=',False),('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)],
                                            'required':[('parent_id','=',False),('medium','=', %(sale_advertising_order.newspaper_advertising_category)d)]}"/>
 							<field name="analytic_account_id" string="Related Analytic Account"/>
 							<field name="issue_date" string="Issue Date"/>
-                            <field name="deadline_gp" />
-                            <field name="deadline_fb" />
+                            <field name="deadline" string="Deadline"/>
 							<field name="default_note" string="Default Note" />
 							<field name="state" string="State" />
 						</group>
@@ -961,7 +962,9 @@
                         <field name="product_attribute_value_id" string="Variant Title"/>
 						<field name="analytic_account_id" string="Related Analytic Account"/>
 						<field name="issue_date" string="Issue Date"/>
+                        <field name="deadline" string="Deadline"/>
 						<field name="medium" string="Medium"/>
+                        <field name="deadline" string="Deadline"/>
 						<field name="default_note" string="Default Note" />
 						<field name="state" string="State" />
 				</tree>

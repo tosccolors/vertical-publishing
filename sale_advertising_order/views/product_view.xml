@@ -21,7 +21,8 @@
 				<field name="inherit_id" ref="product.product_category_form_view"/>
 				<field name="arch" type="xml">
 					<field name="type" position="after">
-							<field name="date_type"/>
+						<field name="date_type" attrs="{'required':[('parent_id','child_of',%(sale_advertising_order.advertising_category)d)]}"/>
+						<field name="deadline_offset" attrs="{'required':[('parent_id','child_of',%(sale_advertising_order.advertising_category)d)]}"/>
 					</field>
 				</field>
 		 </record>

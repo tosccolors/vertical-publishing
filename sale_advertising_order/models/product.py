@@ -51,7 +51,8 @@ class productCategory(models.Model):
             ('newsletter', 'Newsletter'),
             ('online', 'Online'),
             ('issue_date', 'Issue Date'),
-        ], 'Date Type Advertising products', required=True)
+        ], 'Date Type Advertising products')
+    deadline_offset = fields.Integer('Days offset from Issue Deadline', default=0)
 
 
 

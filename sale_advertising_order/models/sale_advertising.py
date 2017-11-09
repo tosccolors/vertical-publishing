@@ -240,10 +240,11 @@ class AdvertisingIssue(models.Model):
         id = self.env.ref('sale_advertising_order.attribute_title').id
         return [('attribute_id', '=', id)]
 
-    @api.model
-    def _domain_medium(self):
-        ads = self.env.ref('sale_advertising_order.advertising_category').id
-        return [('parent_id', '=', ads)]
+#    @api.model
+#    def _domain_medium(self):
+#        import pdb; pdb.set_trace()
+#        ads = self.env.ref('sale_advertising_order.advertising_category','sale_advertising_order.title_pricelist_category').ids
+#        return [('parent_id', 'in', ads)]
 
     name = fields.Char('Name', size=64, required=True)
     child_ids = fields.One2many('sale.advertising.issue', 'parent_id', 'Issues',)
@@ -254,12 +255,30 @@ class AdvertisingIssue(models.Model):
                                       string='Related Analytic Account', ondelete='restrict',
                                       help='Analytic-related data of the issue')
     issue_date = fields.Date('Issue Date')
-    deadline_gp = fields.Datetime('Deadline General')
-    deadline_fb = fields.Datetime('Deadline Family Matters')
-    medium = fields.Many2one('product.category','Medium', domain=_domain_medium, required=True)
+    deadline = fields.Date('Deadline', required=True, help='Closing Date for Sales')
+    medium = fields.Many2one('product.category','Medium', required=True)
+#    medium = fields.Many2one('product.category', 'Medium', domain=_domain_medium, required=True)
     state = fields.Selection([('open','Open'),('close','Close')], 'State', default='open')
     default_note = fields.Text('Default Note')
 
+
+    @api.onchange('parent_id')
+    def onchange_parent_id(self):
+        domain = {}
+        self.medium = False
+        if self.parent_id:
+            if self.parent_id.medium.id == self.env.ref('sale_advertising_order.newspaper_advertising_category').id:
+                ads = self.env.ref('sale_advertising_order.title_pricelist_category').id
+                domain['medium'] = [('parent_id', '=', ads)]
+            else:
+                ads = [self.env.ref('sale_advertising_order.magazine_advertising_category').id]
+                ads.append(self.env.ref('sale_advertising_order.online_advertising_category').id)
+                domain['medium'] = [('id', 'in', ads)]
+
+        else:
+            ads = self.env.ref('sale_advertising_order.advertising_category').id
+            domain['medium'] = [('parent_id', '=', ads)]
+        return {'domain': domain }
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -340,6 +359,7 @@ class SaleOrderLine(models.Model):
 #    medium = fields.Many2one(related='title.medium', relation='product.category',string='Medium', readonly=True )
     medium = fields.Many2one('product.category', string='Medium', domain=_domain_medium, readonly=False)
     ad_class = fields.Many2one('product.category', 'Advertising Class')
+    deadline_offset = fields.Integer(related='ad_class.deadline_offset', string='Offset Deadline')
     product_template_id = fields.Many2one('product.template', string='Generic Product', domain=[('sale_ok', '=', True)],
                                  change_default=True, ondelete='restrict')
     page_reference = fields.Char('Reference of the Page', size=32)
