@@ -97,7 +97,7 @@ class sale_order_line_create_multi_lines(models.TransientModel):
 
                 for ad_iss in ol.issue_product_ids:
                     ad_issue = self.env['sale.advertising.issue'].search([('id', '=', ad_iss.adv_issue_id.id)])
-                    res = {'title': ad_issue.parent_id.id,'adv_issue': ad_issue.id, 'product_id': ad_iss.product_id.id, 'price_unit': ad_iss.price_unit,'issue_product_ids': False, 'product_uom_qty': uom_qty,
+                    res = {'title': ad_issue.parent_id.id,'adv_issue': ad_issue.id, 'title_ids': False, 'product_id': ad_iss.product_id.id, 'price_unit': ad_iss.price_unit,'issue_product_ids': False, 'product_uom_qty': uom_qty,
                            'order_id': ol.order_id.id or False,
                            }
                     vals = ol.copy_data(default=res)[0]

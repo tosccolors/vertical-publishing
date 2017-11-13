@@ -23,6 +23,7 @@
 from odoo import api, fields, models, _
 import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
+import datetime
 
 
 class SaleOrder(models.Model):
@@ -240,11 +241,20 @@ class AdvertisingIssue(models.Model):
         id = self.env.ref('sale_advertising_order.attribute_title').id
         return [('attribute_id', '=', id)]
 
-#    @api.model
-#    def _domain_medium(self):
-#        import pdb; pdb.set_trace()
-#        ads = self.env.ref('sale_advertising_order.advertising_category','sale_advertising_order.title_pricelist_category').ids
-#        return [('parent_id', 'in', ads)]
+    @api.one
+    @api.depends('issue_date')
+    def _week_number(self):
+        """
+        Compute the week number of the issue.
+        """
+        for issue in self:
+            if self.issue_date:
+                wk = fields.Date.from_string(self.issue_date).isocalendar()[1]
+                issue.update({
+                    'issue_week_number': wk,
+                    'week_number_even': wk % 2 == 0
+                })
+
 
     name = fields.Char('Name', size=64, required=True)
     child_ids = fields.One2many('sale.advertising.issue', 'parent_id', 'Issues',)
@@ -255,9 +265,10 @@ class AdvertisingIssue(models.Model):
                                       string='Related Analytic Account', ondelete='restrict',
                                       help='Analytic-related data of the issue')
     issue_date = fields.Date('Issue Date')
-    deadline = fields.Date('Deadline', required=True, help='Closing Date for Sales')
+    issue_week_number = fields.Integer(string='Week Number', store=True, readonly=True, compute='_week_number' )
+    week_number_even = fields.Boolean(string='Even Week Number', store=True, readonly=True, compute='_week_number' )
+    deadline = fields.Date('Deadline', help='Closing Date for Sales')
     medium = fields.Many2one('product.category','Medium', required=True)
-#    medium = fields.Many2one('product.category', 'Medium', domain=_domain_medium, required=True)
     state = fields.Selection([('open','Open'),('close','Close')], 'State', default='open')
     default_note = fields.Text('Default Note')
 
@@ -356,7 +367,6 @@ class SaleOrderLine(models.Model):
                         ('issue_date', 'Issue Date'),
                    ], relation='product.category', string='Date Type', readonly=True)
     adv_issue = fields.Many2one('sale.advertising.issue','Advertising Issue')
-#    medium = fields.Many2one(related='title.medium', relation='product.category',string='Medium', readonly=True )
     medium = fields.Many2one('product.category', string='Medium', domain=_domain_medium, readonly=False)
     ad_class = fields.Many2one('product.category', 'Advertising Class')
     deadline_offset = fields.Integer(related='ad_class.deadline_offset', string='Offset Deadline')
@@ -686,7 +696,6 @@ class SaleOrderLine(models.Model):
         return
 
 
-
 class OrderLineAdvIssuesProducts(models.Model):
 
     _name = "sale.order.line.issues.products"
@@ -731,7 +740,6 @@ class OrderLineDateperiod(models.Model):
     ad_number = fields.Char('Advertising Reference', size=32)
 
 
-
 class AdvertisingProof(models.Model):
     _name = "sale.advertising.proof"
     _description="Sale Advertising Proof"
@@ -740,8 +748,6 @@ class AdvertisingProof(models.Model):
     address_id = fields.Many2one('res.partner','Delivery Address', required=True)
     number = fields.Integer('Number of Copies', required=True, default=1)
     target_id = fields.Many2one('sale.order','Target', required=True)
-
-
 
 
 class MailComposeMessage(models.TransientModel):

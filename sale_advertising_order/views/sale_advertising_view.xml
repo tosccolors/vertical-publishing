@@ -128,27 +128,31 @@
                                     <group>
                                         <group>
                                             <field name="medium" required="True"/>
-                                            <field name="title" string="Title" domain="[('child_ids','!=', False),('medium','=', medium)]"
-                                                   options="{'no_create': True, 'no_create_edit': True}" attrs="{'invisible': [('medium','=', %(sale_advertising_order.newspaper_advertising_category)d)]}"/>
-                                            <field name="title_product_attr_value_id" invisible="0" />
-                                            <field name="title_ids" string="Titles" attrs="{'invisible': [('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
-                                                   domain="[('parent_id','=', False),('medium','=', medium)]"
-                                                   options="{'no_create': True, 'no_create_edit': True}">
-                                                    <tree >
-                                                        <field name="name" string="Name"/>
-                                                    </tree>
-                                            </field>
                                             <field name="ad_class" required="True"
                                                    domain="[('type','!=', 'view'), ('id','child_of', medium)]"
                                                    options="{'no_create': True, 'no_create_edit': True}"/>
+                                            <field name="title" string="Title" domain="[('child_ids','!=', False),('medium','=', medium)]"
+                                                   options="{'no_create': True, 'no_create_edit': True}" attrs="{'invisible': [('title','=', False),('medium','=', %(sale_advertising_order.newspaper_advertising_category)d)]}"/>
+                                            <field name="title_product_attr_value_id" invisible="1" />
+                                            <field name="title_ids" string="Titles" attrs="{'invisible': ['|',('title','!=', False),('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
+                                                   domain="[('parent_id','=', False),('medium','=', medium)]"
+                                                   options="{'no_create': True, 'no_create_edit': True}" context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
+                                                    <!--tree >
+                                                        <field name="name" string="Name"/>
+                                                    </tree-->
+                                            </field>
                                             <field name="deadline_offset" invisible="True" />
-                                            <field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible': [('medium','=', %(sale_advertising_order.online_advertising_category)d)]}"
+                                            <field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible': [('adv_issue','!=', False)]}"
                                                    domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
                                                                 '|',('deadline','&gt;=', datetime.datetime.now()),('deadline','=', False),('issue_date','&gt;=', datetime.datetime.now())]"
-                                                   options="{'no_create': True, 'no_create_edit': True}">
-                                                    <tree >
+                                                   options="{'no_create': True, 'no_create_edit': True}"
+                                                   context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
+                                                    <!--tree >
                                                         <field name="name" string="Name"/>
-                                                    </tree>
+                                                    </tree-->
+                                                    <!--calendar string="Issues" color="parent_id" date_start="issue_date" mode="month" quick_add="False" >
+                                                        <field name="name"/>
+                                                    </calendar-->
                                             </field>
                                             <field name="product_template_id"
                                                 context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
@@ -387,7 +391,6 @@
                                     <field name="user_id"/>
                                     <field name="partner_acc_mgr"/>
 									<field name="tag_ids" widget="many2many_tags"/>
-                                    <field name="client_order_ref"/>
                                     <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
                                     <field name="project_id" attrs="{'invisible':[('state','=','sale')]}"  invisible="[('published_customer','!=', False)]"
                                            context="{'default_partner_id':partner_invoice_id, 'default_name':name}" groups="analytic.group_analytic_accounting"/>
@@ -942,6 +945,7 @@
                                            'required':[('parent_id','=',False),('medium','=', %(sale_advertising_order.newspaper_advertising_category)d)]}"/>
 							<field name="analytic_account_id" string="Related Analytic Account"/>
 							<field name="issue_date" string="Issue Date"/>
+                            <field name="issue_week_number" string="Week Number"/>
                             <field name="deadline" string="Deadline"/>
 							<field name="default_note" string="Default Note" />
 							<field name="state" string="State" />
@@ -951,7 +955,7 @@
 			</field>
 		</record>
 
-		<record model="ir.ui.view" id="sale_advertising_issue_tree">
+		<record id="sale_advertising_issue_tree" model="ir.ui.view" >
 			<field name="name">sale.advertising.issue.tree</field>
 			<field name="type">tree</field>
 			<field name="model">sale.advertising.issue</field>
@@ -962,14 +966,73 @@
                         <field name="product_attribute_value_id" string="Variant Title"/>
 						<field name="analytic_account_id" string="Related Analytic Account"/>
 						<field name="issue_date" string="Issue Date"/>
+                        <field name="issue_week_number" string="Week Number"/>
+                        <field name="week_number_even" invisible="False"/>
                         <field name="deadline" string="Deadline"/>
 						<field name="medium" string="Medium"/>
-                        <field name="deadline" string="Deadline"/>
 						<field name="default_note" string="Default Note" />
 						<field name="state" string="State" />
 				</tree>
 			</field>
 		</record>
+
+        <record id="advertising_issue_titles_tree" model="ir.ui.view" >
+			<field name="name">sale.advertising.issue.tree</field>
+			<field name="type">tree</field>
+			<field name="model">sale.advertising.issue</field>
+			<field name="arch" type="xml">
+				<tree string="Advertising issue">
+						<field name="name" string="Name"/>
+                        <field name="product_attribute_value_id" string="Variant Title"/>
+						<field name="analytic_account_id" string="Related Analytic Account"/>
+						<field name="medium" string="Medium"/>
+						<field name="default_note" string="Default Note" />
+						<field name="state" string="State" />
+				</tree>
+			</field>
+		</record>
+
+        <record id="advertising_issue_ids_tree" model="ir.ui.view" >
+			<field name="name">sale.advertising.issue.tree</field>
+			<field name="type">tree</field>
+			<field name="model">sale.advertising.issue</field>
+			<field name="arch" type="xml">
+				<tree string="Advertising issue">
+						<field name="name" string="Name"/>
+						<field name="parent_id" string="Title"/>
+						<field name="analytic_account_id" string="Related Analytic Account"/>
+						<field name="issue_date" string="Issue Date"/>
+                        <field name="issue_week_number" string="Week Number"/>
+                        <field name="week_number_even" invisible="1"/>
+                        <field name="deadline" string="Deadline"/>
+						<field name="medium" string="Medium"/>
+						<field name="default_note" string="Default Note" />
+						<field name="state" string="State" />
+				</tree>
+			</field>
+		</record>
+
+        <record id="view_advertising_issue_filter" model="ir.ui.view">
+            <field name="name">sale.advertising.issue.tree</field>
+            <field name="model">sale.advertising.issue</field>
+            <field name="arch" type="xml">
+                <search string="Search Advertising Titles/Issues">
+                    <filter string="Titles" domain="[('parent_id','=', False)]"/>
+                    <filter string="Issues" domain="[('parent_id','!=', False)]"/>
+                    <separator/>
+                    <filter string="Even Week Numbers" domain="[('week_number_even','=', True)]" help="Issues in even weeks"/>
+                    <filter string="Uneven Week Numbers" domain="[('week_number_even','=',False)]" help="Issues in uneven weeks"/>
+                    <field name="name"/>
+                    <field name="parent_id" operator="child_of"/>
+                    <field name="medium"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Weeknumbers" domain="[]" context="{'group_by':'issue_week_number'}"/>
+                        <filter string="Title" domain="[]" context="{'group_by':'parent_id'}"/>
+                        <filter string="Issue Date" domain="[]" context="{'group_by':'issue_date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
 
 		<record model="ir.actions.act_window" id="action_sale_advertising_issue">
 			<field name="name">Advertising Issue</field>
@@ -979,8 +1042,6 @@
 			<field name="view_id" ref="sale_advertising_issue_tree"/>
 		</record>
 
-		<!--menuitem name="Advertising" id="menu_sale_advertising"
-				  parent="menu_advsales"/-->
 		<menuitem name="Advertising Issue" id="menu_sale_advertising_issue" parent="menu_advsales" action="action_sale_advertising_issue"/>
 
 <!-- View for sale.advertising.proof object -->
@@ -1023,8 +1084,8 @@
 			<field name="view_id" ref="sale_advertising_proof_tree"/>
 		</record>
 
-		<menuitem name="Advertising Proof" id="menu_sale_advertising_proof"
-				  parent="menu_advsales" action="action_sale_advertising_proof"/>
+		<!--menuitem name="Advertising Proof" id="menu_sale_advertising_proof"
+				  parent="menu_advsales" action="action_sale_advertising_proof"/-->
 
         <!--
             Menus: Inherited:
