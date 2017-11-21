@@ -18,7 +18,8 @@
 #
 ##############################################################################
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+
 
 class productCategory(models.Model):
     _inherit = "product.category"
@@ -55,5 +56,11 @@ class productCategory(models.Model):
     deadline_offset = fields.Integer('Days offset from Issue Deadline', default=0)
 
 
+class productTemplate(models.Model):
+    _inherit = "product.template"
+
+    height = fields.Integer('Height', help="Height advertising format in mm")
+    width = fields.Integer('Width', help="Width advertising format in mm")
+    booklet_surface_area = fields.Integer('Booklet Surface Area', help="Page surface booklet (newspaper) format in cm2")
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
