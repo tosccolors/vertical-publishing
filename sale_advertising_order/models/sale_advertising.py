@@ -302,7 +302,8 @@ class SaleOrderLine(models.Model):
 
         a = self.filtered("advertising")
         b = self - a
-        resb = super(SaleOrderLine, b)._compute_amount()
+        resb = super(SaleOrderLine, b)._compute_amount() or {}
+
         resa = {}
         for line in a:
             comp_discount = 0.0
@@ -343,7 +344,7 @@ class SaleOrderLine(models.Model):
                     'discount_dummy': line.discount,
                 })
             resa.update({'line': line})
-        res = resb.update({resa})
+        res = resb.update(resa)
         return res
 
 
@@ -400,7 +401,7 @@ class SaleOrderLine(models.Model):
             if len(child_id) == 1:
                 vals['ad_class'] = child_id[0]
             else:
-                data = {'ad_class': [('id', 'child_of', self.medium), ('type', '!=', 'view')]}
+                data = {'ad_class': [('id', 'child_of', self.medium.id), ('type', '!=', 'view')]}
             titles = self.env['sale.advertising.issue'].search([('medium', '=', self.medium.id)]).ids
             if titles and len(titles) == 1:
                 vals['title'] = titles[0]
@@ -550,7 +551,7 @@ class SaleOrderLine(models.Model):
         result = {}
         if not self.advertising:
             return {'value': result}
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         qty = self.product_uom_qty
         actual_unit_price = self.actual_unit_price
         price_unit = self.price_unit
