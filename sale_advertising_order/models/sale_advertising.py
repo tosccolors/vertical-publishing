@@ -313,8 +313,6 @@ class SaleOrderLine(models.Model):
                 if not line.price_unit:
                     if line.product_id:
                         price_unit = self.env['account.tax']._fix_tax_included_price(line._get_display_price(line.product_id), line.product_id.taxes_id, line.tax_id)
-                    else:
-                        price_unit = 0.0
                 if price_unit > 0.0:
                     comp_discount = (price_unit - unit_price)/price_unit * 100.0
                 price = unit_price * (1 - line.discount or 0 / 100.0)
