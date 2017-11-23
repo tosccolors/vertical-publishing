@@ -229,6 +229,7 @@ class SaleOrder(models.Model):
 
 
 
+
 class AdvertisingIssue(models.Model):
     _name = "sale.advertising.issue"
     _inherits = {
@@ -303,10 +304,10 @@ class SaleOrderLine(models.Model):
         a = self.filtered("advertising")
         b = self - a
         resb = super(SaleOrderLine, b)._compute_amount() or {}
-
         resa = {}
         for line in a:
             comp_discount = 0.0
+            price_unit = 0.0
             if not line.issue_product_ids:
                 unit_price = line.actual_unit_price
                 if not line.price_unit:
@@ -703,6 +704,7 @@ class SaleOrderLine(models.Model):
         res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
         res['account_analytic_id'] = self.adv_issue.analytic_account_id.id
         return res
+
 
 
 class OrderLineAdvIssuesProducts(models.Model):

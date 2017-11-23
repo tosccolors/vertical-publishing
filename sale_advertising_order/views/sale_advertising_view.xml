@@ -42,7 +42,7 @@
 
                     <button name="print_quotation" string="Print" type="object" states="approved2" class="btn-primary" groups="sale_advertising_order.group_traffic_user"/>
 
-					<button name="action_submit" states="draft" type="object" string="Submit Opportunity" class="oe_highlight"
+					<button name="action_submit" states="draft" type="object" string="Submit Quotation" class="oe_highlight"
 							groups="sales_team.group_sale_salesman"/>
 					<button name="action_approve1" states="submitted" type="object" string="Approval Sales Manager" class="oe_highlight"
 							groups="sales_team.group_sale_manager"/>
