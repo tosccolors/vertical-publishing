@@ -30,18 +30,18 @@
     </record>
 
 
-    <record id="view_company_form_inherit" model="ir.ui.view">
+    <!--record id="view_company_form_inherit" model="ir.ui.view">
         <field name="name">res.company.form</field>
         <field name="model">res.company</field>
         <field name="type">form</field>
         <field name="inherit_id" ref="base.view_company_form"/>
         <field name="arch" type="xml">
             <xpath expr="//notebook[last()]" position="inside">
-                <page string="Configuration" name="Configuration">
+                <page string="Configuration" name="Configuration"-->
                     <!-- Open Page for adding details later -->
-                </page>
+                <!--/page>
             </xpath>
         </field>
-    </record>
+    </record-->
 
 </odoo>
