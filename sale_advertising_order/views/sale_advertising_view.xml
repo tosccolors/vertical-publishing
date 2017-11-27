@@ -62,7 +62,7 @@
                     <button name="action_cancel" states="draft,sent,sale" type="object" string="Cancel"/>
                     <button name="action_draft" states="cancel" type="object" string="Set to Quotation"/>
                     <button name="action_done" type="object" string="Lock" states="sale"
-                        help="If the sale is locked, you can not modify it anymore. However, you will still be able to invoice or deliver."/>
+                            help="If the sale is locked, you can not modify it anymore. However, you will still be able to invoice or deliver."/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved1,approved2,sent,progress,done"/>
                 </header>
                 <sheet>
@@ -483,7 +483,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,calendar,graph</field>
             <field name="search_view_id" ref="advertising_order_view_search_inherit_sale"/>
-            <field name="domain">[('advertising','=',True),('state','not in',('draft','sent','cancel'))]</field>
+            <field name="domain">[('advertising','=',True),('state','in',('sale','done'))]</field>
             <field name="context">{'default_advertising':True}</field>
             <!--<field name="context">{-->
                     <!--'search_default_team_id': [active_id],-->
@@ -583,7 +583,7 @@
             <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
             <field name="search_view_id" ref="advertising_order_view_search_inherit_quotation"/>
             <field name="context">{'hide_sale': True, 'default_advertising':True}</field>
-            <field name="domain">[('advertising','=',True)]</field>
+            <field name="domain">[('advertising','=',True),('state','not in',('sale','done'))]</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
                 Create a Quotation, the first step of a new sale.
@@ -692,35 +692,34 @@
             <field name="name">sale.adv.order.line.tree</field>
             <field name="model">sale.order.line</field>
             <field name="arch" type="xml">
-                <!--header>
-                    <button name="%(sale_advertising_order.action_view_ad_order_line_make_invoice)d"
-                            string="Create Invoices from selected Order Lines" type="action"  class="btn-primary"
-                            attrs="{'invisible': [('state','in',['cancel','draft'])]}"/>
-                </header-->
                 <tree string="Sales Order Lines" create="false">
-                    <field name="id"/>
-                    <field name="order_partner_id" />
-                    <field name="title" />
-                    <field name="adv_issue" />
-                    <field name="ad_class" />
-                    <field name="product_id" />
-                    <field name="layout_category_id" groups="sale.group_sale_layout"/>
-                    <field name="name"/>
-                    <field name="ad_number"/>
-                    <field name="page_reference"/>
-                    <field name="product_uom" />
-                    <field name="price_unit" />
-                    <field name="product_uom_qty"/>
-                    <field name="actual_unit_price"/>
-                    <field name="computed_discount" />
-                    <field name="subtotal_before_agency_disc" />
-                    <field name="discount_dummy" />
-                    <field name="tax_id" />
-                    <field name="discount" groups="sale.group_discount_per_so_line" invisible="1"/>
-                    <field name="price_subtotal" widget="monetary" groups="sale.group_show_price_subtotal"/>
-                    <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
-                    <field name="state" invisible="0"/>
-                    <field name="invoice_status" invisible="1"/>
+                    <!--header>
+                        <button name="%(sale_advertising_order.action_view_ad_order_line_make_invoice)d"
+                            string="Create Invoices from selected Order Lines" type="action"  class="btn-primary"/>
+                    </header-->
+                        <field name="id"/>
+                        <field name="order_partner_id" />
+                        <field name="title" />
+                        <field name="adv_issue" />
+                        <field name="ad_class" />
+                        <field name="product_id" />
+                        <field name="layout_category_id" groups="sale.group_sale_layout"/>
+                        <field name="name"/>
+                        <field name="ad_number"/>
+                        <field name="page_reference"/>
+                        <field name="product_uom" />
+                        <field name="price_unit" />
+                        <field name="product_uom_qty"/>
+                        <field name="actual_unit_price"/>
+                        <field name="computed_discount" />
+                        <field name="subtotal_before_agency_disc" />
+                        <field name="discount_dummy" />
+                        <field name="tax_id" />
+                        <field name="discount" groups="sale.group_discount_per_so_line" invisible="1"/>
+                        <field name="price_subtotal" widget="monetary" groups="sale.group_show_price_subtotal"/>
+                        <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
+                        <field name="state" invisible="0"/>
+                        <field name="invoice_status" invisible="1"/>
                 </tree>
             </field>
         </record>
@@ -895,10 +894,10 @@
 			<field name="name">All Advertising Sale Order Lines</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">sale.order.line</field>
-			<field name="view_type">tree</field>
+			<field name="view_type">form</field>
 			<field name="view_mode">tree,form,pivot</field>
             <field name="search_view_id" ref="view_advertising_sales_order_line_filter"/>
-			<field name="domain">[('advertising','!=',False)]</field>
+			<field name="domain">[('advertising','!=',False),('state','in',('sale','done'))]</field>
 		</record>
 
         <record id="all_advertising_order_lines_action_tree" model="ir.actions.act_window.view">
@@ -1088,7 +1087,7 @@
             Menus: Inherited:
         -->
         <record id="sale.action_quotations" model="ir.actions.act_window">
-            <field name="domain">[('advertising','=',False)]</field>
+            <field name="domain">[('state','in',('draft','sent','cancel')),('advertising','=',False)]</field>
         </record>
 
         <record id="sale.action_orders" model="ir.actions.act_window">
