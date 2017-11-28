@@ -56,14 +56,14 @@
 							groups="sale_advertising_order.group_traffic_user"/>
 
                     <button name="action_confirm" states="sent" string="Confirm Sale" class="btn-primary o_sale_confirm" type="object" groups="sale_advertising_order.group_traffic_user"/>
-                    <button name="action_confirm" states="approved2" string="Confirm Sale" class="o_sale_confirm" type="object" groups="sale_advertising_order.group_traffic_user"/>
-                    <button name="print_quotation" string="Print" type="object" states="sent,sale" groups="sale_advertising_order.group_traffic_user"/>
-                    <button name="action_quotation_send" string="Send by Email" type="object" states="sent,sale" groups="sale_advertising_order.group_traffic_user"/>
+                    <button name="action_confirm" states="approved1,approved2" string="Confirm Sale" class="o_sale_confirm" type="object" groups="sale_advertising_order.group_traffic_user"/>
+                    <button name="print_quotation" string="Print" type="object" states="sent,approved2,sale" groups="sale_advertising_order.group_traffic_user"/>
+                    <button name="action_quotation_send" string="Send by Email" type="object" states="approved2,sent,sale" groups="sale_advertising_order.group_traffic_user"/>
                     <button name="action_cancel" states="draft,sent,sale" type="object" string="Cancel"/>
                     <button name="action_draft" states="cancel" type="object" string="Set to Quotation"/>
                     <button name="action_done" type="object" string="Lock" states="sale"
                             help="If the sale is locked, you can not modify it anymore. However, you will still be able to invoice or deliver."/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved1,approved2,sent,progress,done"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved1,approved2,sent,sale,done"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -176,7 +176,7 @@
                                             <field name="qty_delivered_updateable" invisible="1"/>
                                             <field name="procurement_ids" invisible="1"/>
                                             <field name="price_subtotal" invisible="1"/>
-                                            <field name="mult_line_number" invisible="0" readonly="True"/>
+                                            <field name="multi_line_number" invisible="0" readonly="True"/>
                                             <label for="product_uom_qty" string="Ordered Quantity"/>
                                             <div>
                                                 <field name="product_uom_qty" class="oe_inline"
@@ -693,10 +693,6 @@
             <field name="model">sale.order.line</field>
             <field name="arch" type="xml">
                 <tree string="Sales Order Lines" create="false">
-                    <!--header>
-                        <button name="%(sale_advertising_order.action_view_ad_order_line_make_invoice)d"
-                            string="Create Invoices from selected Order Lines" type="action"  class="btn-primary"/>
-                    </header-->
                         <field name="id"/>
                         <field name="order_partner_id" />
                         <field name="title" />
@@ -719,7 +715,7 @@
                         <field name="price_subtotal" widget="monetary" groups="sale.group_show_price_subtotal"/>
                         <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
                         <field name="state" invisible="0"/>
-                        <field name="invoice_status" invisible="1"/>
+                        <field name="invoice_status" invisible="0"/>
                 </tree>
             </field>
         </record>

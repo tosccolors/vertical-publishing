@@ -61,7 +61,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             raise UserError(_('Please define an accounting sale journal for this company.'))
 
         dateInvoice = self._context.get('date_invoice', False) or fields.Date.today()
-        Section = order.account_analytic_id.section_ids
+#        Section = order.account_analytic_id.section_ids
 
         return {
             'name': lines['name'] or '',
@@ -101,16 +101,16 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         def make_invoice(partner, published_customer, lines):
             vals = self._prepare_invoice(partner, published_customer, lines)
             invoice = self.env['account.invoice'].create(vals)
-            self._cr.execute('insert into sale_order_invoice_rel (order_id,invoice_id) values (%s,%s)', (order.id, invoice.id))
+            self._cr.execute('insert into sale_order_invoice_rel (order_id,invoice_id) values (%s,%s)', (lines.order_id.id, invoice.id))
             return invoice.id
 
         OrderLine = self.env['sale.order.line']
         Order = self.env['sale.order']
 
         for line in OrderLine.browse(lids):
-            key = (line.partner_id, line.published_customer)
+            key = (line.order_partner_id, line.order_id.published_customer)
 
-            if (not line.invoice_line_id) and (line.state not in ('draft', 'cancel')) :
+            if (not line.invoice_lines) and (line.state in ('sale', 'done')) :
                 if not key in invoices:
                     invoices[key] = {'lines':[],'subtotal':0, 'name': ''}
 
@@ -122,8 +122,8 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                     invoices[key]['name'] += str(line.name)+' / '
 
         if not invoices:
-            raise UserError(_('Invoice cannot be created for this Advertissing Order Line due to one of the following reasons:\n'
-                              '1.The state of this ad order line is either "draft" or "cancel"!\n'
+            raise UserError(_('Invoice cannot be created for this Advertising Order Line due to one of the following reasons:\n'
+                              '1.The state of this ad order line is either "draft", "submitted", "approved1", "approved2", "sent", or "cancel"!\n'
                               '2.The Line is Invoiced!\n'))
 
         newInvoices = []

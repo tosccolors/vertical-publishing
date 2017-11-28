@@ -161,17 +161,7 @@ class SaleOrder(models.Model):
         self.update(values)
 
 
-    @api.multi
-    def action_submit(self):
-        for o in self:
-            if not o.order_line:
-                raise UserError(_('You cannot submit a quotation/sales order which has no line.'))
-        return self.write({'state':'submitted'})
 
-    @api.multi
-    def action_approve2(self):
-        return self.write({'state': 'approved2',
-                           'traffic_appr_date': fields.Date.context_today(self)})
 
     @api.multi
     def update_line_discount(self):
@@ -193,17 +183,34 @@ class SaleOrder(models.Model):
 
         return True
 
+    @api.multi
+    def action_submit(self):
+        orders = self.filtered(lambda s: s.state in ['draft'])
+        for o in orders:
+            if not o.order_line:
+                raise UserError(_('You cannot submit a quotation/sales order which has no line.'))
+        return self.write({'state': 'submitted'})
+
     # --added deep
     @api.multi
     def action_approve1(self):
-        self.action_submit()
-        return self.write({'state':'approved1'})
+        orders = self.filtered(lambda s: s.state in ['submitted'])
+        orders.write({'state':'approved1'})
+        return True
+
+    @api.multi
+    def action_approve2(self):
+        orders = self.filtered(lambda s: s.state in ['approved1', 'submitted'])
+        orders.write({'state': 'approved2',
+                      'traffic_appr_date': fields.Date.context_today(self)})
+        return True
 
     # --added deep
     @api.multi
     def action_refuse(self):
-        self.action_submit()
-        return self.write({'state':'draft'})
+        orders = self.filtered(lambda s: s.state in ['submitted', 'sale', 'sent', 'approved1', 'approved2'])
+        orders.write({'state':'draft'})
+        return True
 
     # overridden: -- added deep
     @api.multi
@@ -379,7 +386,17 @@ class SaleOrderLine(models.Model):
     url_to_material = fields.Char('Advertising Material', size=64)
     from_date = fields.Date('Start of Validity')
     to_date = fields.Date('End of Validity')
-    mult_line_number = fields.Integer('Number of Lines')
+    state = fields.Selection([
+        ('draft', 'Quotation'),
+        ('submitted', 'Submitted for Approval'),
+        ('approved1', 'Approved by Sales Mgr'),
+        ('approved2', 'Approved by Traffic'),
+        ('sent', 'Quotation Sent'),
+        ('sale', 'Sale Order'),
+        ('done', 'Done'),
+        ('cancel', 'Cancelled'),
+    ], related='order_id.state', string='Order Status', readonly=True, copy=False, store=True, default='draft')
+    multi_line_number = fields.Integer('Number of Lines')
     partner_acc_mgr = fields.Many2one(related='order_id.partner_acc_mgr', store=True, string='Account Manager', readonly=True)
     order_partner_id = fields.Many2one(related='order_id.partner_id', relation='res.partner', string='Customer')
     discount_dummy = fields.Float(compute='_compute_amount', string='Agency Commission (%)',readonly=True )
@@ -391,6 +408,7 @@ class SaleOrderLine(models.Model):
     computed_discount = fields.Monetary(compute='_compute_amount', string='Discount (%)', digits=dp.get_precision('Account'), store=True)
     subtotal_before_agency_disc = fields.Monetary(compute='_compute_amount', string='Subtotal before Commission', digits=dp.get_precision('Account'), store=True)
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
+    multi_line = fields.Boolean(string='Multi Line')
 
     @api.onchange('medium')
     def onchange_medium(self):
@@ -506,14 +524,14 @@ class SaleOrderLine(models.Model):
                     'adv_issue_ids': [(6, 0, [])],
                     'issue_product_ids': values,
                     'product_id': product_id.id,
-                    'mult_line_number': issues_count,
+                    'multi_line_number': issues_count,
                 })
             self.comb_list_price = price
         else:
             self.update({
                 'issue_product_ids': [(6, 0, [])],
                 'product_id': False,
-                'mult_line_number': False,
+                'multi_line_number': False,
                 'comb_list_price': False,
             })
         return {'value': vals, 'domain': data}
@@ -648,7 +666,7 @@ class SaleOrderLine(models.Model):
                 self.comb_list_price = price
                 ml_qty = len(self.issue_product_ids)
 
-        self.mult_line_number = ml_qty
+        self.multi_line_number = ml_qty
 
 
     '''@api.onchange('product_uom_qty')
@@ -695,6 +713,38 @@ class SaleOrderLine(models.Model):
         self.update(res2['value'])
         return res'''
 
+    # TODO: take following onchange into account
+    @api.onchange('product_id', 'price_unit', 'product_uom', 'product_uom_qty', 'tax_id')
+    def _onchange_discount(self):
+        self.discount = 0.0
+        if not (self.product_id and self.product_uom and
+                    self.order_id.partner_id and self.order_id.pricelist_id and
+                        self.order_id.pricelist_id.discount_policy == 'without_discount' and
+                    self.env.user.has_group('sale.group_discount_per_so_line')):
+            return
+
+        context_partner = dict(self.env.context, partner_id=self.order_id.partner_id.id, date=self.order_id.date_order)
+        pricelist_context = dict(context_partner, uom=self.product_uom.id)
+
+        price, rule_id = self.order_id.pricelist_id.with_context(pricelist_context).get_product_price_rule(
+            self.product_id, self.product_uom_qty or 1.0, self.order_id.partner_id)
+        new_list_price, currency_id = self.with_context(context_partner)._get_real_price_currency(self.product_id,
+                                                                                                  rule_id,
+                                                                                                  self.product_uom_qty,
+                                                                                                  self.product_uom,
+                                                                                                  self.order_id.pricelist_id.id)
+        new_list_price = self.env['account.tax']._fix_tax_included_price_company(new_list_price,
+                                                                                 self.product_id.taxes_id, self.tax_id,
+                                                                                 self.company_id)
+
+        if new_list_price != 0:
+            if self.product_id.company_id and self.order_id.pricelist_id.currency_id != self.product_id.company_id.currency_id:
+                # new_list_price is in company's currency while price in pricelist currency
+                new_list_price = self.env['res.currency'].browse(currency_id).with_context(context_partner).compute(
+                    new_list_price, self.order_id.pricelist_id.currency_id)
+            discount = (new_list_price - price) / new_list_price * 100
+            if discount > 0:
+                self.discount = discount
 
 
     @api.multi
