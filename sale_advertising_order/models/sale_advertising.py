@@ -315,7 +315,7 @@ class SaleOrderLine(models.Model):
         for line in a:
             comp_discount = 0.0
             price_unit = 0.0
-            if not line.issue_product_ids:
+            if not line.multi_line:
                 unit_price = line.actual_unit_price
                 if not line.price_unit:
                     if line.product_id:
@@ -352,6 +352,24 @@ class SaleOrderLine(models.Model):
             resa.update({'line': line})
         res = resb.update(resa)
         return res
+
+    @api.depends('issue_product_ids.price')
+    def _multi_price(self):
+        """
+        Compute the combined price in the multi_line.
+        """
+        for order_line in self:
+            if self.issue_product_ids:
+                price_tot = 0.0
+                count = 0
+                for ipi in order_line.issue_product_ids:
+                    price_tot += ipi.price
+                    count += 1
+
+                order_line.update({
+                    'comb_list_price': price_tot,
+                    'multi_line_number': count,
+                })
 
 
     @api.model
@@ -396,13 +414,13 @@ class SaleOrderLine(models.Model):
         ('done', 'Done'),
         ('cancel', 'Cancelled'),
     ], related='order_id.state', string='Order Status', readonly=True, copy=False, store=True, default='draft')
-    multi_line_number = fields.Integer('Number of Lines')
+    multi_line_number = fields.Integer(compute='_multi_price', string='Number of Lines', store=True)
     partner_acc_mgr = fields.Many2one(related='order_id.partner_acc_mgr', store=True, string='Account Manager', readonly=True)
     order_partner_id = fields.Many2one(related='order_id.partner_id', relation='res.partner', string='Customer')
     discount_dummy = fields.Float(compute='_compute_amount', string='Agency Commission (%)',readonly=True )
     actual_unit_price = fields.Monetary('Actual Unit Price', required=True, default=0.0,
                                      digits=dp.get_precision('Actual Unit Price'), states={'draft': [('readonly', False)]})
-    comb_list_price = fields.Monetary('Combined_List Price', default=0.0,
+    comb_list_price = fields.Monetary(compute='_multi_price', string='Combined_List Price', default=0.0, store=True,
                                 digits=dp.get_precision('Actual Unit Price'))
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', readonly=True, store=True)
     computed_discount = fields.Monetary(compute='_compute_amount', string='Discount (%)', digits=dp.get_precision('Account'), store=True)
@@ -423,7 +441,9 @@ class SaleOrderLine(models.Model):
             if titles and len(titles) == 1:
                 vals['title'] = titles[0]
                 vals['title_ids'] = [(6, 0, [])]
-
+            else:
+                vals['title'] = False
+                vals['title_ids'] = [(6, 0, [])]
         return {'value': vals, 'domain': data }
 
     @api.onchange('ad_class')
@@ -453,20 +473,19 @@ class SaleOrderLine(models.Model):
     def title_oc(self):
         data, vals = {}, {}
         if self.title:
-            title = self.title
-            child_id = [x.id for x in title.child_ids]
+            adissue_ids = self.title.child_ids.ids
 
-            if len(child_id) == 1:
-                vals['adv_issue'] = child_id[0]
+            if len(adissue_ids) == 1:
+                vals['adv_issue'] = adissue_ids[0]
                 vals['adv_issue_ids'] = [(6, 0, [])]
                 vals['product_id'] = False
                 vals['actual_unit_price'] = 0.0
-                data.update({'adv_issue': [('id', 'in', child_id)]})
+                data.update({'adv_issue': [('id', 'in', adissue_ids)]})
             else:
                 vals['adv_issue'] = False
                 vals['product_id'] = False
                 vals['actual_unit_price'] = 0.0
-                data.update({'adv_issue_ids': [('id', 'in', child_id)]})
+                data.update({'adv_issue_ids': [('id', 'in', adissue_ids)]})
         return {'value': vals, 'domain': data}
 
     @api.onchange('title_ids')
@@ -479,6 +498,26 @@ class SaleOrderLine(models.Model):
             for title in titles:
                 if not (title in issue_parent_ids):
                     raise UserError(_('Not for every selected Title an Issue is selected.'))
+            if len(self.title_ids) == 1:
+                self.title = self.title_ids[0]
+                self.title_ids = [(6, 0, [])]
+        elif self.title_ids and self.issue_product_ids:
+            titles = self.title_ids.ids
+            adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', [x.adv_issue_id.id for x in self.issue_product_ids])])
+            issue_parent_ids = [x.parent_id.id for x in adv_issues]
+            back = False
+            for title in titles:
+                if not (title in issue_parent_ids):
+                    back = True
+            if back:
+                self.adv_issue_ids = [(6, 0, adv_issues.ids)]
+                self.issue_product_ids = [(6, 0, [])]
+            if len(self.title_ids) == 1:
+                self.title = self.title_ids[0]
+                self.title_ids = [(6, 0, [])]
+            self.titles_issues_products_price()
+#        elif self.title_ids and not self.issue_product_ids and not self.adv_issue_ids:
+
         else:
             self.adv_issue = False
             self.adv_issue_ids = [(6, 0, [])]
@@ -489,11 +528,10 @@ class SaleOrderLine(models.Model):
 
 
 
-    @api.onchange('product_template_id')
+    @api.onchange('product_template_id', 'product_uom_qty')
     def titles_issues_products_price(self):
         data, vals = {}, {}
-
-        if self.product_template_id and self.adv_issue_ids:
+        if self.product_template_id and self.adv_issue_ids and len(self.adv_issue_ids) > 1:
             self.product_uom = self.product_template_id.uom_id
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', self.adv_issue_ids.ids)])
             values = []
@@ -501,7 +539,51 @@ class SaleOrderLine(models.Model):
             price = 0
             issues_count = 0
             for adv_issue in adv_issues:
-                if adv_issue.parent_id.id in self.title_ids.ids:
+                if adv_issue.parent_id.id in self.title_ids.ids or adv_issue.parent_id.id == self.title:
+                    value = {}
+                    if adv_issue.product_attribute_value_id:
+                        pav = adv_issue.product_attribute_value_id.id
+                    else:
+                        pav = adv_issue.parent_id.product_attribute_value_id.id
+                    product_id = self.env['product.product'].search(
+                        [('product_tmpl_id', '=', self.product_template_id.id), ('attribute_value_ids', '=', pav)])
+                    if product_id:
+                        product = product_id.with_context(
+                            lang=self.order_id.partner_id.lang,
+                            partner=self.order_id.partner_id.id,
+                            quantity=self.product_uom_qty or 0,
+                            date=self.order_id.date_order,
+                            pricelist=self.order_id.pricelist_id.id,
+                            uom=self.product_uom.id
+                        )
+                        if self.order_id.pricelist_id and self.order_id.partner_id:
+                            value['product_id'] = product_id.id
+                            value['adv_issue_id'] = adv_issue.id
+                            value['price_unit'] = self.env['account.tax']._fix_tax_included_price_company(
+                                self._get_display_price(product), product.taxes_id, self.tax_id,
+                                self.company_id)
+
+                            price += value['price_unit'] * self.product_uom_qty
+                            values.append(value)
+                issues_count += 1
+            if product_id:
+                self.update({
+                    'adv_issue_ids': [(6, 0, [])],
+                    'issue_product_ids': values,
+                    'product_id': product_id.id,
+                    'multi_line_number': issues_count,
+                    'multi_line': True,
+                })
+            self.comb_list_price = price
+        elif self.product_template_id and self.issue_product_ids and len(self.issue_product_ids) > 1:
+            self.product_uom = self.product_template_id.uom_id
+            adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', [x.adv_issue_id.id for x in self.issue_product_ids])])
+            values = []
+            product_id = False
+            price = 0
+            issues_count = 0
+            for adv_issue in adv_issues:
+                if adv_issue.parent_id.id in self.title_ids.ids or adv_issue.parent_id.id == self.title:
                     value = {}
                     if adv_issue.product_attribute_value_id:
                         pav = adv_issue.product_attribute_value_id.id
@@ -516,45 +598,76 @@ class SaleOrderLine(models.Model):
                             value['price_unit'] = self.env['account.tax']._fix_tax_included_price_company(
                                 self._get_display_price(product_id), product_id.taxes_id, self.tax_id,
                                 self.company_id)
-                            price += value['price_unit']
-                        values.append(value)
-                        issues_count += 1
+
+                            price += value['price_unit'] * self.product_uom_qty
+                            values.append(value)
+                issues_count += 1
             if product_id:
                 self.update({
-                    'adv_issue_ids': [(6, 0, [])],
                     'issue_product_ids': values,
                     'product_id': product_id.id,
                     'multi_line_number': issues_count,
+                    'multi_line': True,
                 })
             self.comb_list_price = price
+        elif self.product_template_id and (self.adv_issue or len(self.adv_issue_ids) == 1):
+
+                if self.adv_issue.parent_id.id in self.title_ids.ids or self.adv_issue.parent_id.id == self.title:
+                    if self.adv_issue.product_attribute_value_id:
+                        pav = self.adv_issue.product_attribute_value_id.id
+                    else:
+                        pav = self.adv_issue.parent_id.product_attribute_value_id.id
+                    product_id = self.env['product.product'].search(
+                        [('product_tmpl_id', '=', self.product_template_id.id), ('attribute_value_ids', '=', pav)])
+                    if product_id:
+                        self.update({
+                            'adv_issue_ids': [(6, 0, [])],
+                            'issue_product_ids': [(6, 0, [])],
+                            'product_id': product_id.id,
+                            'multi_line_number': 1,
+                            'multi_line': False,
+                        })
         else:
+            ##
+            self.product_id_change()
+            if self.order_id.partner_id.is_ad_agency and not self.order_id.nett_nett:
+                discount = self.order_id.partner_id.agency_discount
+            else:
+                discount = 0.0
+            self.update({'discount': discount, 'discount_dummy': discount})
+
+            # TODO: FIXME
+            if self.price_unit:
+                self.actual_unit_price = self.price_unit
+            else:
+                self.actual_unit_price = 0.0
+#            res2 = self.onchange_actualup()
+#            self.update(res2['value'])
+            ##
             self.update({
                 'issue_product_ids': [(6, 0, [])],
                 'product_id': False,
-                'multi_line_number': False,
+                'multi_line_number': 0,
                 'comb_list_price': False,
+                'multi_line': False,
             })
         return {'value': vals, 'domain': data}
 
     @api.onchange('date_type')
     def onchange_date_type(self):
         vals = {}
-        date_type = self.date_type
-
-        if date_type:
-            if date_type == 'date':
+        if self.date_type:
+            if self.date_type == 'date':
                 if self.dateperiods:
                     vals['dateperiods'] = [(6,0,[])] #[(2,x[1]) for x in dateperiods]
                 if self.adv_issue_ids:
                     vals['adv_issue_ids'] = [(6,0,[])]
-
-            elif date_type == 'validity':
+            elif self.date_type == 'validity':
                 if self.dates:
                     vals['dates'] = [(6,0,[])] #[(2, x[1]) for x in dates]
                 if self.adv_issue_ids:
                     vals['adv_issue_ids'] = [(6,0,[])]
-
-            elif date_type == 'issue_date':
+            elif self.date_type == 'issue_date':
                 if self.dates:
                     vals['dates'] = [(6,0,[])] #[(2, x[1]) for x in dates]
                 if self.dateperiods:
@@ -568,64 +681,58 @@ class SaleOrderLine(models.Model):
         result = {}
         if not self.advertising:
             return {'value': result}
-        # import pdb; pdb.set_trace()
-        qty = self.product_uom_qty
-        actual_unit_price = self.actual_unit_price
-        price_unit = self.price_unit
-        discount = self.discount
-
-        if self.comb_list_price and self.comb_list_price > 0:
-            if self.subtotal_before_agency_disc and self.subtotal_before_agency_disc > 0:
-                cdisc = (float(self.comb_list_price) - float(self.subtotal_before_agency_disc)) / float(self.comb_list_price) * 100.0
-                result['computed_discount'] = cdisc
-                result['price_subtotal'] = round((float(self.subtotal_before_agency_disc) * (1.0 - float(discount) / 100.0)), 2)
-            else:
-                result['subtotal_before_agency_disc'] = self.comb_list_price
-                result['computed_discount'] = 0.0
-                result['price_subtotal'] = round((float(self.comb_list_price) * (1.0 - float(discount) / 100.0)), 2)
-        elif actual_unit_price and actual_unit_price > 0.0:
-            if price_unit and price_unit > 0.0:
-                cdisc = (float(price_unit) - float(actual_unit_price)) / float(price_unit) * 100.0
-                result['computed_discount'] = cdisc
-                result['subtotal_before_agency_disc'] = round((float(actual_unit_price) * float(qty)), 2)
-                result['price_subtotal'] = round((float(actual_unit_price) * float(qty) * (1.0 - float(discount)/100.0)), 2)
-            else:
-                result['computed_discount'] = 0.0
-                result['subtotal_before_agency_disc'] = round((float(actual_unit_price) * float(qty)), 2)
-                result['price_subtotal'] = round((float(actual_unit_price) * float(qty) * (1.0 - float(discount)/100.0)), 2)
+#        import pdb; pdb.set_trace()
+        if self.multi_line:
+            if self.comb_list_price and self.comb_list_price > 0:
+                if self.subtotal_before_agency_disc and self.subtotal_before_agency_disc > 0:
+                    cdisc = (float(self.comb_list_price) - float(self.subtotal_before_agency_disc)) / float(self.comb_list_price) * 100.0
+                    result['computed_discount'] = cdisc
+                    result['price_subtotal'] = round((float(self.subtotal_before_agency_disc) * (1.0 - float(self.discount) / 100.0)), 2)
+                else:
+                    result['subtotal_before_agency_disc'] = self.comb_list_price
+                    result['computed_discount'] = 0.0
+                    result['price_subtotal'] = round((float(self.comb_list_price) * (1.0 - float(self.discount) / 100.0)), 2)
         else:
-            if price_unit and price_unit > 0.0:
-                result['actual_unit_price'] = 0.0
-            result['computed_discount'] = 100.0
-            result['subtotal_before_agency_disc'] = round((float(actual_unit_price) * float(qty)), 2)
-            result['price_subtotal'] = round((float(actual_unit_price) * float(qty) * (1.0 - float(discount)/100.0)), 2)
+            if self.actual_unit_price and self.actual_unit_price > 0.0:
+                if self.price_unit and self.price_unit > 0.0:
+                    cdisc = (float(self.price_unit) - float(self.actual_unit_price)) / float(self.price_unit) * 100.0
+                    result['computed_discount'] = cdisc
+                    result['subtotal_before_agency_disc'] = round((float(self.actual_unit_price) * float(self.product_uom_qty)), 2)
+                    result['price_subtotal'] = round((float(self.actual_unit_price) * float(self.product_uom_qty) * (1.0 - float(self.discount)/100.0)), 2)
+                else:
+                    result['computed_discount'] = 0.0
+                    result['subtotal_before_agency_disc'] = round((float(self.actual_unit_price) * float(self.product_uom_qty)), 2)
+                    result['price_subtotal'] = round((float(self.actual_unit_price) * float(self.product_uom_qty) * (1.0 - float(self.discount)/100.0)), 2)
+            else:
+                if self.price_unit and self.price_unit > 0.0:
+#                   result['actual_unit_price'] = 0.0
+                    result['computed_discount'] = 100.0
+                    result['subtotal_before_agency_disc'] = 0.0
+#                    round((float(self.self.actual_unit_price) * float(self.product_uom_qty)), 2)
+                    result['price_subtotal'] = 0.0
+#                    round((float(self.actual_unit_price) * float(self.product_uom_qty) * (1.0 - float(self.discount)/100.0)), 2)
         return {'value': result}
 
 
     @api.onchange('subtotal_before_agency_disc')
     def onchange_price_subtotal(self):
         result = {}
-        if not self.advertising:
-            return {'value': result}
+#        import pdb;
+#        pdb.set_trace()
+        if self.multi_line:
+            if self.comb_list_price and self.comb_list_price > 0 and self.subtotal_before_agency_disc and self.subtotal_before_agency_disc > 0.0:
+                cdisc = (float(self.comb_list_price) - float(self.subtotal_before_agency_disc)) / float(
+                    self.comb_list_price) * 100.0
+                result['computed_discount'] = cdisc
+                result['price_subtotal'] = round((float(self.subtotal_before_agency_disc) * (1.0 - float(self.discount) / 100.0)), 2)
 
-        subtotal_before_agency_disc = self.subtotal_before_agency_disc
-        qty = self.product_uom_qty
-
-        if self.comb_list_price and self.comb_list_price > 0 and subtotal_before_agency_disc and subtotal_before_agency_disc > 0.0:
-            cdisc = (float(self.comb_list_price) - float(self.subtotal_before_agency_disc)) / float(
-                self.comb_list_price) * 100.0
-            result['computed_discount'] = cdisc
-            result['price_subtotal'] = round(
-                (float(subtotal_before_agency_disc) * (1.0 - float(self.discount) / 100.0)), 2)
-
-        elif subtotal_before_agency_disc and subtotal_before_agency_disc > 0.0:
-                if qty > 0.0:
-                    actual_unit_price = float(subtotal_before_agency_disc) / float(qty)
-                    result['actual_unit_price'] = actual_unit_price
-                    result['price_subtotal'] = round((float(subtotal_before_agency_disc) * (1.0 - float(self.discount) / 100.0)), 2)
-        else:
-            result['actual_unit_price'] = 0.0
-            result['price_subtotal'] = 0.0
+        elif self.subtotal_before_agency_disc and self.subtotal_before_agency_disc > 0.0:
+            if self.product_uom_qty and self.product_uom_qty > 0.0:
+                result['actual_unit_price'] = float(self.subtotal_before_agency_disc) / float(self.product_uom_qty)
+                result['price_subtotal'] = round((float(self.subtotal_before_agency_disc) * (1.0 - float(self.discount) / 100.0)), 2)
+            else:
+                result['actual_unit_price'] = 0.0
+                result['price_subtotal'] = 0.0
         return {'value': result}
 
 
@@ -634,6 +741,7 @@ class SaleOrderLine(models.Model):
 #        import pdb;
 #        pdb.set_trace()
         ml_qty = 0
+        self.multi_line = False
         if self.adv_issue and self.adv_issue_ids:
             if len(self.adv_issue_ids) > 1:
                 ml_qty = len(self.adv_issue_ids)
@@ -642,7 +750,6 @@ class SaleOrderLine(models.Model):
                 self.adv_issue = self.adv_issue_ids.id
                 self.adv_issue_ids = [(6,0,[])]
                 ml_qty = 1
-
         elif self.adv_issue_ids:
             if len(self.adv_issue_ids) > 1:
                 ml_qty = len(self.adv_issue_ids)
@@ -650,101 +757,35 @@ class SaleOrderLine(models.Model):
                 self.adv_issue = self.adv_issue_ids.id
                 self.adv_issue_ids = [(6,0,[])]
                 ml_qty = 1
-
         elif self.adv_issue:
             ml_qty = 1
-
+            self.multi_line = False
         elif self.dates:
             if len(self.dates) >= 1:
-                ml_qty = len(self.dates)
-
+                ml_qty = 1
+                self.product_uom_qty = len(self.dates)
         elif self.issue_product_ids:
             if len(self.issue_product_ids) > 1:
-                price = 0
-                for issue in self.issue_product_ids:
-                    price += issue.price_unit
-                self.comb_list_price = price
                 ml_qty = len(self.issue_product_ids)
 
         self.multi_line_number = ml_qty
-
-
-    '''@api.onchange('product_uom_qty')
-    
-    def qty_change(self):
-        res = self.product_id_change()
-
-        mqty = False
-        if self.date_type == 'issue_date' and self.adv_issue_ids:
-            if len(self.adv_issue_ids) >= 1:
-                mqty = len(self.adv_issue_ids)
-            else:
-                mqty = 0
-        elif self.date_type == 'issue_date' and self.issue_product_ids:
-            if len(self.issue_product_ids) > 1:
-                mqty = len(self.adv_issue_ids)
-            else:
-                mqty = 0
-
-        if self.date_type == 'date' and self.dates:
-            if len(self.dates) >= 1:
-                mqty = len(self.dates)
-            else:
-                mqty = 0
-        if mqty:
-            qty = mqty
-            self.product_uom_qty = qty
-
-        partner = self.order_id.partner_id
-        if partner.is_ad_agency and not self.order_id.nett_nett:
-            discount = partner.agency_discount
+        if ml_qty > 1:
+            self.multi_line = True
         else:
-            discount = 0.0
-        self.update({'discount': discount, 'discount_dummy': discount})
+            self.multi_line = False
+            if not self.title and self.title_ids:
+                self.title = self.title_ids.id
+            self.title_ids = [(6,0,[])]
 
-        # TODO: FIXME
-        # if self.price_unit:
-        #     pu = self.price_unit
-        #     if pu != self.price_unit:
-        #         actual_unit_price = pu
-        # else:
-        #     pu = 0.0
-        res2 = self.onchange_actualup()
-        self.update(res2['value'])
-        return res'''
 
-    # TODO: take following onchange into account
     @api.onchange('product_id', 'price_unit', 'product_uom', 'product_uom_qty', 'tax_id')
     def _onchange_discount(self):
-        self.discount = 0.0
-        if not (self.product_id and self.product_uom and
-                    self.order_id.partner_id and self.order_id.pricelist_id and
-                        self.order_id.pricelist_id.discount_policy == 'without_discount' and
-                    self.env.user.has_group('sale.group_discount_per_so_line')):
-            return
-
-        context_partner = dict(self.env.context, partner_id=self.order_id.partner_id.id, date=self.order_id.date_order)
-        pricelist_context = dict(context_partner, uom=self.product_uom.id)
-
-        price, rule_id = self.order_id.pricelist_id.with_context(pricelist_context).get_product_price_rule(
-            self.product_id, self.product_uom_qty or 1.0, self.order_id.partner_id)
-        new_list_price, currency_id = self.with_context(context_partner)._get_real_price_currency(self.product_id,
-                                                                                                  rule_id,
-                                                                                                  self.product_uom_qty,
-                                                                                                  self.product_uom,
-                                                                                                  self.order_id.pricelist_id.id)
-        new_list_price = self.env['account.tax']._fix_tax_included_price_company(new_list_price,
-                                                                                 self.product_id.taxes_id, self.tax_id,
-                                                                                 self.company_id)
-
-        if new_list_price != 0:
-            if self.product_id.company_id and self.order_id.pricelist_id.currency_id != self.product_id.company_id.currency_id:
-                # new_list_price is in company's currency while price in pricelist currency
-                new_list_price = self.env['res.currency'].browse(currency_id).with_context(context_partner).compute(
-                    new_list_price, self.order_id.pricelist_id.currency_id)
-            discount = (new_list_price - price) / new_list_price * 100
-            if discount > 0:
-                self.discount = discount
+        result = {}
+        if not self.advertising:
+            return {'value': result}
+        if not self.multi_line:
+            self.actual_unit_price = self.price_unit
+        super(SaleOrderLine, self)._onchange_discount()
 
 
     @api.multi
@@ -761,13 +802,22 @@ class OrderLineAdvIssuesProducts(models.Model):
     _description= "Advertising Order Line Advertising Issues"
     _order = "order_line_id,sequence,id"
 
+
+    @api.depends('price_unit', 'qty')
+    def _compute_price(self):
+        for line in self:
+            line.price = line.price_unit * line.qty
+
+
     sequence = fields.Integer('Sequence', help="Gives the sequence of this line .", default=10)
     order_line_id = fields.Many2one('sale.order.line', 'Line', ondelete='cascade', index=True, required=True)
-    adv_issue_id = fields.Many2one('sale.advertising.issue', 'Issue', ondelete='cascade', index=True, required=True)
+    adv_issue_id = fields.Many2one('sale.advertising.issue', 'Issue', ondelete='cascade', index=True, readonly=True, required=True)
     product_attribute_value_id = fields.Many2one(related='adv_issue_id.parent_id.product_attribute_value_id', relation='sale.advertising.issue',
                                       string='Title', readonly=True)
-    product_id = fields.Many2one('product.product', 'Product', ondelete='cascade', index=True, )
-    price_unit = fields.Float('Unit Price', required=True, digits=dp.get_precision('Product Price'), default=0.0)
+    product_id = fields.Many2one('product.product', 'Product', ondelete='cascade', index=True, readonly=True)
+    price_unit = fields.Float('Unit Price', required=True, digits=dp.get_precision('Product Price'), default=0.0, readonly=True)
+    qty = fields.Float(related='order_line_id.product_uom_qty', readonly=True)
+    price = fields.Float(compute='_compute_price', string='Price', readonly=True, required=True, digits=dp.get_precision('Product Price'), default=0.0)
     page_reference = fields.Char('Reference of the Page', size=32)
     ad_number = fields.Char('Advertising Reference', size=32)
     url_to_material = fields.Char('Advertising Material', size=64)

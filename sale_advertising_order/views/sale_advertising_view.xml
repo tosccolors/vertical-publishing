@@ -136,7 +136,7 @@
                                                    options="{'no_create': True, 'no_create_edit': True}"
                                                    attrs="{'invisible': [('title','=', False),('medium','=', %(sale_advertising_order.newspaper_advertising_category)d)]}"/>
                                             <field name="title_ids" string="Titles"
-                                                   attrs="{'invisible': ['|',('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d),('title','!=', False),('title_ids','=', False)]}"
+                                                   attrs="{'invisible': [('title','!=', False),('title_ids','=', False)]}"
                                                    domain="[('parent_id','=', False),('medium','child_of', medium)]"
                                                    options="{'no_create': True, 'no_create_edit': True}" context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
                                                     <tree >
@@ -176,6 +176,7 @@
                                             <field name="qty_delivered_updateable" invisible="1"/>
                                             <field name="procurement_ids" invisible="1"/>
                                             <field name="price_subtotal" invisible="1"/>
+                                            <field name="multi_line" invisible="0"/>
                                             <field name="multi_line_number" invisible="0" readonly="True"/>
                                             <label for="product_uom_qty" string="Ordered Quantity"/>
                                             <div>
@@ -204,9 +205,9 @@
                                                 domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
                                                 groups="sale_advertising_order.group_traffic_user"
                                                 attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
-                                            <field name="price_unit" readonly="True" attrs="{'invisible': [('issue_product_ids','!=', False)]}"/>
-                                            <field name="comb_list_price" readonly="True" attrs="{'invisible': [('issue_product_ids','=', False)]}"/>
-                                            <field name="actual_unit_price" attrs="{'invisible': [('issue_product_ids','!=', False)]}"/>
+                                            <field name="price_unit" readonly="True" attrs="{'invisible': [('multi_line','!=', False)]}"/>
+                                            <field name="comb_list_price" readonly="True" attrs="{'invisible': [('multi_line','=', False)]}"/>
+                                            <field name="actual_unit_price" attrs="{'invisible': [('multi_line','!=', False)]}"/>
                                             <label for="computed_discount" groups="sale.group_discount_per_so_line"/>
                                                 <div name="computed_discount" groups="sale.group_discount_per_so_line">
                                                     <field name="computed_discount" class="oe_inline"/> %%
@@ -257,7 +258,9 @@
                                                 <field name="adv_issue_id" string="Issue" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
                                                 <field name="product_attribute_value_id" invisible="True" />
                                                 <field name="product_id" string="Product" domain="[('product_tmpl_id','=', parent.product_template_id), ('attribute_value_ids','in', product_attribute_value_id)]"/>
-                                                <field name="price_unit" string="Price"/>
+                                                <field name="price_unit" string="Unit Price"/>
+                                                <field name="qty" string="Qty"/>
+                                                <field name="price" string="Price"/>
                                                 <field name="page_reference" string="Ref" />
                                                 <field name="ad_number" string="Ad No." />
                                                 <field name="url_to_material" string="URL Ad Material" />

@@ -76,12 +76,12 @@ class sale_order_line_create_multi_lines(models.TransientModel):
             lines = [x.id for x in ol.order_id.order_line]
             if ol.adv_issue_ids and not ol.issue_product_ids:
                 number_ids = len(ol.adv_issue_ids)
-                uom_qty = ol.product_uom_qty / number_ids
-                if uom_qty < 1:
+                uom_qty = ol.multi_line_number / number_ids
+                if uom_qty != 1:
                     raise UserError(_('The product Quantity is not a multiple of the number of Issues in the multi line.'))
                 for ad_iss in ol.adv_issue_ids:
-                    res = {'adv_issue': ad_iss.id, 'adv_issue_ids': False, 'product_uom_qty': uom_qty,
-                           'order_id': ol.order_id.id or False,
+                    res = {'adv_issue': ad_iss.id, 'adv_issue_ids': False, 'actual_unit_price': ol.subtotal_before_agency_disc / ol.multi_line_number,
+                           'order_id': ol.order_id.id or False, 'comb_list_price': 0.0, 'multi_line_number': 1, 'multi_line': False
                            }
                     vals = ol.copy_data(default=res)[0]
                     mol_rec = sol_obj.create(vals)
@@ -91,14 +91,15 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                     lines.append(mol_rec.id)
             elif ol.issue_product_ids:
                 number_ids = len(ol.issue_product_ids)
-                uom_qty = ol.product_uom_qty / number_ids
-                if uom_qty < 1:
+                uom_qty = ol.multi_line_number / number_ids
+                if uom_qty != 1:
                     raise UserError(_('The product Quantity is different from the number of Issues in the multi line.'))
 
                 for ad_iss in ol.issue_product_ids:
                     ad_issue = self.env['sale.advertising.issue'].search([('id', '=', ad_iss.adv_issue_id.id)])
-                    res = {'title': ad_issue.parent_id.id,'adv_issue': ad_issue.id, 'title_ids': False, 'product_id': ad_iss.product_id.id, 'price_unit': ad_iss.price_unit,'issue_product_ids': False, 'product_uom_qty': uom_qty,
-                           'order_id': ol.order_id.id or False,
+                    res = {'title': ad_issue.parent_id.id,'adv_issue': ad_issue.id, 'title_ids': False, 'product_id': ad_iss.product_id.id,
+                           'price_unit': ad_iss.price_unit,'issue_product_ids': False, 'actual_unit_price': ol.subtotal_before_agency_disc / ol.multi_line_number,
+                           'order_id': ol.order_id.id or False, 'comb_list_price': 0.0, 'multi_line_number': 1, 'multi_line': False
                            }
                     vals = ol.copy_data(default=res)[0]
                     mol_rec = sol_obj.create(vals)
