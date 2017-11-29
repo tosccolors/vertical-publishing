@@ -358,14 +358,14 @@ class SaleOrderLine(models.Model):
         """
         Compute the combined price in the multi_line.
         """
-        for order_line in self:
-            if self.issue_product_ids:
+        a = self.filtered("advertising")
+        for order_line in a:
+            if a.issue_product_ids:
                 price_tot = 0.0
                 count = 0
                 for ipi in order_line.issue_product_ids:
                     price_tot += ipi.price
                     count += 1
-
                 order_line.update({
                     'comb_list_price': price_tot,
                     'multi_line_number': count,
