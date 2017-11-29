@@ -693,6 +693,10 @@
             <field name="model">sale.order.line</field>
             <field name="arch" type="xml">
                 <tree string="Sales Order Lines" create="false">
+                        <button name="%(sale_advertising_order.action_view_ad_order_line_make_invoice)d"
+                            string="Create Invoices from selected Order Lines" type="action"
+                            class="btn-primary" icon="fa-check text-success"
+                           />
                         <field name="id"/>
                         <field name="order_partner_id" />
                         <field name="title" />
