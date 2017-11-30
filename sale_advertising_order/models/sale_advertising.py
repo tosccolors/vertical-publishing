@@ -38,6 +38,7 @@ class SaleOrder(models.Model):
         for order in self.filtered('advertising'):
             amount_untaxed = amount_tax = max_cdiscount = 0.0
             cdiscount = []
+            ver_tr_exc = False
             for line in order.order_line:
                 amount_untaxed += line.price_subtotal
                 cdiscount.append(line.computed_discount)
@@ -51,15 +52,14 @@ class SaleOrder(models.Model):
                         amount_tax += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
                     else:
                         price = line.subtotal_before_agency_disc * (1 - (line.discount or 0.0) / 100.0)
-                        taxes = line.tax_id.compute_all(price, line.order_id.currency_id, 1,
+                        taxes = line.tax_id.compute_all(price, line.order_id.currency_id, quantity=1,
                                                         product=line.product_id, partner=order.partner_shipping_id)
                         amount_tax += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
                 else:
                     amount_tax += line.price_tax
                 if order.company_id.verify_order_setting < amount_untaxed or order.company_id.verify_discount_setting < max_cdiscount:
                     ver_tr_exc = True
-                else:
-                    ver_tr_exc = False
+
             order.update({
                 'amount_untaxed': order.pricelist_id.currency_id.round(amount_untaxed),
                 'amount_tax': order.pricelist_id.currency_id.round(amount_tax),
@@ -285,14 +285,14 @@ class AdvertisingIssue(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    @api.depends('product_uom_qty', 'discount', 'comb_list_price', 'actual_unit_price', 'price_unit', 'tax_id')
+    @api.depends('product_uom_qty', 'discount', 'computed_discount', 'comb_list_price', 'actual_unit_price', 'price_unit', 'tax_id')
     @api.multi
     def _compute_amount(self):
         """
         Compute the amounts of the SO line.
         """
 #        import pdb; pdb.set_trace()
-        super(SaleOrderLine, self)._compute_amount()
+        super(SaleOrderLine, self.filtered(lambda record: record.advertising != True))._compute_amount()
         for line in self.filtered('advertising'):
             comp_discount = 0.0
             price_unit = 0.0
@@ -312,6 +312,10 @@ class SaleOrderLine(models.Model):
                     if price_unit and price_unit > 0.0:
                         comp_discount = (price_unit - unit_price)/price_unit * 100.0
                         line.price_unit = price_unit
+                else:
+                    if line.price_unit > 0.0:
+                        comp_discount = (line.price_unit - unit_price)/line.price_unit * 100.0
+
                 price = unit_price * (1 - line.discount or 0 / 100.0)
                 subtotal_bad = unit_price * line.product_uom_qty
                 taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id, partner=line.order_id.partner_id)
@@ -325,10 +329,10 @@ class SaleOrderLine(models.Model):
                     'discount_dummy': line.discount,
                 })
             else:
-                if line.comb_list_price > 0.0:
-                    comp_discount = (line.comb_list_price - line.subtotal_before_agency_disc)/line.comb_list_price * 100.0
+                line.price_unit = 0.0
+                line.subtotal_before_agency_disc = line.comb_list_price * line.computed_discount
                 price = line.subtotal_before_agency_disc * (1 - line.discount or 0 / 100.0)
-                taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty,
+                taxes = line.tax_id.compute_all(price, line.order_id.currency_id, quantity=1,
                                                 product=line.product_template_id, partner=line.order_id.partner_id)
 
                 line.update({
@@ -411,8 +415,8 @@ class SaleOrderLine(models.Model):
     comb_list_price = fields.Monetary(compute='_multi_price', string='Combined_List Price', default=0.0, store=True,
                                 digits=dp.get_precision('Actual Unit Price'))
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', readonly=True)
-    computed_discount = fields.Monetary(compute='_compute_amount', string='Discount (%)', digits=dp.get_precision('Account'), store="True")
-    subtotal_before_agency_disc = fields.Monetary(compute='_compute_amount', string='Subtotal before Commission', digits=dp.get_precision('Account'), store="True")
+    computed_discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Account'))
+    subtotal_before_agency_disc = fields.Monetary(compute='_compute_amount', string='Subtotal before Commission', digits=dp.get_precision('Account'), store=True)
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
     multi_line = fields.Boolean(string='Multi Line')
 
@@ -568,7 +572,7 @@ class SaleOrderLine(models.Model):
                     'multi_line': True,
                 })
             self.comb_list_price = price
-
+            self.subtotal_before_agency_disc = price
         elif self.product_template_id and self.issue_product_ids and len(self.issue_product_ids) > 1:
             self.product_uom = self.product_template_id.uom_id
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', [x.adv_issue_id.id for x in self.issue_product_ids])])
@@ -604,6 +608,7 @@ class SaleOrderLine(models.Model):
                     'multi_line': True,
                 })
             self.comb_list_price = price
+            self.subtotal_before_agency_disc = price
         elif self.product_template_id and (self.adv_issue or len(self.adv_issue_ids) == 1):
                 if self.adv_issue_ids and len(self.adv_issue_ids) == 1:
                     self.adv_issue = self.adv_issue_ids.id
@@ -669,7 +674,7 @@ class SaleOrderLine(models.Model):
 
 
 
-    @api.onchange('actual_unit_price', 'comb_list_price', 'discount')
+    @api.onchange('actual_unit_price', 'comb_list_price', 'subtotal_before_agency_disc')
     def onchange_actualup(self):
         result = {}
         if not self.advertising:
@@ -776,6 +781,7 @@ class SaleOrderLine(models.Model):
         if not self.multi_line:
             if self.actual_unit_price == 0:
                 self.actual_unit_price = self.price_unit
+
 
 
 
