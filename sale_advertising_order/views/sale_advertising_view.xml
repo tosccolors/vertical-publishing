@@ -134,9 +134,9 @@
                                             <field name="title" string="Title"
                                                    domain="[('child_ids','!=', False),('medium','child_of', medium)]"
                                                    options="{'no_create': True, 'no_create_edit': True}"
-                                                   attrs="{'invisible': [('title','=', False),('medium','=', %(sale_advertising_order.newspaper_advertising_category)d)]}"/>
+                                                   attrs="{'invisible': [('title','=', False)]}"/>
                                             <field name="title_ids" string="Titles"
-                                                   attrs="{'invisible': [('title','!=', False),('title_ids','=', False)]}"
+                                                   attrs="{'invisible': [('title','!=', False),('title_ids','=', [])]}"
                                                    domain="[('parent_id','=', False),('medium','child_of', medium)]"
                                                    options="{'no_create': True, 'no_create_edit': True}" context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
                                                     <tree >
@@ -314,8 +314,8 @@
                                         <!--string="Ordered Qty"-->
                                         <!--context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"-->
                                     <!--/>-->
-                                    <field name="qty_delivered" invisible="context.get('hide_sale')"
-                                        attrs="{'readonly': [('qty_delivered_updateable', '=', False)]}"/>
+                                    <!--field name="qty_delivered" invisible="context.get('hide_sale')"
+                                        attrs="{'readonly': [('qty_delivered_updateable', '=', False)]}"/-->
                                     <field name="qty_invoiced"
                                         invisible="context.get('hide_sale')"/>
                                     <field name="qty_to_invoice" invisible="1"/>
@@ -323,11 +323,11 @@
                                         attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
                                         context="{'company_id': parent.company_id}"
                                         groups="product.group_uom" options='{"no_open": True}'/>
-                                    <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" widget="many2many_tags"/>
-									<field name="price_unit"
-                                        attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
+                                    <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" invisible="1" widget="many2many_tags"/>
+									<field name="price_unit" readonly="1"/>
                                     <field name="product_uom_qty"/>
                                     <field name="actual_unit_price"/>
+                                    <field name="comb_list_price"/>
                                     <field name="computed_discount" />
                                     <field name="subtotal_before_agency_disc" />
                                     <field name="discount_dummy" />
@@ -698,8 +698,7 @@
                 <tree string="Sales Order Lines" create="false">
                         <button name="%(sale_advertising_order.action_view_ad_order_line_make_invoice)d"
                             string="Create Invoices from selected Order Lines" type="action"
-                            class="btn-primary" icon="fa-check text-success"
-                           />
+                            class="btn-primary" icon="fa-check text-success"/>
                         <field name="id"/>
                         <field name="order_partner_id" />
                         <field name="title" />
