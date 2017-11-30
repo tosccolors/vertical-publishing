@@ -877,16 +877,20 @@
                     <filter string="My Sales Order Lines" domain="[('salesman_id','=',uid)]" help="Sales Order Lines related to a Sales Order of mine"/>
                     <filter name="accmgr_sale_orders_filter" string="My Sales Order Lines (Account Manager)"
                             domain="[('partner_acc_mgr','=',uid)]" help="My Sales Order Lines as Account manager" />
+                    <filter name="issue_date_sale_orders_filter" string="Order Lines with Issue Date before today"
+                            domain="[('issue_date','&lt;=', datetime.datetime.now())]" help="Order Lines with Issue Date before today" />
                     <field name="order_id"/>
                     <field name="order_partner_id" operator="child_of"/>
                     <field name="product_id"/>
                     <field name="salesman_id"/>
                     <field name="partner_acc_mgr"/>
+                    <field name="issue_date"/>
                     <group expand="0" string="Group By">
                         <filter string="Product" domain="[]" context="{'group_by':'product_id'}"/>
                         <filter string="Order" domain="[]" context="{'group_by':'order_id'}"/>
                         <filter string="Salesperson" domain="[]" context="{'group_by':'salesman_id'}"/>
                         <filter string="Account Manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
+                        <filter string="Issue Date" icon="terp-personal" domain="[]" context="{'group_by':'issue_date'}"/>
                     </group>
                 </search>
             </field>

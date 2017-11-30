@@ -386,9 +386,10 @@ class SaleOrderLine(models.Model):
                         ('issue_date', 'Issue Date'),
                    ], relation='product.category', string='Date Type', readonly=True)
     adv_issue = fields.Many2one('sale.advertising.issue','Advertising Issue')
+    issue_date = fields.Date(related='adv_issue.issue_date', string='Issue Date', store=True)
     medium = fields.Many2one('product.category', string='Medium', domain=_domain_medium, readonly=False)
     ad_class = fields.Many2one('product.category', 'Advertising Class')
-    deadline_offset = fields.Integer(related='ad_class.deadline_offset', string='Offset Deadline')
+    deadline_offset = fields.Integer(related='ad_class.deadline_offset', string='Offset Deadline', store=True)
     product_template_id = fields.Many2one('product.template', string='Generic Product', domain=[('sale_ok', '=', True)],
                                  change_default=True, ondelete='restrict')
     page_reference = fields.Char('Reference of the Page', size=32)
