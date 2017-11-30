@@ -577,7 +577,7 @@ class SaleOrderLine(models.Model):
             price = 0
             issues_count = 0
             for adv_issue in adv_issues:
-                if adv_issue.parent_id.id in self.title_ids.ids or adv_issue.parent_id.id == self.title:
+                if adv_issue.parent_id.id in self.title_ids.ids or adv_issue.parent_id.id == self.title.id:
                     value = {}
                     if adv_issue.product_attribute_value_id:
                         pav = adv_issue.product_attribute_value_id.id
@@ -605,8 +605,9 @@ class SaleOrderLine(models.Model):
                 })
             self.comb_list_price = price
         elif self.product_template_id and (self.adv_issue or len(self.adv_issue_ids) == 1):
-
-                if self.adv_issue.parent_id.id in self.title_ids.ids or self.adv_issue.parent_id.id == self.title:
+                if self.adv_issue_ids and len(self.adv_issue_ids) == 1:
+                    self.adv_issue = self.adv_issue_ids.id
+                if self.adv_issue.parent_id.id == self.title.id:
                     if self.adv_issue.product_attribute_value_id:
                         pav = self.adv_issue.product_attribute_value_id.id
                     else:
