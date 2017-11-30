@@ -35,20 +35,35 @@ class SaleOrder(models.Model):
         Compute the total amounts of the SO.
         """
         super(SaleOrder, self)._amount_all()
-        ad = self.filtered("advertising")
-        for order in ad:
-            amount_untaxed = max_cdiscount = 0.0
+        for order in self.filtered('advertising'):
+            amount_untaxed = amount_tax = max_cdiscount = 0.0
             cdiscount = []
-
             for line in order.order_line:
                 amount_untaxed += line.price_subtotal
                 cdiscount.append(line.computed_discount)
-            if cdiscount:
-                max_cdiscount = max(cdiscount)
-            if order.company_id.verify_order_setting < amount_untaxed or order.company_id.verify_discount_setting < max_cdiscount:
-                ver_tr_exc = True
-            else: ver_tr_exc = False
+                if cdiscount:
+                    max_cdiscount = max(cdiscount)
+                if order.company_id.tax_calculation_rounding_method == 'round_globally':
+                    if not line.multi_line:
+                        price = line.acual_unit_price * (1 - (line.discount or 0.0) / 100.0)
+                        taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty,
+                                                        product=line.product_id, partner=order.partner_shipping_id)
+                        amount_tax += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
+                    else:
+                        price = line.subtotal_before_agency_disc * (1 - (line.discount or 0.0) / 100.0)
+                        taxes = line.tax_id.compute_all(price, line.order_id.currency_id, 1,
+                                                        product=line.product_id, partner=order.partner_shipping_id)
+                        amount_tax += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
+                else:
+                    amount_tax += line.price_tax
+                if order.company_id.verify_order_setting < amount_untaxed or order.company_id.verify_discount_setting < max_cdiscount:
+                    ver_tr_exc = True
+                else:
+                    ver_tr_exc = False
             order.update({
+                'amount_untaxed': order.pricelist_id.currency_id.round(amount_untaxed),
+                'amount_tax': order.pricelist_id.currency_id.round(amount_tax),
+                'amount_total': amount_untaxed + amount_tax,
                 'ver_tr_exc': ver_tr_exc,
             })
 
@@ -270,15 +285,15 @@ class AdvertisingIssue(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    @api.depends('product_uom_qty', 'discount', 'price_unit', 'tax_id')
+    @api.depends('product_uom_qty', 'discount', 'comb_list_price', 'actual_unit_price', 'price_unit', 'tax_id')
+    @api.multi
     def _compute_amount(self):
         """
         Compute the amounts of the SO line.
         """
 #        import pdb; pdb.set_trace()
-        a = self.filtered("advertising")
-        resa = {}
-        for line in a:
+        super(SaleOrderLine, self)._compute_amount()
+        for line in self.filtered('advertising'):
             comp_discount = 0.0
             price_unit = 0.0
             if not line.multi_line:
@@ -324,18 +339,15 @@ class SaleOrderLine(models.Model):
                     'subtotal_before_agency_disc': line.subtotal_before_agency_disc,
                     'discount_dummy': line.discount,
                 })
-            resa.update({'line': line})
-        resall = super(SaleOrderLine, self)._compute_amount() or {}
-        res = resall.update(resa)
-        return res
+        return True
 
     @api.depends('issue_product_ids.price')
+    @api.multi
     def _multi_price(self):
         """
         Compute the combined price in the multi_line.
         """
-        a = self.filtered("advertising")
-        for order_line in a:
+        for order_line in self.filtered('advertising'):
             if order_line.issue_product_ids:
                 price_tot = 0.0
                 count = 0
@@ -399,8 +411,8 @@ class SaleOrderLine(models.Model):
     comb_list_price = fields.Monetary(compute='_multi_price', string='Combined_List Price', default=0.0, store=True,
                                 digits=dp.get_precision('Actual Unit Price'))
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', readonly=True)
-    computed_discount = fields.Monetary(compute='_compute_amount', string='Discount (%)', digits=dp.get_precision('Account'))
-    subtotal_before_agency_disc = fields.Monetary(compute='_compute_amount', string='Subtotal before Commission', digits=dp.get_precision('Account'))
+    computed_discount = fields.Monetary(compute='_compute_amount', string='Discount (%)', digits=dp.get_precision('Account'), store="True")
+    subtotal_before_agency_disc = fields.Monetary(compute='_compute_amount', string='Subtotal before Commission', digits=dp.get_precision('Account'), store="True")
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
     multi_line = fields.Boolean(string='Multi Line')
 
