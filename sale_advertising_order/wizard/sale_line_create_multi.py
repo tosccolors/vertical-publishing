@@ -97,7 +97,7 @@ class sale_order_line_create_multi_lines(models.TransientModel):
 
                 for ad_iss in ol.issue_product_ids:
                     ad_issue = self.env['sale.advertising.issue'].search([('id', '=', ad_iss.adv_issue_id.id)])
-                    res = {'title': ad_issue.parent_id.id,'adv_issue': ad_issue.id, 'title_ids': False, 'product_id': ad_iss.product_id.id,
+                    res = {'title': ad_issue.parent_id.id,'adv_issue': ad_issue.id, 'title_ids': False, 'product_id': ad_iss.product_id.id, 'name': ad_iss.product_id.name,
                            'price_unit': ad_iss.price_unit,'issue_product_ids': False, 'actual_unit_price': ol.subtotal_before_agency_disc / ol.multi_line_number,
                            'order_id': ol.order_id.id or False, 'comb_list_price': 0.0, 'multi_line_number': 1, 'multi_line': False
                            }
