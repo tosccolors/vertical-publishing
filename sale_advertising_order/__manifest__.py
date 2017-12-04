@@ -33,7 +33,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
     'website': 'http://www.magnus.nl',
     'depends': [
                 'sale_crm', 'sale_operating_unit',
-                'product_variant_template_categ_id'
+                'product_variant_template_categ_id','project'
                 ],
     'data': [
              "data/sale_advertising_data.xml",
@@ -48,7 +48,11 @@ This module allows you to use both CRM and Sales Management to run your advertis
              "views/sale_advertising_view.xml",
              "views/crm_lead_view.xml",
              "views/crm_menu_view.xml",
+             "views/sale_dashboard_view.xml",
              ],
+    'qweb': [
+        "static/src/xml/sales_team_dashboard.xml",
+    ],
     'demo': ['demo/sale_advertising_demo.xml'],
     'installable': True
 }
