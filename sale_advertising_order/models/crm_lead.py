@@ -24,6 +24,7 @@
 from odoo import api, fields, models, _
 from odoo.tools.safe_eval import safe_eval
 from odoo.tools import email_re, email_split
+from datetime import datetime, timedelta, date
 
 
 class Lead(models.Model):
@@ -296,6 +297,25 @@ class Lead(models.Model):
                    }
 
         return res
+
+    @api.model
+    def retrieve_sales_dashboard(self):
+        result = super(Lead, self).retrieve_sales_dashboard()
+        tasks = self.env['project.task'].search([('user_id', '=', self._uid)])
+        result['task'] = {
+            'today' :0,
+            'next_7_days' :0,
+        }
+        for task in tasks:
+            if task.date_assign and task.date_assign:
+                date_assign = fields.Date.from_string(task.date_assign)
+                if date_assign == date.today():
+                    result['task']['today'] += 1
+                if task.date_deadline:
+                    date_deadline = fields.Date.from_string(task.date_deadline)
+                    if date.today() <= date_deadline <= date.today() + timedelta(days=7):
+                        result['task']['next_7_days'] += 1
+        return result
 
 
 
