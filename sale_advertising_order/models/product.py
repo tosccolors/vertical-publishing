@@ -19,6 +19,7 @@
 ##############################################################################
 
 from odoo import api, fields, models
+import odoo.addons.decimal_precision as dp
 
 
 class productCategory(models.Model):
@@ -61,6 +62,6 @@ class productTemplate(models.Model):
 
     height = fields.Integer('Height', help="Height advertising format in mm")
     width = fields.Integer('Width', help="Width advertising format in mm")
-    booklet_surface_area = fields.Integer('Booklet Surface Area', help="Page surface booklet (newspaper) format in cm2")
+    booklet_surface_area = fields.Float('Booklet Surface Area', help="Page surface booklet (newspaper) format in cm2",digits=dp.get_precision('Product Unit of Measure'))
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
