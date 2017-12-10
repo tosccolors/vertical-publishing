@@ -8,6 +8,25 @@
             <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_manager')),]"/>
             <field name="users" eval="[(4, ref('base.user_root'))]"/>
         </record>
+
+        <record id="group_advertising_sales_user" model="res.groups">
+            <field name="name">Advertising Sales User</field>
+            <field name="category_id" ref="base.module_category_sales_management"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+        </record>
+
+        <record id="group_regular_sales_user" model="res.groups">
+            <field name="name">Regular Sales User</field>
+            <field name="category_id" ref="base.module_category_sales_management"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+        </record>
+
+        <record model="ir.ui.menu" id="sales_team.menu_base_partner">
+            <field name="groups_id" eval="[(6,0,[ref('group_regular_sales_user'),ref('group_advertising_sales_user')])]"/>
+        </record>
+        <record model="ir.ui.menu" id="menu_advsales">
+            <field name="groups_id" eval="[(6,0,[ref('group_advertising_sales_user')])]"/>
+        </record>
         <!--record id="sales_team.group_sale_salesman" model="res.groups">
             <field name="name">See Own Leads</field>
             <field name="category_id" ref="base.module_category_sales_management"/>
