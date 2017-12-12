@@ -6,14 +6,6 @@
             Menu: Advertising Sales
         -->
 
-        <!--menuitem id="menu_base_advsales" name="Advertising Sales"
-                  groups="sales_team.group_sale_salesman,sales_team.group_sale_manager" sequence="7"/-->
-
-        <!--menuitem name="Sales" id="sales_team.menu_base_partner" groups="sale_advertising_order.group_advertising_sales_user,sale_advertising_order.group_regular_sales_user" sequence="6"/>
-
-        <menuitem id="menu_advsales" name="Advertising Sales" parent="sales_team.menu_base_partner"
-                  groups="sale_advertising_order.group_advertising_sales_user"
-                  sequence="1"/-->
 
         <menuitem id="menu_partner_form1" parent="menu_advsales"
                   action="action_partner_form_crm" sequence="2"/>
@@ -1089,8 +1081,8 @@
 			<field name="view_id" ref="sale_advertising_proof_tree"/>
 		</record>
 
-		<!--menuitem name="Advertising Proof" id="menu_sale_advertising_proof"
-				  parent="menu_advsales" action="action_sale_advertising_proof"/-->
+		<menuitem name="Advertising Proof" id="menu_sale_advertising_proof"
+				  parent="menu_advsales" action="action_sale_advertising_proof" groups="base.group_no_one"/>
 
         <!--
             Menus: Inherited:
