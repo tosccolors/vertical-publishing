@@ -790,7 +790,8 @@ class SaleOrderLine(models.Model):
     @api.multi
     def _prepare_invoice_line(self, qty):
         res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
-        res['account_analytic_id'] = self.adv_issue.analytic_account_id.id
+        if self.advertising:
+            res['account_analytic_id'] = self.adv_issue.analytic_account_id.id
         return res
 
 
