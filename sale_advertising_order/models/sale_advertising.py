@@ -442,6 +442,8 @@ class SaleOrderLine(models.Model):
 
     @api.model
     def _domain_medium(self):
+        if not self.advertising:
+            return
         ads = self.env.ref('sale_advertising_order.advertising_category').id
         return [('parent_id', '=', ads)]
 
@@ -505,7 +507,7 @@ class SaleOrderLine(models.Model):
     @api.onchange('medium')
     def onchange_medium(self):
         vals, data, result = {}, {}, {}
-        if self.medium:
+        if self.medium and self.advertising:
             child_id = [x.id for x in self.medium.child_id]
             if len(child_id) == 1:
                 vals['ad_class'] = child_id[0]
@@ -524,7 +526,7 @@ class SaleOrderLine(models.Model):
     def onchange_ad_class(self):
         vals, data, result = {}, {}, {}
 
-        if self.ad_class:
+        if self.ad_class and self.advertising:
             product_ids = self.env['product.template'].search([('categ_id', '=', self.ad_class.id)])
             if product_ids:
                 data['product_template_id'] = [('categ_id', '=', self.ad_class.id)]
@@ -532,13 +534,12 @@ class SaleOrderLine(models.Model):
                     vals['product_template_id'] = product_ids[0]
                 else:
                     vals['product_template_id'] = False
-
             date_type = self.ad_class.date_type
             if date_type:
                 vals['date_type'] = date_type
             else: result = {'title':_('Warning'),
                                  'message':_('The Ad Class has no Date Type. You have to define one')}
-        else:
+        elif self.advertising:
             vals['product_template_id'] = False
             vals['date_type'] = False
         return {'value': vals, 'domain' : data, 'warning': result}
@@ -546,9 +547,8 @@ class SaleOrderLine(models.Model):
     @api.onchange('title')
     def title_oc(self):
         data, vals = {}, {}
-        if self.title:
+        if self.title and self.advertising:
             adissue_ids = self.title.child_ids.ids
-
             if len(adissue_ids) == 1:
                 vals['adv_issue'] = adissue_ids[0]
                 vals['adv_issue_ids'] = [(6, 0, [])]
