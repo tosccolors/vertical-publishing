@@ -528,7 +528,8 @@ class SaleOrderLine(models.Model):
 
     @api.onchange('product_template_id', 'product_uom_qty')
     def titles_issues_products_price(self):
-        data, vals = {}, {}
+        if not self.advertising:
+            return
         if self.product_template_id and self.adv_issue_ids and len(self.adv_issue_ids) > 1:
             self.product_uom = self.product_template_id.uom_id
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', self.adv_issue_ids.ids)])
@@ -650,7 +651,7 @@ class SaleOrderLine(models.Model):
                 'comb_list_price': False,
                 'multi_line': False,
             })
-        return {'value': vals, 'domain': data}
+        return True
 
     @api.onchange('date_type')
     def onchange_date_type(self):
