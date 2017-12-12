@@ -54,7 +54,7 @@ class productCategory(models.Model):
             ('online', 'Online'),
             ('issue_date', 'Issue Date'),
         ], 'Date Type Advertising products')
-    deadline_offset = fields.Integer('Days offset from Issue Deadline', default=0)
+    deadline_offset = fields.Integer('Hours offset from Issue Deadline', default=0)
 
 
 class productTemplate(models.Model):
