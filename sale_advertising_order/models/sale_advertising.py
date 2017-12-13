@@ -297,6 +297,7 @@ class SaleOrderLine(models.Model):
         for line in self.filtered('advertising'):
             comp_discount = line.computed_discount or 0.0
             price_unit = line.price_unit or 0.0
+            unit_price = line.actual_unit_price or 0.0
             qty = line.product_uom_qty or 0.0
             if line.order_id.partner_id.agency_discount:
                 discount = line.order_id.partner_id.agency_discount
@@ -327,20 +328,18 @@ class SaleOrderLine(models.Model):
                 taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id,
                                                 partner=line.order_id.partner_id)
                 line.update({
-#                    'price_unit': price_unit,
-#                    'actual_unit_price': unit_price,
+                    'price_unit': price_unit,
+                    'actual_unit_price': unit_price,
                     'price_tax': taxes['total_included'] - taxes['total_excluded'],
                     'price_total': taxes['total_included'],
                     'price_subtotal': taxes['total_excluded'],
-#                    'computed_discount': comp_discount,
-#                    'subtotal_before_agency_disc': subtotal_bad,
-#                    'discount': discount,
+                    'computed_discount': comp_discount,
+                    'subtotal_before_agency_disc': subtotal_bad,
+                    'discount': discount,
                 })
             else:
-                price_unit = unit_price = 0.0
                 clp = line.comb_list_price
-                comp_discount = 0.0
-                subtotal_bad = clp
+                subtotal_bad = clp * (1 - comp_discount / 100.0)
                 price = subtotal_bad * (1 - (discount or 0) / 100.0)
                 taxes = line.tax_id.compute_all(price, line.order_id.currency_id, quantity=1,
                                                 product=line.product_template_id, partner=line.order_id.partner_id)
@@ -349,11 +348,11 @@ class SaleOrderLine(models.Model):
                     'price_tax': taxes['total_included'] - taxes['total_excluded'],
                     'price_total': taxes['total_included'],
                     'price_subtotal': taxes['total_excluded'],
-#                    'actual_unit_price': unit_price,
+                    'actual_unit_price': unit_price,
 #                    'computed_discount': comp_discount,
-#                    'price_unit': price_unit,
-#                    'subtotal_before_agency_disc': subtotal_bad,
-#                    'discount': discount,
+                    'price_unit': price_unit,
+                    'subtotal_before_agency_disc': subtotal_bad,
+                    'discount': discount,
                 })
         return True
 
