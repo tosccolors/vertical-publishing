@@ -396,7 +396,7 @@
                                     <field name="fiscal_position_id" options="{'no_create': True}"/>
                                     <field name="invoice_status"
                                         attrs="{'invisible': [('state', 'not in', ('sale','done'))]}"/>
-                                    <field name="advertising" invisible="1"/>
+                                    <field name="advertising" invisible="0"/>
                                 </group>
                                 <group string="Reporting" name="technical" groups="base.group_no_one">
                                     <field groups="base.group_no_one" name="origin"/>
