@@ -49,38 +49,24 @@ class Company(models.Model):
             for case in self:
                 treshold = case.verify_order_setting
                 maxdiscount = case.verify_discount_setting
-
                 self._cr.execute("""
-                            UPDATE sale_order
-                            SET ver_tr_exc=True
-                            WHERE (amount_untaxed > %s)
-                            AND company_id= %s
-                            AND state!='done';
-
-                            UPDATE sale_order
-                            SET ver_tr_exc=False
-                            WHERE amount_untaxed <= %s
-                            AND company_id= %s
-                            AND state!='done'
-                            """, (treshold, case.id,  treshold, case.id ))
-
-                # TODO: FIXME
-                # Supporting details for 'Max discount' is missing...
-                # self._cr.execute("""
-                #             UPDATE sale_order
-                #             SET ver_tr_exc=True
-                #             WHERE (amount_untaxed > %s
-                #             OR max_discount > %s)
-                #             AND company_id= %s
-                #             AND state!='done';
-                #
-                #             UPDATE sale_order
-                #             SET ver_tr_exc=False
-                #             WHERE amount_untaxed <= %s
-                #             AND company_id= %s
-                #             AND max_discount <= %s
-                #             AND state!='done'
-                #             """, (treshold, maxdiscount, case.id,  treshold, case.id, maxdiscount ))
+                         UPDATE sale_order
+                         SET ver_tr_exc=True
+                         WHERE (amount_untaxed > %s
+                         OR max_discount > %s)
+                         AND company_id= %s
+                         AND advertising=True
+                         AND state!='done';
+            
+                         UPDATE sale_order
+                         SET ver_tr_exc=False
+                         WHERE amount_untaxed <= %s
+                         AND company_id= %s
+                         AND advertising=True
+                         AND max_discount <= %s
+                         AND state!='done'
+                         """, (treshold, maxdiscount, case.id,  treshold, case.id, maxdiscount )
+                )
 
 
         return res
