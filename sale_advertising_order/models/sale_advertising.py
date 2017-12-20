@@ -57,7 +57,7 @@ class SaleOrder(models.Model):
                         amount_tax += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
                 else:
                     amount_tax += line.price_tax
-                if order.company_id.verify_order_setting < amount_untaxed or order.company_id.verify_discount_setting < max_cdiscount:
+                if order.company_id.verify_order_setting != -1 and order.company_id.verify_order_setting < amount_untaxed or order.company_id.verify_discount_setting < max_cdiscount:
                     ver_tr_exc = True
 
             order.update({
@@ -65,6 +65,7 @@ class SaleOrder(models.Model):
                 'amount_tax': order.pricelist_id.currency_id.round(amount_tax),
                 'amount_total': amount_untaxed + amount_tax,
                 'ver_tr_exc': ver_tr_exc,
+                'max_discount': max_cdiscount,
             })
 
 
@@ -93,6 +94,7 @@ class SaleOrder(models.Model):
     date_to = fields.Date(compute=lambda *a, **k: {}, string="Date to")
     ver_tr_exc = fields.Boolean(string='Verification Treshold', store=True, readonly=True, compute='_amount_all', track_visibility='always')
     advertising = fields.Boolean('Advertising', default=False)
+    max_discount = fields.Integer(compute='_amount_all', track_visibility='always', string="Maximum Discount")
 
 
     # overridden:

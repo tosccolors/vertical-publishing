@@ -27,7 +27,6 @@ class Partner(models.Model):
 
     agency_discount = fields.Float('Agency Discount (%)', digits=(16, 2), default=0.0)
     is_ad_agency = fields.Boolean('Agency', default=False)
-    coc_nr = fields.Char('Chamber of Commerce id', size=64, help="Customer CoC number" )
 
 
 
@@ -42,31 +41,47 @@ class Company(models.Model):
     def write(self, vals):
         res = super(Company, self).write(vals)
 
-        # -- deep
-        # Functionality for updating "Verification Treshold" in SO are split b/w Company & Sale Object
 
         if 'verify_order_setting' in vals or 'verify_discount_setting' in vals:
             for case in self:
                 treshold = case.verify_order_setting
                 maxdiscount = case.verify_discount_setting
-                self._cr.execute("""
-                         UPDATE sale_order
-                         SET ver_tr_exc=True
-                         WHERE (amount_untaxed > %s
-                         OR max_discount > %s)
-                         AND company_id= %s
-                         AND advertising=True
-                         AND state!='done';
-            
-                         UPDATE sale_order
-                         SET ver_tr_exc=False
-                         WHERE amount_untaxed <= %s
-                         AND company_id= %s
-                         AND advertising=True
-                         AND max_discount <= %s
-                         AND state!='done'
-                         """, (treshold, maxdiscount, case.id,  treshold, case.id, maxdiscount )
-                )
+                if treshold == -1:
+                    self._cr.execute("""
+                                 UPDATE sale_order
+                                 SET ver_tr_exc=True
+                                 WHERE max_discount > %s
+                                 AND company_id= %s
+                                 AND advertising=True
+                                 AND state!='done';
+
+                                 UPDATE sale_order
+                                 SET ver_tr_exc=False
+                                 WHERE company_id= %s
+                                 AND advertising=True
+                                 AND max_discount <= %s
+                                 AND state!='done'
+                                 """, (maxdiscount, case.id, case.id, maxdiscount)
+                    )
+                else:
+                    self._cr.execute("""
+                                 UPDATE sale_order
+                                 SET ver_tr_exc=True
+                                 WHERE (amount_untaxed > %s
+                                 OR max_discount > %s)
+                                 AND company_id= %s
+                                 AND advertising=True
+                                 AND state!='done';
+                    
+                                 UPDATE sale_order
+                                 SET ver_tr_exc=False
+                                 WHERE amount_untaxed <= %s
+                                 AND company_id= %s
+                                 AND advertising=True
+                                 AND max_discount <= %s
+                                 AND state!='done'
+                                 """, (treshold, maxdiscount, case.id,  treshold, case.id, maxdiscount )
+                    )
 
 
         return res
