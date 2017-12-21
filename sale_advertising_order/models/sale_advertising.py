@@ -29,7 +29,7 @@ import datetime
 class SaleOrder(models.Model):
     _inherit = ["sale.order"]
 
-    @api.depends('order_line.price_total', 'company_id')
+    @api.depends('order_line.price_total', 'order_line.computed_discount', 'company_id')
     def _amount_all(self):
         """
         Compute the total amounts of the SO.
@@ -72,7 +72,7 @@ class SaleOrder(models.Model):
     state = fields.Selection([
         ('draft', 'Quotation'),
         ('submitted', 'Submitted for Approval'),
-        ('approved1', 'Approved by Sales Mgr'),
+        ('approved1', 'Approved by Sales Support'),
         ('approved2', 'Approved by Traffic'),
         ('sent', 'Quotation Sent'),
         ('sale', 'Sale Order'),
@@ -94,7 +94,7 @@ class SaleOrder(models.Model):
     date_to = fields.Date(compute=lambda *a, **k: {}, string="Date to")
     ver_tr_exc = fields.Boolean(string='Verification Treshold', store=True, readonly=True, compute='_amount_all', track_visibility='always')
     advertising = fields.Boolean('Advertising', default=False)
-    max_discount = fields.Integer(compute='_amount_all', track_visibility='always', string="Maximum Discount")
+    max_discount = fields.Integer(compute='_amount_all', track_visibility='always', store=True, string="Maximum Discount")
 
 
     # overridden:

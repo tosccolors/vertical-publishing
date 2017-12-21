@@ -46,7 +46,7 @@ class Company(models.Model):
             for case in self:
                 treshold = case.verify_order_setting
                 maxdiscount = case.verify_discount_setting
-                if treshold == -1:
+                if treshold == -1.00:
                     self._cr.execute("""
                                  UPDATE sale_order
                                  SET ver_tr_exc=True
