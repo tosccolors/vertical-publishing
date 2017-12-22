@@ -39,6 +39,9 @@
 			<field name="name">Title Pricelist</field>
             <field name="type">view</field>
 		</record>
+		<record id="dummy_paginasoort_analytic_account" model="account.analytic.account">
+			<field name="name">Paginasoorten</field>
+		</record>
 
 	</data>
 </odoo>

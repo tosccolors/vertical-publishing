@@ -88,7 +88,7 @@
                         <group>
                             <field name="published_customer"
 							   context="{'tree_view_ref': 'nsm_crm.view_partner_tree_nsm_crm'}"
-							   domain="[('is_ad_agency','!=', True),('is_company','=', True),('customer','=', True)]"
+							   domain="[('is_ad_agency','!=', True),('parent_id','=', False),('customer','=', True)]"
 							   attrs="{'readonly':[('state','not in','draft')]}" required="True"/>
 
                             <field name="partner_id" string="Payer" domain="[('customer','=',True), ('is_company','=', True)]"
@@ -108,7 +108,7 @@
                             <field name="related_project_id"
                                    attrs="{'readonly': ['|',('project_id','!=',False),('invoice_count','!=',0),('state','=','sale')],'invisible':[('state','!=','sale')]}"
                                    context="{'default_partner_id':partner_invoice_id, 'default_name':name}"
-                                   groups="analytic.group_analytic_accounting"/>
+                                   groups="analytic.group_no_one"/>
 
                         </group>
                         <group>
@@ -159,11 +159,9 @@
                                             </field>
                                             <field name="product_template_id"
                                                 context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
-                                                attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])],'invisible': [('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)],
-                                                'required': [('medium','=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
-                                                domain="[('categ_id','=', ad_class)]"
-                                                options="{'no_create': True, 'no_create_edit': True}"/>
-                                            <field name="product_id" invisible="1"
+                                                attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}" domain="[('categ_id','=', ad_class)]"
+                                                options="{'no_create': True, 'no_create_edit': True}" required="1"/>
+                                            <field name="product_id" invisible="0"
                                                 context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                                 attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
                                                 domain="['|','&amp;',('categ_id','=', ad_class),('attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id)]"
@@ -196,6 +194,9 @@
                                             <field name="adv_issue" domain="[('parent_id','=', title)]"
                                                    options="{'no_create': True, 'no_create_edit': True}"
                                                    attrs="{'invisible': [('adv_issue','=', False)]}"/>
+                                            <field name="issue_date" readonly="1"
+                                                   attrs="{'invisible': [('adv_issue','=', False)]}"/>
+
                                         </group>
                                         <group>
                                             <field name="tax_id" widget="many2many_tags"
@@ -204,9 +205,11 @@
                                                 attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
                                             <field name="price_unit" readonly="True" attrs="{'invisible': [('multi_line','!=', False)]}"/>
                                             <field name="comb_list_price" readonly="True" attrs="{'invisible': [('multi_line','=', False)]}"/>
-                                            <field name="actual_unit_price" attrs="{'invisible': [('multi_line','!=', False)]}"/>
+                                            <!--field name="actual_unit_price" attrs="{'invisible': [('multi_line','!=', False)]}"/-->
+                                            <field name="actual_unit_price" />
                                             <label for="computed_discount" groups="sale.group_discount_per_so_line"/>
                                                 <div name="computed_discount" groups="sale.group_discount_per_so_line">
+                                                    <!--field name="computed_discount" class="oe_inline" attrs="{'readonly': [('multi_line', '=', False)]}"/-->
                                                     <field name="computed_discount" class="oe_inline"/> %%
                                                 </div>
                                             <field name="subtotal_before_agency_disc" readonly="False"/>
@@ -218,14 +221,14 @@
                                             <field name="price_subtotal" readonly="True" />
                                             <field name="date_type" invisible="True"/>
                                             <label for="customer_lead" groups="sale.group_no_one"/>
-                                            <div>
+                                            <div groups="sale.group_no_one">
                                                 <field name="customer_lead" class="oe_inline" groups="sale.group_no_one"/> days
                                             </div>
-                                            <label for="analytic_tag_ids"/>
+                                            <label for="analytic_tag_ids" string="Page Category"/>
                                             <div>
-                                                <field name="analytic_tag_ids" widget="many2many_tags"
-                                                       domain="[('id','in','sale'),('company_id','=',parent.company_id)]"/>
+                                                <field name="analytic_tag_ids" string="Page Category" widget="many2many_tags"/>
                                             </div>
+                                            <field name="advertising" invisible="0"/>
                                         </group>
                                     </group>
                                     <group>
@@ -298,7 +301,7 @@
                                 <tree string="Sales Order Lines"  decoration-info="invoice_status=='to invoice'">
                                     <field name="sequence" widget="handle"/>
                                     <field name="title" />
-                                    <field name="adv_issue" />
+                                    <field name="issue_date" />
                                     <field name="ad_class" required="1"/>
                                     <field name="product_id"
                                         attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
