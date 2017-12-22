@@ -228,7 +228,7 @@
                                             <div>
                                                 <field name="analytic_tag_ids" string="Page Category" widget="many2many_tags"/>
                                             </div>
-                                            <field name="advertising" invisible="0"/>
+                                            <!--field name="advertising" invisible="0"/-->
                                         </group>
                                     </group>
                                     <group>

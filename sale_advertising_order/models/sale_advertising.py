@@ -57,7 +57,7 @@ class SaleOrder(models.Model):
                         amount_tax += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
                 else:
                     amount_tax += line.price_tax
-                if order.company_id.verify_order_setting != -1 and order.company_id.verify_order_setting < amount_untaxed or order.company_id.verify_discount_setting < max_cdiscount:
+                if order.company_id.verify_order_setting != -1.00 and order.company_id.verify_order_setting < amount_untaxed or order.company_id.verify_discount_setting < max_cdiscount:
                     ver_tr_exc = True
 
             order.update({
@@ -288,7 +288,7 @@ class AdvertisingIssue(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    @api.depends('product_uom_qty', 'order_id.partner_id', 'subtotal_before_agency_disc', 'price_unit', 'tax_id')
+    @api.depends('product_uom_qty', 'order_id.partner_id', 'subtotal_before_agency_disc', 'discount', 'price_unit', 'tax_id')
     @api.multi
     def _compute_amount(self):
         """
@@ -377,13 +377,10 @@ class SaleOrderLine(models.Model):
 
     @api.model
     def _domain_medium(self):
-        ads = self.env.ref('sale_advertising_order.advertising_category').id
-        return [('parent_id', '=', ads)]
+        return [('parent_id', '=', self.env.ref('sale_advertising_order.advertising_category').id)]
 
     @api.model
     def _domain_analytic_tags(self):
-#        if not self.advertising:
-#            return
         if self.title and self.medium != self.env.ref('sale_advertising_order.newspaper_advertising_category'):
             tags = self.title.analytic_account_id
         else:
@@ -540,7 +537,7 @@ class SaleOrderLine(models.Model):
         elif self.title_ids and not self.issue_product_ids and not self.adv_issue_ids:
             self.product_template_id = False
             self.product_id = False
-            self.product_uom_qty = 1
+#            self.product_uom_qty = 1
 
         else:
             self.adv_issue = False
@@ -663,10 +660,10 @@ class SaleOrderLine(models.Model):
         if not self.advertising:
             return result
         if not self.multi_line:
-            self.actual_unit_price = self.price_unit
-            self.subtotal_before_agency_disc = self.actual_unit_price * self.product_uom_qty
+            self.subtotal_before_agency_disc = self.actual_unit_price = self.price_unit
         else:
             self.actual_unit_price = self.price_unit = 0.0
+        self.product_uom_qty = 1
         return result
 
     @api.onchange('date_type')
