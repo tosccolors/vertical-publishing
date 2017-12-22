@@ -91,8 +91,7 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                     except:
                         pass
                     lines.append(mol_rec.id)
-
-            self._cr.execute("delete from sale_order_line where id = %s"%(ol.id))
+                sol_obj.search([('id','=', ol.id)]).unlink()
 
         return
 
