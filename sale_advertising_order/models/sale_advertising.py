@@ -258,7 +258,7 @@ class SaleOrder(models.Model):
                     line.deadline_check()
                     line.page_qty_check_create()
             if not olines == []:
-                list =self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
+                list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
                 self._cr.commit()
                 newlines = self.env['sale.order.line'].browse(list)
                 for newline in newlines:
@@ -864,6 +864,7 @@ class SaleOrderLine(models.Model):
             lines = self.env['sale.order.line'].browse(newlines)
             for line in lines:
                 line.page_qty_check_create()
+            return
         return result
 
     '''@api.multi
@@ -878,6 +879,13 @@ class SaleOrderLine(models.Model):
             if not 'multi_line' in values and ('adv_issue' in values or 'ad_class' in values or 'product_id' in values or 'product_uom_qty' in values):
                     line.page_qty_check_update()
         return super(SaleOrderLine, self).write(values)'''
+
+    @api.multi
+    def unlink(self):
+        res = self.filtered(lambda x: x.env.context.get('multi') == True)
+        if len(res) > 0:
+            models.Model.unlink(res)
+        return super(SaleOrderLine, self - res).unlink()
 
     @api.multi
     def deadline_check(self):
@@ -897,7 +905,8 @@ class SaleOrderLine(models.Model):
             return
         user = self.env['res.users'].browse(self.env.uid)
         lspace = self.product_uom_qty * self.product_template_id.space
-        lpage = self.product_template_id.page_id.id
+        lpage = self.product_template_id.page_id
+        lpage_id = lpage.id
         if lspace > self.adv_issue.calc_page_space(lpage) and not user.has_group('sale_advertising_order.group_no_availability_check'):
             raise UserError(_('There is not enough availability for this placement on %s in %s.') % (lpage.name, self.adv_issue.name))
         else:
@@ -905,7 +914,7 @@ class SaleOrderLine(models.Model):
                 'adv_issue_id': self.adv_issue.id,
                 'name': 'Afboeking',
                 'order_line_id': self.id,
-                'page_id': lpage,
+                'page_id': lpage_id,
                 'available_qty': - int(lspace)
             }
             self.env['sale.advertising.available'].create(vals)

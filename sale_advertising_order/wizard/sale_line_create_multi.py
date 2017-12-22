@@ -32,34 +32,25 @@ class sale_order_line_create_multi_lines(models.TransientModel):
     @api.multi
     def create_multi_lines(self):
         context = self._context
-
         model = context.get('active_model', False)
         n = 0
         all_lines = []
         if model and model == 'sale.order':
             order_ids = context.get('active_ids', [])
             for so in self.env['sale.order'].search([('id','in', order_ids)]):
-                olines = so.order_line.filtered(lambda x: x.multi_line)
+                olines = so.order_line.filtered('multi_line')
                 if not olines: continue
-                all_lines.append(olines)
-                n += 1
+                for ol in olines:
+                    all_lines.append(ol.id)
+                    n += 1
             if n == 0:
                 raise UserError(_('There are no Sales Order Lines with Multi Lines in the selected Sales Orders.'))
             self.create_multi_from_order_lines(orderlines=all_lines)
 
         elif model and model == 'sale.order.line':
-            orders = []
             line_ids = context.get('active_ids', [])
-            for line in self.env['sale.order.line'].search([('id','in', line_ids)]):
-                orders.append(line.order_id.id)
-            for oid in orders:
-                lines = self.env['sale.order.line'].search([('order_id','=', oid),('id','in', line_ids),
-                                                                   ('multi_line','=', True)])
-                if not lines:
-                    continue
-                n += 1
-                all_lines.append(lines)
-            if n == 0:
+            all_lines = self.env['sale.order.line'].search([('id','in', line_ids),('multi_line','=', True)])
+            if not all_lines:
                 raise UserError(_('There are no Sales Order Lines with Multi Lines in the selection.'))
             self.create_multi_from_order_lines(orderlines=all_lines)
         return
@@ -105,8 +96,11 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                     mol_rec = sol_obj.create(vals)
 
                     lines.append(mol_rec.id)
-                self._cr.execute("delete from sale_order_line where id = %s" % (ol.id))
+
+                sol_obj.search([('id','=', ol.id)]).with_context(multi=True).unlink()
+
         return lines
+
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
