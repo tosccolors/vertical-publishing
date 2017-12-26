@@ -131,7 +131,7 @@
                                 <form string="Sales Order Lines">
                                     <group>
                                         <group>
-                                            <field name="medium" required="True"/>
+                                            <field name="medium" required="True" domain="[('parent_id','=', %(sale_advertising_order.advertising_category)d)]"/>
                                             <field name="ad_class" required="True"
                                                    domain="[('type','!=', 'view'), ('id','child_of', medium)]"
                                                    options="{'no_create': True, 'no_create_edit': True}"/>
@@ -147,7 +147,7 @@
                                                         <field name="name" string="Name"/>
                                                     </tree>
                                             </field>
-                                            <field name="deadline_offset" invisible="True" />
+                                            <field name="deadline" invisible="True" />
                                             <field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
                                                    domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
                                                                 '|',('deadline','&gt;=', datetime.datetime.now()),('deadline','=', False),('issue_date','&gt;=', datetime.datetime.now())]"
@@ -224,11 +224,11 @@
                                             <div groups="sale.group_no_one">
                                                 <field name="customer_lead" class="oe_inline" groups="sale.group_no_one"/> days
                                             </div>
+                                            <field name="tags_ad_class" invisible="0"/>
                                             <label for="analytic_tag_ids" string="Page Category"/>
                                             <div>
-                                                <field name="analytic_tag_ids" string="Page Category" widget="many2many_tags"/>
+                                                <field name="analytic_tag_ids" string="Page Category" widget="many2many_tags" domain="[('id','in', tags_ad_class)]"/>
                                             </div>
-                                            <!--field name="advertising" invisible="0"/-->
                                         </group>
                                     </group>
                                     <group>
@@ -268,9 +268,9 @@
                                             </tree>
                                         </field>
 
-                                        <group attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}">
-                                            <field name="ad_number" attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}"/>
-                                            <field name="page_reference" attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}"/>
+                                        <group name="ad_refs" attrs="{'invisible':[('date_type','in',['date','validity'])]}">
+                                            <field name="ad_number" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
+                                            <field name="page_reference" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
                                             <field name="url_to_material" widget="url"/>
                                         </group>
                                         <group attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}">
@@ -284,9 +284,6 @@
                                             <field name="layout_remark" colspan="2" nolabel="1"/>
                                         </group>
                                         <group>
-                                            <!--<label for="name"/>-->
-                                            <!--<field name="name"/>-->
-
                                             <separator string="Description" colspan="2"/>
                                             <field name="name" colspan="2" nolabel="1"/>
                                         </group>
@@ -396,8 +393,6 @@
                                     <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
                                     <field name="project_id" attrs="{'invisible':[('state','=','sale')]}"  invisible="[('published_customer','!=', False)]"
                                            context="{'default_partner_id':partner_invoice_id, 'default_name':name}" groups="analytic.group_analytic_accounting"/>
-
-
                                 </group>
                                 <group name="sale_pay" string="Invoicing">
                                     <field name="fiscal_position_id" options="{'no_create': True}"/>
@@ -412,6 +407,7 @@
 									<field name="source_id" groups="base.group_no_one"/>
 									<field name="opportunity_id" help="Log in the chatter from which opportunity the order originates" groups="base.group_no_one"/>
                                 </group>
+
                             </group>
                         </page>
                     </notebook>
@@ -952,7 +948,18 @@
                             <field name="deadline" string="Deadline"/>
 							<field name="default_note" string="Default Note" />
 							<field name="state" string="State" />
-						</group>
+                        </group>
+                            <field name="available_ids" string="Availability" >
+                                 <tree string="Availability">
+                                    <field name="name" string="Name"/>
+                                    <field name="page_id" string="Ad Class"/>
+                                    <field name="order_line_id" string="Ad Placement"/>
+                                    <field name="available_qty" string="Quantity"/>
+                                 </tree>
+                            </field>
+                        <group class="oe_subtotal_footer oe_right">
+                            <field name="amount_total" class="oe_subtotal_footer_separator"/>
+                        </group>
 					</sheet>
 				</form>
 			</field>
@@ -979,6 +986,7 @@
 			</field>
 		</record>
 
+        <!--view for search view "Titles" in Order Line -->
         <record id="advertising_issue_titles_tree" model="ir.ui.view" >
 			<field name="name">sale.advertising.issue.tree</field>
 			<field name="type">tree</field>
@@ -995,6 +1003,7 @@
 			</field>
 		</record>
 
+        <!--view for search view "Issues" in Order Line -->
         <record id="advertising_issue_ids_tree" model="ir.ui.view" >
 			<field name="name">sale.advertising.issue.tree</field>
 			<field name="type">tree</field>
@@ -1047,6 +1056,45 @@
 
 		<menuitem name="Advertising Issue" id="menu_sale_advertising_issue" parent="sales_team.menu_sale_config"
                   action="action_sale_advertising_issue" groups="sale_advertising_order.group_advertising_sales_user"/>
+
+        <!-- View for sale.advertising.page object -->
+
+		<record model="ir.ui.view" id="sale_advertising_page_form">
+			<field name="name">sale.advertising.page.form</field>
+			<field name="type">form</field>
+			<field name="model">sale.advertising.page</field>
+			<field name="arch" type="xml">
+				<form string="Advertising issue" >
+					<sheet>
+						<group >
+							<field name="name" string="Page Name"/>
+                        </group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="sale_advertising_page_tree" model="ir.ui.view" >
+			<field name="name">sale.advertising.page.tree</field>
+			<field name="type">tree</field>
+			<field name="model">sale.advertising.page</field>
+			<field name="arch" type="xml">
+				<tree string="Advertising Pages">
+						<field name="name" string="Page Name"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="action_sale_advertising_page">
+			<field name="name">Advertising Page</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">sale.advertising.page</field>
+			<field name="view_type">form</field>
+			<field name="view_id" ref="sale_advertising_page_tree"/>
+		</record>
+
+        <menuitem name="Advertising Pages" id="menu_sale_advertising_pages" parent="sales_team.menu_sale_config"
+                  action="action_sale_advertising_page" groups="sale_advertising_order.group_advertising_sales_user"/>
 
 <!-- View for sale.advertising.proof object -->
 		<record model="ir.ui.view" id="sale_advertising_proof_form">

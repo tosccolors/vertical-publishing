@@ -55,6 +55,7 @@ class productCategory(models.Model):
             ('issue_date', 'Issue Date'),
         ], 'Date Type Advertising products')
     deadline_offset = fields.Integer('Hours offset from Issue Deadline', default=0)
+    tag_ids = fields.Many2many('account.analytic.tag', 'product_category_tag_rel', 'categ_id', 'tag_id', string='Analytic Tags', copy=True)
 
 
 class productTemplate(models.Model):
@@ -62,6 +63,8 @@ class productTemplate(models.Model):
 
     height = fields.Integer('Height', help="Height advertising format in mm")
     width = fields.Integer('Width', help="Width advertising format in mm")
+    page_id = fields.Many2one('sale.advertising.page', string='Issue Page')
+    space = fields.Integer('Space', help="Space taken by ad")
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -23,7 +23,7 @@
 from odoo import api, fields, models, _
 import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
-import datetime
+from datetime import datetime, timedelta
 
 
 class SaleOrder(models.Model):
@@ -150,7 +150,7 @@ class SaleOrder(models.Model):
 
 
 
-    @api.multi
+    '''@api.multi
     def update_line_discount(self):
         self.ensure_one()
         discount = self.partner_id.agency_discount or 0.0
@@ -167,7 +167,7 @@ class SaleOrder(models.Model):
             vals['tax_id'] = [(6,0,tax)]
 
             line.write(vals)
-        return True
+        return True'''
 
     @api.multi
     def action_submit(self):
@@ -191,6 +191,15 @@ class SaleOrder(models.Model):
                       'traffic_appr_date': fields.Date.context_today(self)})
         return True
 
+    @api.multi
+    def action_confirm(self):
+        for order in self.filtered("advertising"):
+            order.order_line.deadline_check()
+            order.order_line.page_qty_check()
+
+        super(SaleOrder, self).action_confirm()
+        return True
+
     # --added deep
     @api.multi
     def action_refuse(self):
@@ -205,7 +214,7 @@ class SaleOrder(models.Model):
         return self.env['report'].get_action(self, 'sale.report_saleorder')
 
 
-    @api.multi
+    '''@api.multi
     def write(self, vals):
         res = super(SaleOrder, self).write(vals)
         if self.advertising:
@@ -218,72 +227,8 @@ class SaleOrder(models.Model):
         res = super(SaleOrder, self).create(vals)
         if self.advertising:
             res.update_line_discount()
-        return res
+        return res'''
 
-
-
-
-class AdvertisingIssue(models.Model):
-    _name = "sale.advertising.issue"
-    _inherits = {
-        'account.analytic.account': 'analytic_account_id',
-    }
-    _description="Sale Advertising Issue"
-
-    @api.model
-    def _get_attribute_domain(self):
-        id = self.env.ref('sale_advertising_order.attribute_title').id
-        return [('attribute_id', '=', id)]
-
-    @api.one
-    @api.depends('issue_date')
-    def _week_number(self):
-        """
-        Compute the week number of the issue.
-        """
-        for issue in self:
-            if self.issue_date:
-                wk = fields.Date.from_string(self.issue_date).isocalendar()[1]
-                issue.update({
-                    'issue_week_number': wk,
-                    'week_number_even': wk % 2 == 0
-                })
-
-
-    name = fields.Char('Name', size=64, required=True)
-    child_ids = fields.One2many('sale.advertising.issue', 'parent_id', 'Issues',)
-    parent_id = fields.Many2one('sale.advertising.issue', 'Title', index=True)
-    product_attribute_value_id = fields.Many2one('product.attribute.value', string='Variant Title',
-                                                 domain=_get_attribute_domain)
-    analytic_account_id = fields.Many2one('account.analytic.account', required=True,
-                                      string='Related Analytic Account', ondelete='restrict',
-                                      help='Analytic-related data of the issue')
-    issue_date = fields.Date('Issue Date')
-    issue_week_number = fields.Integer(string='Week Number', store=True, readonly=True, compute='_week_number' )
-    week_number_even = fields.Boolean(string='Even Week Number', store=True, readonly=True, compute='_week_number' )
-    deadline = fields.Datetime('Deadline', help='Closing Time for Sales')
-    medium = fields.Many2one('product.category','Medium', required=True)
-    state = fields.Selection([('open','Open'),('close','Close')], 'State', default='open')
-    default_note = fields.Text('Default Note')
-
-
-    @api.onchange('parent_id')
-    def onchange_parent_id(self):
-        domain = {}
-        self.medium = False
-        if self.parent_id:
-            if self.parent_id.medium.id == self.env.ref('sale_advertising_order.newspaper_advertising_category').id:
-                ads = self.env.ref('sale_advertising_order.title_pricelist_category').id
-                domain['medium'] = [('parent_id', '=', ads)]
-            else:
-                ads = [self.env.ref('sale_advertising_order.magazine_advertising_category').id]
-                ads.append(self.env.ref('sale_advertising_order.online_advertising_category').id)
-                domain['medium'] = [('id', 'in', ads)]
-
-        else:
-            ads = self.env.ref('sale_advertising_order.advertising_category').id
-            domain['medium'] = [('parent_id', '=', ads)]
-        return {'domain': domain }
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -375,21 +320,22 @@ class SaleOrderLine(models.Model):
                     'multi_line_number': count,
                 })
 
-    @api.model
-    def _domain_medium(self):
-        return [('parent_id', '=', self.env.ref('sale_advertising_order.advertising_category').id)]
-
-    @api.model
-    def _domain_analytic_tags(self):
-        if self.title and self.medium != self.env.ref('sale_advertising_order.newspaper_advertising_category'):
-            tags = self.title.analytic_account_id
-        else:
-            tags = self.env.ref('sale_advertising_order.dummy_paginasoort_analytic_account')
-        return [('id', 'in', tags.tag_ids.ids)]
+    @api.depends('adv_issue', 'ad_class')
+    @api.multi
+    def _compute_deadline(self):
+        """
+        Compute the deadline for this placement.
+        """
+        for line in self.filtered('advertising'):
+            if line.ad_class and line.adv_issue:
+                dt_deadline = fields.Datetime.from_string(line.adv_issue.deadline)
+                dt_offset = timedelta(hours=line.ad_class.deadline_offset)
+                line.deadline = fields.Datetime.to_string(dt_deadline - dt_offset)
 
 
     layout_remark = fields.Text('Layout Remark')
     title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)])
+    tags_ad_class = fields.Many2many(related='ad_class.tag_ids', relation='account.analytic.account')
     title_ids = fields.Many2many('sale.advertising.issue', 'sale_order_line_adv_issue_title_rel', 'order_line_id', 'adv_issue_id', 'Titles')
     adv_issue_ids = fields.Many2many('sale.advertising.issue','sale_order_line_adv_issue_rel', 'order_line_id', 'adv_issue_id',  'Advertising Issues')
     issue_product_ids = fields.One2many('sale.order.line.issues.products', 'order_line_id', 'Adv. Issues with Product Prices')
@@ -405,9 +351,9 @@ class SaleOrderLine(models.Model):
                    ], relation='product.category', string='Date Type', readonly=True)
     adv_issue = fields.Many2one('sale.advertising.issue','Advertising Issue')
     issue_date = fields.Date(related='adv_issue.issue_date', string='Issue Date', store=True)
-    medium = fields.Many2one('product.category', string='Medium', domain=_domain_medium)
+    medium = fields.Many2one('product.category', string='Medium')
     ad_class = fields.Many2one('product.category', 'Advertising Class')
-    deadline_offset = fields.Integer(related='ad_class.deadline_offset', string='Offset Deadline', store=True)
+    deadline = fields.Datetime(compute=_compute_deadline, string='Deadline', store=True)
     product_template_id = fields.Many2one('product.template', string='Generic Product', domain=[('sale_ok', '=', True)],
                                  change_default=True, ondelete='restrict')
     page_reference = fields.Char('Reference of the Page', size=32)
@@ -438,7 +384,7 @@ class SaleOrderLine(models.Model):
     subtotal_before_agency_disc = fields.Monetary(string='Subtotal before Commission', digits=dp.get_precision('Account'))
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
     multi_line = fields.Boolean(string='Multi Line')
-    analytic_tag_ids = fields.Many2many('account.analytic.tag', string='Analytic Tags', domain=_domain_analytic_tags)
+#    analytic_tag_ids = fields.Many2many(domain=_domain_analytic_tags)
 
     @api.onchange('medium')
     def onchange_medium(self):
@@ -803,6 +749,31 @@ class SaleOrderLine(models.Model):
             res['account_analytic_id'] = self.adv_issue.analytic_account_id.id
         return res
 
+    @api.multi
+    def write(self, values):
+        if 'adv_issue' in values or 'ad_class' in values:
+            if 'product_uom_qty' in values or 'product_id' in values:
+                self.deadline_check()
+                self.page_qty_check()
+            else:
+                self.deadline_check()
+        result = super(SaleOrderLine, self).write(values)
+        return result
+
+    @api.multi
+    def deadline_check(self):
+        for line in self.filtered('advertising'):
+            if fields.Datetime.from_string(line.deadline) < datetime.now():
+                raise UserError(_('The deadline for this Product/Advertising Issue has passed.'))
+
+
+    @api.multi
+    def page_qty_check(self):
+        for line in self.filtered('advertising'):
+            lspace = line.product_uom_qty * line.product_template_id.space
+            lpage = line.product_template_id.page_id.id
+            if lspace < line.adv_issue.calc_page_space(lpage):
+                raise UserError(_('There is not enough availability for this placement on this page in this Advertising Issue.'))
 
 
 class OrderLineAdvIssuesProducts(models.Model):
