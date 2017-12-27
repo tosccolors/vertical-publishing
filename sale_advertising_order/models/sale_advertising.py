@@ -377,7 +377,7 @@ class SaleOrderLine(models.Model):
     ad_class = fields.Many2one('product.category', 'Advertising Class')
     deadline = fields.Datetime(compute=_compute_deadline, string='Deadline', store=True)
     deadline_offset = fields.Datetime(compute=_compute_deadline)
-    product_template_id = fields.Many2one('product.template', string='Generic Product', domain=[('sale_ok', '=', True)],
+    product_template_id = fields.Many2one('product.template', string='Product', domain=[('sale_ok', '=', True)],
                                  change_default=True, ondelete='restrict')
     page_reference = fields.Char('Reference of the Page', size=32)
     ad_number = fields.Char('Advertising Reference', size=32)
@@ -407,7 +407,7 @@ class SaleOrderLine(models.Model):
     subtotal_before_agency_disc = fields.Monetary(string='Subtotal before Commission', digits=dp.get_precision('Account'))
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
     multi_line = fields.Boolean(string='Multi Line')
-    color_surcharge = fields.Boolean(string='Color Charge')
+    color_surcharge = fields.Boolean(string='Color Surcharge')
     color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Account'), readonly=True)
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
 
@@ -421,6 +421,7 @@ class SaleOrderLine(models.Model):
             if len(child_id) == 1:
                 vals['ad_class'] = child_id[0]
             else:
+                vals['ad_class'] = False
                 data = {'ad_class': [('id', 'child_of', self.medium.id), ('type', '!=', 'view')]}
             titles = self.env['sale.advertising.issue'].search([('parent_id','=', False),('medium', '=', self.medium.id)]).ids
             if titles and len(titles) == 1:
@@ -508,7 +509,6 @@ class SaleOrderLine(models.Model):
         elif self.title_ids and not self.issue_product_ids and not self.adv_issue_ids:
             self.product_template_id = False
             self.product_id = False
-#            self.product_uom_qty = 1
 
         else:
             self.adv_issue = False
