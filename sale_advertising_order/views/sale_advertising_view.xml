@@ -142,15 +142,17 @@
                                             <field name="title_ids" string="Titles"
                                                    attrs="{'invisible': [('title','!=', False),('title_ids','=', [])]}"
                                                    domain="[('parent_id','=', False),('medium','child_of', medium)]"
-                                                   options="{'no_create': True, 'no_create_edit': True}" context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
+                                                   options="{'no_create': True, 'no_create_edit': True}" context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
+                                                                                                                   'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
                                                     <tree >
                                                         <field name="name" string="Name"/>
                                                     </tree>
                                             </field>
-                                            <field name="deadline" invisible="True" />
+                                            <field name="deadline_offset" invisible="0" />
                                             <field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
                                                    domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
-                                                                '|',('deadline','&gt;=', datetime.datetime.now()),('deadline','=', False),('issue_date','&gt;=', datetime.datetime.now())]"
+                                                            '|',('deadline','&gt;=', deadline_offset),
+                                                                ('deadline','=', False),('issue_date','&gt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
                                                    options="{'no_create': True, 'no_create_edit': True}"
                                                    context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
                                                     <tree >
@@ -205,13 +207,15 @@
                                                 attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
                                             <field name="price_unit" readonly="True" attrs="{'invisible': [('multi_line','!=', False)]}"/>
                                             <field name="comb_list_price" readonly="True" attrs="{'invisible': [('multi_line','=', False)]}"/>
-                                            <!--field name="actual_unit_price" attrs="{'invisible': [('multi_line','!=', False)]}"/-->
+                                            <field name="color_surcharge" />
+                                            <field name="color_surcharge_amount" attrs="{'invisible': [('color_surcharge','=', False)]}"/>
                                             <field name="actual_unit_price" />
                                             <label for="computed_discount" groups="sale.group_discount_per_so_line"/>
                                                 <div name="computed_discount" groups="sale.group_discount_per_so_line">
                                                     <!--field name="computed_discount" class="oe_inline" attrs="{'readonly': [('multi_line', '=', False)]}"/-->
                                                     <field name="computed_discount" class="oe_inline"/> %%
                                                 </div>
+                                            <field name="discount_reason_id" attrs="{'invisible': [('computed_discount','=', 0.0)],'required': [('computed_discount','!=', 0.0)]}"/>
                                             <field name="subtotal_before_agency_disc" readonly="False"/>
                                             <label for="discount" string="Agency Commission" groups="sale.group_discount_per_so_line"/>
                                                 <div name="discount" groups="sale.group_discount_per_so_line">
@@ -224,10 +228,10 @@
                                             <div groups="sale.group_no_one">
                                                 <field name="customer_lead" class="oe_inline" groups="sale.group_no_one"/> days
                                             </div>
-                                            <field name="tags_ad_class" invisible="0"/>
+                                            <field name="page_class_domain" invisible="1"/>
                                             <label for="analytic_tag_ids" string="Page Category"/>
                                             <div>
-                                                <field name="analytic_tag_ids" string="Page Category" widget="many2many_tags" domain="[('id','in', tags_ad_class)]"/>
+                                                <field name="analytic_tag_ids" string="Page Category" widget="many2many_tags" domain="page_class_domain"/>
                                             </div>
                                         </group>
                                     </group>
@@ -952,7 +956,7 @@
                             <field name="available_ids" string="Availability" >
                                  <tree string="Availability">
                                     <field name="name" string="Name"/>
-                                    <field name="page_id" string="Ad Class"/>
+                                    <field name="page_id" string="Ad Page"/>
                                     <field name="order_line_id" string="Ad Placement"/>
                                     <field name="available_qty" string="Quantity"/>
                                  </tree>
@@ -1095,6 +1099,111 @@
 
         <menuitem name="Advertising Pages" id="menu_sale_advertising_pages" parent="sales_team.menu_sale_config"
                   action="action_sale_advertising_page" groups="sale_advertising_order.group_advertising_sales_user"/>
+
+        <!-- View for sale.advertising.available object -->
+
+		<record model="ir.ui.view" id="sale_advertising_available_form">
+			<field name="name">sale.advertising.available.form</field>
+			<field name="type">form</field>
+			<field name="model">sale.advertising.available</field>
+			<field name="arch" type="xml">
+				<form string="Page Availablity" >
+					<sheet>
+						<group >
+                            <field name="adv_issue_id" string="Issue"/>
+							<field name="name" string="Page Name"/>
+                            <field name="page_id" string="Ad Page"/>
+                            <field name="order_line_id" string="Ad Placement" readonly="1"/>
+                            <field name="available_qty" string="Quantity"/>
+                        </group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="sale_advertising_available_tree" model="ir.ui.view" >
+			<field name="name">sale.advertising.available.tree</field>
+			<field name="type">tree</field>
+			<field name="model">sale.advertising.available</field>
+			<field name="arch" type="xml">
+                <tree string="Page Availablity">
+                    <field name="adv_issue_id" string="Issue"/>
+                    <field name="name" string="Name"/>
+                    <field name="page_id" string="Ad Page"/>
+                    <field name="order_line_id" string="Ad Placement"/>
+                    <field name="available_qty" string="Quantity"/>
+                </tree>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="action_sale_advertising_available">
+			<field name="name">Advertising Pages</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">sale.advertising.available</field>
+			<field name="view_type">form</field>
+			<field name="view_id" ref="sale_advertising_available_tree"/>
+		</record>
+
+        <record id="view_advertising_available_filter" model="ir.ui.view">
+            <field name="name">sale.advertising.available.filter</field>
+            <field name="model">sale.advertising.available</field>
+            <field name="arch" type="xml">
+                <search string="Search Advertising Availability">
+                    <filter string="Opboekingen" domain="[('available_qty','&gt;=', 0)]"/>
+                    <filter string="Afboekingen" domain="[('available_qty','&lt;', 0)]"/>
+                    <separator/>
+                    <field name="name"/>
+                    <field name="adv_issue_id" />
+                    <field name="page_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Issues" domain="[]" context="{'group_by':'adv_issue_id'}"/>
+                        <filter string="Page" domain="[]" context="{'group_by':'page_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <menuitem name="Advertising Page Availability" id="menu_sale_advertising_available" parent="sales_team.menu_sale_config"
+                  action="action_sale_advertising_available" groups="sale_advertising_order.group_advertising_sales_user"/>
+
+        <!-- View for discount.reason object -->
+
+		<record model="ir.ui.view" id="discount_reason_form">
+			<field name="name">discount.reason.form</field>
+			<field name="type">form</field>
+			<field name="model">discount.reason</field>
+			<field name="arch" type="xml">
+				<form string="Discount Reason" >
+					<sheet>
+						<group >
+							<field name="name" string="Page Name"/>
+                        </group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="discount_reason_tree" model="ir.ui.view" >
+			<field name="name">discount.reason.tree</field>
+			<field name="type">tree</field>
+			<field name="model">discount.reason</field>
+			<field name="arch" type="xml">
+				<tree string="Discount Reasons">
+						<field name="name" string="Page Name"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="action_discount_reason">
+			<field name="name">Discount Reasons</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">discount.reason</field>
+			<field name="view_type">form</field>
+			<field name="view_id" ref="discount_reason_tree"/>
+		</record>
+
+        <menuitem name="Discount Reasons" id="menu_discount_reason" parent="sales_team.menu_sale_config"
+                  action="action_discount_reason" groups="sale_advertising_order.group_advertising_sales_user"/>
 
 <!-- View for sale.advertising.proof object -->
 		<record model="ir.ui.view" id="sale_advertising_proof_form">

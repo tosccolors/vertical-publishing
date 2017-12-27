@@ -47,7 +47,7 @@ class AdvertisingIssue(models.Model):
     def calc_page_space(self, page_id):
         self.ensure_one()
         av_space = 0
-        for line in self.available_ids.filtered(lambda record: record.page_id == page_id):
+        for line in self.available_ids.filtered(lambda record: record.page_id.id == page_id):
             av_space += line.available_qty or 0
         return av_space
 
