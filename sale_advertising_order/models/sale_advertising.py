@@ -335,9 +335,9 @@ class SaleOrderLine(models.Model):
         """
         for line in self.filtered('advertising'):
             if line.ad_class:
-                dt_offset = timedelta(hours=line.ad_class.deadline_offset)
+                dt_offset = timedelta(hours=line.ad_class.deadline_offset or 0)
                 line.deadline_offset = fields.Datetime.to_string(datetime.now() + dt_offset)
-                if line.adv_issue:
+                if line.adv_issue and line.adv_issue.deadline:
                     dt_deadline = fields.Datetime.from_string(line.adv_issue.deadline)
                     line.deadline = fields.Datetime.to_string(dt_deadline - dt_offset)
 
@@ -739,12 +739,20 @@ class SaleOrderLine(models.Model):
                 self.computed_discount = 0.0
                 self.actual_unit_price = aup
                 self.subtotal_before_agency_disc = round((float(aup) * float(self.product_uom_qty)), 2)
-
+            else:
+                self.color_surcharge_amount = 0.0
+                self.computed_discount = 0.0
+                self.actual_unit_price = aup = pu
+                self.subtotal_before_agency_disc = round((float(aup) * float(self.product_uom_qty)), 2)
         else:
             if self.color_surcharge:
                 self.computed_discount = 0.0
                 self.color_surcharge_amount = clp / 2
                 self.subtotal_before_agency_disc = round((float(clp) * 1.50 ), 2)
+            else:
+                self.computed_discount = 0.0
+                self.color_surcharge_amount = 0.0
+                self.subtotal_before_agency_disc = clp
 
 
     @api.onchange('adv_issue', 'adv_issue_ids','dates','issue_product_ids')

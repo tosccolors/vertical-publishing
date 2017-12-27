@@ -152,7 +152,7 @@
                                             <field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
                                                    domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
                                                             '|',('deadline','&gt;=', deadline_offset),
-                                                                ('deadline','=', False),('issue_date','&gt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
+                                                                ('deadline','=', False),'|',('issue_date','&gt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),('issue_date','=', False)]"
                                                    options="{'no_create': True, 'no_create_edit': True}"
                                                    context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
                                                     <tree >
@@ -388,7 +388,7 @@
                         </page>
                         <page string="Other Information">
                             <group>
-								<group string="Shipping Information" name="sale_shipping">
+								<group string="Shipping Information" name="sale_shipping" groups="base.group_no_one">
 								</group>
                                 <group string="Sales Information" name="sales_person">
                                     <field name="user_id"/>
