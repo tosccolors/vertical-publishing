@@ -40,11 +40,11 @@
                             string="Submit for Approval" class="oe_highlight"
 							groups="sales_team.group_sale_salesman"/>
 					<button name="action_approve1" states="submitted" type="object" string="Approval Sales Support" class="oe_highlight"
-							groups="sales_team.group_traffic_user, sale_advertising_order.group_senior_sales "/>
+							groups="sale_advertising_order.group_traffic_user, sale_advertising_order.group_senior_sales "/>
 					<!--button name="action_approve2" states="approved1" string="Approval Traffic" type="object"  class="oe_highlight"
 							groups="sale_advertising_order.group_traffic_user"/-->
 					<button name="action_refuse" string="Refuse" type="object" states="submitted"
-							groups="sales_team.group_traffic_user,sale_advertising_order.group_senior_sales"/>
+							groups="sale_advertising_order.group_traffic_user,sale_advertising_order.group_senior_sales"/>
 					<button name="%(sale_advertising_order.action_view_sale_order_line_create_multi)d"
 							string="Create Multiple Order Lines" type="action"  class="btn-primary"
 							attrs="{'invisible': [('state','in',['cancel','sale','done'])]}"/>

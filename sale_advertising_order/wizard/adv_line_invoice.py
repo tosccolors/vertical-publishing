@@ -51,29 +51,23 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     def _prepare_invoice(self, partner, published_customer, lines):
 
         self.ensure_one()
-        if partner and partner.property_customer_payment_term_id.id:
-            pay_term = partner.property_customer_payment_term_id.id
-        else:
-            pay_term = False
+
 
         journal_id = self.env['account.invoice'].default_get(['journal_id'])['journal_id']
         if not journal_id:
             raise UserError(_('Please define an accounting sale journal for this company.'))
 
-        dateInvoice = self._context.get('date_invoice', False) or fields.Date.today()
-#        Section = order.account_analytic_id.section_ids
 
         return {
-            'name': lines['name'] or '',
-            'origin': "in te vullen",
+            'name': self.client_order_ref or '',
+            'origin': self.name,
             'type': 'out_invoice',
-            'reference': False,
             'account_id': partner.partner_invoice_id.property_account_receivable_id.id,
             'partner_id': partner.partner_invoice_id.id,
             'published_customer': published_customer.id,
             'invoice_line_ids': [(6, 0, lines['lines'])],
-            'comment': "in te vullen",
-            'payment_term': pay_term,
+            'comment': self.note,
+            'payment_term_id': self.payment_term_id.id,
             'journal_id': journal_id,
             'fiscal_position_id': partner.property_account_position_id.id,
             'user_id': self.uid ,
@@ -83,6 +77,17 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'check_total': lines['subtotal'],
         }
 
+        invoice_vals = {
+
+
+
+            'payment_term_id': self.payment_term_id.id,
+            'fiscal_position_id': self.fiscal_position_id.id or self.partner_invoice_id.property_account_position_id.id,
+            'company_id': self.company_id.id,
+            'user_id': self.user_id and self.user_id.id,
+            'team_id': self.team_id.id
+        }
+        return invoice_vals
 
     @api.multi
     def make_invoices_from_lines(self):
