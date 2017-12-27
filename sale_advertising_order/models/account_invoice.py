@@ -29,7 +29,7 @@ class Invoice(models.Model):
     _inherit = 'account.invoice'
 
 
-    ad = fields.Boolean('Ad', help="It indicates that the invoice is a Advertising Invoice.", default=False)
+    ad = fields.Boolean('Ad', help="It indicates that the invoice is an Advertising Invoice.", default=False)
 
 
     @api.multi

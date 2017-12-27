@@ -102,6 +102,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             vals = self._prepare_invoice(partner, published_customer, lines)
             invoice = self.env['account.invoice'].create(vals)
             self._cr.execute('insert into sale_order_invoice_rel (order_id,invoice_id) values (%s,%s)', (lines.order_id.id, invoice.id))
+            self._cr.execute('update account_invoice_line set invoice_id=%s where id in %s ', (invoice.id,lines.ids))
             return invoice.id
 
         OrderLine = self.env['sale.order.line']
@@ -114,7 +115,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                 if not key in invoices:
                     invoices[key] = {'lines':[],'subtotal':0, 'name': ''}
 
-                inv_line_id = line.invoice_line_create()
+                inv_line_id = self.invoice_line_create(line)
 
                 for lid in inv_line_id:
                     invoices[key]['lines'].append(lid)
@@ -153,55 +154,49 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         return action
 
     @api.multi
-    def _prepare_invoice_line(self, qty):
+    def _prepare_invoice_line(self,line):
         """
         Prepare the dict of values to create the new invoice line for a sales order line.
 
         :param qty: float quantity to invoice
         """
-        self.ensure_one()
+        line.ensure_one()
         res = {}
-        account = self.product_id.property_account_income_id or self.product_id.categ_id.property_account_income_categ_id
+        account = line.product_id.property_account_income_id or line.product_id.categ_id.property_account_income_categ_id
         if not account:
             raise UserError(
                 _('Please define income account for this product: "%s" (id:%d) - or for its category: "%s".') %
-                (self.product_id.name, self.product_id.id, self.product_id.categ_id.name))
+                (line.product_id.name, line.product_id.id, line.product_id.categ_id.name))
 
-        fpos = self.order_id.fiscal_position_id or self.order_id.partner_id.property_account_position_id
+        fpos = line.order_id.fiscal_position_id or line.order_id.partner_id.property_account_position_id
         if fpos:
             account = fpos.map_account(account)
 
         res = {
-            'name': self.name,
-            'sequence': self.sequence,
-            'origin': self.order_id.name,
+            'name': line.name,
+            'sequence': line.sequence,
+            'origin': line.order_id.name,
             'account_id': account.id,
-            'price_unit': self.price_unit,
-            'quantity': qty,
-            'discount': self.discount,
-            'uom_id': self.product_uom.id,
-            'product_id': self.product_id.id or False,
-            'layout_category_id': self.layout_category_id and self.layout_category_id.id or False,
-            'invoice_line_tax_ids': [(6, 0, self.tax_id.ids)],
-            'account_analytic_id': self.order_id.project_id.id,
-            'analytic_tag_ids': [(6, 0, self.analytic_tag_ids.ids)],
+            'price_unit': line.actual_unit_price,
+            'quantity': line.product_uom_qty,
+            'discount': line.discount,
+            'uom_id': line.product_uom.id,
+            'product_id': line.product_id.id or False,
+            'layout_category_id': line.layout_category_id and line.layout_category_id.id or False,
+            'invoice_line_tax_ids': [(6, 0, line.tax_id.ids)],
+            'account_analytic_id': line.adv_issue.analytic_account_id.id,
+            'analytic_tag_ids': [(6, 0, line.analytic_tag_ids.ids)],
         }
         return res
 
     @api.multi
-    def invoice_line_create(self, invoice_id, qty):
+    def invoice_line_create(self, line):
         """
-        Create an invoice line. The quantity to invoice can be positive (invoice) or negative
-        (refund).
-
-        :param invoice_id: integer
-        :param qty: float quantity to invoice
+        Create an invoice line.
         """
-        precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
-        for line in self:
-            if not float_is_zero(qty, precision_digits=precision):
-                vals = line._prepare_invoice_line(qty=qty)
-                vals.update({'invoice_id': invoice_id, 'sale_line_ids': [(6, 0, [line.id])]})
-                self.env['account.invoice.line'].create(vals)
+        self.ensure_one()
+        vals = self._prepare_invoice_line(line)
+        vals.update({'sale_line_ids': [(6, 0, [line.id])]})
+        return self.env['account.invoice.line'].create(vals)
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
