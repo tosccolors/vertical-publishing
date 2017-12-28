@@ -25,12 +25,12 @@ from odoo import api, fields, models, _
 
 
 class Invoice(models.Model):
-    """ Inherits invoice and adds hon boolean to invoice to flag hon-invoices"""
+    """ Inherits invoice and adds ad boolean to invoice to flag Advertising-invoices"""
     _inherit = 'account.invoice'
 
 
     ad = fields.Boolean('Ad', help="It indicates that the invoice is an Advertising Invoice.", default=False)
-
+    published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer', '=', True)])
 
     @api.multi
     def invoice_print(self):
@@ -38,15 +38,15 @@ class Invoice(models.Model):
             easily the next step of the workflow
         """
         self.ensure_one()
-        self.sent = True
+#        self.sent = True
 
-        if self.hon == True:
-            return self.env['report'].get_action(self, 'account.invoice.hon')
+#        if self.hon == True:
+#            return self.env['report'].get_action(self, 'account.invoice.hon')
 
         return super(Invoice, self).invoice_print()
 
 
-    @api.multi
+    '''@api.multi
     def action_invoice_sent(self):
         """ Open a window to compose an email, with the edi invoice template
             message loaded by default
@@ -81,13 +81,11 @@ class Invoice(models.Model):
             'view_id': compose_form.id,
             'target': 'new',
             'context': ctx,
-        }
+        }'''
 
 
 class InvoiceLine(models.Model):
-    """ Inherits invoice.line and adds activity from analytic_secondaxis to invoice """
+    """ Inherits invoice.line and adds advertising order line id and publishing date to invoice """
     _inherit = 'account.invoice.line'
 
-
-    ad_order_line_id = fields.Many2one('sale.order.line', 'Advertising Order Line')
     date_publish = fields.Date('Publishing Date')

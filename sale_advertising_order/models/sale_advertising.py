@@ -533,7 +533,7 @@ class SaleOrderLine(models.Model):
             price = 0
             issues_count = 0
             for adv_issue in adv_issues:
-                if adv_issue.parent_id.id in self.title_ids.ids or adv_issue.parent_id.id == self.title:
+                if adv_issue.parent_id.id in self.title_ids.ids or adv_issue.parent_id.id == self.title.id:
                     value = {}
                     if adv_issue.product_attribute_value_id:
                         pav = adv_issue.product_attribute_value_id.id
