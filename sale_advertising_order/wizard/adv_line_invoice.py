@@ -190,7 +190,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         Create an invoice line.
         """
         self.ensure_one()
-        import pdb; pdb.set_trace()
         vals = self._prepare_invoice_line(line)
         vals.update({'sale_line_ids': [(6, 0, [line.id])]})
         return self.env['account.invoice.line'].create(vals)
