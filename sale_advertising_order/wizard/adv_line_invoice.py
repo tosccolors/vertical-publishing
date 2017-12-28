@@ -51,43 +51,33 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     def _prepare_invoice(self, partner, published_customer, lines):
 
         self.ensure_one()
-
-
+        context = dict(self._context or {})
+        company_id = context.get('company_id', []) or []
         journal_id = self.env['account.invoice'].default_get(['journal_id'])['journal_id']
+#        partner_record = self.env['res.partner'].search([('id', '=', partner.id)])
+#        published_record = self.env['res.partner'].search([('id', '=', published_customer.id)])
         if not journal_id:
             raise UserError(_('Please define an accounting sale journal for this company.'))
-
-
         return {
-            'name': self.client_order_ref or '',
-            'origin': self.name,
+            'name': lines['name'] or '',
+#            'origin': lines.name,
             'type': 'out_invoice',
-            'account_id': partner.partner_invoice_id.property_account_receivable_id.id,
-            'partner_id': partner.partner_invoice_id.id,
-            'published_customer': published_customer.id,
+            'account_id': partner.property_account_receivable_id.id,
+            'partner_id': partner.id,
+#            'published_customer': published_customer.id,
             'invoice_line_ids': [(6, 0, lines['lines'])],
-            'comment': self.note,
-            'payment_term_id': self.payment_term_id.id,
+#            'comment': lines['note'],
+#            'payment_term_id': partner.payment_term_id.id or False,
             'journal_id': journal_id,
             'fiscal_position_id': partner.property_account_position_id.id,
-            'user_id': self.uid ,
-            'company_id': self.company_id.id,
-            'date_invoice': dateInvoice,
+            'user_id': partner.user_id.id,
+            'company_id': self.env.user.company_id.id,
             'partner_bank_id': partner.bank_ids and partner.bank_ids[0].id or False,
-            'check_total': lines['subtotal'],
+#            'check_total': lines['subtotal'],
+            'team_id': partner.team_id.id
         }
 
-        invoice_vals = {
 
-
-
-            'payment_term_id': self.payment_term_id.id,
-            'fiscal_position_id': self.fiscal_position_id.id or self.partner_invoice_id.property_account_position_id.id,
-            'company_id': self.company_id.id,
-            'user_id': self.user_id and self.user_id.id,
-            'team_id': self.team_id.id
-        }
-        return invoice_vals
 
     @api.multi
     def make_invoices_from_lines(self):
@@ -107,7 +97,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             vals = self._prepare_invoice(partner, published_customer, lines)
             invoice = self.env['account.invoice'].create(vals)
             self._cr.execute('insert into sale_order_invoice_rel (order_id,invoice_id) values (%s,%s)', (lines.order_id.id, invoice.id))
-            self._cr.execute('update account_invoice_line set invoice_id=%s where id in %s ', (invoice.id,lines.ids))
+#            self._cr.execute('update account_invoice_line set invoice_id=%s where id in %s ', (invoice.id,lines.ids))
             return invoice.id
 
         OrderLine = self.env['sale.order.line']
@@ -200,6 +190,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         Create an invoice line.
         """
         self.ensure_one()
+        import pdb; pdb.set_trace()
         vals = self._prepare_invoice_line(line)
         vals.update({'sale_line_ids': [(6, 0, [line.id])]})
         return self.env['account.invoice.line'].create(vals)
