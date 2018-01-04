@@ -49,7 +49,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 
     @api.model
     def _prepare_invoice(self, partner, published_customer, lines):
-#        import pdb; pdb.set_trace()
         self.ensure_one()
         line_ids = [x.id for x in lines['lines']]
         journal_id = self.env['account.invoice'].default_get(['journal_id'])['journal_id']
@@ -142,6 +141,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         else:
             action = {'type': 'ir.actions.act_window_close'}
         return action
+
 
     @api.multi
     def _prepare_invoice_line(self,line):
