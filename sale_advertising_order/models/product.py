@@ -18,8 +18,7 @@
 #
 ##############################################################################
 
-from odoo import api, fields, models
-
+from odoo import api, fields, models, _
 
 
 class productCategory(models.Model):
