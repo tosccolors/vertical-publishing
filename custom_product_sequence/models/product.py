@@ -83,7 +83,7 @@ class ProductProduct(models.Model):
             super(ProductProduct, product).write(vals)
         return True
 
-    #pass context{'templateCopy':True} for template add sequence on create from variant duplicate
+    #pass context{'variantCopy':True} for template add sequence on create from variant duplicate
     @api.multi
     def copy(self, default=None):
         return super(ProductProduct, self.with_context({'variantCopy':True})).copy(default)
