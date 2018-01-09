@@ -90,29 +90,25 @@
                     <group>
                         <group>
                             <field name="published_customer"
-							   context="{'tree_view_ref': 'nsm_crm.view_partner_tree_nsm_crm'}"
-							   domain="[('is_ad_agency','!=', True),('parent_id','=', False),('customer','=', True)]"
-							   attrs="{'readonly':[('state','not in','draft')]}" required="True"/>
-
-                            <field name="partner_id" string="Payer" domain="[('customer','=',True), ('is_company','=', True)]"
-                                   context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}'/>
-
-                            <field name="partner_invoice_id" string="Payer Invoice Address" groups="sale.group_delivery_invoice_address"
-                                   context="{'default_type':'invoice', 'show_address': 1}" domain="[('id','child_of',partner_id)]"/>
-                            <field name="customer_contact" required="True" context="{'default_parent_id': partner_id, 'show_email': 1}"
-							        domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"
-							        options='{"always_reload": True}'/>
+                                   context="{'tree_view_ref': 'nsm_crm.view_partner_tree_nsm_crm'}"
+                                   domain="[('is_ad_agency','!=', True),('parent_id','=', False),('customer','=', True)]"
+                                   attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"
+                                   required="True"/>
+                            <field name="partner_id" string="Payer"
+                                   domain="[('customer','=',True), ('parent_id','=', False)]"
+                                   context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}'
+                                   attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"/>
+                            <field name="partner_invoice_id" string="Payer Invoice Address"
+                                   context="{'default_type':'invoice', 'show_address': 1}" domain="[('id','child_of',partner_id)]"
+                                   attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"
+                                   groups="sale.group_delivery_invoice_address"/>
+                            <field name="customer_contact" required="False" context="{'default_parent_id': partner_id, 'show_email': 1}"
+                                   domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"
+                                   options='{"always_reload": True}'
+                                   attrs="{'readonly':[('state','in', ['cancel','done'])]}"/>
                             <field name="advertising_agency"
-                               domain="[('is_ad_agency','=', True),('customer','=',True), ('is_company','=', True)]"
-                               attrs="{'readonly':[('state','not in','draft')]}"/>
-                            <field name="nett_nett" />
-
-                            <field name="opportunity_subject"/>
-                            <field name="related_project_id"
-                                   attrs="{'readonly': ['|',('project_id','!=',False),('invoice_count','!=',0),('state','=','sale')],'invisible':[('state','!=','sale')]}"
-                                   context="{'default_partner_id':partner_invoice_id, 'default_name':name}"
-                                   groups="analytic.group_no_one"/>
-
+                                   domain="[('is_ad_agency','=', True),('customer','=',True), ('is_company','=', True)]"
+                                   attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}" />
                         </group>
                         <group>
                             <field name="date_order" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
