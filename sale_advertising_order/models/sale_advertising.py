@@ -676,6 +676,7 @@ class SaleOrderLine(models.Model):
         csa = self.color_surcharge_amount or 0.0
         comp_discount = self.computed_discount
         price = self.price_unit
+        subtotal_bad = 0.0
         if self.multi_line:
             clp = self.comb_list_price or 0.0
             if clp and clp > 0:
@@ -711,7 +712,7 @@ class SaleOrderLine(models.Model):
         if not self.multi_line:
             if self.color_surcharge:
                 self.color_surcharge_amount = pu / 2
-                aup = pu * 1.50 * round(float(1 - float(self.comp_dicount / 100)), 2)
+                aup = pu * 1.50 * round(float(1 - float(self.computed_discount / 100)), 2)
 #                self.computed_discount = 0.0
                 self.actual_unit_price = aup
                 self.subtotal_before_agency_disc = round((float(aup) * float(self.product_uom_qty)), 2)
@@ -725,7 +726,7 @@ class SaleOrderLine(models.Model):
             if self.color_surcharge:
 #                self.computed_discount = 0.0
                 self.color_surcharge_amount = clp / 2
-                self.subtotal_before_agency_disc = round((float(clp) * 1.50 * float(1 - float(self.comp_dicount / 100))), 2)
+                self.subtotal_before_agency_disc = round((float(clp) * 1.50 * float(1 - float(self.computed_discount / 100))), 2)
             else:
 #                self.computed_discount = 0.0
                 self.subtotal_before_agency_disc = self.subtotal_before_agency_disc - csa
