@@ -35,16 +35,17 @@ class sale_order_line_create_multi_lines(models.TransientModel):
 
         model = context.get('active_model', False)
         n = 0
+        all_lines = []
         if model and model == 'sale.order':
             order_ids = context.get('active_ids', [])
             for so in self.env['sale.order'].search([('id','in', order_ids)]):
-                olines = so.order_line.filtered(lambda x: not x.adv_issue)
+                olines = so.order_line.filtered(lambda x: x.multi_line)
                 if not olines: continue
+                all_lines.append(olines)
                 n += 1
-                self.create_multi_from_order_lines(orderlines=olines)
             if n == 0:
                 raise UserError(_('There are no Sales Order Lines without Advertising Issues in the selected Sales Orders.'))
-
+            self.create_multi_from_order_lines(orderlines=all_lines)
 
         elif model and model == 'sale.order.line':
             orders = []
@@ -53,21 +54,21 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                 orders.append(line.order_id.id)
             for oid in orders:
                 lines = self.env['sale.order.line'].search([('order_id','=', oid),('id','in', line_ids),
-                                                                   ('adv_issue','=', False)])
+                                                                   ('multi_line','=', True)])
                 if not lines:
                     continue
                 n += 1
-                self.create_multi_from_order_lines(orderlines=lines)
+                all_lines.append(lines)
             if n == 0:
                 raise UserError(_('There are no Sales Order Lines without Advertising Issues in the selection.'))
+            self.create_multi_from_order_lines(orderlines=all_lines)
         return
 
     @api.model
     def create_multi_from_order_lines(self, orderlines=[]):
-
         sol_obj = self.env['sale.order.line']
-
-        for ol in orderlines:
+        olines = sol_obj.browse(orderlines)
+        for ol in olines:
             lines = [x.id for x in ol.order_id.order_line]
             if ol.adv_issue_ids and not ol.issue_product_ids:
                 raise UserError(_('The Order Line is in error. Please correct!'))
@@ -79,6 +80,9 @@ class sale_order_line_create_multi_lines(models.TransientModel):
 
                 for ad_iss in ol.issue_product_ids:
                     ad_issue = self.env['sale.advertising.issue'].search([('id', '=', ad_iss.adv_issue_id.id)])
+                    csa = ol.color_surcharge_amount / ol.comb_list_price * ad_iss.price_unit * ol.product_uom_qty if ol.color_surcharge else 0.0
+                    sbad = (ad_iss.price_unit * ol.product_uom_qty + csa) * (1 - ol.computed_discount / 100.0)
+                    aup = sbad / ol.product_uom_qty
                     res = {'title': ad_issue.parent_id.id,
                            'adv_issue': ad_issue.id,
                            'title_ids': False,
@@ -86,10 +90,9 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                            'name': ad_iss.product_id.product_tmpl_id.name,
                            'price_unit': ad_iss.price_unit,
                            'issue_product_ids': False,
-                           'color_surcharge_amount': (ad_iss.price_unit / 2 if ol.color_surcharge else 0.0),
-                           'subtotal_before_agency_disc': (ad_iss.price_unit * 1.5 if ol.color_surcharge else ad_iss.price_unit) *
-                                                          ol.product_uom_qty * (1 - ol.computed_discount / 100.0),
-                           'actual_unit_price': (ad_iss.price_unit * 1.5 if ol.color_surcharge else ad_iss.price_unit) * (1 - ol.computed_discount / 100.0),
+                           'color_surcharge_amount':  csa,
+                           'subtotal_before_agency_disc': sbad,
+                           'actual_unit_price': aup,
                            'order_id': ol.order_id.id or False,
                            'comb_list_price': 0.0,
                            'multi_line_number': 1,
@@ -104,7 +107,6 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                         pass
                     lines.append(mol_rec.id)
                 sol_obj.search([('id','=', ol.id)]).unlink()
-
         return
 
 

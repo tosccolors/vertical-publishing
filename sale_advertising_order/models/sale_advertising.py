@@ -191,13 +191,6 @@ class SaleOrder(models.Model):
                       'traffic_appr_date': fields.Date.context_today(self)})
         return True
 
-    @api.multi
-    def action_confirm(self):
-        for order in self.filtered("advertising"):
-            order.order_line.deadline_check()
-            order.order_line.page_qty_check()
-        return super(SaleOrder, self).action_confirm()
-
     # --added deep
     @api.multi
     def action_refuse(self):
@@ -211,18 +204,55 @@ class SaleOrder(models.Model):
         self.filtered(lambda s: s.state == 'approved2').write({'state': 'sent'})
         return self.env['report'].get_action(self, 'sale.report_saleorder')
 
+    @api.multi
+    def action_cancel(self):
+        for order in self.filtered(lambda s: s.state == 'sale' and s.advertising):
+            for line in order.order_line:
+                line.page_qty_check_unlink()
+        return super(SaleOrder, self).action_cancel()
+
+    @api.multi
+    def action_confirm(self):
+        for order in self.filtered("advertising"):
+            olines = []
+            for line in order.order_line:
+                if line.multi_line:
+                    olines.append(line.id)
+            if not olines == []:
+                self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
+#                self._cr.commit()
+            for newline in order.order_line:
+                newline.deadline_check()
+                newline.page_qty_check_create()
+        return super(SaleOrder, self).action_confirm()
+
+    @api.multi
+    def write(self, vals):
+        for order in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
+            olines = []
+            for line in order.order_line:
+                if line.multi_line:
+                    olines.append(line.id)
+            if not olines == []:
+                self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
+            #            self._cr.commit()
+            for newline in order.order_line:
+                newline.deadline_check()
+                newline.page_qty_check_update()
+        return super(SaleOrder, self).write(vals)
+
 
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'comb_list_price', 'subtotal_before_agency_disc', 'discount', 'price_unit', 'tax_id')
+    @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'comb_list_price',
+                 'color_surcharge_amount', 'subtotal_before_agency_disc', 'discount', 'price_unit', 'tax_id')
     @api.multi
     def _compute_amount(self):
         """
         Compute the amounts of the SO line.
         """
-#        import pdb; pdb.set_trace()
         super(SaleOrderLine, self.filtered(lambda record: record.advertising != True))._compute_amount()
         for line in self.filtered('advertising'):
             comp_discount = line.computed_discount or 0.0
@@ -245,10 +275,9 @@ class SaleOrderLine(models.Model):
                 elif price_unit > 0.0 and subtotal_bad > 0.0:
                     unit_price = round(float(subtotal_bad) / float(qty), 2)
                     comp_discount = round((float(price_unit + float(csa) - float(unit_price))) / (float(price_unit) + float(csa)) * 100.0, 2)
-                elif price_unit > 0.0 and subtotal_bad == 0.0:
-                    unit_price = 0.0
-                    csa = 0.0
-                    comp_discount = 100.0
+                else:
+                    unit_price = round(float(price_unit) * float(1 - float(comp_discount) / 100.0) + float(csa), 2)
+                    subtotal_bad = unit_price * qty
 
                 price = unit_price * (1 - (discount or 0) / 100.0)
                 taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id,
@@ -381,8 +410,7 @@ class SaleOrderLine(models.Model):
     partner_acc_mgr = fields.Many2one(related='order_id.partner_acc_mgr', store=True, string='Account Manager', readonly=True)
     order_partner_id = fields.Many2one(related='order_id.partner_id', relation='res.partner', string='Customer')
     discount_dummy = fields.Float(related='discount', string='Agency Commission (%)', readonly=True )
-    actual_unit_price = fields.Monetary(string='Actual Unit Price', required=True, default=0.0,
-                                     digits=dp.get_precision('Actual Unit Price'), states={'draft': [('readonly', False)]})
+    actual_unit_price = fields.Monetary(compute='_compute_amount', string='Actual Unit Price', default=0.0, readonly=True)
     comb_list_price = fields.Monetary(compute='_multi_price', string='Combined_List Price', default=0.0, store=True,
                                 digits=dp.get_precision('Actual Unit Price'))
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', readonly=True)
@@ -391,7 +419,7 @@ class SaleOrderLine(models.Model):
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
     multi_line = fields.Boolean(string='Multi Line')
     color_surcharge = fields.Boolean(string='Color Surcharge')
-    color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Account'), readonly=True)
+    color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Account'))
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
 
     @api.onchange('medium')
@@ -617,7 +645,7 @@ class SaleOrderLine(models.Model):
         if not self.multi_line:
             self.subtotal_before_agency_disc = self.actual_unit_price = self.price_unit
         else:
-            self.actual_unit_price = self.price_unit = 0.0
+            self.subtotal_before_agency_disc = self.price_unit = 0.0
         self.product_uom_qty = 1
         return result
 
@@ -714,13 +742,13 @@ class SaleOrderLine(models.Model):
                 self.color_surcharge_amount = pu / 2
                 aup = pu * 1.50 * round(float(1 - float(self.computed_discount / 100)), 2)
 #                self.computed_discount = 0.0
-                self.actual_unit_price = aup
+#                self.actual_unit_price = aup
                 self.subtotal_before_agency_disc = round((float(aup) * float(self.product_uom_qty)), 2)
             else:
                 self.color_surcharge_amount = 0.0
                 aup = aup - csa
 #                self.computed_discount = 0.0
-                self.actual_unit_price = aup
+#                self.actual_unit_price = aup
                 self.subtotal_before_agency_disc = round((float(aup) * float(self.product_uom_qty)), 2)
         else:
             if self.color_surcharge:
@@ -781,51 +809,73 @@ class SaleOrderLine(models.Model):
             res['account_analytic_id'] = self.adv_issue.analytic_account_id.id
         return res
 
-#    @api.multi
-#    def create(self, values):
-#        if ('product_uom_qty' or 'adv_issue' or 'product_id') in values:
-#            self.page_qty_check()
-#        result = super(SaleOrderLine, self).create(values)
-#        return result
+    @api.multi
+    def create(self, values):
+        if ('product_uom_qty' or 'adv_issue' or 'product_id') in values:
+            for line in self:
+                line.page_qty_check_create()
+        result = super(SaleOrderLine, self).create(values)
+        return result
 
     @api.multi
     def write(self, values):
         for line in self.filtered(lambda l: l.state == 'sale' and l.advertising):
-            if ('adv_issue' or 'ad_class') in values:
-                self.deadline_check()
-                if ('product_uom_qty' or 'product_id') in values:
-                    self.page_qty_check()
+            if ('adv_issue' or 'ad_class' or 'product_id' or 'product_uom_qty') in values:
+                line.deadline_check()
+                line.page_qty_check_update()
         result = super(SaleOrderLine, self).write(values)
         return result
 
+    ##Original sale method
+#    @api.multi
+#    def unlink(self):
+#        if self.filtered(lambda x: x.state in ('sale', 'done')):
+#            raise UserError(
+#                _('You can not remove a sale order line.\nDiscard changes and try setting the quantity to 0.'))
+#        return super(SaleOrderLine, self).unlink()
+
     @api.multi
     def deadline_check(self):
-        for line in self.filtered('advertising'):
-            if line.deadline:
-                if fields.Datetime.from_string(line.deadline) < datetime.now():
-                    raise UserError(_('The deadline %s for this Category/Advertising Issue has passed.') %(line.deadline))
-            elif line.issue_date and fields.Datetime.from_string(line.issue_date) < datetime.now():
-                raise UserError(_('The Issue Date %s for this Advertising Issue has passed.') % (line.issue_date))
+        self.ensure_one()
+        if self.deadline:
+            if fields.Datetime.from_string(self.deadline) < datetime.now():
+                raise UserError(_('The deadline %s for this Category/Advertising Issue has passed.') %(self.deadline))
+        elif self.issue_date and fields.Datetime.from_string(self.issue_date) < datetime.now():
+            raise UserError(_('The Issue Date %s for Advertising Issue %s has passed.') % (self.issue_date, self.adv_issue.name))
 
 
     @api.multi
-    def page_qty_check(self):
-        for line in self.filtered('advertising'):
-            if not line.product_template_id.page_id:
-                return
-            lspace = line.product_uom_qty * line.product_template_id.space
-            lpage = line.product_template_id.page_id.id
-            if lspace > line.adv_issue.calc_page_space(lpage):
-                raise UserError(_('There is not enough availability for this placement on %s in %s.') % (lpage, line.adv_issue))
-            else:
-                vals = {
-                    'adv_issue_id': line.adv_issue.id,
-                    'name': 'Afboeking',
-                    'order_line_id': line.id,
-                    'page_id': lpage,
-                    'available_qty': - int(lspace)
-                }
-                self.env['sale.advertising.available'].create(vals)
+    def page_qty_check_create(self):
+        self.ensure_one()
+        if not self.product_template_id.page_id:
+            return
+        lspace = self.product_uom_qty * self.product_template_id.space
+        lpage = self.product_template_id.page_id.id
+        if lspace > self.adv_issue.calc_page_space(lpage):
+            raise UserError(_('There is not enough availability for this placement on %s in %s.') % (lpage, self.adv_issue.name))
+        else:
+            vals = {
+                'adv_issue_id': self.adv_issue.id,
+                'name': 'Afboeking',
+                'order_line_id': self.id,
+                'page_id': lpage,
+                'available_qty': - int(lspace)
+            }
+            self.env['sale.advertising.available'].create(vals)
+
+    @api.multi
+    def page_qty_check_update(self):
+        self.ensure_one()
+        self.page_qty_check_unlink()
+        self.page_qty_check_create()
+
+    @api.multi
+    def page_qty_check_unlink(self):
+        self.ensure_one()
+        res = self.env['sale.advertising.available'].search([('order_line_id', '=', self.id)])
+        if res and len(res) > 0:
+            res.unlink()
+
 
 
 class OrderLineAdvIssuesProducts(models.Model):
