@@ -172,16 +172,16 @@
                                             <field name="qty_delivered_updateable" invisible="1"/>
                                             <field name="procurement_ids" invisible="1"/>
                                             <field name="price_subtotal" invisible="1"/>
-                                            <field name="multi_line" invisible="0" groups="base.group_no_one"/>
-                                            <field name="multi_line_number" invisible="0" readonly="True" groups="base.group_no_one"/>
+                                            <field name="multi_line" invisible="1" groups="base.group_no_one"/>
+                                            <field name="multi_line_number" invisible="1" readonly="True" groups="base.group_no_one"/>
                                             <label for="product_uom_qty" string="Ordered Quantity"/>
                                             <div>
                                                 <field name="product_uom_qty" class="oe_inline"
                                                         context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id,
-                                                                    'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"/>
+                                                                    'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"
+                                                       attrs="{'invisible': [('product_uom', '=', 'Stuk(s)')]}"/>
                                                 <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"
-                                                    attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
-                                                    invisible="0"/>
+                                                    attrs="{'invisible': [('product_uom', '=', 'Stuk(s)')],'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"/>
                                             </div>
                                             <label for="qty_delivered" string="Delivered Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>
                                             <div invisible="context.get('hide_sale')" groups="base.group_no_one">

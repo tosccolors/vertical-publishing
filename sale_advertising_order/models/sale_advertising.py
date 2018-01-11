@@ -226,7 +226,7 @@ class SaleOrder(models.Model):
                 newline.page_qty_check_create()
         return super(SaleOrder, self).action_confirm()
 
-    @api.multi
+    '''@api.multi
     def write(self, vals):
         for order in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
             olines = []
@@ -234,12 +234,11 @@ class SaleOrder(models.Model):
                 if line.multi_line:
                     olines.append(line.id)
             if not olines == []:
-                self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
-            #            self._cr.commit()
+                
             for newline in order.order_line:
                 newline.deadline_check()
                 newline.page_qty_check_update()
-        return super(SaleOrder, self).write(vals)
+        return super(SaleOrder, self).write(vals)'''
 
 
 
@@ -645,7 +644,7 @@ class SaleOrderLine(models.Model):
         if not self.multi_line:
             self.subtotal_before_agency_disc = self.actual_unit_price = self.price_unit
         else:
-            self.subtotal_before_agency_disc = self.price_unit = 0.0
+            self.price_unit = 0.0
         self.product_uom_qty = 1
         return result
 
@@ -811,8 +810,8 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def create(self, values):
-        if ('product_uom_qty' or 'adv_issue' or 'product_id') in values:
-            for line in self:
+        if 'advertising' in values and ('product_uom_qty' or 'adv_issue' or 'product_id') in values:
+            for line in self.filtered(lambda l: l.state == 'sale' and l.advertising):
                 line.page_qty_check_create()
         result = super(SaleOrderLine, self).create(values)
         return result
@@ -820,9 +819,19 @@ class SaleOrderLine(models.Model):
     @api.multi
     def write(self, values):
         for line in self.filtered(lambda l: l.state == 'sale' and l.advertising):
+            user = self.env['res.users'].browse(self.env.uid)
+            if not (user.has_group('sale_advertising_order.group_traffic_user') or user.has_group('sale_advertising_order.group_senior_sales')) \
+                    and self.computed_discount > 60.0:
+                raise UserError(_('You cannot save a Sale Order Line with more than 60% discount. You\'ll have to ask Sales Support for help'))
+            if line.multi_line:
+                if self.env.context.get('LoopBreaker'):
+                    return
+                self = self.with_context(LoopBreaker=True)
+                self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=[line.id])
+                self._cr.commit()
             if ('adv_issue' or 'ad_class' or 'product_id' or 'product_uom_qty') in values:
-                line.deadline_check()
-                line.page_qty_check_update()
+                    line.deadline_check()
+                    line.page_qty_check_update()
         result = super(SaleOrderLine, self).write(values)
         return result
 
