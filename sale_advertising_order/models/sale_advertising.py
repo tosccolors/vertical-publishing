@@ -274,8 +274,7 @@ class SaleOrderLine(models.Model):
                     comp_discount = 0.0
                     subtotal_bad = 0.0
                     csa = 0.0
-                else:
-                    price_unit > 0.0 :
+                elif price_unit > 0.0 :
                     unit_price = round((float(price_unit) + float(csa)) * float(1 - comp_discount / 100.0), 2)
                     subtotal_bad = round(float(unit_price) * float(qty), 2)
 
