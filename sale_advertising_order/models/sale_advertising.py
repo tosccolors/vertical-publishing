@@ -297,7 +297,8 @@ class SaleOrderLine(models.Model):
             else:
                 clp = line.comb_list_price or 0.0
                 if clp > 0.0:
-                    comp_discount = round((float(clp) + float(csa) - float(subtotal_bad)) / (float(clp) + float(csa)) * 100.0,2)
+#                    comp_discount = round((float(clp) + float(csa) - float(subtotal_bad)) / (float(clp) + float(csa)) * 100.0,2)
+                    subtotal_bad = round((float(clp) + float(csa)) * float(1 - comp_discount / 100.0), 2)
                     unit_price = 0.0
                     price_unit = 0.0
                 else:
