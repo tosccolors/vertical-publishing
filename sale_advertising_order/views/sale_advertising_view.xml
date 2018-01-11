@@ -108,6 +108,9 @@
                             <field name="advertising_agency"
                                    domain="[('is_ad_agency','=', True),('customer','=',True), ('is_company','=', True)]"
                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}" />
+                            <field name="nett_nett" />
+                            <field name="agency_is_publish" />
+                            <field name="opportunity_subject" required="True" string="Subject"/>
                         </group>
                         <group>
                             <field name="date_order" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>

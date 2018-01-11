@@ -104,6 +104,7 @@ class SaleOrder(models.Model):
     published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer','=',True)])
     advertising_agency = fields.Many2one('res.partner', 'Advertising Agency', domain=[('customer','=',True)])
     nett_nett = fields.Boolean('Netto Netto Deal', default=False)
+    agency_is_publish = fields.Boolean('Agency is Publishing Customer', default=False)
     customer_contact = fields.Many2one('res.partner', 'Payer Contact Person', domain=[('customer','=',True)])
     traffic_employee = fields.Many2one('res.users', 'Traffic Employee',)
     traffic_comments = fields.Text('Traffic Comments')
@@ -121,7 +122,7 @@ class SaleOrder(models.Model):
 
     # overridden:
     @api.multi
-    @api.onchange('partner_id', 'published_customer', 'advertising_agency')
+    @api.onchange('partner_id', 'published_customer', 'advertising_agency', 'agency_is_publish')
     def onchange_partner_id(self):
         """
         Update the following fields when the partner is changed:
@@ -140,7 +141,9 @@ class SaleOrder(models.Model):
                 self.partner_id = self.advertising_agency = False
             if self.advertising_agency:
                 self.partner_id = self.advertising_agency
-
+                if self.agency_is_publish:
+                    self.published_customer = self.advertising_agency
+                    self.nett_nett = True
             if not self.partner_id:
                 self.update({
                     'customer_contact': False
