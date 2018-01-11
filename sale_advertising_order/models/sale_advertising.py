@@ -248,8 +248,8 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'comb_list_price',
-                 'color_surcharge_amount', 'subtotal_before_agency_disc', 'discount', 'price_unit', 'tax_id')
+    @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett',
+                 'color_surcharge_amount', 'discount', 'price_unit', 'tax_id')
     @api.multi
     def _compute_amount(self):
         """
@@ -678,29 +678,7 @@ class SaleOrderLine(models.Model):
 
 
 
-    '''@api.onchange('actual_unit_price')
-    def onchange_actualup(self):
-        result = {}
-        if not self.advertising:
-            return {'value': result}
-        if not self.multi_line:
-            if self.actual_unit_price > 0.0:
-                if self.price_unit > 0.0:
-                    pcsa = float(self.price_unit) + float(self.color_surcharge_amount)
-                    cdisc = round((pcsa - float(self.actual_unit_price)) / pcsa * 100.0,2)
-                    result['computed_discount'] = cdisc
-                    result['subtotal_before_agency_disc'] = round((float(self.actual_unit_price) * float(self.product_uom_qty)), 2)
-                else:
-                    result['actual_unit_price'] = 0.0
-                    result['computed_discount'] = 0.0
-                    result['subtotal_before_agency_disc'] = 0.0
-            else:
-                if self.price_unit > 0.0:
-                    result['computed_discount'] = 100.0
-                    result['subtotal_before_agency_disc'] = 0.0
-        return {'value': result}'''
-
-    @api.onchange('computed_discount', 'color_surcharge_amount')
+    @api.onchange('computed_discount')
     def onchange_actualcd(self):
         result = {}
         if not self.advertising:
@@ -720,7 +698,27 @@ class SaleOrderLine(models.Model):
                 aup = round((float(price) + float(csa) ) * float(1.0 - comp_discount / 100.0), 2)
                 subtotal_bad = aup * self.product_uom_qty
         result['subtotal_before_agency_disc'] = subtotal_bad
+        return {'value': result}
 
+    @api.onchange('subtotal_before_agency_disc')
+    def onchange_subtotal(self):
+        result = {}
+        if not self.advertising:
+            return {'value': result}
+        csa = self.color_surcharge_amount or 0.0
+        subtotal_bad = self.subtotal_before_agency_disc
+        price = self.price_unit
+
+        if self.multi_line:
+            clp = self.comb_list_price or 0.0
+            if clp and clp > 0:
+                comp_discount = round((float(subtotal_bad) / (float(clp) + float(csa)) * 100.0), 2)
+            else:
+                comp_discount = 0.0
+        else:
+            if price and price > 0:
+                comp_discount = round(float(subtotal_bad) / (float(price) + float(csa)) * 100.0, 2)
+        result['computed_discount'] = comp_discount
         return {'value': result}
 
 
@@ -748,22 +746,16 @@ class SaleOrderLine(models.Model):
             if self.color_surcharge:
                 self.color_surcharge_amount = pu / 2
                 aup = pu * 1.50 * round(float(1 - float(self.computed_discount / 100)), 2)
-#                self.computed_discount = 0.0
-#                self.actual_unit_price = aup
                 self.subtotal_before_agency_disc = round((float(aup) * float(self.product_uom_qty)), 2)
             else:
                 self.color_surcharge_amount = 0.0
                 aup = aup - csa
-#                self.computed_discount = 0.0
-#                self.actual_unit_price = aup
                 self.subtotal_before_agency_disc = round((float(aup) * float(self.product_uom_qty)), 2)
         else:
             if self.color_surcharge:
-#                self.computed_discount = 0.0
                 self.color_surcharge_amount = clp / 2
                 self.subtotal_before_agency_disc = round((float(clp) * 1.50 * float(1 - float(self.computed_discount / 100))), 2)
             else:
-#                self.computed_discount = 0.0
                 self.subtotal_before_agency_disc = self.subtotal_before_agency_disc - csa
                 self.color_surcharge_amount = 0.0
 
