@@ -714,7 +714,7 @@ class SaleOrderLine(models.Model):
                 comp_discount = 0.0
         else:
             if price and price > 0:
-                comp_discount = round((1.0 - (float(subtotal_bad) / (float(price) + float(csa))) * self.product_uom_qty) * 100.0, 3)
+                comp_discount = round((1.0 - (float(subtotal_bad) / (float(price) + float(csa))) / self.product_uom_qty) * 100.0, 3)
         result['computed_discount'] = comp_discount
         return {'value': result}
 
