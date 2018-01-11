@@ -315,6 +315,7 @@ class SaleOrderLine(models.Model):
                     'price_tax': taxes['total_included'] - taxes['total_excluded'],
                     'price_total': taxes['total_included'],
                     'price_subtotal': taxes['total_excluded'],
+                    'subtotal_before_agency_disc': subtotal_bad,
                     'actual_unit_price': unit_price,
                     'computed_discount': comp_discount,
                     'color_surcharge_amount': csa,
