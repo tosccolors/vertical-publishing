@@ -297,8 +297,8 @@ class SaleOrderLine(models.Model):
             else:
                 clp = line.comb_list_price or 0.0
                 if clp > 0.0:
-#                    comp_discount = round((float(clp) + float(csa) - float(subtotal_bad)) / (float(clp) + float(csa)) * 100.0,2)
-                    subtotal_bad = round((float(clp) + float(csa)) * float(1 - comp_discount / 100.0), 2)
+                    comp_discount = round((float(clp) + float(csa) - float(subtotal_bad)) / (float(clp) + float(csa)) * 100.0,2)
+#                    subtotal_bad = round((float(clp) + float(csa)) * float(1 - comp_discount / 100.0), 2)
                     unit_price = 0.0
                     price_unit = 0.0
                 else:
@@ -315,7 +315,7 @@ class SaleOrderLine(models.Model):
                     'price_tax': taxes['total_included'] - taxes['total_excluded'],
                     'price_total': taxes['total_included'],
                     'price_subtotal': taxes['total_excluded'],
-                    'subtotal_before_agency_disc': subtotal_bad,
+#                    'subtotal_before_agency_disc': subtotal_bad,
                     'actual_unit_price': unit_price,
                     'computed_discount': comp_discount,
                     'color_surcharge_amount': csa,
@@ -700,7 +700,7 @@ class SaleOrderLine(models.Model):
         result['subtotal_before_agency_disc'] = subtotal_bad
         return {'value': result}
 
-    @api.onchange('subtotal_before_agency_disc')
+    '''@api.onchange('subtotal_before_agency_disc')
     def onchange_subtotal(self):
         result = {}
         if not self.advertising:
@@ -719,7 +719,7 @@ class SaleOrderLine(models.Model):
             if price and price > 0:
                 comp_discount = round(float(subtotal_bad) / (float(price) + float(csa)) * self.product_uom_qty * 100.0, 2)
         result['computed_discount'] = comp_discount
-        return {'value': result}
+        return {'value': result}'''
 
 
 #    @api.onchange('product_uom_qty')
