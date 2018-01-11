@@ -248,7 +248,7 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett',
+    @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'subtotal_before_agency_disc',
                  'color_surcharge_amount', 'discount', 'price_unit', 'tax_id')
     @api.multi
     def _compute_amount(self):
@@ -289,7 +289,7 @@ class SaleOrderLine(models.Model):
                     'price_tax': taxes['total_included'] - taxes['total_excluded'],
                     'price_total': taxes['total_included'],
                     'price_subtotal': taxes['total_excluded'],
-                    'subtotal_before_agency_disc': subtotal_bad,
+#                    'subtotal_before_agency_disc': subtotal_bad,
                     'color_surcharge_amount': csa,
                     'discount': discount,
                     'computed_discount': comp_discount,
@@ -297,8 +297,8 @@ class SaleOrderLine(models.Model):
             else:
                 clp = line.comb_list_price or 0.0
                 if clp > 0.0:
-                    comp_discount = round((float(clp) + float(csa) - float(subtotal_bad)) / (float(clp) + float(csa)) * 100.0,2)
-#                    subtotal_bad = round((float(clp) + float(csa)) * float(1 - comp_discount / 100.0), 2)
+#                    comp_discount = round((float(clp) + float(csa) - float(subtotal_bad)) / (float(clp) + float(csa)) * 100.0,2)
+                    subtotal_bad = round((float(clp) + float(csa)) * float(1 - comp_discount / 100.0), 2)
                     unit_price = 0.0
                     price_unit = 0.0
                 else:
@@ -708,7 +708,7 @@ class SaleOrderLine(models.Model):
         csa = self.color_surcharge_amount or 0.0
         subtotal_bad = self.subtotal_before_agency_disc
         price = self.price_unit
-
+        comp_discount = 0.0
         if self.multi_line:
             clp = self.comb_list_price or 0.0
             if clp and clp > 0:
@@ -717,7 +717,7 @@ class SaleOrderLine(models.Model):
                 comp_discount = 0.0
         else:
             if price and price > 0:
-                comp_discount = round(float(subtotal_bad) / (float(price) + float(csa)) * 100.0, 2)
+                comp_discount = round(float(subtotal_bad) / (float(price) + float(csa)) * self.product_uom_qty * 100.0, 2)
         result['computed_discount'] = comp_discount
         return {'value': result}
 
