@@ -729,9 +729,9 @@ class SaleOrderLine(models.Model):
             return {'value': result}
         if not self.multi_line:
             self.subtotal_before_agency_disc = round((float(self.price_unit) + (float(self.color_surcharge_amount))) *
-                                                      float(self.product_uom_qty) * float(1.0 - comp_discount / 100.0), 2)
+                                                      float(self.product_uom_qty) * float(1.0 - self.computed_discount / 100.0), 2)
         else:
-            self.subtotal_before_agency_disc = round((float(self.comb_list_price) + (float(self.color_surcharge_amount))) * float(1.0 - comp_discount / 100.0), 2)
+            self.subtotal_before_agency_disc = round((float(self.comb_list_price) + (float(self.color_surcharge_amount))) * float(1.0 - self.computed_discount / 100.0), 2)
 
     @api.onchange('color_surcharge' )
     def onchange_color(self):
