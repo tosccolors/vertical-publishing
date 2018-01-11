@@ -813,8 +813,16 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def create(self, values):
-        if 'advertising' in values and ('product_uom_qty' or 'adv_issue' or 'product_id') in values:
-            for line in self.filtered(lambda l: l.state == 'sale' and l.advertising):
+#        import pdb;
+#        pdb.set_trace()
+        for line in self.filtered(lambda l: l.state == 'sale' and l.advertising):
+#            if line.multi_line:
+#                if self.env.context.get('LoopBreaker'):
+#                    return
+#                self = self.with_context(LoopBreaker=True)
+#                self.env['sale.order.line.create.multi.lines'].create_multi_from_new_order_lines(orderline=line)
+            #               self._cr.commit()
+            if ('product_uom_qty' or 'adv_issue' or 'product_id') in values:
                 line.page_qty_check_create()
         result = super(SaleOrderLine, self).create(values)
         return result
@@ -826,12 +834,6 @@ class SaleOrderLine(models.Model):
             if not (user.has_group('sale_advertising_order.group_traffic_user') or user.has_group('sale_advertising_order.group_senior_sales')) \
                     and self.computed_discount > 60.0:
                 raise UserError(_('You cannot save a Sale Order Line with more than 60% discount. You\'ll have to ask Sales Support for help'))
-            if line.multi_line:
-                if self.env.context.get('LoopBreaker'):
-                    return
-                self = self.with_context(LoopBreaker=True)
-                self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=[line.id])
-                self._cr.commit()
             if ('adv_issue' or 'ad_class' or 'product_id' or 'product_uom_qty') in values:
                     line.deadline_check()
                     line.page_qty_check_update()

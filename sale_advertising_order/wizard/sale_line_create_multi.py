@@ -106,9 +106,49 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                     except:
                         pass
                     lines.append(mol_rec.id)
-                sol_obj.search([('id','=', ol.id)]).unlink()
+                self._cr.execute("delete from sale_order_line where id = %s" % (ol.id))
+#                sol_obj.search([('id','=', ol.id)]).unlink()
         return
 
+    @api.model
+    def create_multi_from_vals(self, vals):
+        self.ensure_one
+        sol_obj = self.env['sale.order.line']
+        if orderline.adv_issue_ids and not orderline.issue_product_ids:
+            raise UserError(_('The Order Line is in error. Please correct!'))
+        elif orderline.issue_product_ids:
+            number_ids = len(orderline.issue_product_ids)
+            uom_qty = orderline.multi_line_number / number_ids
+            if uom_qty != 1:
+                raise UserError(_('The number of Lines is different from the number of Issues in the multi line.'))
 
+            for ad_iss in orderline.issue_product_ids:
+                ad_issue = self.env['sale.advertising.issue'].search([('id', '=', ad_iss.adv_issue_id.id)])
+                csa = orderline.color_surcharge_amount / orderline.comb_list_price * ad_iss.price_unit * orderline.product_uom_qty if orderline.color_surcharge else 0.0
+                sbad = (ad_iss.price_unit * orderline.product_uom_qty + csa) * (1 - orderline.computed_discount / 100.0)
+                aup = sbad / orderline.product_uom_qty
+                res = {'title': ad_issue.parent_id.id,
+                       'adv_issue': ad_issue.id,
+                       'title_ids': False,
+                       'product_id': ad_iss.product_id.id,
+                       'name': ad_iss.product_id.product_tmpl_id.name,
+                       'price_unit': ad_iss.price_unit,
+                       'issue_product_ids': False,
+                       'color_surcharge_amount': csa,
+                       'subtotal_before_agency_disc': sbad,
+                       'actual_unit_price': aup,
+                       'order_id': orderline.order_id.id or False,
+                       'comb_list_price': 0.0,
+                       'multi_line_number': 1,
+                       'multi_line': False
+                       }
+                vals = orderline.copy_data(default=res)[0]
+                mol_rec = sol_obj.create(vals)
+
+                try:
+                    del context['__copy_data_seen']
+                except:
+                    pass
+        return
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
