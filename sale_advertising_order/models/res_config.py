@@ -58,25 +58,24 @@ class Partner(models.Model):
         ctx = self.env.context.copy()
         ctx.update({'searchFor': 'name'}) #default search for name
         if name:
-            partner_ids = self.search( [('zip', '=like', name + "%")] + args, limit=limit)
+            partner_ids = self.search([('zip', '=like', name + "%")] + args, limit=limit)
             ctx.update({'searchFor': 'zip'}) if partner_ids else ctx
             if not partner_ids:
                 partner_ids = self.search([('email', '=like', name + "%")] + args, limit=limit)
                 ctx.update({'searchFor': 'email'}) if partner_ids else ctx
-            if not partner_ids:
-                partner_ids = self.search( [('name', operator, name)] + args, limit=limit)
+            partner_ids += self.search([('name', operator, name)] + args, limit=limit)
             if not partner_ids and len(name.split()) >= 2:
                 # Separating zip, email and name of partner for searching
                 operand1, operand2 = name.split(' ', 1)  # name can contain spaces e.g. OpenERP S.A.
-                ids = self.search([('zip', operator, operand1), ('name', operator, operand2)] + args,
+                partner_ids = self.search([('zip', operator, operand1), ('name', operator, operand2)] + args,
                                   limit=limit)
-                ctx.update({'searchFor': 'zip'}) if ids else ctx
-                if not ids:
-                    ids = self.search([('email', operator, operand1), ('name', operator, operand2)] + args,
+                ctx.update({'searchFor': 'zip'}) if partner_ids else ctx
+                if not partner_ids:
+                    partner_ids = self.search([('email', operator, operand1), ('name', operator, operand2)] + args,
                                       limit=limit)
-                    ctx.update({'searchFor': 'email'}) if ids else ctx
+                    ctx.update({'searchFor': 'email'}) if partner_ids else ctx
             if partner_ids:
-                return self.with_context(ctx).name_get_custom(partner_ids)
+                return self.with_context(ctx).name_get_custom(list(set(partner_ids)))
             else:
                 return[]
         return super(Partner, self).name_search(name, args, operator=operator, limit=limit)
