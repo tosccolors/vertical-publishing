@@ -104,6 +104,7 @@ class SaleOrder(models.Model):
     published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer','=',True)])
     advertising_agency = fields.Many2one('res.partner', 'Advertising Agency', domain=[('customer','=',True)])
     nett_nett = fields.Boolean('Netto Netto Deal', default=False)
+    agency_is_publish = fields.Boolean('Agency is Publishing Customer', default=False)
     customer_contact = fields.Many2one('res.partner', 'Payer Contact Person', domain=[('customer','=',True)])
     traffic_employee = fields.Many2one('res.users', 'Traffic Employee',)
     traffic_comments = fields.Text('Traffic Comments')
@@ -121,7 +122,7 @@ class SaleOrder(models.Model):
 
     # overridden:
     @api.multi
-    @api.onchange('partner_id', 'published_customer', 'advertising_agency')
+    @api.onchange('partner_id', 'published_customer', 'advertising_agency', 'agency_is_publish')
     def onchange_partner_id(self):
         """
         Update the following fields when the partner is changed:
@@ -140,7 +141,9 @@ class SaleOrder(models.Model):
                 self.partner_id = self.advertising_agency = False
             if self.advertising_agency:
                 self.partner_id = self.advertising_agency
-
+                if self.agency_is_publish:
+                    self.published_customer = self.advertising_agency
+                    self.nett_nett = True
             if not self.partner_id:
                 self.update({
                     'customer_contact': False
@@ -191,13 +194,6 @@ class SaleOrder(models.Model):
                       'traffic_appr_date': fields.Date.context_today(self)})
         return True
 
-    @api.multi
-    def action_confirm(self):
-        for order in self.filtered("advertising"):
-            order.order_line.deadline_check()
-            order.order_line.page_qty_check()
-        return super(SaleOrder, self).action_confirm()
-
     # --added deep
     @api.multi
     def action_refuse(self):
@@ -211,18 +207,54 @@ class SaleOrder(models.Model):
         self.filtered(lambda s: s.state == 'approved2').write({'state': 'sent'})
         return self.env['report'].get_action(self, 'sale.report_saleorder')
 
+    @api.multi
+    def action_cancel(self):
+        for order in self.filtered(lambda s: s.state == 'sale' and s.advertising):
+            for line in order.order_line:
+                line.page_qty_check_unlink()
+        return super(SaleOrder, self).action_cancel()
+
+    @api.multi
+    def action_confirm(self):
+        for order in self.filtered("advertising"):
+            olines = []
+            for line in order.order_line:
+                if line.multi_line:
+                    olines.append(line.id)
+            if not olines == []:
+                self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
+#                self._cr.commit()
+            for newline in order.order_line:
+                newline.deadline_check()
+                newline.page_qty_check_create()
+        return super(SaleOrder, self).action_confirm()
+
+    '''@api.multi
+    def write(self, vals):
+        for order in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
+            olines = []
+            for line in order.order_line:
+                if line.multi_line:
+                    olines.append(line.id)
+            if not olines == []:
+                
+            for newline in order.order_line:
+                newline.deadline_check()
+                newline.page_qty_check_update()
+        return super(SaleOrder, self).write(vals)'''
+
 
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'comb_list_price', 'subtotal_before_agency_disc', 'discount', 'price_unit', 'tax_id')
+    @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett',
+                 'color_surcharge_amount', 'discount', 'price_unit', 'tax_id')
     @api.multi
     def _compute_amount(self):
         """
         Compute the amounts of the SO line.
         """
-#        import pdb; pdb.set_trace()
         super(SaleOrderLine, self.filtered(lambda record: record.advertising != True))._compute_amount()
         for line in self.filtered('advertising'):
             comp_discount = line.computed_discount or 0.0
@@ -245,10 +277,9 @@ class SaleOrderLine(models.Model):
                 elif price_unit > 0.0 and subtotal_bad > 0.0:
                     unit_price = round(float(subtotal_bad) / float(qty), 2)
                     comp_discount = round((float(price_unit + float(csa) - float(unit_price))) / (float(price_unit) + float(csa)) * 100.0, 2)
-                elif price_unit > 0.0 and subtotal_bad == 0.0:
-                    unit_price = 0.0
-                    csa = 0.0
-                    comp_discount = 100.0
+                else:
+                    unit_price = round(float(price_unit) * float(1 - float(comp_discount) / 100.0) + float(csa), 2)
+                    subtotal_bad = unit_price * qty
 
                 price = unit_price * (1 - (discount or 0) / 100.0)
                 taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id,
@@ -267,6 +298,7 @@ class SaleOrderLine(models.Model):
                 clp = line.comb_list_price or 0.0
                 if clp > 0.0:
                     comp_discount = round((float(clp) + float(csa) - float(subtotal_bad)) / (float(clp) + float(csa)) * 100.0,2)
+#                    subtotal_bad = round((float(clp) + float(csa)) * float(1 - comp_discount / 100.0), 2)
                     unit_price = 0.0
                     price_unit = 0.0
                 else:
@@ -283,6 +315,7 @@ class SaleOrderLine(models.Model):
                     'price_tax': taxes['total_included'] - taxes['total_excluded'],
                     'price_total': taxes['total_included'],
                     'price_subtotal': taxes['total_excluded'],
+                    'subtotal_before_agency_disc': subtotal_bad,
                     'actual_unit_price': unit_price,
                     'computed_discount': comp_discount,
                     'color_surcharge_amount': csa,
@@ -381,8 +414,7 @@ class SaleOrderLine(models.Model):
     partner_acc_mgr = fields.Many2one(related='order_id.partner_acc_mgr', store=True, string='Account Manager', readonly=True)
     order_partner_id = fields.Many2one(related='order_id.partner_id', relation='res.partner', string='Customer')
     discount_dummy = fields.Float(related='discount', string='Agency Commission (%)', readonly=True )
-    actual_unit_price = fields.Monetary(string='Actual Unit Price', required=True, default=0.0,
-                                     digits=dp.get_precision('Actual Unit Price'), states={'draft': [('readonly', False)]})
+    actual_unit_price = fields.Monetary(compute='_compute_amount', string='Actual Unit Price', default=0.0, readonly=True)
     comb_list_price = fields.Monetary(compute='_multi_price', string='Combined_List Price', default=0.0, store=True,
                                 digits=dp.get_precision('Actual Unit Price'))
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', readonly=True)
@@ -391,7 +423,7 @@ class SaleOrderLine(models.Model):
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
     multi_line = fields.Boolean(string='Multi Line')
     color_surcharge = fields.Boolean(string='Color Surcharge')
-    color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Account'), readonly=True)
+    color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Account'))
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
 
     @api.onchange('medium')
@@ -617,7 +649,7 @@ class SaleOrderLine(models.Model):
         if not self.multi_line:
             self.subtotal_before_agency_disc = self.actual_unit_price = self.price_unit
         else:
-            self.actual_unit_price = self.price_unit = 0.0
+            self.price_unit = 0.0
         self.product_uom_qty = 1
         return result
 
@@ -646,29 +678,7 @@ class SaleOrderLine(models.Model):
 
 
 
-    '''@api.onchange('actual_unit_price')
-    def onchange_actualup(self):
-        result = {}
-        if not self.advertising:
-            return {'value': result}
-        if not self.multi_line:
-            if self.actual_unit_price > 0.0:
-                if self.price_unit > 0.0:
-                    pcsa = float(self.price_unit) + float(self.color_surcharge_amount)
-                    cdisc = round((pcsa - float(self.actual_unit_price)) / pcsa * 100.0,2)
-                    result['computed_discount'] = cdisc
-                    result['subtotal_before_agency_disc'] = round((float(self.actual_unit_price) * float(self.product_uom_qty)), 2)
-                else:
-                    result['actual_unit_price'] = 0.0
-                    result['computed_discount'] = 0.0
-                    result['subtotal_before_agency_disc'] = 0.0
-            else:
-                if self.price_unit > 0.0:
-                    result['computed_discount'] = 100.0
-                    result['subtotal_before_agency_disc'] = 0.0
-        return {'value': result}'''
-
-    @api.onchange('computed_discount', 'color_surcharge_amount')
+    @api.onchange('computed_discount')
     def onchange_actualcd(self):
         result = {}
         if not self.advertising:
@@ -688,17 +698,40 @@ class SaleOrderLine(models.Model):
                 aup = round((float(price) + float(csa) ) * float(1.0 - comp_discount / 100.0), 2)
                 subtotal_bad = aup * self.product_uom_qty
         result['subtotal_before_agency_disc'] = subtotal_bad
-
         return {'value': result}
 
-
-    @api.onchange('product_uom_qty')
-    def onchange_actualqty(self):
+    @api.onchange('subtotal_before_agency_disc')
+    def onchange_subtotal(self):
         result = {}
         if not self.advertising:
             return {'value': result}
-        if not self.multi_line:
-            self.subtotal_before_agency_disc = round((float(self.actual_unit_price) * float(self.product_uom_qty)), 2)
+        csa = self.color_surcharge_amount or 0.0
+        subtotal_bad = self.subtotal_before_agency_disc
+        price = self.price_unit
+
+        if self.multi_line:
+            clp = self.comb_list_price or 0.0
+            if clp and clp > 0:
+                comp_discount = round((float(subtotal_bad) / (float(clp) + float(csa)) * 100.0), 2)
+            else:
+                comp_discount = 0.0
+        else:
+            if price and price > 0:
+                comp_discount = round(float(subtotal_bad) / (float(price) + float(csa)) * 100.0, 2)
+        result['computed_discount'] = comp_discount
+        return {'value': result}
+
+
+#    @api.onchange('product_uom_qty')
+#    def onchange_actualqty(self):
+#        result = {}
+#        if not self.advertising:
+#            return {'value': result}
+#        if not self.multi_line:
+#            self.subtotal_before_agency_disc = round((float(self.price_unit) + (float(self.color_surcharge_amount))) *
+#                                                      float(self.product_uom_qty) * float(1.0 - self.computed_discount / 100.0), 2)
+#        else:
+#            self.subtotal_before_agency_disc = round((float(self.comb_list_price) + float(self.color_surcharge_amount)) * float(1.0 - self.computed_discount / 100.0), 2)
 
     @api.onchange('color_surcharge' )
     def onchange_color(self):
@@ -713,22 +746,16 @@ class SaleOrderLine(models.Model):
             if self.color_surcharge:
                 self.color_surcharge_amount = pu / 2
                 aup = pu * 1.50 * round(float(1 - float(self.computed_discount / 100)), 2)
-#                self.computed_discount = 0.0
-                self.actual_unit_price = aup
                 self.subtotal_before_agency_disc = round((float(aup) * float(self.product_uom_qty)), 2)
             else:
                 self.color_surcharge_amount = 0.0
                 aup = aup - csa
-#                self.computed_discount = 0.0
-                self.actual_unit_price = aup
                 self.subtotal_before_agency_disc = round((float(aup) * float(self.product_uom_qty)), 2)
         else:
             if self.color_surcharge:
-#                self.computed_discount = 0.0
                 self.color_surcharge_amount = clp / 2
                 self.subtotal_before_agency_disc = round((float(clp) * 1.50 * float(1 - float(self.computed_discount / 100))), 2)
             else:
-#                self.computed_discount = 0.0
                 self.subtotal_before_agency_disc = self.subtotal_before_agency_disc - csa
                 self.color_surcharge_amount = 0.0
 
@@ -781,51 +808,85 @@ class SaleOrderLine(models.Model):
             res['account_analytic_id'] = self.adv_issue.analytic_account_id.id
         return res
 
-#    @api.multi
-#    def create(self, values):
-#        if ('product_uom_qty' or 'adv_issue' or 'product_id') in values:
-#            self.page_qty_check()
-#        result = super(SaleOrderLine, self).create(values)
-#        return result
+    @api.multi
+    def create(self, values):
+#        import pdb;
+#        pdb.set_trace()
+        for line in self.filtered(lambda l: l.state == 'sale' and l.advertising):
+#            if line.multi_line:
+#                if self.env.context.get('LoopBreaker'):
+#                    return
+#                self = self.with_context(LoopBreaker=True)
+#                self.env['sale.order.line.create.multi.lines'].create_multi_from_new_order_lines(orderline=line)
+            #               self._cr.commit()
+            if ('product_uom_qty' or 'adv_issue' or 'product_id') in values:
+                line.page_qty_check_create()
+        result = super(SaleOrderLine, self).create(values)
+        return result
 
     @api.multi
     def write(self, values):
         for line in self.filtered(lambda l: l.state == 'sale' and l.advertising):
-            if ('adv_issue' or 'ad_class') in values:
-                self.deadline_check()
-                if ('product_uom_qty' or 'product_id') in values:
-                    self.page_qty_check()
+            user = self.env['res.users'].browse(self.env.uid)
+            if not (user.has_group('sale_advertising_order.group_traffic_user') or user.has_group('sale_advertising_order.group_senior_sales')) \
+                    and self.computed_discount > 60.0:
+                raise UserError(_('You cannot save a Sale Order Line with more than 60% discount. You\'ll have to ask Sales Support for help'))
+            if ('adv_issue' or 'ad_class' or 'product_id' or 'product_uom_qty') in values:
+                    line.deadline_check()
+                    line.page_qty_check_update()
         result = super(SaleOrderLine, self).write(values)
         return result
 
+    ##Original sale method
+#    @api.multi
+#    def unlink(self):
+#        if self.filtered(lambda x: x.state in ('sale', 'done')):
+#            raise UserError(
+#                _('You can not remove a sale order line.\nDiscard changes and try setting the quantity to 0.'))
+#        return super(SaleOrderLine, self).unlink()
+
     @api.multi
     def deadline_check(self):
-        for line in self.filtered('advertising'):
-            if line.deadline:
-                if fields.Datetime.from_string(line.deadline) < datetime.now():
-                    raise UserError(_('The deadline %s for this Category/Advertising Issue has passed.') %(line.deadline))
-            elif line.issue_date and fields.Datetime.from_string(line.issue_date) < datetime.now():
-                raise UserError(_('The Issue Date %s for this Advertising Issue has passed.') % (line.issue_date))
+        self.ensure_one()
+        if self.deadline:
+            if fields.Datetime.from_string(self.deadline) < datetime.now():
+                raise UserError(_('The deadline %s for this Category/Advertising Issue has passed.') %(self.deadline))
+        elif self.issue_date and fields.Datetime.from_string(self.issue_date) < datetime.now():
+            raise UserError(_('The Issue Date %s for Advertising Issue %s has passed.') % (self.issue_date, self.adv_issue.name))
 
 
     @api.multi
-    def page_qty_check(self):
-        for line in self.filtered('advertising'):
-            if not line.product_template_id.page_id:
-                return
-            lspace = line.product_uom_qty * line.product_template_id.space
-            lpage = line.product_template_id.page_id.id
-            if lspace > line.adv_issue.calc_page_space(lpage):
-                raise UserError(_('There is not enough availability for this placement on %s in %s.') % (lpage, line.adv_issue))
-            else:
-                vals = {
-                    'adv_issue_id': line.adv_issue.id,
-                    'name': 'Afboeking',
-                    'order_line_id': line.id,
-                    'page_id': lpage,
-                    'available_qty': - int(lspace)
-                }
-                self.env['sale.advertising.available'].create(vals)
+    def page_qty_check_create(self):
+        self.ensure_one()
+        if not self.product_template_id.page_id:
+            return
+        lspace = self.product_uom_qty * self.product_template_id.space
+        lpage = self.product_template_id.page_id.id
+        if lspace > self.adv_issue.calc_page_space(lpage):
+            raise UserError(_('There is not enough availability for this placement on %s in %s.') % (lpage, self.adv_issue.name))
+        else:
+            vals = {
+                'adv_issue_id': self.adv_issue.id,
+                'name': 'Afboeking',
+                'order_line_id': self.id,
+                'page_id': lpage,
+                'available_qty': - int(lspace)
+            }
+            self.env['sale.advertising.available'].create(vals)
+
+    @api.multi
+    def page_qty_check_update(self):
+        self.ensure_one()
+        self.page_qty_check_unlink()
+        self.page_qty_check_create()
+
+    @api.multi
+    def page_qty_check_unlink(self):
+        self.ensure_one()
+        res = self.env['sale.advertising.available'].search([('order_line_id', '=', self.id)])
+        if res and len(res) > 0:
+            res.unlink()
+
 
 
 class OrderLineAdvIssuesProducts(models.Model):
