@@ -828,7 +828,7 @@ class SaleOrderLine(models.Model):
         olines = []
         for line in self.filtered(lambda l: l.state == 'sale' and l.advertising):
             user = self.env['res.users'].browse(self.env.uid)
-            if not (user.has_group('sale_advertising_order.group_traffic_user') or user.has_group('sale_advertising_order.group_senior_sales')) \
+            if not user.has_group('sale_advertising_order.group_no_discount_check') \
                     and self.computed_discount > 60.0:
                 raise UserError(_('You cannot save a Sale Order Line with more than 60% discount. You\'ll have to ask Sales Support for help'))
             if not 'multi_line' in values and ('adv_issue' or 'ad_class' or 'product_id' or 'product_uom_qty') in values:
@@ -849,7 +849,8 @@ class SaleOrderLine(models.Model):
     @api.multi
     def deadline_check(self):
         self.ensure_one()
-        if self.deadline:
+        user = self.env['res.users'].browse(self.env.uid)
+        if not user.has_group('sale_advertising_order.group_no_discount_check') and self.deadline:
             if fields.Datetime.from_string(self.deadline) < datetime.now():
                 raise UserError(_('The deadline %s for this Category/Advertising Issue has passed.') %(self.deadline))
         elif self.issue_date and fields.Datetime.from_string(self.issue_date) < datetime.now():
@@ -861,9 +862,10 @@ class SaleOrderLine(models.Model):
         self.ensure_one()
         if not self.product_template_id.page_id:
             return
+        user = self.env['res.users'].browse(self.env.uid)
         lspace = self.product_uom_qty * self.product_template_id.space
         lpage = self.product_template_id.page_id.id
-        if lspace > self.adv_issue.calc_page_space(lpage):
+        if lspace > self.adv_issue.calc_page_space(lpage) and not user.has_group('sale_advertising_order.group_no_availability_check'):
             raise UserError(_('There is not enough availability for this placement on %s in %s.') % (lpage, self.adv_issue.name))
         else:
             vals = {
