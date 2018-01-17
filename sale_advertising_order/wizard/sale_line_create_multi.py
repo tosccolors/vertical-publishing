@@ -44,7 +44,7 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                 all_lines.append(olines)
                 n += 1
             if n == 0:
-                raise UserError(_('There are no Sales Order Lines without Advertising Issues in the selected Sales Orders.'))
+                raise UserError(_('There are no Sales Order Lines with Multi Lines in the selected Sales Orders.'))
             self.create_multi_from_order_lines(orderlines=all_lines)
 
         elif model and model == 'sale.order.line':
@@ -60,7 +60,7 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                 n += 1
                 all_lines.append(lines)
             if n == 0:
-                raise UserError(_('There are no Sales Order Lines without Advertising Issues in the selection.'))
+                raise UserError(_('There are no Sales Order Lines with Multi Lines in the selection.'))
             self.create_multi_from_order_lines(orderlines=all_lines)
         return
 
@@ -68,8 +68,8 @@ class sale_order_line_create_multi_lines(models.TransientModel):
     def create_multi_from_order_lines(self, orderlines=[]):
         sol_obj = self.env['sale.order.line']
         olines = sol_obj.browse(orderlines)
+        lines = []
         for ol in olines:
-            lines = [x.id for x in ol.order_id.order_line]
             if ol.adv_issue_ids and not ol.issue_product_ids:
                 raise UserError(_('The Order Line is in error. Please correct!'))
             elif ol.issue_product_ids:
@@ -101,54 +101,9 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                     vals = ol.copy_data(default=res)[0]
                     mol_rec = sol_obj.create(vals)
 
-                    try:
-                        del context['__copy_data_seen']
-                    except:
-                        pass
                     lines.append(mol_rec.id)
                 self._cr.execute("delete from sale_order_line where id = %s" % (ol.id))
-#                sol_obj.search([('id','=', ol.id)]).unlink()
-        return
+        return lines
 
-    @api.model
-    def create_multi_from_vals(self, vals):
-        self.ensure_one
-        sol_obj = self.env['sale.order.line']
-        if orderline.adv_issue_ids and not orderline.issue_product_ids:
-            raise UserError(_('The Order Line is in error. Please correct!'))
-        elif orderline.issue_product_ids:
-            number_ids = len(orderline.issue_product_ids)
-            uom_qty = orderline.multi_line_number / number_ids
-            if uom_qty != 1:
-                raise UserError(_('The number of Lines is different from the number of Issues in the multi line.'))
-
-            for ad_iss in orderline.issue_product_ids:
-                ad_issue = self.env['sale.advertising.issue'].search([('id', '=', ad_iss.adv_issue_id.id)])
-                csa = orderline.color_surcharge_amount / orderline.comb_list_price * ad_iss.price_unit * orderline.product_uom_qty if orderline.color_surcharge else 0.0
-                sbad = (ad_iss.price_unit * orderline.product_uom_qty + csa) * (1 - orderline.computed_discount / 100.0)
-                aup = sbad / orderline.product_uom_qty
-                res = {'title': ad_issue.parent_id.id,
-                       'adv_issue': ad_issue.id,
-                       'title_ids': False,
-                       'product_id': ad_iss.product_id.id,
-                       'name': ad_iss.product_id.product_tmpl_id.name,
-                       'price_unit': ad_iss.price_unit,
-                       'issue_product_ids': False,
-                       'color_surcharge_amount': csa,
-                       'subtotal_before_agency_disc': sbad,
-                       'actual_unit_price': aup,
-                       'order_id': orderline.order_id.id or False,
-                       'comb_list_price': 0.0,
-                       'multi_line_number': 1,
-                       'multi_line': False
-                       }
-                vals = orderline.copy_data(default=res)[0]
-                mol_rec = sol_obj.create(vals)
-
-                try:
-                    del context['__copy_data_seen']
-                except:
-                    pass
-        return
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
