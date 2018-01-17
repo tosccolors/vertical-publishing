@@ -240,8 +240,9 @@ class SaleOrder(models.Model):
             for line in order.order_line:
                 if line.multi_line:
                     olines.append(line.id)
-                line.deadline_check()
-                line.page_qty_check_update()
+                    continue
+#                line.deadline_check()
+#                line.page_qty_check_update()
             if not olines == []:
                 list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
                 newlines = self.env['sale.order.line'].browse(list)
@@ -285,7 +286,7 @@ class SaleOrderLine(models.Model):
                     comp_discount = round((1.0 - float(unit_price) / (float(price_unit) + float(csa))) * 100.0, 2)
 
 
-                price = unit_price * (1 - (discount or 0) / 100.0)
+                price = round(float(unit_price) * (1.0 - float(discount or 0) / 100.0), 2)
                 taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id,
                                                 partner=line.order_id.partner_id)
                 line.update({
@@ -309,8 +310,8 @@ class SaleOrderLine(models.Model):
                     unit_price = 0.0
                     price_unit = 0.0
 
-                price = subtotal_bad * (1 - (discount or 0) / 100.0)
-                taxes = line.tax_id.compute_all(price, line.order_id.currency_id, quantity=1,
+                price = round(float(subtotal_bad) * (1.0 - float(discount or 0) / 100.0), 2)
+                taxes = line.tax_id.compute_all(price, line.order_id.currency_id, quantity=qty,
                                                 product=line.product_template_id, partner=line.order_id.partner_id)
                 line.update({
                     'price_tax': taxes['total_included'] - taxes['total_excluded'],
@@ -640,7 +641,7 @@ class SaleOrderLine(models.Model):
                             'multi_line': False,
                         })
 
-    @api.multi
+    '''@api.multi
     @api.onchange('product_id')
     def product_id_change(self):
         result = super(SaleOrderLine, self).product_id_change()
@@ -651,7 +652,7 @@ class SaleOrderLine(models.Model):
         else:
             self.price_unit = 0.0
         self.product_uom_qty = 1
-        return result
+        return result'''
 
     @api.onchange('date_type')
     def onchange_date_type(self):
@@ -824,7 +825,6 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def write(self, values):
-        result = super(SaleOrderLine, self).write(values)
         olines = []
         for line in self.filtered(lambda l: l.state == 'sale' and l.advertising):
             user = self.env['res.users'].browse(self.env.uid)
@@ -836,6 +836,7 @@ class SaleOrderLine(models.Model):
                     line.page_qty_check_update()
             elif 'multi_line' in values:
                 olines.append(line.id)
+        result = super(SaleOrderLine, self).write(values)
         if olines != []:
             newlines = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
             #               self._cr.commit()
