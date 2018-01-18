@@ -116,10 +116,10 @@
                             <field name="date_order" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
                             <field name="validity_date" attrs="{'invisible': [('state', 'in', ['sale', 'done'])]}"/>
                             <field name="confirmation_date" attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'cancel'])]}"/>
-                            <field name="client_order_ref" string="PO-number"/>
-						    <field name="traffic_employee" string="Traffic Employee" groups="sale_advertising_order.group_traffic_user"/>
-                            <field name="traffic_comments" string="Traffic Comments"/>
-						    <field name="traffic_appr_date" string="Traffic Approval Date" readonly="True"/>
+                            <field name="client_order_ref" string="Client Order Reference"/>
+						    <field name="traffic_employee" invisible="1" string="Traffic Employee" groups="sale_advertising_order.group_traffic_user"/>
+                            <field name="traffic_comments" invisible="1" string="Traffic Comments"/>
+						    <field name="traffic_appr_date" invisible="1" string="Traffic Approval Date" readonly="True"/>
                             <field name="pricelist_id" groups="product.group_sale_pricelist"/>
                             <field name="currency_id" invisible="1"/>
                             <field name="payment_term_id" options="{'no_create': True}"/>
