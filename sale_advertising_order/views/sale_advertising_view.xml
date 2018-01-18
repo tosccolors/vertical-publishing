@@ -1161,7 +1161,7 @@
             </field>
         </record>
 
-        <menuitem name="Advertising Page Availability" id="menu_sale_advertising_available" parent="sales_team.menu_sale_config"
+        <menuitem name="Advertising Page Availability" id="menu_sale_advertising_available" parent="sale_advertising_order.menu_advsales"
                   action="action_sale_advertising_available" groups="sale_advertising_order.group_advertising_sales_user"/>
 
         <!-- View for discount.reason object -->
