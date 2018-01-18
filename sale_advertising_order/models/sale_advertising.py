@@ -641,7 +641,7 @@ class SaleOrderLine(models.Model):
                             'multi_line': False,
                         })
 
-    '''@api.multi
+    @api.multi
     @api.onchange('product_id')
     def product_id_change(self):
         result = super(SaleOrderLine, self).product_id_change()
@@ -651,8 +651,9 @@ class SaleOrderLine(models.Model):
             self.subtotal_before_agency_disc = self.actual_unit_price = self.price_unit
         else:
             self.price_unit = 0.0
+            self.subtotal_before_agency_disc = self.comb_list_price
         self.product_uom_qty = 1
-        return result'''
+        return result
 
     @api.onchange('date_type')
     def onchange_date_type(self):
