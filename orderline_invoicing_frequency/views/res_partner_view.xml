@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_partners_form_bdu_account_inherited" model="ir.ui.view">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.view_partner_property_form" />
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='accounting_entries']" position="after">
+                    <group string="Invoicing Frequency" name="invoicing_frequency">
+                        <field name="invoice_frequency"/>
+                        <field name="last_invoice_sent_date" attrs="{'invisible': [('invoice_frequency', '=', False)]}" readonly="1"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
