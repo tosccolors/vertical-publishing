@@ -1,4 +1,4 @@
-<openerp>
+<odoo>
     <data>
     <record id="view_nsm_res_company_form_sale_adv" model="ir.ui.view">
         <field name="name">res.company.form</field>
@@ -17,4 +17,4 @@
         </field>
     </record>
     </data>
-</openerp>
+</odoo>

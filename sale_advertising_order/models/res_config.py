@@ -28,6 +28,57 @@ class Partner(models.Model):
     agency_discount = fields.Float('Agency Discount (%)', digits=(16, 2), default=0.0)
     is_ad_agency = fields.Boolean('Agency', default=False)
 
+    def name_get_custom(self, partner_ids):
+        if not partner_ids:
+            return []
+        res = []
+        domain = False
+        if 'searchFor' in self.env.context:
+            domain = self.env.context['searchFor']
+        for record in partner_ids:
+            str_name = record.name
+            if domain:
+                if record.zip and domain == 'zip':
+                    name = '['+record.zip+']'+str_name
+                    res.append((record.id, name))
+                elif record.email and domain == 'email':
+                    name = '['+record.email+']'+str_name
+                    res.append((record.id, name))
+                else:
+                    res.append((record.id, str_name))
+            else:
+                res.append((record.id, str_name))
+        return res
+
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=100):
+        if not args:
+            args = []
+        args = args[:]
+        ctx = self.env.context.copy()
+        ctx.update({'searchFor': 'name'}) #default search for name
+        if name:
+            partner_ids = self.search([('zip', '=like', name + "%")] + args, limit=limit)
+            ctx.update({'searchFor': 'zip'}) if partner_ids else ctx
+            if not partner_ids:
+                partner_ids = self.search([('email', '=like', name + "%")] + args, limit=limit)
+                ctx.update({'searchFor': 'email'}) if partner_ids else ctx
+            partner_ids += self.search([('name', operator, name)] + args, limit=limit)
+            if not partner_ids and len(name.split()) >= 2:
+                # Separating zip, email and name of partner for searching
+                operand1, operand2 = name.split(' ', 1)  # name can contain spaces e.g. OpenERP S.A.
+                partner_ids = self.search([('zip', operator, operand1), ('name', operator, operand2)] + args,
+                                  limit=limit)
+                ctx.update({'searchFor': 'zip'}) if partner_ids else ctx
+                if not partner_ids:
+                    partner_ids = self.search([('email', operator, operand1), ('name', operator, operand2)] + args,
+                                      limit=limit)
+                    ctx.update({'searchFor': 'email'}) if partner_ids else ctx
+            if partner_ids:
+                return self.with_context(ctx).name_get_custom(list(set(partner_ids)))
+            else:
+                return[]
+        return super(Partner, self).name_search(name, args, operator=operator, limit=limit)
 
 
 class Company(models.Model):

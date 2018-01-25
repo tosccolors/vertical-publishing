@@ -70,6 +70,8 @@
                 <search string="Search Partner">
                    <field name="name"
                        filter_domain="['|','|',('name','ilike',self),('parent_id','ilike',self),('ref','=',self)]"/>
+                   <field name="email" filter_domain="['|',('email','ilike',self),('email','=',self)]"/>
+                   <field name="zip" filter_domain="['|',('zip','ilike',self),('zip','=',self)]"/>
                    <filter help="My Customers" name="my_partners" icon="terp-personal+" domain="[('user_id','=',uid)]"/>
                    <separator/>
                    <filter string="Persons" name="type_person" domain="[('is_company','=',0),('type','=','contact')]"/>

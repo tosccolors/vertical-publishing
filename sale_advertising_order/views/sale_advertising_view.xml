@@ -45,27 +45,26 @@
 							groups="sale_advertising_order.group_traffic_user"/-->
 					<button name="action_refuse" string="Refuse" type="object" states="submitted"
 							groups="sale_advertising_order.group_traffic_user,sale_advertising_order.group_senior_sales"/>
-					<button name="%(sale_advertising_order.action_view_sale_order_line_create_multi)d"
+					<!--button name="%(sale_advertising_order.action_view_sale_order_line_create_multi)d"
 							string="Create Multiple Order Lines" type="action"  class="btn-primary"
-							attrs="{'invisible': [('state','in',['cancel','sale','done'])]}"/>
+							attrs="{'invisible': [('state','in',['cancel','sale','done'])]}"/-->
                     <button name="action_confirm" string="Confirm Sale"
-                            attrs="{'invisible': ['|','|','&amp;',('state','not in',['sent','approved1']),('ver_tr_exc','=',True),('id','=',False),('state','in',['cancel','sale','done'])]}"
+                            attrs="{'invisible': ['|','|',('id','=',False),('state','in',('cancel','sale','done')),('ver_tr_exc','=',True),('state','in',('draft','submitted'))]}"
                             class="btn-primary o_sale_confirm" groups="sales_team.group_sale_salesman" type="object" />
-                    <button name="action_confirm" string="Confirm Sale" attrs="{'invisible': ['|',('state','in',['sent','approved1']),
-                                                                                                ('ver_tr_exc','!=',True),('state','in',['cancel','sale','done'])]}"
-                            class="o_sale_confirm" type="object" groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/>
-                    <!--button name="action_confirm" attrs="{'invisible': [('state','in',['cancel','sent','approved1','sale','done'])]}" string="Confirm Sale"
-                            class="o_sale_confirm" type="object" groups="sale_advertising_order.group_traffic_user"/-->
-                    <button name="action_quotation_send" string="Send by Email" type="object" attrs="{'invisible': ['|',('state','not in',['sent','approved1']),
-                                                                                                    ('ver_tr_exc','=',True),('state','in',['cancel'])]}"
-                            class="btn-primary"	groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"/>
-                    <!--button name="action_quotation_send" string="Send by Email" type="object" attrs="{'invisible': [('state', 'in',['cancel'])]}"
-                            class="btn-primary"	groups="sale_advertising_order.group_traffic_user"/-->
-                    <button name="print_quotation" string="Print" type="object" attrs="{'invisible': ['|',('state','not in',['sent','approved1']),('ver_tr_exc','=',True),
-                                                                                        ('state','in',['cancel'])]}"
-                            class="btn-primary" groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"/>
-                    <!--button name="print_quotation" string="Print" type="object" states="draft,approved1,sent,sale,done"
-                            groups="sale_advertising_order.group_traffic_user"/-->
+                    <!--button name="action_confirm" string="Confirm Sale" attrs="{'invisible': [('state','in',['cancel','sent','submitted','sale','done'])]}"
+                            class="o_sale_confirm" type="object" groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/-->
+                    <button name="action_confirm" string="Confirm Sale" attrs="{'invisible': [('state','in',['cancel','sale','done'])]}"
+                            class="btn-primary o_sale_confirm" type="object" groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/>
+                    <button name="action_quotation_send" string="Send by Email" type="object" attrs="{'invisible': ['|',('state','in',['cancel','sale','done']),
+                                                                                                                       ('ver_tr_exc','=',True),('state','in',['draft','submitted'])]}"
+                            class="btn-primary"	groups="sales_team.group_sale_salesman"/>
+                    <button name="action_quotation_send" string="Send by Email" type="object" attrs="{'invisible': [('state', 'in',['cancel','sale','done'])]}"
+                            class="btn-primary"	groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/>
+                    <button name="print_quotation" string="Print" type="object" attrs="{'invisible': ['|',('state','in',['cancel','submitted','sale','done']),
+                                                                                                          ('ver_tr_exc','=',True),('state','in',['draft','submitted'])]}"
+                            class="btn-primary" groups="sales_team.group_sale_salesman"/>
+                    <button name="print_quotation" string="Print" type="object" states="draft,submitted,approved1,sent,sale,done"
+                            groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/>
                     <button name="action_cancel" states="draft,submitted,approved1,sent,sale" type="object" string="Cancel"/>
                     <button name="action_draft" states="cancel" type="object" string="Set to Quotation"/>
                     <button name="action_done" type="object" string="Lock" states="sale" groups="sale_advertising_order.group_traffic_user"/>
@@ -90,47 +89,46 @@
                     <group>
                         <group>
                             <field name="published_customer"
-							   context="{'tree_view_ref': 'nsm_crm.view_partner_tree_nsm_crm'}"
-							   domain="[('is_ad_agency','!=', True),('parent_id','=', False),('customer','=', True)]"
-							   attrs="{'readonly':[('state','not in','draft')]}" required="True"/>
-
-                            <field name="partner_id" string="Payer" domain="[('customer','=',True), ('is_company','=', True)]"
-                                   context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}'/>
-
-                            <field name="partner_invoice_id" string="Payer Invoice Address" groups="sale.group_delivery_invoice_address"
-                                   context="{'default_type':'invoice', 'show_address': 1}" domain="[('id','child_of',partner_id)]"/>
-                            <field name="customer_contact" required="True" context="{'default_parent_id': partner_id, 'show_email': 1}"
-							        domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"
-							        options='{"always_reload": True}'/>
+                                   context="{'tree_view_ref': 'nsm_crm.view_partner_tree_nsm_crm'}"
+                                   domain="[('is_ad_agency','!=', True),('parent_id','=', False),('customer','=', True)]"
+                                   attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"
+                                   required="True"/>
+                            <field name="partner_id" string="Payer"
+                                   domain="[('customer','=',True), ('parent_id','=', False)]"
+                                   context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}'
+                                   attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"/>
+                            <field name="partner_invoice_id" string="Payer Invoice Address"
+                                   context="{'default_type':'invoice', 'show_address': 1}" domain="[('id','child_of',partner_id)]"
+                                   attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"
+                                   groups="sale.group_delivery_invoice_address"/>
+                            <field name="customer_contact" required="False" context="{'default_parent_id': partner_id, 'show_email': 1}"
+                                   domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"
+                                   options='{"always_reload": True}'
+                                   attrs="{'readonly':[('state','in', ['cancel','done'])]}"/>
                             <field name="advertising_agency"
-                               domain="[('is_ad_agency','=', True),('customer','=',True), ('is_company','=', True)]"
-                               attrs="{'readonly':[('state','not in','draft')]}"/>
+                                   domain="[('is_ad_agency','=', True),('customer','=',True), ('is_company','=', True)]"
+                                   attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}" />
                             <field name="nett_nett" />
-
-                            <field name="opportunity_subject"/>
-                            <field name="related_project_id"
-                                   attrs="{'readonly': ['|',('project_id','!=',False),('invoice_count','!=',0),('state','=','sale')],'invisible':[('state','!=','sale')]}"
-                                   context="{'default_partner_id':partner_invoice_id, 'default_name':name}"
-                                   groups="analytic.group_no_one"/>
-
+                            <field name="agency_is_publish" />
+                            <field name="opportunity_subject" required="True" string="Subject"/>
                         </group>
                         <group>
                             <field name="date_order" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
                             <field name="validity_date" attrs="{'invisible': [('state', 'in', ['sale', 'done'])]}"/>
                             <field name="confirmation_date" attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'cancel'])]}"/>
-                            <field name="client_order_ref" string="PO-number"/>
-						    <field name="traffic_employee" string="Traffic Employee" groups="sale_advertising_order.group_traffic_user"/>
-                            <field name="traffic_comments" string="Traffic Comments"/>
-						    <field name="traffic_appr_date" string="Traffic Approval Date" readonly="True"/>
+                            <field name="client_order_ref" string="Client Order Reference"/>
+						    <field name="traffic_employee" invisible="1" string="Traffic Employee" groups="sale_advertising_order.group_traffic_user"/>
+                            <field name="traffic_comments" invisible="1" string="Traffic Comments"/>
+						    <field name="traffic_appr_date" invisible="1" string="Traffic Approval Date" readonly="True"/>
                             <field name="pricelist_id" groups="product.group_sale_pricelist"/>
                             <field name="currency_id" invisible="1"/>
                             <field name="payment_term_id" options="{'no_create': True}"/>
                         </group>
                     </group>
                     <notebook>
-                        <page string="Order Lines">
+                        <page string="Order Lines" name="order_line">
                             <field name="order_line" mode="tree,kanban"
-                                attrs="{'readonly': [('state', 'in', ('done','cancel'))]}">
+                                attrs="{'readonly': ['|',('state', 'in', ['done','cancel']),('state', 'in', ['approved1','sent']),('ver_tr_exc','=',True)]}">
                                 <form string="Sales Order Lines">
                                     <group>
                                         <group>
@@ -151,8 +149,11 @@
                                                         <field name="name" string="Name"/>
                                                     </tree>
                                             </field>
-                                            <field name="deadline_offset" invisible="0" groups="base.group_no_one"/>
-                                            <field name="adv_issue_ids" string="Advertising Issues" attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
+                                            <field name="deadline_offset" invisible="1" groups="base.group_no_one"/>
+                                            <field name="deadline_passed" invisible="1" />
+                                            <field name="deadline" invisible="0" />
+                                            <field name="adv_issue_ids" string="Advertising Issues"
+                                                   attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
                                                    domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
                                                             '|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
                                                             ('issue_date','&gt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
@@ -163,30 +164,33 @@
                                                     </tree>
                                             </field>
                                             <field name="product_template_id"
-                                                context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
-                                                attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}" domain="[('categ_id','=', ad_class)]"
-                                                options="{'no_create': True, 'no_create_edit': True}" required="1"/>
-                                            <field name="product_id" invisible="0" groups="base.group_no_one"
-                                                context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
-                                                attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
-                                                domain="['|','&amp;',('categ_id','=', ad_class),('attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id)]"
-                                                options="{'no_create': True, 'no_create_edit': True}"/>
+                                                   context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
+                                                   attrs="{'readonly': ['|','|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', []),
+                                                                                 ('deadline_passed','=', True)]}"
+                                                   domain="[('categ_id','=', ad_class)]"
+                                                   options="{'no_create': True, 'no_create_edit': True}" required="1"/>
+                                            <field name="product_id" invisible="1" groups="base.group_no_one"
+                                                   context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
+                                                   attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
+                                                   domain="['|','&amp;',('categ_id','=', ad_class),('attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id)]"
+                                                   options="{'no_create': True, 'no_create_edit': True}"/>
                                             <field name="layout_category_id" groups="sale.group_sale_layout"/>
                                             <field name="invoice_status" invisible="1"/>
                                             <field name="qty_to_invoice" invisible="1"/>
                                             <field name="qty_delivered_updateable" invisible="1"/>
                                             <field name="procurement_ids" invisible="1"/>
                                             <field name="price_subtotal" invisible="1"/>
-                                            <field name="multi_line" invisible="0" groups="base.group_no_one"/>
-                                            <field name="multi_line_number" invisible="0" readonly="True" groups="base.group_no_one"/>
+                                            <field name="multi_line" invisible="1" groups="base.group_no_one"/>
+                                            <field name="multi_line_number" invisible="1" readonly="True" groups="base.group_no_one"/>
                                             <label for="product_uom_qty" string="Ordered Quantity"/>
                                             <div>
                                                 <field name="product_uom_qty" class="oe_inline"
-                                                        context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id,
-                                                                    'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"/>
+                                                       context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id,
+                                                                    'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"
+                                                       attrs="{'readonly': [('deadline_passed','=', True)]}"/>
                                                 <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"
-                                                    attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
-                                                    invisible="0"/>
+                                                       attrs="{'readonly': ['|',('deadline_passed','=', True),
+                                                                                ('state', 'in', ('sale','done', 'cancel'))]}"/>
                                             </div>
                                             <label for="qty_delivered" string="Delivered Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>
                                             <div invisible="context.get('hide_sale')" groups="base.group_no_one">
@@ -235,7 +239,11 @@
                                             <field name="page_class_domain" invisible="1"/>
                                             <label for="analytic_tag_ids" string="Page Category"/>
                                             <div>
-                                                <field name="analytic_tag_ids" string="Page Category" widget="many2many_tags" domain="page_class_domain"/>
+                                                <field name="analytic_tag_ids"
+                                                       string="Page Category"
+                                                       widget="many2many_tags"
+                                                       domain="page_class_domain"
+                                                       attrs="{'readonly': [('deadline_passed','=', True)]}"/>
                                             </div>
                                         </group>
                                     </group>
@@ -421,6 +429,45 @@
                     <field name="message_ids" widget="mail_thread"/>
                 </div>
                 </form>
+            </field>
+        </record>
+
+        <record id="view_order_form_advertising_no_deadline_check" model="ir.ui.view">
+            <field name="name">sale.order.form.advertising.ndl</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_no_deadline_check'))]"/>
+            <field name="arch" type="xml">
+                <field name="adv_issue_ids" position="attributes">
+                     <attribute name="domain" >['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
+                                                    ('issue_date','&gt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]</attribute>
+                </field>
+                <field name="product_template_id" position="attributes">
+                     <attribute name="attrs" >{'readonly': ['|',('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}</attribute>
+                </field>
+                <field name="product_uom_qty" position="attributes">
+                     <attribute name="attrs" ></attribute>
+                </field>
+                <field name="product_uom" position="attributes">
+                     <attribute name="attrs" >{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}</attribute>
+                </field>
+                <field name="analytic_tag_ids" position="attributes">
+                    <attribute name="attrs" ></attribute>
+                </field>
+
+            </field>
+        </record>
+
+        <record id="view_order_form_advertising_senior_sales" model="ir.ui.view">
+            <field name="name">sale.order.form.advertising.ss</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_senior_sales'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='order_line']/field[@name='order_line']" position="attributes">
+                     <attribute name="attrs" >{'readonly': [('state', 'in', ['done','cancel'])]}</attribute>
+                </xpath>
+
             </field>
         </record>
 
@@ -1163,7 +1210,7 @@
             </field>
         </record>
 
-        <menuitem name="Advertising Page Availability" id="menu_sale_advertising_available" parent="sales_team.menu_sale_config"
+        <menuitem name="Advertising Page Availability" id="menu_sale_advertising_available" parent="sale_advertising_order.menu_advsales"
                   action="action_sale_advertising_available" groups="sale_advertising_order.group_advertising_sales_user"/>
 
         <!-- View for discount.reason object -->
