@@ -216,13 +216,14 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_confirm(self):
-        for order in self.filtered("advertising"):
+        for order in self.filtered('advertising'):
             olines = []
             for line in order.order_line:
                 if line.multi_line:
                     olines.append(line.id)
-                line.deadline_check()
-                line.page_qty_check_create()
+                else:
+                    line.deadline_check()
+                    line.page_qty_check_create()
             if not olines == []:
                 list =self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
                 self._cr.commit()
@@ -241,8 +242,6 @@ class SaleOrder(models.Model):
                 if line.multi_line:
                     olines.append(line.id)
                     continue
-#                line.deadline_check()
-#                line.page_qty_check_update()
             if not olines == []:
                 list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
                 newlines = self.env['sale.order.line'].browse(list)
@@ -281,10 +280,11 @@ class SaleOrderLine(models.Model):
                     unit_price = 0.0
                     comp_discount = 0.0
                     csa = 0.0
-                elif price_unit > 0.0 :
+                elif price_unit > 0.0 and qty > 0.0 :
                     unit_price = round(float(subtotal_bad) / float(qty), 2)
                     comp_discount = round((1.0 - float(unit_price) / (float(price_unit) + float(csa))) * 100.0, 2)
-
+                elif qty == 0.0:
+                    unit_price = 0.0
 
                 price = round(float(unit_price) * (1.0 - float(discount or 0) / 100.0), 2)
                 taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id,
@@ -311,7 +311,7 @@ class SaleOrderLine(models.Model):
                     price_unit = 0.0
 
                 price = round(float(subtotal_bad) * (1.0 - float(discount or 0) / 100.0), 2)
-                taxes = line.tax_id.compute_all(price, line.order_id.currency_id, quantity=qty,
+                taxes = line.tax_id.compute_all(price, line.order_id.currency_id, quantity=1,
                                                 product=line.product_template_id, partner=line.order_id.partner_id)
                 line.update({
                     'price_tax': taxes['total_included'] - taxes['total_excluded'],
@@ -357,6 +357,7 @@ class SaleOrderLine(models.Model):
                 if line.adv_issue and line.adv_issue.deadline:
                     dt_deadline = fields.Datetime.from_string(line.adv_issue.deadline)
                     line.deadline = fields.Datetime.to_string(dt_deadline - dt_offset)
+                    line.deadline_passed = datetime.now() > (dt_deadline - dt_offset)
 
 
 
@@ -392,13 +393,14 @@ class SaleOrderLine(models.Model):
     issue_date = fields.Date(related='adv_issue.issue_date', string='Issue Date', store=True)
     medium = fields.Many2one('product.category', string='Medium')
     ad_class = fields.Many2one('product.category', 'Advertising Class')
+    deadline_passed = fields.Boolean(compute=_compute_deadline, string='Deadline Passed')
     deadline = fields.Datetime(compute=_compute_deadline, string='Deadline', store=True)
     deadline_offset = fields.Datetime(compute=_compute_deadline)
     product_template_id = fields.Many2one('product.template', string='Product', domain=[('sale_ok', '=', True)],
                                  change_default=True, ondelete='restrict')
-    page_reference = fields.Char('Reference of the Page', size=32)
-    ad_number = fields.Char('Advertising Reference', size=32)
-    url_to_material = fields.Char('Advertising Material', size=64)
+    page_reference = fields.Char('Page Preference', size=32)
+    ad_number = fields.Char('External Reference', size=32)
+    url_to_material = fields.Char('URL Material', size=64)
     from_date = fields.Date('Start of Validity')
     to_date = fields.Date('End of Validity')
     state = fields.Selection([
@@ -733,7 +735,8 @@ class SaleOrderLine(models.Model):
             self.subtotal_before_agency_disc = round((float(self.price_unit) + (float(self.color_surcharge_amount))) *
                                                       float(self.product_uom_qty) * float(1.0 - self.computed_discount / 100.0), 2)
         else:
-            self.subtotal_before_agency_disc = round((float(self.comb_list_price) + float(self.color_surcharge_amount)) * float(1.0 - self.computed_discount / 100.0), 2)
+            self.subtotal_before_agency_disc = round((float(self.comb_list_price) + float(self.color_surcharge_amount)) *
+                                                     float(1.0 - self.computed_discount / 100.0), 2)
 
     @api.onchange('color_surcharge' )
     def onchange_color(self):
@@ -818,7 +821,6 @@ class SaleOrderLine(models.Model):
         self = self.with_context(LoopBreaker=True)
         if result.state == 'sale' and result.advertising and result.multi_line:
             newlines = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=[result.id])
-            #               self._cr.commit()
             lines = self.env['sale.order.line'].browse(newlines)
             for line in lines:
                 line.page_qty_check_create()
@@ -826,32 +828,22 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def write(self, values):
-        olines = []
+#        import pdb; pdb.set_trace()
         for line in self.filtered(lambda l: l.state == 'sale' and l.advertising):
-            user = self.env['res.users'].browse(self.env.uid)
-            if not user.has_group('sale_advertising_order.group_no_discount_check') \
-                    and self.computed_discount > 60.0:
-                raise UserError(_('You cannot save a Sale Order Line with more than 60% discount. You\'ll have to ask Sales Support for help'))
-            if not 'multi_line' in values and ('adv_issue' or 'ad_class' or 'product_id' or 'product_uom_qty') in values:
-                    line.deadline_check()
+            if 'computed_discount' in values:
+                user = self.env['res.users'].browse(self.env.uid)
+                if not user.has_group('sale_advertising_order.group_no_discount_check') \
+                        and self.computed_discount > 60.0:
+                    raise UserError(_('You cannot save a Sale Order Line with more than 60% discount. You\'ll have to ask Sales Support for help'))
+            if not 'multi_line' in values and ('adv_issue' in values or 'ad_class' in values or 'product_id' in values or 'product_uom_qty' in values):
                     line.page_qty_check_update()
-            elif 'multi_line' in values:
-                olines.append(line.id)
-        result = super(SaleOrderLine, self).write(values)
-        if olines != []:
-            newlines = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
-            #               self._cr.commit()
-            lines = self.browse(newlines)
-            for line in lines:
-                line.deadline_check()
-                line.page_qty_check_update()
-        return result
+        return super(SaleOrderLine, self).write(values)
 
     @api.multi
     def deadline_check(self):
         self.ensure_one()
         user = self.env['res.users'].browse(self.env.uid)
-        if not user.has_group('sale_advertising_order.group_no_discount_check') and self.deadline:
+        if not user.has_group('sale_advertising_order.group_no_deadline_check') and self.deadline:
             if fields.Datetime.from_string(self.deadline) < datetime.now():
                 raise UserError(_('The deadline %s for this Category/Advertising Issue has passed.') %(self.deadline))
         elif self.issue_date and fields.Datetime.from_string(self.issue_date) < datetime.now():
@@ -867,7 +859,7 @@ class SaleOrderLine(models.Model):
         lspace = self.product_uom_qty * self.product_template_id.space
         lpage = self.product_template_id.page_id.id
         if lspace > self.adv_issue.calc_page_space(lpage) and not user.has_group('sale_advertising_order.group_no_availability_check'):
-            raise UserError(_('There is not enough availability for this placement on %s in %s.') % (lpage, self.adv_issue.name))
+            raise UserError(_('There is not enough availability for this placement on %s in %s.') % (lpage.name, self.adv_issue.name))
         else:
             vals = {
                 'adv_issue_id': self.adv_issue.id,
@@ -916,8 +908,8 @@ class OrderLineAdvIssuesProducts(models.Model):
     qty = fields.Float(related='order_line_id.product_uom_qty', readonly=True)
     price = fields.Float(compute='_compute_price', string='Price', readonly=True, required=True, digits=dp.get_precision('Product Price'), default=0.0)
     page_reference = fields.Char('Reference of the Page', size=32)
-    ad_number = fields.Char('Advertising Reference', size=32)
-    url_to_material = fields.Char('Advertising Material', size=64)
+    ad_number = fields.Char('External Reference', size=32)
+    url_to_material = fields.Char('URL Material', size=64)
 
 
 class OrderLineDate(models.Model):
@@ -930,8 +922,8 @@ class OrderLineDate(models.Model):
     order_line_id = fields.Many2one('sale.order.line', 'Line', ondelete='cascade', index=True, required=True)
     issue_date = fields.Date('Date of Issue')
     name = fields.Char('Name', size=64)
-    page_reference = fields.Char('Reference of the Page', size=32)
-    ad_number = fields.Char('Advertising Reference', size=32)
+    page_reference = fields.Char('Page Preference', size=32)
+    ad_number = fields.Char('External Reference', size=32)
 
 
 class OrderLineDateperiod(models.Model):
@@ -945,8 +937,8 @@ class OrderLineDateperiod(models.Model):
     from_date = fields.Date('Start of Validity')
     to_date = fields.Date('End of Validity')
     name = fields.Char('Name', size=64)
-    page_reference = fields.Char('Reference of the Page', size=32)
-    ad_number = fields.Char('Advertising Reference', size=32)
+    page_reference = fields.Char('Page Preference', size=32)
+    ad_number = fields.Char('External Reference', size=32)
 
 
 class AdvertisingProof(models.Model):
@@ -973,7 +965,7 @@ class MailComposeMessage(models.TransientModel):
     def send_mail(self, auto_commit=False):
         if self._context.get('default_model') == 'sale.order' and self._context.get('default_res_id') and self._context.get('mark_so_as_sent'):
             order = self.env['sale.order'].browse([self._context['default_res_id']])
-            if order.state == 'approved2':
+            if order.state in ['approved2','approved1','draft']:
                 order.state = 'sent'
         return super(MailComposeMessage, self.with_context(mail_post_autofollow=True)).send_mail(auto_commit=auto_commit)
 

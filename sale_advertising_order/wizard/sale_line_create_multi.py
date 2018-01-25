@@ -87,7 +87,7 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                            'adv_issue': ad_issue.id,
                            'title_ids': False,
                            'product_id': ad_iss.product_id.id,
-                           'name': ad_iss.product_id.product_tmpl_id.name,
+                           'name': ol.order_id.name or False,
                            'price_unit': ad_iss.price_unit,
                            'issue_product_ids': False,
                            'color_surcharge_amount':  csa,
@@ -96,7 +96,10 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                            'order_id': ol.order_id.id or False,
                            'comb_list_price': 0.0,
                            'multi_line_number': 1,
-                           'multi_line': False
+                           'multi_line': False,
+                           'ad_number': ad_iss.ad_number or ol.ad_number or False,
+                           'page_reference': ad_iss.page_reference or ol.page_reference or False,
+                           'url_to_material': ad_iss.url_to_material or ol.url_to_material or False,
                            }
                     vals = ol.copy_data(default=res)[0]
                     mol_rec = sol_obj.create(vals)
