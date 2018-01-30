@@ -132,32 +132,35 @@
                                 <form string="Sales Order Lines">
                                     <group>
                                         <group>
-                                            <field name="medium" required="True" domain="[('parent_id','=', %(sale_advertising_order.advertising_category)d)]"/>
+                                            <field name="medium" required="True"
+                                                   domain="[('parent_id','=', %(sale_advertising_order.advertising_category)d)]"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                                             <field name="ad_class" required="True"
                                                    domain="[('type','!=', 'view'), ('id','child_of', medium)]"
-                                                   options="{'no_create': True, 'no_create_edit': True}"/>
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                                             <field name="title" string="Title"
                                                    domain="[('child_ids','!=', False),('medium','child_of', medium)]"
-                                                   options="{'no_create': True, 'no_create_edit': True}"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    attrs="{'invisible': [('title','=', False)]}"/>
                                             <field name="title_ids" string="Titles"
                                                    attrs="{'invisible': [('title','!=', False),('title_ids','=', [])]}"
                                                    domain="[('parent_id','=', False),('medium','child_of', medium)]"
-                                                   options="{'no_create': True, 'no_create_edit': True}" context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
-                                                                                                                   'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
-                                                    <tree >
-                                                        <field name="name" string="Name"/>
-                                                    </tree>
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
+                                                   context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
+                                                             'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
+                                                <tree >
+                                                    <field name="name" string="Name" readonly="1"/>
+                                                </tree>
                                             </field>
                                             <field name="deadline_offset" invisible="1" groups="base.group_no_one"/>
                                             <field name="deadline_passed" invisible="1" />
                                             <field name="deadline" invisible="0" />
-                                            <field name="adv_issue_ids" string="Advertising Issues"
+                                            <field name="adv_issue_ids" string="Advertising Issues" readonly="1"
                                                    attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
                                                    domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
                                                             '|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
                                                             ('issue_date','&gt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
-                                                   options="{'no_create': True, 'no_create_edit': True}"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
                                                     <tree >
                                                         <field name="name" string="Name"/>
@@ -168,12 +171,12 @@
                                                    attrs="{'readonly': ['|','|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', []),
                                                                                  ('deadline_passed','=', True)]}"
                                                    domain="[('categ_id','=', ad_class)]"
-                                                   options="{'no_create': True, 'no_create_edit': True}" required="1"/>
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}" required="1"/>
                                             <field name="product_id" invisible="1" groups="base.group_no_one"
                                                    context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                                    attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
                                                    domain="['|','&amp;',('categ_id','=', ad_class),('attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id)]"
-                                                   options="{'no_create': True, 'no_create_edit': True}"/>
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                                             <field name="layout_category_id" groups="sale.group_sale_layout"/>
                                             <field name="invoice_status" invisible="1"/>
                                             <field name="qty_to_invoice" invisible="1"/>
@@ -202,7 +205,7 @@
                                             </div>
                                             <field name="adv_issue" domain="[('parent_id','=', title),'|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
                                                                             ('issue_date','&gt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
-                                                   options="{'no_create': True, 'no_create_edit': True}"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    attrs="{'invisible': [('adv_issue','=', False)]}"/>
                                             <field name="issue_date" readonly="1"
                                                    attrs="{'invisible': [('adv_issue','=', False)]}"/>
@@ -296,11 +299,11 @@
                                     </group>
                                     <group>
                                         <group>
-                                            <separator string="Layout Remark" colspan="2"/>
+                                            <separator string="Material Remarks" colspan="2"/>
                                             <field name="layout_remark" colspan="2" nolabel="1"/>
                                         </group>
                                         <group>
-                                            <separator string="Description" colspan="2"/>
+                                            <separator string="Mapping Remarks" colspan="2"/>
                                             <field name="name" colspan="2" nolabel="1"/>
                                         </group>
                                     </group>

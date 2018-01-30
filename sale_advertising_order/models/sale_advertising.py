@@ -373,7 +373,7 @@ class SaleOrderLine(models.Model):
                 [('id', 'in', rec.ad_class.tag_ids.ids)]
             )
 
-    layout_remark = fields.Text('Layout Remark')
+    layout_remark = fields.Text('Material Remark')
     title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)])
     page_class_domain = fields.Char(compute=_compute_tags_domain, readonly=True, store=False,)
     title_ids = fields.Many2many('sale.advertising.issue', 'sale_order_line_adv_issue_title_rel', 'order_line_id', 'adv_issue_id', 'Titles')
@@ -649,12 +649,15 @@ class SaleOrderLine(models.Model):
         result = super(SaleOrderLine, self).product_id_change()
         if not self.advertising:
             return result
-        if not self.multi_line:
-            self.subtotal_before_agency_disc = self.actual_unit_price = self.price_unit
-        else:
-            self.price_unit = 0.0
-            self.subtotal_before_agency_disc = self.comb_list_price
+        self.color_surcharge = False
         self.product_uom_qty = 1
+        self.computed_discount = 0.0
+#        if not self.multi_line:
+#            self.subtotal_before_agency_disc = self.actual_unit_price = self.price_unit
+#        else:
+        if self.multi_line:
+            self.price_unit = 0.0
+#            self.subtotal_before_agency_disc = self.comb_list_price
         return result
 
     @api.onchange('date_type')
@@ -775,6 +778,14 @@ class SaleOrderLine(models.Model):
         ais = self.adv_issue_ids
         ds = self.dates
         iis = self.issue_product_ids
+        if self.title_ids and ais:
+            titles = self.title_ids.ids
+            issue_ids = ais.ids
+            adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', issue_ids)])
+            issue_parent_ids = [x.parent_id.id for x in adv_issues]
+            for title in titles:
+                if not (title in issue_parent_ids):
+                    raise UserError(_('Not for every selected Title an Issue is selected.'))
         if ais:
             if len(ais) > 1:
                 ml_qty = len(ais)
