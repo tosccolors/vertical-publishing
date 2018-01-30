@@ -204,8 +204,33 @@ class SaleOrder(models.Model):
     # overridden: -- added deep
     @api.multi
     def print_quotation(self):
-        self.filtered(lambda s: s.state == 'approved2').write({'state': 'sent'})
-        return self.env['report'].get_action(self, 'sale.report_saleorder')
+        orders = self.filtered(lambda s: s.advertising and s.state in ['draft','approved1', 'submitted', 'approved2'])
+        for order in orders:
+            olines = []
+            for line in order.order_line:
+                if line.multi_line:
+                    olines.append(line.id)
+            if not olines == []:
+                self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
+        orders.write({'state': 'sent'})
+        return super(SaleOrder, self).print_quotation()
+
+    @api.multi
+    def action_quotation_send(self):
+        '''
+        This function opens a window to compose an email, with the edi sale template message loaded by default
+        '''
+        self.ensure_one()
+        if self.advertising and self.state in ['draft', 'approved1', 'submitted', 'approved2']:
+            olines = []
+            for line in self.order_line:
+                if line.multi_line:
+                    olines.append(line.id)
+            if not olines == []:
+                self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
+        self.write({'state': 'sent'})
+        return super(SaleOrder, self).action_quotation_send()
+
 
     @api.multi
     def action_cancel(self):
@@ -373,6 +398,7 @@ class SaleOrderLine(models.Model):
                 [('id', 'in', rec.ad_class.tag_ids.ids)]
             )
 
+    mig_remark = fields.Text('Migration Remark')
     layout_remark = fields.Text('Material Remark')
     title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)])
     page_class_domain = fields.Char(compute=_compute_tags_domain, readonly=True, store=False,)
