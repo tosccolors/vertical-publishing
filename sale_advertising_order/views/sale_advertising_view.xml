@@ -306,6 +306,10 @@
                                             <separator string="Mapping Remarks" colspan="2"/>
                                             <field name="name" colspan="2" nolabel="1"/>
                                         </group>
+                                        <group>
+                                            <separator string="Migration Remarks" colspan="2"/>
+                                            <field name="mig_remark" colspan="2" nolabel="1"/>
+                                        </group>
                                     </group>
                                     <div groups="base.group_no_one">
                                         <label for="invoice_lines"/>
