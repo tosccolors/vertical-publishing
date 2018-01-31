@@ -192,8 +192,7 @@
                                                                     'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"
                                                        attrs="{'readonly': [('deadline_passed','=', True)]}"/>
                                                 <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"
-                                                       attrs="{'readonly': ['|',('deadline_passed','=', True),
-                                                                                ('state', 'in', ('sale','done', 'cancel'))]}"/>
+                                                       readonly="True"/>
                                             </div>
                                             <label for="qty_delivered" string="Delivered Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>
                                             <div invisible="context.get('hide_sale')" groups="base.group_no_one">
