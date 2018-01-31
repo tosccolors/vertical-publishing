@@ -23,6 +23,7 @@
 import sale_line_create_multi
 import crm_lead_to_opportunity
 import adv_line_invoice
+import sale_order_state
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

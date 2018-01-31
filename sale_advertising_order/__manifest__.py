@@ -43,6 +43,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
              "wizard/sale_line_create_multi_view.xml",
              "wizard/crm_lead_to_opportunity_view.xml",
              "wizard/adv_line_invoice.xml",
+             "wizard/sale_order_state_view.xml",
              "views/res_partner_view.xml",
              "views/res_company_view.xml",
              "views/product_view.xml",

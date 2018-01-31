@@ -1,0 +1,52 @@
+<odoo>
+    <data>
+
+        <record id="sale_order_confirm_view" model="ir.ui.view">
+            <field name="name">sale.order.confirm.form</field>
+            <field name="model">sale.order.confirm</field>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_senior_sales'))]"/>
+            <field name="arch" type="xml">
+                <form string="Confirm Sale Orders">
+                    <p class="oe_grey">
+                        Once sale orders are confirmed, you will still be able
+                        to modify them.
+                    </p>
+                    <footer>
+                        <button string="Confirm Orders" name="sale_order_confirm" type="object" default_focus="1" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_sale_order_confirm"
+            multi="True"
+            key2="client_action_multi" name="Confirm Sale Orders"
+            res_model="sale.order.confirm" src_model="sale.order"
+            view_mode="form" target="new" view_type="form"
+            groups="sale_advertising_order.group_senior_sales"/>
+
+        <!--record id="account_invoice_cancel_view" model="ir.ui.view">
+            <field name="name">account.invoice.cancel.form</field>
+            <field name="model">account.invoice.cancel</field>
+            <field name="arch" type="xml">
+                <form string="Cancel Selected Invoices">
+                    <footer>
+                        <button string="Cancel Invoices" name="invoice_cancel" type="object" default_focus="1" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_account_invoice_cancel" model="ir.actions.act_window">
+            <field name="name">Cancel Selected Invoices</field>
+            <field name="res_model">account.invoice.cancel</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_invoice_cancel_view"/>
+            <field name="target">new</field>
+        </record-->
+
+    </data>
+</odoo>

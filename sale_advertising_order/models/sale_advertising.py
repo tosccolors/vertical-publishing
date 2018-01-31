@@ -212,6 +212,7 @@ class SaleOrder(models.Model):
                     olines.append(line.id)
             if not olines == []:
                 self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
+        self._cr.commit()
         orders.write({'state': 'sent'})
         return super(SaleOrder, self).print_quotation()
 
@@ -228,6 +229,7 @@ class SaleOrder(models.Model):
                     olines.append(line.id)
             if not olines == []:
                 self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
+        self._cr.commit()
         self.write({'state': 'sent'})
         return super(SaleOrder, self).action_quotation_send()
 
@@ -684,6 +686,11 @@ class SaleOrderLine(models.Model):
         if self.multi_line:
             self.price_unit = 0.0
 #            self.subtotal_before_agency_disc = self.comb_list_price
+        pt = self.product_template_id
+        name = pt.name or ''
+        if pt.description_sale:
+            name += '\n' + pt.description_sale
+        self.name = name
         return result
 
     @api.onchange('date_type')
