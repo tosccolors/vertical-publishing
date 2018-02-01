@@ -264,9 +264,17 @@ class SaleOrder(models.Model):
     def write(self, vals):
         result = super(SaleOrder, self).write(vals)
         for order in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
+            user = self.env['res.users'].browse(self.env.uid)
+            if not user.has_group('sale_advertising_order.group_no_discount_check') \
+               and self.ver_tr_exc:
+                    raise UserError(_(
+                    'You cannot save a Sale Order with a line more than 60% discount. You\'ll have to cancel the order and '
+                    'resubmit it or ask Sales Support for help'))
             olines = []
             for line in order.order_line:
-                if line.multi_line:
+                if not line.multi_line:
+                    line.page_qty_check_update()
+                else:
                     olines.append(line.id)
                     continue
             if not olines == []:
@@ -851,7 +859,7 @@ class SaleOrderLine(models.Model):
                 line.page_qty_check_create()
         return result
 
-    @api.multi
+    '''@api.multi
     def write(self, values):
 #        import pdb; pdb.set_trace()
         for line in self.filtered(lambda l: l.state == 'sale' and l.advertising):
@@ -862,7 +870,7 @@ class SaleOrderLine(models.Model):
                     raise UserError(_('You cannot save a Sale Order Line with more than 60% discount. You\'ll have to ask Sales Support for help'))
             if not 'multi_line' in values and ('adv_issue' in values or 'ad_class' in values or 'product_id' in values or 'product_uom_qty' in values):
                     line.page_qty_check_update()
-        return super(SaleOrderLine, self).write(values)
+        return super(SaleOrderLine, self).write(values)'''
 
     @api.multi
     def deadline_check(self):

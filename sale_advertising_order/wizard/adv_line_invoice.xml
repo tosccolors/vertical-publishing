@@ -25,7 +25,7 @@
                         All eligible items in these orders will be invoiced.
                     </p>
                     <footer>
-                        <button name="make_invoices_from_orders" string="Create Invoices" type="object" class="oe_highlight"/>
+                        <button name="make_invoices_from_ad_orders" string="Create Invoices" type="object" class="oe_highlight"/>
                         <!--button string="Cancel" class="oe_link" special="cancel" /-->
                     </footer>
                 </form>

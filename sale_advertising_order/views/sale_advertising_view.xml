@@ -1179,12 +1179,12 @@
 			<field name="type">tree</field>
 			<field name="model">sale.advertising.available</field>
 			<field name="arch" type="xml">
-                <tree string="Page Availablity">
-                    <field name="adv_issue_id" string="Issue"/>
-                    <field name="name" string="Name"/>
-                    <field name="page_id" string="Ad Page"/>
-                    <field name="order_line_id" string="Ad Placement"/>
-                    <field name="available_qty" string="Quantity"/>
+                <tree string="Page Availablity" create="0" delete="0" readonly="1">
+                    <field name="adv_issue_id" string="Issue" />
+                    <field name="name" string="Name" />
+                    <field name="page_id" string="Ad Page" />
+                    <field name="order_line_id" string="Ad Placement" />
+                    <field name="available_qty" string="Quantity" />
                 </tree>
 			</field>
 		</record>
