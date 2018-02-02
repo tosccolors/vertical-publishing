@@ -289,7 +289,7 @@
                                         <group name="ad_refs" attrs="{'invisible':[('date_type','in',['date','validity'])]}">
                                             <field name="ad_number" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
                                             <field name="page_reference" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
-                                            <field name="url_to_material" widget="url"/>
+                                            <field name="url_to_material" />
                                         </group>
                                         <group attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}">
                                             <field name="from_date" attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}"/>

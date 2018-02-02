@@ -12,4 +12,4 @@ access_sale_advertising_page_traffic,sale.advertising.page,model_sale_advertisin
 access_sale_advertising_page,sale.advertising.page,model_sale_advertising_page,sales_team.group_sale_salesman,1,0,0,0
 access_discount_reason_traffic,discount.reason,model_discount_reason,group_traffic_user,1,1,1,1
 access_discount_reason,discount.reason,model_discount_reason,sales_team.group_sale_salesman,1,0,0,0
-access_crm_team_user,crm.team.user,model_crm_team,sales_team.group_sale_salesman,1,1,0,0
+sale_advertising_order.access_crm_team_user,crm.team.user,model_crm_team,sales_team.group_sale_salesman,1,1,0,0
