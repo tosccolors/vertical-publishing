@@ -263,7 +263,7 @@ class SaleOrder(models.Model):
     @api.multi
     def write(self, vals):
         result = super(SaleOrder, self).write(vals)
-        for order in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
+        for order in self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('pubble_call')):
             user = self.env['res.users'].browse(self.env.uid)
             if not user.has_group('sale_advertising_order.group_no_discount_check') \
                and self.ver_tr_exc:
