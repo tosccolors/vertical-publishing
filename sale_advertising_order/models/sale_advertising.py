@@ -94,9 +94,14 @@ class SaleOrder(models.Model):
 
 
     state = fields.Selection(selection_add=[
+        ('draft', 'Draft Quotation'),
         ('submitted', 'Submitted for Approval'),
-        ('approved1', 'Approved by Sales Support'),
+        ('approved1', 'Approved by Sales Mgr'),
         ('approved2', 'Approved by Traffic'),
+        ('sent', 'Quotation Sent'),
+        ('cancel', 'Cancelled'),
+        ('sale', 'Sales Order'),
+        ('done', 'Done'),
         ])
     invoice_status = fields.Selection(selection_add=[
         ('not invoiced', 'Nothing Invoiced Yet')

@@ -48,23 +48,25 @@
 					<!--button name="%(sale_advertising_order.action_view_sale_order_line_create_multi)d"
 							string="Create Multiple Order Lines" type="action"  class="btn-primary"
 							attrs="{'invisible': [('state','in',['cancel','sale','done'])]}"/-->
-                    <button name="action_confirm" string="Confirm Sale"
-                            attrs="{'invisible': ['|','|',('id','=',False),('state','in',('cancel','sale','done')),('ver_tr_exc','=',True),('state','in',('draft','submitted'))]}"
-                            class="btn-primary o_sale_confirm" groups="sales_team.group_sale_salesman" type="object" />
-                    <!--button name="action_confirm" string="Confirm Sale" attrs="{'invisible': [('state','in',['cancel','sent','submitted','sale','done'])]}"
-                            class="o_sale_confirm" type="object" groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/-->
-                    <button name="action_confirm" string="Confirm Sale" attrs="{'invisible': [('state','in',['cancel','sale','done'])]}"
-                            class="btn-primary o_sale_confirm" type="object" groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/>
-                    <button name="action_quotation_send" string="Send by Email" type="object" attrs="{'invisible': ['|',('state','in',['cancel','sale','done']),
-                                                                                                                       ('ver_tr_exc','=',True),('state','in',['draft','submitted'])]}"
+                    <button name="action_confirm" string="Confirm Sale" class="btn-primary o_sale_confirm"
+                            attrs="{'invisible': ['|','|',('id','=',False),('state','in',('cancel','sale','done')),
+                                                          ('ver_tr_exc','=',True),('state','in',('draft','submitted'))]}"
+                            groups="sales_team.group_sale_salesman" type="object" />
+                    <!--button name="action_confirm" string="Confirm Sale" class="btn-primary o_sale_confirm" type="object"
+                            attrs="{'invisible': [('state','in',['cancel','sale','done'])]}"
+                            groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/-->
+                    <button name="action_quotation_send" string="Send by Email" type="object"
+                            attrs="{'invisible': ['|',('state','in',['cancel','sale','done']),
+                                                      ('ver_tr_exc','=',True),('state','in',['draft','submitted'])]}"
                             class="btn-primary"	groups="sales_team.group_sale_salesman"/>
-                    <button name="action_quotation_send" string="Send by Email" type="object" attrs="{'invisible': [('state', 'in',['cancel','sale','done'])]}"
-                            class="btn-primary"	groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/>
-                    <button name="print_quotation" string="Print" type="object" attrs="{'invisible': ['|',('state','in',['cancel','submitted','sale','done']),
-                                                                                                          ('ver_tr_exc','=',True),('state','in',['draft','submitted'])]}"
+                    <!--button name="action_quotation_send" string="Send by Email" type="object" attrs="{'invisible': [('state', 'in',['cancel','sale','done'])]}"
+                            class="btn-primary"	groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/-->
+                    <button name="print_quotation" string="Print" type="object"
+                            attrs="{'invisible': ['|',('state','in',['cancel','submitted','sale','done']),
+                                                      ('ver_tr_exc','=',True),('state','in',['draft','submitted'])]}"
                             class="btn-primary" groups="sales_team.group_sale_salesman"/>
-                    <button name="print_quotation" string="Print" type="object" states="draft,submitted,approved1,sent,sale,done"
-                            groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/>
+                    <!--button name="print_quotation" string="Print" type="object" states="draft,submitted,approved1,sent,sale,done"
+                            groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/-->
                     <button name="action_cancel" states="draft,submitted,approved1,sent,sale" type="object" string="Cancel"/>
                     <button name="action_draft" states="cancel" type="object" string="Set to Quotation"/>
                     <button name="action_done" type="object" string="Lock" states="sale" groups="sale_advertising_order.group_traffic_user"/>
@@ -470,6 +472,15 @@
             <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
             <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_senior_sales'))]"/>
             <field name="arch" type="xml">
+                <button name="action_confirm" position="attributes">
+                     <attribute name="attrs" >{'invisible': [('state','in',['cancel','sale','done'])]}</attribute>
+                </button>
+                <button name="action_quotation_send" position="attributes">
+                     <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sale','done'])]}</attribute>
+                </button>
+                <button name="print_quotation" position="attributes">
+                     <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sale','done'])]}</attribute>
+                </button>
                 <xpath expr="//page[@name='order_line']/field[@name='order_line']" position="attributes">
                      <attribute name="attrs" >{'readonly': [('state', 'in', ['done','cancel'])]}</attribute>
                 </xpath>
