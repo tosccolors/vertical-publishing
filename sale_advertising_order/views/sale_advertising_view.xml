@@ -49,20 +49,20 @@
 							string="Create Multiple Order Lines" type="action"  class="btn-primary"
 							attrs="{'invisible': [('state','in',['cancel','sale','done'])]}"/-->
                     <button name="action_confirm" string="Confirm Sale" class="btn-primary o_sale_confirm"
-                            attrs="{'invisible': ['|','|',('id','=',False),('state','in',('cancel','sale','done')),
-                                                          ('ver_tr_exc','=',True),('state','in',('draft','submitted'))]}"
+                            attrs="{'invisible': ['|','|',('state','in',['cancel','sale','done']),('id','=',False),
+                                                          ('ver_tr_exc','=',True),('state','in',['draft','submitted'])]}"
                             groups="sales_team.group_sale_salesman" type="object" />
                     <!--button name="action_confirm" string="Confirm Sale" class="btn-primary o_sale_confirm" type="object"
                             attrs="{'invisible': [('state','in',['cancel','sale','done'])]}"
                             groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/-->
                     <button name="action_quotation_send" string="Send by Email" type="object"
-                            attrs="{'invisible': ['|',('state','in',['cancel','sale','done']),
+                            attrs="{'invisible': ['|','|',('state','in',['cancel','sent','sale','done']),('id','=',False),
                                                       ('ver_tr_exc','=',True),('state','in',['draft','submitted'])]}"
                             class="btn-primary"	groups="sales_team.group_sale_salesman"/>
                     <!--button name="action_quotation_send" string="Send by Email" type="object" attrs="{'invisible': [('state', 'in',['cancel','sale','done'])]}"
                             class="btn-primary"	groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/-->
                     <button name="print_quotation" string="Print" type="object"
-                            attrs="{'invisible': ['|',('state','in',['cancel','submitted','sale','done']),
+                            attrs="{'invisible': ['|','|',('state','in',['cancel','submitted','sent','sale','done']),('id','=',False),
                                                       ('ver_tr_exc','=',True),('state','in',['draft','submitted'])]}"
                             class="btn-primary" groups="sales_team.group_sale_salesman"/>
                     <!--button name="print_quotation" string="Print" type="object" states="draft,submitted,approved1,sent,sale,done"
@@ -418,7 +418,7 @@
                                     <field name="fiscal_position_id" options="{'no_create': True}"/>
                                     <field name="invoice_status"
                                         attrs="{'invisible': [('state', 'not in', ('sale','done'))]}"/>
-                                    <field name="advertising" invisible="0"/>
+                                    <field name="advertising" invisible="1"/>
                                 </group>
                                 <group string="Reporting" name="technical" groups="base.group_no_one">
                                     <field groups="base.group_no_one" name="origin"/>
@@ -476,10 +476,10 @@
                      <attribute name="attrs" >{'invisible': [('state','in',['cancel','sale','done'])]}</attribute>
                 </button>
                 <button name="action_quotation_send" position="attributes">
-                     <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sale','done'])]}</attribute>
+                     <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sent','sale','done'])]}</attribute>
                 </button>
                 <button name="print_quotation" position="attributes">
-                     <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sale','done'])]}</attribute>
+                     <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sent','sale','done'])]}</attribute>
                 </button>
                 <xpath expr="//page[@name='order_line']/field[@name='order_line']" position="attributes">
                      <attribute name="attrs" >{'readonly': [('state', 'in', ['done','cancel'])]}</attribute>
