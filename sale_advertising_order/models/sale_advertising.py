@@ -93,7 +93,7 @@ class SaleOrder(models.Model):
                 order['invoice_status'] = invoice_status
 
 
-    state = fields.Selection(selection_add=[
+    state = fields.Selection(selection=[
         ('draft', 'Draft Quotation'),
         ('submitted', 'Submitted for Approval'),
         ('approved1', 'Approved by Sales Mgr'),
