@@ -58,7 +58,8 @@ class SaleOrder(models.Model):
                         amount_tax += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
                 else:
                     amount_tax += line.price_tax
-                if order.company_id.verify_order_setting != -1.00 and order.company_id.verify_order_setting < amount_untaxed or order.company_id.verify_discount_setting < max_cdiscount:
+                if order.company_id.verify_order_setting != -1.00 and order.company_id.verify_order_setting < amount_untaxed \
+                                                                  or order.company_id.verify_discount_setting < max_cdiscount:
                     ver_tr_exc = True
 
             order.update({
@@ -462,7 +463,7 @@ class SaleOrderLine(models.Model):
     actual_unit_price = fields.Monetary(compute='_compute_amount', string='Actual Unit Price', default=0.0, readonly=True)
     comb_list_price = fields.Monetary(compute='_multi_price', string='Combined_List Price', default=0.0, store=True,
                                 digits=dp.get_precision('Actual Unit Price'))
-    price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', readonly=True)
+#    price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', readonly=True)
     computed_discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Discount'), default=0.0)
     subtotal_before_agency_disc = fields.Monetary(string='Subtotal before Commission', digits=dp.get_precision('Account'))
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
@@ -1004,7 +1005,7 @@ class MailComposeMessage(models.TransientModel):
     def send_mail(self, auto_commit=False):
         if self._context.get('default_model') == 'sale.order' and self._context.get('default_res_id') and self._context.get('mark_so_as_sent'):
             order = self.env['sale.order'].browse([self._context['default_res_id']])
-            if order.state in ['approved2','approved1','draft']:
+            if order.state in ['approved2','approved1']:
                 order.state = 'sent'
         return super(MailComposeMessage, self.with_context(mail_post_autofollow=True)).send_mail(auto_commit=auto_commit)
 

@@ -40,6 +40,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                         order_line_ids.append(line.id)
         context.update({'active_ids':order_line_ids}),context.update({'active_id':order_line_ids[0]}) if order_line_ids else context
         if not order_line_ids:
-            raise UserError(_('No Ad Order lines are comming under this criteria.'))
+            raise UserError(_('No Ad Order lines are selected under this criteria.'))
         return super(AdOrderLineMakeInvoice, self.with_context(context)).make_invoices_from_lines()
 

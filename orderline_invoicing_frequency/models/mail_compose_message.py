@@ -19,4 +19,3 @@ class MailComposer(models.TransientModel):
                             invoice_obj.partner_id.last_invoice_sent_date = date.today()
         return res
 
-MailComposer()
