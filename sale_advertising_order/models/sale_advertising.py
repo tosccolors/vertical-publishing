@@ -845,7 +845,6 @@ class SaleOrderLine(models.Model):
         self.adv_issue_ids = ais
 
 
-
     @api.multi
     def _prepare_invoice_line(self, qty):
         res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
@@ -867,22 +866,9 @@ class SaleOrderLine(models.Model):
             return
         return result
 
-    '''@api.multi
-    def write(self, values):
-#        import pdb; pdb.set_trace()
-        for line in self.filtered(lambda l: l.state == 'sale' and l.advertising):
-            if 'computed_discount' in values:
-                user = self.env['res.users'].browse(self.env.uid)
-                if not user.has_group('sale_advertising_order.group_no_discount_check') \
-                        and self.computed_discount > 60.0:
-                    raise UserError(_('You cannot save a Sale Order Line with more than 60% discount. You\'ll have to ask Sales Support for help'))
-            if not 'multi_line' in values and ('adv_issue' in values or 'ad_class' in values or 'product_id' in values or 'product_uom_qty' in values):
-                    line.page_qty_check_update()
-        return super(SaleOrderLine, self).write(values)'''
-
     @api.multi
     def unlink(self):
-        res = self.filtered(lambda x: x.env.context.get('multi') == True)
+        res = self.filtered(lambda x: x.env.context.get('multi'))
         if len(res) > 0:
             models.Model.unlink(res)
         return super(SaleOrderLine, self - res).unlink()
