@@ -893,8 +893,10 @@ class SaleOrderLine(models.Model):
         lspace = self.product_uom_qty * self.product_template_id.space
         lpage = self.product_template_id.page_id
         lpage_id = lpage.id
-        if lspace > self.adv_issue.calc_page_space(lpage) and not user.has_group('sale_advertising_order.group_no_availability_check'):
-            raise UserError(_('There is not enough availability for this placement on %s in %s.') % (lpage.name, self.adv_issue.name))
+        avail = self.adv_issue.calc_page_space(lpage_id)
+        if lspace > avail and not user.has_group('sale_advertising_order.group_no_availability_check'):
+            raise UserError(_('There is not enough availability for this placement on %s in %s.'
+                              'Available Capacity is %d and required is %d') % (lpage.name, self.adv_issue.name, avail, lspace))
         else:
             vals = {
                 'adv_issue_id': self.adv_issue.id,
