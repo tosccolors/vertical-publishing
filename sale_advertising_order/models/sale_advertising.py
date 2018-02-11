@@ -255,15 +255,15 @@ class SaleOrder(models.Model):
                 if line.multi_line:
                     olines.append(line.id)
                 else:
-                    line.deadline_check()
-                    line.page_qty_check_create()
+                    if line.deadline_check():
+                        line.page_qty_check_create()
             if not olines == []:
                 list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
                 self._cr.commit()
                 newlines = self.env['sale.order.line'].browse(list)
                 for newline in newlines:
-                    newline.deadline_check()
-                    newline.page_qty_check_create()
+                    if newline.deadline_check():
+                        newline.page_qty_check_create()
         return super(SaleOrder, self.with_context(confirm=True)).action_confirm()
 
     @api.multi
@@ -288,8 +288,8 @@ class SaleOrder(models.Model):
                 list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
                 newlines = self.env['sale.order.line'].browse(list)
                 for newline in newlines:
-                    newline.deadline_check()
-                    newline.page_qty_check_update()
+                    if newline.deadline_check():
+                        newline.page_qty_check_update()
         return result
 
 
@@ -739,8 +739,8 @@ class SaleOrderLine(models.Model):
             return {'value': result}
         csa = self.color_surcharge_amount or 0.0
         comp_discount = self.computed_discount
-        if comp_discount < 0.0:
-            self.computed_discount = 0.000
+#        if comp_discount < 0.0:
+#            self.computed_discount = 0.000
         price = self.price_unit
         subtotal_bad = 0.0
         if self.multi_line:
@@ -877,11 +877,14 @@ class SaleOrderLine(models.Model):
     def deadline_check(self):
         self.ensure_one()
         user = self.env['res.users'].browse(self.env.uid)
-        if not user.has_group('sale_advertising_order.group_no_deadline_check') and self.deadline:
+        if self.issue_date and fields.Datetime.from_string(self.issue_date) < datetime.now():
+            return False
+        elif not user.has_group('sale_advertising_order.group_no_deadline_check') and self.deadline:
             if fields.Datetime.from_string(self.deadline) < datetime.now():
                 raise UserError(_('The deadline %s for this Category/Advertising Issue has passed.') %(self.deadline))
-        elif self.issue_date and fields.Datetime.from_string(self.issue_date) < datetime.now():
-            raise UserError(_('The Issue Date %s for Advertising Issue %s has passed.') % (self.issue_date, self.adv_issue.name))
+        return True
+
+
 
 
     @api.multi
@@ -944,7 +947,7 @@ class OrderLineAdvIssuesProducts(models.Model):
     price_unit = fields.Float('Unit Price', required=True, digits=dp.get_precision('Product Price'), default=0.0, readonly=True)
     qty = fields.Float(related='order_line_id.product_uom_qty', readonly=True)
     price = fields.Float(compute='_compute_price', string='Price', readonly=True, required=True, digits=dp.get_precision('Product Price'), default=0.0)
-    page_reference = fields.Char('Reference of the Page', size=32)
+    page_reference = fields.Char('Reference of the Page', size=64)
     ad_number = fields.Char('External Reference', size=32)
     url_to_material = fields.Char('URL Material', size=64)
 
@@ -959,7 +962,7 @@ class OrderLineDate(models.Model):
     order_line_id = fields.Many2one('sale.order.line', 'Line', ondelete='cascade', index=True, required=True)
     issue_date = fields.Date('Date of Issue')
     name = fields.Char('Name', size=64)
-    page_reference = fields.Char('Page Preference', size=32)
+    page_reference = fields.Char('Page Preference', size=64)
     ad_number = fields.Char('External Reference', size=32)
 
 
@@ -974,7 +977,7 @@ class OrderLineDateperiod(models.Model):
     from_date = fields.Date('Start of Validity')
     to_date = fields.Date('End of Validity')
     name = fields.Char('Name', size=64)
-    page_reference = fields.Char('Page Preference', size=32)
+    page_reference = fields.Char('Page Preference', size=64)
     ad_number = fields.Char('External Reference', size=32)
 
 
