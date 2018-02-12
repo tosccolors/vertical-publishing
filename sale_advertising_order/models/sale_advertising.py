@@ -739,8 +739,8 @@ class SaleOrderLine(models.Model):
             return {'value': result}
         csa = self.color_surcharge_amount or 0.0
         comp_discount = self.computed_discount
-#        if comp_discount < 0.0:
-#            self.computed_discount = 0.000
+        if comp_discount < 0.0:
+            self.computed_discount = 0.000
         price = self.price_unit
         subtotal_bad = 0.0
         if self.multi_line:
