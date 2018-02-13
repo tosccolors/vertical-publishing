@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-31 09:25+0000\n"
-"PO-Revision-Date: 2018-01-31 10:32+0100\n"
+"POT-Creation-Date: 2018-02-09 10:00+0000\n"
+"PO-Revision-Date: 2018-02-09 11:46+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -88,6 +88,7 @@ msgstr "<span class=\"oe_grey\"> met </span>"
 #: model:ir.ui.view,arch_db:sale_advertising_order.crm_case_form_view_leads_adv
 #: model:ir.ui.view,arch_db:sale_advertising_order.crm_case_form_view_oppor_advertising
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_partner_form
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_partner_form_sales_manager
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_partner_tree_nsm_crm
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_res_partner_filter_crm
@@ -97,7 +98,7 @@ msgstr "Klanteigenaar"
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue_message_needaction
 msgid "Action Needed"
-msgstr "Vereist actie"
+msgstr "Actie vereist"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue_active
@@ -469,6 +470,7 @@ msgid "Booklet Surface Area"
 msgstr "Oppervlakte"
 
 #. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.sale_order_confirm_view
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_crm_lead2opportunity_partner_adv
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_sale_order_line_create_multi
@@ -476,7 +478,7 @@ msgid "Cancel"
 msgstr "Annuleer"
 
 #. module: sale_advertising_order
-#: code:addons/sale_advertising_order/models/sale_advertising.py:168
+#: code:addons/sale_advertising_order/models/sale_advertising.py:174
 #, python-format
 msgid "Changing the Customer can have a change in Agency Discount as a result.This change will only show after saving the order!Before saving the order the order lines and the total amounts may thereforshow wrong values."
 msgstr "Als de relatie wordt aangepast dan kan dit gevolgen hebben voor de mediabureau commissie. Eventuele aanpassingen zullen pas zichtbaar worden na het opslaan van de order. Voordat de order is opgeslagen kunnen de orderregels en totaalbedragen dus afwijkingen bevatten."
@@ -581,9 +583,25 @@ msgid "Configuration"
 msgstr "Instellingen"
 
 #. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.sale_order_confirm_view
+msgid "Confirm Orders"
+msgstr "Bevestig orders"
+
+#. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Confirm Sale"
 msgstr "Verkoop bevestigen"
+
+#. module: sale_advertising_order
+#: model:ir.actions.act_window,name:sale_advertising_order.action_sale_order_confirm
+#: model:ir.ui.view,arch_db:sale_advertising_order.sale_order_confirm_view
+msgid "Confirm Sale Orders"
+msgstr "Bevestig verkooporders"
+
+#. module: sale_advertising_order
+#: model:ir.model,name:sale_advertising_order.model_sale_order_confirm
+msgid "Confirm the selected sale orders"
+msgstr "Bevestig de geselecteerde verkooporders"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.crm_case_form_view_oppor_advertising
@@ -678,6 +696,7 @@ msgstr "Creëer facturen"
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue_create_uid
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_page_create_uid
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_proof_create_uid
+#: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_confirm_create_uid
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_create_multi_lines_create_uid
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_date_create_uid
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_dateperiod_create_uid
@@ -693,6 +712,7 @@ msgstr "Aangemaakt door"
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue_create_date
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_page_create_date
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_proof_create_date
+#: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_confirm_create_date
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_create_multi_lines_create_date
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_date_create_date
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_dateperiod_create_date
@@ -715,7 +735,7 @@ msgstr "Valuta"
 #: model:ir.ui.view,arch_db:sale_advertising_order.crm_case_form_view_leads_adv
 #: model:ir.ui.view,arch_db:sale_advertising_order.crm_case_form_view_oppor_advertising
 msgid "Customer"
-msgstr "Relatie"
+msgstr "Klant"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_res_partner_filter_crm
@@ -728,7 +748,7 @@ msgstr "Relatie partners"
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_crm_lead2opportunity_partner_adv
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_res_partner_filter_crm
 msgid "Customers"
-msgstr "Relaties"
+msgstr "Klanten"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_date_type
@@ -858,6 +878,7 @@ msgstr "Kortingsredenen"
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue_display_name
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_page_display_name
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_proof_display_name
+#: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_confirm_display_name
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_create_multi_lines_display_name
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_date_display_name
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_dateperiod_display_name
@@ -982,6 +1003,7 @@ msgstr "Afwijking van deadline in uren"
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue_id
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_page_id
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_proof_id
+#: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_confirm_id
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_create_multi_lines_id
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_date_id
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_dateperiod_id
@@ -1134,6 +1156,7 @@ msgstr "Laatste bericht datum"
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue___last_update
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_page___last_update
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_proof___last_update
+#: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_confirm___last_update
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_create_multi_lines___last_update
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_date___last_update
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_dateperiod___last_update
@@ -1156,6 +1179,7 @@ msgstr "Afgelopen maand"
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue_write_uid
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_page_write_uid
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_proof_write_uid
+#: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_confirm_write_uid
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_create_multi_lines_write_uid
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_date_write_uid
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_dateperiod_write_uid
@@ -1171,6 +1195,7 @@ msgstr "Laatst bijgewerkt door"
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue_write_date
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_page_write_date
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_proof_write_date
+#: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_confirm_write_date
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_create_multi_lines_write_date
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_date_write_date
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_dateperiod_write_date
@@ -1425,7 +1450,7 @@ msgstr "Nieuwsbrief"
 #. module: sale_advertising_order
 #: model:product.category,name:sale_advertising_order.newspaper_advertising_category
 msgid "Newspapers/Specials"
-msgstr "Kranten/Specials"
+msgstr "Newspapers/Specials"
 
 #. module: sale_advertising_order
 #. openerp-web
@@ -1475,8 +1500,8 @@ msgid "No Discount Check User"
 msgstr "Geen kortings check"
 
 #. module: sale_advertising_order
-#: code:addons/sale_advertising_order/models/sale_advertising.py:532
-#: code:addons/sale_advertising_order/models/sale_advertising.py:814
+#: code:addons/sale_advertising_order/models/sale_advertising.py:549
+#: code:addons/sale_advertising_order/models/sale_advertising.py:817
 #, python-format
 msgid "Not for every selected Title an Issue is selected."
 msgstr "Niet voor iedere titel is een editie geselecteerd."
@@ -1535,6 +1560,15 @@ msgstr ""
 "een opportunity en/of nieuwe klant in uw adresboek."
 
 #. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.sale_order_confirm_view
+msgid ""
+"Once sale orders are confirmed, you will still be able\n"
+"                        to modify them."
+msgstr ""
+"Once sale orders are confirmed, you will still be able\n"
+"                        to modify them."
+
+#. module: sale_advertising_order
 #: selection:product.category,date_type:0
 #: model:product.category,name:sale_advertising_order.online_advertising_category
 msgid "Online"
@@ -1563,7 +1597,7 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue_operating_unit_ids
 msgid "Operating Units"
-msgstr "Operating units"
+msgstr "Operating Units"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.crm_case_form_view_oppor_advertising
@@ -1666,7 +1700,7 @@ msgstr "Pagina domein klasse"
 #: model:ir.model.fields,help:sale_advertising_order.field_product_product_booklet_surface_area
 #: model:ir.model.fields,help:sale_advertising_order.field_product_template_booklet_surface_area
 msgid "Page surface booklet (newspaper) format in cm2"
-msgstr "Page surface booklet (newspaper) format in cm2"
+msgstr "Pagina oppervlakte booklet (krant) formaat in cm2"
 
 #. module: sale_advertising_order
 #: model:ir.model,name:sale_advertising_order.model_res_partner
@@ -1745,7 +1779,7 @@ msgstr "Product"
 #. module: sale_advertising_order
 #: model:ir.model,name:sale_advertising_order.model_product_category
 msgid "Product Category"
-msgstr "Soort advertentie"
+msgstr "Productcategorie"
 
 #. module: sale_advertising_order
 #: model:ir.model,name:sale_advertising_order.model_product_template
@@ -1897,7 +1931,7 @@ msgstr "Verkopen"
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Sales Information"
-msgstr "Verkoopinformatie"
+msgstr "Verkoop informatie"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.advertising_order_view_search_inherit_quotation
@@ -1974,6 +2008,12 @@ msgstr "Zoek advertentie titels/edities"
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_res_partner_filter_crm
 msgid "Search Partner"
 msgstr "Zoek relatie"
+
+#. module: sale_advertising_order
+#: code:addons/sale_advertising_order/wizard/sale_order_state.py:21
+#, python-format
+msgid "Selected order(s) cannot be confirmed as they are not in 'Draft', 'Approved' or 'Sent' state."
+msgstr "De geselecteerde order(s) kunnen niet bevestigd worden aangezien deze niet de ‘Concept’, ‘Goedgekeurd’ of ‘Verstuurd’ status hebben."
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
@@ -2102,25 +2142,25 @@ msgid "Tasks"
 msgstr "Taken"
 
 #. module: sale_advertising_order
-#: code:addons/sale_advertising_order/models/sale_advertising.py:496
+#: code:addons/sale_advertising_order/models/sale_advertising.py:513
 #, python-format
 msgid "The Ad Class has no Date Type. You have to define one"
 msgstr "Deze advertentiesoort heeft geen datumtype. U dient er een te definiëren"
 
 #. module: sale_advertising_order
-#: code:addons/sale_advertising_order/models/sale_advertising.py:887
+#: code:addons/sale_advertising_order/models/sale_advertising.py:884
 #, python-format
 msgid "The Issue Date %s for Advertising Issue %s has passed."
 msgstr "De editiedatum %s van editie %s is verstreken."
 
 #. module: sale_advertising_order
-#: code:addons/sale_advertising_order/wizard/sale_line_create_multi.py:74
+#: code:addons/sale_advertising_order/wizard/sale_line_create_multi.py:65
 #, python-format
 msgid "The Order Line is in error. Please correct!"
 msgstr "Deze orderregel bevat een fout. Corrigeer deze alstublieft."
 
 #. module: sale_advertising_order
-#: code:addons/sale_advertising_order/models/sale_advertising.py:885
+#: code:addons/sale_advertising_order/models/sale_advertising.py:882
 #, python-format
 msgid "The deadline %s for this Category/Advertising Issue has passed."
 msgstr "De deadline %s voor deze advertentie editie is verstreken."
@@ -2133,7 +2173,7 @@ msgid "The internal user that is in charge of communicating with this contact if
 msgstr "De interne gebruiker die verantwoordelijk is voor de communicatie met deze relatie (indien van toepassing)."
 
 #. module: sale_advertising_order
-#: code:addons/sale_advertising_order/wizard/sale_line_create_multi.py:79
+#: code:addons/sale_advertising_order/wizard/sale_line_create_multi.py:70
 #, python-format
 msgid "The number of Lines is different from the number of Issues in the multi line."
 msgstr "Get aantal regels wijkt af van het aantal edities in de multiregel"
@@ -2145,16 +2185,16 @@ msgid "There are no Sales Order Lines with Multi Lines in the selected Sales Ord
 msgstr "Er zijn geen orderregels met multi regels aanwezig in de geselecteerde verkooporders."
 
 #. module: sale_advertising_order
-#: code:addons/sale_advertising_order/wizard/sale_line_create_multi.py:63
+#: code:addons/sale_advertising_order/wizard/sale_line_create_multi.py:54
 #, python-format
 msgid "There are no Sales Order Lines with Multi Lines in the selection."
 msgstr "Er zijn geen orderregels met multi regels aanwezig in de selectie."
 
 #. module: sale_advertising_order
-#: code:addons/sale_advertising_order/models/sale_advertising.py:899
+#: code:addons/sale_advertising_order/models/sale_advertising.py:898
 #, python-format
-msgid "There is not enough availability for this placement on %s in %s."
-msgstr "Er is onvoldoende beschikbaarheid voor deze plaatsing op %s in %s."
+msgid "There is not enough availability for this placement on %s in %s.Available Capacity is %d and required is %d"
+msgstr "There is not enough availability for this placement on %s in %s.Available Capacity is %d and required is %d"
 
 #. module: sale_advertising_order
 #. openerp-web
@@ -2363,7 +2403,7 @@ msgstr "Oneven weken"
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_issues_products_price_unit
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Unit Price"
-msgstr "Prijs per stuk"
+msgstr "Prijs"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue_message_unread
@@ -2421,11 +2461,11 @@ msgstr "Titelvariant"
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_ver_tr_exc
 msgid "Verification Treshold"
-msgstr "Ondergrens verificatie"
+msgstr "Tweede procuratiegrens"
 
 #. module: sale_advertising_order
-#: code:addons/sale_advertising_order/models/sale_advertising.py:167
-#: code:addons/sale_advertising_order/models/sale_advertising.py:495
+#: code:addons/sale_advertising_order/models/sale_advertising.py:173
+#: code:addons/sale_advertising_order/models/sale_advertising.py:512
 #, python-format
 msgid "Warning"
 msgstr "Waarschuwing"
@@ -2471,13 +2511,13 @@ msgid "Won in Opportunities"
 msgstr "Gewonnen in opportunities"
 
 #. module: sale_advertising_order
-#: code:addons/sale_advertising_order/models/sale_advertising.py:874
+#: code:addons/sale_advertising_order/models/sale_advertising.py:277
 #, python-format
-msgid "You cannot save a Sale Order Line with more than 60% discount. You'll have to ask Sales Support for help"
-msgstr "U bent niet geautoriseerd om een verkooporder regel op te slaan met meer dan 60% korting. Vraag een Senior om hulp."
+msgid "You cannot save a Sale Order with a line more than 60% discount. You'll have to cancel the order and resubmit it or ask Sales Support for help"
+msgstr "You cannot save a Sale Order with a line more than 60% discount. You'll have to cancel the order and resubmit it or ask Sales Support for help"
 
 #. module: sale_advertising_order
-#: code:addons/sale_advertising_order/models/sale_advertising.py:180
+#: code:addons/sale_advertising_order/models/sale_advertising.py:186
 #, python-format
 msgid "You cannot submit a quotation/sales order which has no line."
 msgstr "Het is niet mogelijk een offerte/verkooporder te verzenden zonder regel."
@@ -2511,12 +2551,12 @@ msgstr "dagen"
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.crm_case_form_view_oppor_advertising
 msgid "e.g. Discuss proposal"
-msgstr "Bijv. bespreken van de offerte"
+msgstr "bijv. bespreken van de offerte"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.crm_case_form_view_oppor_advertising
 msgid "e.g. Product Pricing"
-msgstr "Bijv. productprijs"
+msgstr "bijv. productprijs"
 
 #. module: sale_advertising_order
 #. openerp-web
