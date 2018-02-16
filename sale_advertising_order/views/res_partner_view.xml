@@ -32,6 +32,13 @@
             <field name="groups_id" eval="[(6,0,[ref('sales_team.group_sale_manager'),ref('account.group_account_user'),
                                             ])]" />
             <field name="arch" type="xml">
+                <div name="button_box" position="inside">
+                    <button class="oe_stat_button" type="action" name="%(action_orders_advertising_smart_button)d"
+                        attrs="{'invisible': [('customer', '=', False)]}"
+                        icon="fa-usd">
+                        <field string="Advertising Sales" name="adv_sale_order_count" widget="statinfo"/>
+                    </button>
+                </div>
                 <data>
                     <field name="category_id" position="attributes">
                         <attribute name="readonly">False</attribute>
@@ -148,6 +155,25 @@
             <field name="view_mode">tree</field>
             <field name="view_id" ref="view_partner_tree_nsm_crm"/>
             <field name="act_window_id" ref="action_partner_form_crm"/>
+        </record>
+        <!--Action Inherited: Sale Orders smart button-->
+        <record id="sale.act_res_partner_2_sale_order" model="ir.actions.act_window">
+            <field name="name">Quotations and Sales</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('state','not in',('draft','sent','cancel')), ('advertising','=',False)]</field>
+            <field name="view_mode">tree,form,graph</field>
+            <field name="context">{'search_default_partner_id': active_id}</field>
+            <field name="groups_id" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Create a Quotation, the first step of a new sale.
+              </p><p>
+                Your next actions should flow efficiently: confirm the Quotation to a Sale Order, then create the Invoice and collect the Payment.
+              </p><p>
+                Note that once a Quotation becomes a Sale Order, it will be moved from the Quotations list to the Sales Order list.
+              </p>
+            </field>
         </record>
 
 
