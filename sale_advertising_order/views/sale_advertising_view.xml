@@ -597,6 +597,40 @@
                   action="action_orders_advertising"
                   groups="sale_advertising_order.group_advertising_sales_user" sequence="12" />
 
+        <!--Action for advertising smart button-->
+        <record id="action_orders_advertising_smart_button" model="ir.actions.act_window">
+            <field name="name">Advertising Sales Orders</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field name="search_view_id" ref="advertising_order_view_search_inherit_sale"/>
+            <field name="domain">[('advertising','=',True),('state','in',('sale','done'))]</field>
+            <field name="context">{'default_advertising':True,'search_default_partner_id': active_id}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Create a Quotation, the first step of a new sale.
+              </p><p>
+                Your next actions should flow efficiently: confirm the Quotation to a Sale Order, then create the Invoice and collect the Payment.
+              </p><p>
+                Note that once a Quotation becomes a Sale Order, it will be moved from the Quotations list to the Sales Order list.
+              </p>
+            </field>
+        </record>
+
+        <record id="action_orders_advertising_smart_button_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_order_form_advertising"/>
+            <field name="act_window_id" ref="action_orders_advertising_smart_button"/>
+        </record>
+
+        <record id="action_orders_advertising_smart_button_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_order_advertising_tree"/>
+            <field name="act_window_id" ref="action_orders_advertising_smart_button"/>
+        </record>
+
         <record id="view_quotation_advertising_tree" model="ir.ui.view">
             <field name="name">sale.order.advertising.tree</field>
             <field name="model">sale.order</field>
