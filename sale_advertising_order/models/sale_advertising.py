@@ -93,6 +93,21 @@ class SaleOrder(models.Model):
                 invoice_status = 'not invoiced'
                 order['invoice_status'] = invoice_status
 
+    @api.depends('agency_is_publish')
+    @api.multi
+    def _compute_pub_cust_domain(self):
+        """
+        Compute the domain for the published_customer domain.
+        """
+        for rec in self:
+            if rec.agency_is_publish:
+                rec.pub_cust_domain = json.dumps(
+                    [('is_ad_agency', '=', True), ('parent_id', '=', False), ('customer', '=', True)]
+                )
+            else:
+                rec.pub_cust_domain = json.dumps(
+                    [('is_ad_agency', '!=', True),('parent_id', '=', False), ('customer', '=', True)]
+                )
 
     state = fields.Selection(selection=[
         ('draft', 'Draft Quotation'),
@@ -110,6 +125,7 @@ class SaleOrder(models.Model):
     published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer','=',True)])
     advertising_agency = fields.Many2one('res.partner', 'Advertising Agency', domain=[('customer','=',True)])
     nett_nett = fields.Boolean('Netto Netto Deal', default=False)
+    pub_cust_domain = fields.Char(compute=_compute_pub_cust_domain, readonly=True, store=False, )
     agency_is_publish = fields.Boolean('Agency is Publishing Customer', default=False)
     customer_contact = fields.Many2one('res.partner', 'Payer Contact Person', domain=[('customer','=',True)])
     traffic_employee = fields.Many2one('res.users', 'Traffic Employee',)
@@ -416,6 +432,8 @@ class SaleOrderLine(models.Model):
             rec.page_class_domain = json.dumps(
                 [('id', 'in', rec.ad_class.tag_ids.ids)]
             )
+
+
 
     mig_remark = fields.Text('Migration Remark')
     layout_remark = fields.Text('Material Remark')

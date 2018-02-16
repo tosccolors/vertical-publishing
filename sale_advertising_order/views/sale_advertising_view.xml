@@ -90,17 +90,12 @@
                     </div>
                     <group>
                         <group>
+                            <field name="pub_cust_domain" invisible="1"/>
                             <field name="published_customer"
                                    context="{'tree_view_ref': 'nsm_crm.view_partner_tree_nsm_crm'}"
-                                   domain="[('is_ad_agency','!=', True),('parent_id','=', False),('customer','=', True)]"
+                                   domain="pub_cust_domain"
                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')],
                                             'invisible': [('agency_is_publish','=',True)]}"
-                                   required="True"/>
-                            <field name="published_customer"
-                                   context="{'tree_view_ref': 'nsm_crm.view_partner_tree_nsm_crm'}"
-                                   domain="[('parent_id','=', False),('customer','=', True)]"
-                                   attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')],
-                                            'invisible': [('agency_is_publish','=',False)]}"
                                    required="True"/>
                             <field name="partner_id" string="Payer"
                                    domain="[('customer','=',True), ('parent_id','=', False)]"
