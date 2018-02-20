@@ -64,6 +64,7 @@ class productTemplate(models.Model):
     width = fields.Integer('Width', help="Width advertising format in mm")
     page_id = fields.Many2one('sale.advertising.page', string='Issue Page')
     space = fields.Integer('Space', help="Space taken by ad")
+    price_edit = fields.Boolean('Price Editable')
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

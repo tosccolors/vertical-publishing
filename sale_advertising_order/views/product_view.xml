@@ -45,6 +45,7 @@
 				 	<field name="width"/>
 				 	<field name="page_id"/>
 					<field name="space"/>
+					<field name="price_edit"/>
 			  	</field>
 		   	</field>
 		</record>
@@ -61,6 +62,7 @@
 				 	<field name="width"/>
 					<field name="space"/>
 				 	<field name="page_id"/>
+					<field name="price_edit"/>
 			  	</field>
 		   	</field>
 		</record>

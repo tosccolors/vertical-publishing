@@ -164,7 +164,10 @@ class SaleOrder(models.Model):
             if self.advertising_agency:
                 self.partner_id = self.advertising_agency
                 if self.agency_is_publish:
-                    self.published_customer = self.advertising_agency
+                    if self.advertising_agency:
+                        self.published_customer = self.advertising_agency
+                    else:
+                        self.advertising_agency = self.published_customer
                     self.nett_nett = True
             if not self.partner_id:
                 self.update({
@@ -433,6 +436,17 @@ class SaleOrderLine(models.Model):
                 [('id', 'in', rec.ad_class.tag_ids.ids)]
             )
 
+    @api.depends('title', 'product_template_id')
+    @api.multi
+    def _compute_price_edit(self):
+        """
+        Compute if price_unit should be editable.
+        """
+        for line in self.filtered('advertising'):
+            if line.product_template_id.price_edit or line.title.price_edit:
+                line.price_edit = True
+
+
 
 
     mig_remark = fields.Text('Migration Remark')
@@ -479,6 +493,9 @@ class SaleOrderLine(models.Model):
     multi_line_number = fields.Integer(compute='_multi_price', string='Number of Lines', store=True)
     partner_acc_mgr = fields.Many2one(related='order_id.partner_acc_mgr', store=True, string='Account Manager', readonly=True)
     order_partner_id = fields.Many2one(related='order_id.partner_id', relation='res.partner', string='Customer')
+    order_pricelist_id = fields.Many2one(related='order_id.pricelist_id', relation='product.pricelist', string='Pricelist')
+    order_company_id = fields.Many2one(related='order_id.company_id', relation='res.company',
+                                         string='Company')
     discount_dummy = fields.Float(related='discount', string='Agency Commission (%)', readonly=True )
     price_unit_dummy = fields.Float(related='price_unit', string='Unit Price', readonly=True)
     actual_unit_price = fields.Monetary(compute='_compute_amount', string='Actual Unit Price', digits=dp.get_precision('Actual Unit Price'),
@@ -490,6 +507,7 @@ class SaleOrderLine(models.Model):
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
     multi_line = fields.Boolean(string='Multi Line')
     color_surcharge = fields.Boolean(string='Color Surcharge')
+    price_edit = fields.Boolean(compute=_compute_price_edit, string='Price Editable')
     color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Account'))
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
 
@@ -965,6 +983,7 @@ class OrderLineAdvIssuesProducts(models.Model):
                                       string='Title', readonly=True)
     product_id = fields.Many2one('product.product', 'Product', ondelete='cascade', index=True, readonly=True)
     price_unit = fields.Float('Unit Price', required=True, digits=dp.get_precision('Product Price'), default=0.0, readonly=True)
+    price_edit = fields.Boolean(related='order_line_id.price_edit', readonly=True)
     qty = fields.Float(related='order_line_id.product_uom_qty', readonly=True)
     price = fields.Float(compute='_compute_price', string='Price', readonly=True, required=True, digits=dp.get_precision('Product Price'), default=0.0)
     page_reference = fields.Char('Reference of the Page', size=64)
