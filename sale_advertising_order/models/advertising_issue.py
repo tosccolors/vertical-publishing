@@ -53,6 +53,7 @@ class AdvertisingIssue(models.Model):
 
 
     name = fields.Char('Name', size=64, required=True)
+    code = fields.Char('Code', size=16, required=True)
     child_ids = fields.One2many('sale.advertising.issue', 'parent_id', 'Issues',)
     available_ids = fields.One2many('sale.advertising.available', 'adv_issue_id', 'Available', )
     parent_id = fields.Many2one('sale.advertising.issue', 'Title', index=True)

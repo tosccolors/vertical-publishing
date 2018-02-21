@@ -414,13 +414,18 @@ class SaleOrderLine(models.Model):
         Compute the deadline for this placement.
         """
         for line in self.filtered('advertising'):
+            user = self.env['res.users'].browse(self.env.uid)
             if line.ad_class:
-                dt_offset = timedelta(hours=line.ad_class.deadline_offset or 0)
-                line.deadline_offset = fields.Datetime.to_string(datetime.now() + dt_offset)
-                if line.adv_issue and line.adv_issue.deadline:
-                    dt_deadline = fields.Datetime.from_string(line.adv_issue.deadline)
-                    line.deadline = fields.Datetime.to_string(dt_deadline - dt_offset)
-                    line.deadline_passed = datetime.now() > (dt_deadline - dt_offset)
+                if user.has_group('sale_advertising_order.group_no_deadline_check') and line.issue_date:
+                    line.deadline = False
+                    line.deadline_passed = datetime.now() >= fields.Datetime.from_string(line.issue_date)
+                elif not user.has_group('sale_advertising_order.group_no_deadline_check'):
+                    dt_offset = timedelta(hours=line.ad_class.deadline_offset or 0)
+                    line.deadline_offset = fields.Datetime.to_string(datetime.now() + dt_offset)
+                    if line.adv_issue and line.adv_issue.deadline:
+                        dt_deadline = fields.Datetime.from_string(line.adv_issue.deadline)
+                        line.deadline = fields.Datetime.to_string(dt_deadline - dt_offset)
+                        line.deadline_passed = datetime.now() > (dt_deadline - dt_offset)
 
 
 
@@ -471,7 +476,7 @@ class SaleOrderLine(models.Model):
     medium = fields.Many2one('product.category', string='Medium')
     ad_class = fields.Many2one('product.category', 'Advertising Class')
     deadline_passed = fields.Boolean(compute=_compute_deadline, string='Deadline Passed')
-    deadline = fields.Datetime(compute=_compute_deadline, string='Deadline', store=True)
+    deadline = fields.Datetime(compute=_compute_deadline, string='Deadline', store=False)
     deadline_offset = fields.Datetime(compute=_compute_deadline)
     product_template_id = fields.Many2one('product.template', string='Product', domain=[('sale_ok', '=', True)],
                                  change_default=True, ondelete='restrict')
@@ -530,6 +535,11 @@ class SaleOrderLine(models.Model):
             else:
                 vals['title'] = False
                 vals['title_ids'] = [(6, 0, [])]
+        else:
+            vals['ad_class'] = False
+            vals['title'] = False
+            vals['title_ids'] = [(6, 0, [])]
+            data = {'ad_class': []}
         return {'value': vals, 'domain': data }
 
     @api.onchange('ad_class')
@@ -566,16 +576,24 @@ class SaleOrderLine(models.Model):
                 vals['adv_issue'] = adissue_ids[0]
                 vals['adv_issue_ids'] = [(6, 0, [])]
                 vals['product_id'] = False
-                data.update({'adv_issue': [('id', 'in', adissue_ids)]})
+#                data.update({'adv_issue': [('id', 'in', adissue_ids)]})
             else:
                 vals['adv_issue'] = False
                 vals['product_id'] = False
-                data.update({'adv_issue_ids': [('id', 'in', adissue_ids)]})
+#                data.update({'adv_issue_ids':
+#                                 [('parent_id','=', self.title),
+#                                  '|',('deadline','>=', self.deadline_offset),('deadline','=', False),
+#                                  ('issue_date','>=', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]})
+        else:
+            vals['adv_issue'] = False
+            vals['product_id'] = False
+            vals['adv_issue_ids'] = [(6, 0, [])]
+#            data.update({'adv_issue': [],'adv_issue_ids': []})
         return {'value': vals, 'domain': data}
 
     @api.onchange('title_ids')
     def title_ids_oc(self):
-        vals = {}
+        vals, data = {}, {}
         if not self.advertising:
             return {'value': vals}
         if self.title_ids and self.adv_issue_ids:
@@ -598,6 +616,7 @@ class SaleOrderLine(models.Model):
             for title in titles:
                 if not (title in issue_parent_ids):
                     back = True
+                    break
             if back:
                 self.adv_issue_ids = [(6, 0, adv_issues.ids)]
                 self.issue_product_ids = [(6, 0, [])]
@@ -606,10 +625,13 @@ class SaleOrderLine(models.Model):
                 self.title_ids = [(6, 0, [])]
             self.titles_issues_products_price()
 
-        elif self.title_ids and not self.issue_product_ids and not self.adv_issue_ids:
+        elif self.title_ids:
             self.product_template_id = False
             self.product_id = False
-
+#            data.update({'adv_issue_ids':
+#                             [('parent_id', 'in', self.title_ids.ids),
+#                              '|', ('deadline', '>=', self.deadline_offset), ('deadline', '=', False),
+#                              ('issue_date', '>=', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]})
         else:
             self.adv_issue = False
             self.adv_issue_ids = [(6, 0, [])]
@@ -617,7 +639,7 @@ class SaleOrderLine(models.Model):
             self.product_id = False
             self.product_template_id = False
             self.product_uom = False
-
+        return {'value': vals, 'domain': data}
 
 
     @api.onchange('product_template_id')
@@ -975,6 +997,15 @@ class OrderLineAdvIssuesProducts(models.Model):
         for line in self:
             line.price = line.price_unit * line.qty
 
+    @api.depends('adv_issue_id', 'order_line_id.price_edit')
+    def _compute_price_edit(self):
+        for line in self:
+            if self.order_line_id.price_edit:
+                line.price_edit = True
+                continue
+            if self.adv_issue_id.parent_id.price_edit:
+                line.price_edit = True
+
 
     sequence = fields.Integer('Sequence', help="Gives the sequence of this line .", default=10)
     order_line_id = fields.Many2one('sale.order.line', 'Line', ondelete='cascade', index=True, required=True)
@@ -983,7 +1014,7 @@ class OrderLineAdvIssuesProducts(models.Model):
                                       string='Title', readonly=True)
     product_id = fields.Many2one('product.product', 'Product', ondelete='cascade', index=True, readonly=True)
     price_unit = fields.Float('Unit Price', required=True, digits=dp.get_precision('Product Price'), default=0.0, readonly=True)
-    price_edit = fields.Boolean(related='order_line_id.price_edit', readonly=True)
+    price_edit = fields.Boolean(compute=_compute_price_edit, readonly=True)
     qty = fields.Float(related='order_line_id.product_uom_qty', readonly=True)
     price = fields.Float(compute='_compute_price', string='Price', readonly=True, required=True, digits=dp.get_precision('Product Price'), default=0.0)
     page_reference = fields.Char('Reference of the Page', size=64)

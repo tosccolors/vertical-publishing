@@ -204,9 +204,9 @@
                                             <div invisible="context.get('hide_sale')" groups="base.group_no_one">
                                                 <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
                                             </div>
-                                            <field name="adv_issue" domain="[('parent_id','=', title),'|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
-                                                                            ('issue_date','&gt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
-                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
+                                            <field name="adv_issue" options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
+                                                   domain="[('parent_id','=', title),'|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
+                                                            ('issue_date','&gt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
                                                    attrs="{'invisible': [('adv_issue','=', False)]}"/>
                                             <field name="issue_date" readonly="1"
                                                    attrs="{'invisible': [('adv_issue','=', False)]}"/>
@@ -1239,6 +1239,7 @@
 					<sheet>
 						<group col="4" colspan="4" >
 							<field name="name" string="Name"/>
+                            <field name="code" string="Code"/>
 							<field name="parent_id" string="Title" domain="[('parent_id','=', False)]"/>
                             <field name="price_edit" string="Price Editable"
                                    attrs="{'invisible':[('parent_id','=',True)]}"/>
@@ -1275,17 +1276,18 @@
 			<field name="model">sale.advertising.issue</field>
 			<field name="arch" type="xml">
 				<tree string="Advertising issue">
-						<field name="name" string="Name"/>
-						<field name="parent_id" string="Title"/>
-                        <field name="product_attribute_value_id" string="Variant Title"/>
-						<field name="analytic_account_id" string="Related Analytic Account"/>
-						<field name="issue_date" string="Issue Date"/>
-                        <field name="issue_week_number" string="Week Number"/>
-                        <field name="week_number_even" invisible="False"/>
-                        <field name="deadline" string="Deadline"/>
-						<field name="medium" string="Medium"/>
-						<field name="default_note" string="Default Note" />
-						<field name="state" string="State" />
+                    <field name="name" string="Name"/>
+                    <field name="code" string="Code"/>
+                    <field name="parent_id" string="Title"/>
+                    <field name="product_attribute_value_id" string="Variant Title"/>
+                    <field name="analytic_account_id" string="Related Analytic Account"/>
+                    <field name="issue_date" string="Issue Date"/>
+                    <field name="issue_week_number" string="Week Number"/>
+                    <field name="week_number_even" invisible="False"/>
+                    <field name="deadline" string="Deadline"/>
+                    <field name="medium" string="Medium"/>
+                    <field name="default_note" string="Default Note" />
+                    <field name="state" string="State" />
 				</tree>
 			</field>
 		</record>
@@ -1297,12 +1299,13 @@
 			<field name="model">sale.advertising.issue</field>
 			<field name="arch" type="xml">
 				<tree string="Advertising issue">
-						<field name="name" string="Name"/>
-                        <field name="product_attribute_value_id" string="Variant Title"/>
-						<field name="analytic_account_id" string="Related Analytic Account"/>
-						<field name="medium" string="Medium"/>
-						<field name="default_note" string="Default Note" />
-						<field name="state" string="State" />
+                    <field name="name" string="Name"/>
+                    <field name="code" string="Code"/>
+                    <field name="product_attribute_value_id" string="Variant Title"/>
+                    <field name="analytic_account_id" string="Related Analytic Account"/>
+                    <field name="medium" string="Medium"/>
+                    <field name="default_note" string="Default Note" />
+                    <field name="state" string="State" />
 				</tree>
 			</field>
 		</record>
@@ -1314,16 +1317,17 @@
 			<field name="model">sale.advertising.issue</field>
 			<field name="arch" type="xml">
 				<tree string="Advertising issue">
-						<field name="name" string="Name"/>
-						<field name="parent_id" string="Title"/>
-						<field name="analytic_account_id" string="Related Analytic Account"/>
-						<field name="issue_date" string="Issue Date"/>
-                        <field name="issue_week_number" string="Week Number"/>
-                        <field name="week_number_even" invisible="1"/>
-                        <field name="deadline" string="Deadline"/>
-						<field name="medium" string="Medium"/>
-						<field name="default_note" string="Default Note" />
-						<field name="state" string="State" />
+                    <field name="name" string="Name"/>
+                    <field name="code" string="Code"/>
+                    <field name="parent_id" string="Title"/>
+                    <field name="analytic_account_id" string="Related Analytic Account"/>
+                    <field name="issue_date" string="Issue Date"/>
+                    <field name="issue_week_number" string="Week Number"/>
+                    <field name="week_number_even" invisible="1"/>
+                    <field name="deadline" string="Deadline"/>
+                    <field name="medium" string="Medium"/>
+                    <field name="default_note" string="Default Note" />
+                    <field name="state" string="State" />
 				</tree>
 			</field>
 		</record>
