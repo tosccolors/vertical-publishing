@@ -327,6 +327,7 @@
 
                                 <tree string="Sales Order Lines"  decoration-info="invoice_status=='to invoice'">
                                     <field name="sequence" widget="handle"/>
+                                    <field name="id"/>
                                     <field name="title" />
                                     <field name="issue_date" />
                                     <field name="ad_class" groups="base.group_no_one"/>
@@ -528,6 +529,8 @@
                     <filter name="accmgr_sale_orders_filter" string="My Sales Orders (Account Manager)"
                             domain="[('partner_acc_mgr','=',uid)]" help="My Sales Orders as Account manager" />
                     <field name="partner_acc_mgr"/>
+                    <field name="published_customer"/>
+                    <field name="advertising_agency"/>
                     <separator/>
                     <filter string="To Invoice" domain="[('invoice_status','=','to invoice')]" />
                     <filter string="Upselling" domain="[('invoice_status','=','upselling')]" />
