@@ -1433,7 +1433,7 @@
 			<field name="type">tree</field>
 			<field name="model">sale.advertising.available</field>
 			<field name="arch" type="xml">
-                <tree string="Page Availablity" create="0" delete="0" readonly="1">
+                <tree name="page_available" string="Page Availablity" create="0" delete="0" readonly="1">
                     <field name="adv_issue_id" string="Issue" />
                     <field name="name" string="Name" />
                     <field name="page_id" string="Ad Page" />
@@ -1442,6 +1442,22 @@
                 </tree>
 			</field>
 		</record>
+
+        <record id="sale_advertising_available_tree_manage" model="ir.ui.view" >
+			<field name="name">sale.advertising.available.tree.manage</field>
+			<field name="type">tree</field>
+			<field name="model">sale.advertising.available</field>
+            <field name="inherit_id" ref="sale_advertising_order.sale_advertising_available_tree"/>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_traffic_user'))]"/>
+			<field name="arch" type="xml">
+                <tree name="page_available" position="attributes" >
+                    <attribute name="create" >1</attribute>
+                    <attribute name="delete" >1</attribute>
+                    <attribute name="readonly" >0</attribute>
+                </tree>
+			</field>
+		</record>
+
 
 		<record model="ir.actions.act_window" id="action_sale_advertising_available">
 			<field name="name">Advertising Pages</field>
