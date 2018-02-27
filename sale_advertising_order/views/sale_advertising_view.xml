@@ -126,6 +126,7 @@
                             <field name="pricelist_id" groups="product.group_sale_pricelist"/>
                             <field name="currency_id" invisible="1"/>
                             <field name="payment_term_id" options="{'no_create': True}"/>
+                            <field name="payment_mode_id" domain="[('payment_type', '=', 'inbound')]" widget="selection"/>
                         </group>
                     </group>
                     <notebook>
