@@ -156,45 +156,43 @@ class SaleOrder(models.Model):
         if not self.advertising:
             return super(SaleOrder, self).onchange_partner_id()
         # Advertiser:
+        if self.published_customer:
+            self.partner_id = self.published_customer.id
         else:
-            if self.published_customer:
-                self.partner_id = self.published_customer.id
-            else:
-                self.partner_id = self.advertising_agency = False
-            if self.advertising_agency:
-                self.partner_id = self.advertising_agency
-                if self.agency_is_publish:
-                    if self.advertising_agency:
-                        self.published_customer = self.advertising_agency
-                    else:
-                        self.advertising_agency = self.published_customer
-                    self.nett_nett = True
-            if not self.partner_id:
-                self.update({
-                    'customer_contact': False
-                })
-            super(SaleOrder, self).onchange_partner_id()
-            if self.partner_id.type == 'contact':
-                contact = self.env['res.partner'].search([('is_company','=', False),('type','=', 'contact'),('parent_id','=', self.partner_id.id)])
-                if len(contact) >=1:
-                    contact_id = contact[0]
+            self.partner_id = self.advertising_agency = False
+        if self.advertising_agency:
+            self.partner_id = self.advertising_agency
+            if self.agency_is_publish:
+                if self.advertising_agency:
+                    self.published_customer = self.advertising_agency
                 else:
-                    contact_id = False
+                    self.advertising_agency = self.published_customer
+        if not self.partner_id:
+            self.update({
+                'customer_contact': False
+            })
+        super(SaleOrder, self).onchange_partner_id()
+        if self.partner_id.type == 'contact':
+            contact = self.env['res.partner'].search([('is_company','=', False),('type','=', 'contact'),('parent_id','=', self.partner_id.id)])
+            if len(contact) >=1:
+                contact_id = contact[0]
             else:
-                addr = self.partner_id.address_get(['delivery', 'invoice'])
-                contact_id = addr['contact']
-            if not self.partner_id.is_company and not self.partner_id.parent_id:
-                contact_id = self.partner_id
-            # Not sure about this!
-            self.user_id = self._uid
-            self.customer_contact = contact_id
-            if self.order_line:
-                warning = {'title':_('Warning'),
-                                     'message':_('Changing the Customer can have a change in Agency Discount as a result.'
-                                                 'This change will only show after saving the order!'
-                                                 'Before saving the order the order lines and the total amounts may therefor'
-                                                 'show wrong values.')}
-                return {'warning': warning}
+                contact_id = False
+        else:
+            addr = self.partner_id.address_get(['delivery', 'invoice'])
+            contact_id = addr['contact']
+        if not self.partner_id.is_company and not self.partner_id.parent_id:
+            contact_id = self.partner_id
+        # Not sure about this!
+        self.user_id = self._uid
+        self.customer_contact = contact_id
+        if self.order_line:
+            warning = {'title':_('Warning'),
+                                 'message':_('Changing the Customer can have a change in Agency Discount as a result.'
+                                             'This change will only show after saving the order!'
+                                             'Before saving the order the order lines and the total amounts may therefor'
+                                             'show wrong values.')}
+            return {'warning': warning}
 
 
     @api.multi
@@ -498,6 +496,9 @@ class SaleOrderLine(models.Model):
     multi_line_number = fields.Integer(compute='_multi_price', string='Number of Lines', store=True)
     partner_acc_mgr = fields.Many2one(related='order_id.partner_acc_mgr', store=True, string='Account Manager', readonly=True)
     order_partner_id = fields.Many2one(related='order_id.partner_id', relation='res.partner', string='Customer')
+    order_advertiser_id = fields.Many2one(related='order_id.published_customer', relation='res.partner', string='Advertising Customer')
+    order_agency_id = fields.Many2one(related='order_id.advertising_agency', relation='res.partner',
+                                          string='Advertising Agency')
     order_pricelist_id = fields.Many2one(related='order_id.pricelist_id', relation='product.pricelist', string='Pricelist')
     order_company_id = fields.Many2one(related='order_id.company_id', relation='res.company',
                                          string='Company')
@@ -952,8 +953,8 @@ class SaleOrderLine(models.Model):
         lpage_id = lpage.id
         avail = self.adv_issue.calc_page_space(lpage_id)
         if lspace > avail and not user.has_group('sale_advertising_order.group_no_availability_check'):
-            raise UserError(_('There is not enough availability for this placement on %s in %s.'
-                              'Available Capacity is %d and required is %d') % (lpage.name, self.adv_issue.name, avail, lspace))
+            raise UserError(_('There is not enough availability for this placement in Ordernumber %s line %s on %s in %s. '
+                              'Available Capacity is %d and required is %d') % (self.order_id.name, self.id, lpage.name, self.adv_issue.name, avail, lspace))
         else:
             vals = {
                 'adv_issue_id': self.adv_issue.id,
@@ -987,17 +988,19 @@ class OrderLineAdvIssuesProducts(models.Model):
 
 
     @api.depends('price_unit', 'qty')
+    @api.multi
     def _compute_price(self):
         for line in self:
             line.price = line.price_unit * line.qty
 
     @api.depends('adv_issue_id', 'order_line_id.price_edit')
+    @api.multi
     def _compute_price_edit(self):
         for line in self:
-            if self.order_line_id.price_edit:
+            if line.order_line_id.price_edit:
                 line.price_edit = True
                 continue
-            if self.adv_issue_id.parent_id.price_edit:
+            if line.adv_issue_id.parent_id.price_edit:
                 line.price_edit = True
 
 

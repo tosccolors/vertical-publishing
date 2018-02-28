@@ -38,8 +38,8 @@ This module allows you to use both CRM and Sales Management to run your advertis
                 ],
     'data': [
              "data/sale_advertising_data.xml",
-             "security/ir.model.access.csv",
              "security/security.xml",
+             "security/ir.model.access.csv",
              "wizard/sale_line_create_multi_view.xml",
              "wizard/crm_lead_to_opportunity_view.xml",
              "wizard/adv_line_invoice.xml",
