@@ -576,19 +576,13 @@ class SaleOrderLine(models.Model):
                 vals['adv_issue'] = adissue_ids[0]
                 vals['adv_issue_ids'] = [(6, 0, [])]
                 vals['product_id'] = False
-#                data.update({'adv_issue': [('id', 'in', adissue_ids)]})
             else:
                 vals['adv_issue'] = False
                 vals['product_id'] = False
-#                data.update({'adv_issue_ids':
-#                                 [('parent_id','=', self.title),
-#                                  '|',('deadline','>=', self.deadline_offset),('deadline','=', False),
-#                                  ('issue_date','>=', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]})
         else:
             vals['adv_issue'] = False
             vals['product_id'] = False
             vals['adv_issue_ids'] = [(6, 0, [])]
-#            data.update({'adv_issue': [],'adv_issue_ids': []})
         return {'value': vals, 'domain': data}
 
     @api.onchange('title_ids')
