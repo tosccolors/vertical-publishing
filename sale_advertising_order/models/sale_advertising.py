@@ -162,11 +162,11 @@ class SaleOrder(models.Model):
             self.partner_id = self.advertising_agency = False
         if self.advertising_agency:
             self.partner_id = self.advertising_agency
-            if self.agency_is_publish:
-                if self.advertising_agency:
-                    self.published_customer = self.advertising_agency
-                else:
-                    self.advertising_agency = self.published_customer
+#        if self.agency_is_publish:
+#            if self.advertising_agency:
+#                self.published_customer = self.advertising_agency
+#            else:
+#                self.advertising_agency = self.published_customer
         if not self.partner_id:
             self.update({
                 'customer_contact': False
@@ -315,7 +315,7 @@ class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'subtotal_before_agency_disc',
-                 'color_surcharge_amount', 'discount', 'price_unit', 'tax_id')
+                 'discount', 'price_unit', 'tax_id')
     @api.multi
     def _compute_amount(self):
         """
@@ -336,12 +336,11 @@ class SaleOrderLine(models.Model):
 
             if not line.multi_line:
                 if price_unit == 0.0:
-                    unit_price = 0.0
+                    unit_price = csa
                     comp_discount = 0.0
-                    csa = 0.0
                 elif price_unit > 0.0 and qty > 0.0 :
                     unit_price = round(float(subtotal_bad) / float(qty), 3)
-                    comp_discount = round((1.0 - float(unit_price) / (float(price_unit) + float(csa))) * 100.0, 2)
+                    comp_discount = round((1.0 - float(unit_price) / (float(price_unit) + float(csa))) * 100.0, 3)
                 elif qty == 0.0:
                     unit_price = 0.0
                     comp_discount = 0.0
@@ -355,18 +354,16 @@ class SaleOrderLine(models.Model):
                     'price_total': taxes['total_included'],
                     'price_subtotal': taxes['total_excluded'],
                     'computed_discount': comp_discount,
-                    'color_surcharge_amount': csa,
                     'discount': discount,
                 })
             else:
                 clp = line.comb_list_price or 0.0
                 if clp > 0.0:
-                    comp_discount = round((1.0 - float(subtotal_bad) / (float(clp) + float(csa))) * 100.0, 2)
+                    comp_discount = round((1.0 - float(subtotal_bad) / (float(clp) + float(csa))) * 100.0, 3)
                     unit_price = 0.0
                     price_unit = 0.0
                 else:
                     comp_discount = 0.0
-                    csa = 0.0
                     unit_price = 0.0
                     price_unit = 0.0
 
@@ -380,7 +377,6 @@ class SaleOrderLine(models.Model):
                     'price_subtotal': taxes['total_excluded'],
                     'computed_discount': comp_discount,
                     'actual_unit_price': unit_price,
-                    'color_surcharge_amount': csa,
                     'price_unit': price_unit,
                     'discount': discount,
                 })
@@ -495,20 +491,21 @@ class SaleOrderLine(models.Model):
     ], related='order_id.state', string='Order Status', readonly=True, copy=False, store=True, default='draft')
     multi_line_number = fields.Integer(compute='_multi_price', string='Number of Lines', store=True)
     partner_acc_mgr = fields.Many2one(related='order_id.partner_acc_mgr', store=True, string='Account Manager', readonly=True)
-    order_partner_id = fields.Many2one(related='order_id.partner_id', relation='res.partner', string='Customer')
-    order_advertiser_id = fields.Many2one(related='order_id.published_customer', relation='res.partner', string='Advertising Customer')
+    order_partner_id = fields.Many2one(related='order_id.partner_id', relation='res.partner', string='Customer', store=True)
+    order_advertiser_id = fields.Many2one(related='order_id.published_customer', relation='res.partner',
+                                          string='Advertising Customer', store=True)
     order_agency_id = fields.Many2one(related='order_id.advertising_agency', relation='res.partner',
-                                          string='Advertising Agency')
+                                          string='Advertising Agency', store=True)
     order_pricelist_id = fields.Many2one(related='order_id.pricelist_id', relation='product.pricelist', string='Pricelist')
     order_company_id = fields.Many2one(related='order_id.company_id', relation='res.company',
                                          string='Company')
     discount_dummy = fields.Float(related='discount', string='Agency Commission (%)', readonly=True )
     price_unit_dummy = fields.Float(related='price_unit', string='Unit Price', readonly=True)
-    actual_unit_price = fields.Monetary(compute='_compute_amount', string='Actual Unit Price', digits=dp.get_precision('Actual Unit Price'),
+    actual_unit_price = fields.Float(compute='_compute_amount', string='Actual Unit Price', digits=dp.get_precision('Product Price'),
                                         default=0.0, readonly=True)
     comb_list_price = fields.Monetary(compute='_multi_price', string='Combined_List Price', default=0.0, store=True,
-                                digits=dp.get_precision('Actual Unit Price'))
-    computed_discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Discount'), default=0.0)
+                                digits=dp.get_precision('Account'))
+    computed_discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Product Price'), default=0.0)
     subtotal_before_agency_disc = fields.Monetary(string='Subtotal before Commission', digits=dp.get_precision('Account'))
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
     multi_line = fields.Boolean(string='Multi Line')
@@ -797,18 +794,14 @@ class SaleOrderLine(models.Model):
         comp_discount = self.computed_discount
         if comp_discount < 0.0:
             comp_discount = self.computed_discount = 0.000
-        price = self.price_unit
+        price = self.price_unit or 0.0
         subtotal_bad = 0.0
         if self.multi_line:
             clp = self.comb_list_price or 0.0
-            if clp and clp > 0:
-                subtotal_bad = round((float(clp) + float(csa)) * (1.0 - float(comp_discount) / 100.0), 2)
-            else:
-                subtotal_bad = 0.0
+            subtotal_bad = round((float(clp) + float(csa)) * (1.0 - float(comp_discount) / 100.0), 2)
         else:
-            if price and price > 0:
-                aup = round((float(price) + float(csa)) * (1.0 - float(comp_discount) / 100.0), 3)
-                subtotal_bad = aup * self.product_uom_qty
+            aup = round((float(price) + float(csa)) * (1.0 - float(comp_discount) / 100.0), 2)
+            subtotal_bad = round(float(aup) * float(self.product_uom_qty), 2)
         result['subtotal_before_agency_disc'] = subtotal_bad
         return {'value': result}
 
@@ -832,25 +825,28 @@ class SaleOrderLine(models.Model):
             return {'value': result}
         pu = self.price_unit
         clp = self.comb_list_price
-        aup = self.actual_unit_price
-        csa = self.color_surcharge_amount
         if not self.multi_line:
             if self.color_surcharge:
                 self.color_surcharge_amount = pu / 2
-                aup = pu * 1.50 * round(float(1 - float(self.computed_discount / 100)), 3)
-                self.subtotal_before_agency_disc = round((float(aup) * float(self.product_uom_qty)), 2)
             else:
                 self.color_surcharge_amount = 0.0
-                aup = aup - csa
-                self.subtotal_before_agency_disc = round((float(aup) * float(self.product_uom_qty)), 2)
         else:
             if self.color_surcharge:
                 self.color_surcharge_amount = clp / 2
-                self.subtotal_before_agency_disc = round((float(clp) * 1.50 ), 2)
             else:
-                self.subtotal_before_agency_disc = round(float(self.subtotal_before_agency_disc - csa), 2)
                 self.color_surcharge_amount = 0.0
 
+    @api.onchange('color_surcharge_amount')
+    def onchange_csa(self):
+        result = {}
+        if not self.advertising:
+            return {'value': result}
+        csa = self.color_surcharge_amount
+        if not self.multi_line:
+            self.subtotal_before_agency_disc = (self.price_unit + csa) * self.product_uom_qty * (
+                        1 - self.computed_discount / 100)
+        else:
+            self.subtotal_before_agency_disc = (self.comb_list_price + csa) * (1 - self.computed_discount / 100)
 
     @api.onchange('adv_issue', 'adv_issue_ids','dates','issue_product_ids')
     def onchange_getQty(self):

@@ -287,22 +287,22 @@
                                                        attrs="{'readonly': [('price_edit','!=', True)]}"/>
                                                 <field name="qty" string="Qty"/>
                                                 <field name="price" string="Price"/>
-                                                <field name="page_reference" string="Ref" />
-                                                <field name="ad_number" string="Ad No." />
+                                                <field name="page_reference" string="Page Pref." />
+                                                <field name="ad_number" string="External Ref." />
                                                 <field name="url_to_material" string="URL Ad Material" />
                                             </tree>
                                         </field>
 
-                                        <group name="ad_refs" attrs="{'invisible':['|',('multi_line','!=', False),('date_type','in',['date','validity'])]}">
+                                        <group name="ad_refs" attrs="{'invisible':[('date_type','in',['date','validity'])]}">
                                             <field name="ad_number" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
                                             <field name="page_reference" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
                                             <field name="url_to_material" />
                                         </group>
-                                        <group attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')]}">
+                                        <group attrs="{'invisible':[('date_type','!=','validity')]}">
                                             <field name="from_date"
-                                                   attrs="{'invisible':['|',('multi_line','!=', False),('date_type','!=','validity')]}"/>
+                                                   attrs="{'invisible':[('date_type','!=','validity')]}"/>
                                             <field name="to_date"
-                                                   attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')]}"/>
+                                                   attrs="{'invisible':[('date_type','!=','validity')]}"/>
                                         </group>
                                     </group>
                                     <group>
