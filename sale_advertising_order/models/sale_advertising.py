@@ -24,6 +24,7 @@ import json
 from odoo import api, fields, models, _
 import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
+from odoo.tools import float_is_zero, float_compare, DEFAULT_SERVER_DATETIME_FORMAT
 from datetime import datetime, timedelta
 
 
@@ -339,27 +340,26 @@ class SaleOrderLine(models.Model):
                     unit_price = csa
                     comp_discount = 0.0
                 elif price_unit > 0.0 and qty > 0.0 :
-                    unit_price = round(float(subtotal_bad) / float(qty), 3)
-                    comp_discount = round((1.0 - float(unit_price) / (float(price_unit) + float(csa))) * 100.0, 3)
+                    comp_discount = round((1.0 - float(subtotal_bad) / (float(price_unit) * float(qty) + float(csa) * float(qty))) * 100.0, 5)
+                    unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), 5)
                 elif qty == 0.0:
                     unit_price = 0.0
                     comp_discount = 0.0
-#                price = round(float(unit_price) * (1.0 - float(discount or 0) / 100.0), 2)
-                price = unit_price * (1 - (discount or 0.0) / 100.0)
+                price = round(unit_price * (1 - (discount or 0.0) / 100.0), 5)
                 taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id,
                                                 partner=line.order_id.partner_id)
                 line.update({
-                    'actual_unit_price': unit_price,
+                    'actual_unit_price': round(unit_price, 3),
                     'price_tax': taxes['total_included'] - taxes['total_excluded'],
                     'price_total': taxes['total_included'],
                     'price_subtotal': taxes['total_excluded'],
-                    'computed_discount': comp_discount,
+                    'computed_discount': round(comp_discount, 2),
                     'discount': discount,
                 })
             else:
                 clp = line.comb_list_price or 0.0
                 if clp > 0.0:
-                    comp_discount = round((1.0 - float(subtotal_bad) / (float(clp) + float(csa))) * 100.0, 3)
+                    comp_discount = round((1.0 - float(subtotal_bad) / (float(clp) + float(csa))) * 100.0, 5)
                     unit_price = 0.0
                     price_unit = 0.0
                 else:
@@ -368,14 +368,14 @@ class SaleOrderLine(models.Model):
                     price_unit = 0.0
 
 #                price = round(float(subtotal_bad) * (1.0 - float(discount or 0) / 100.0), 2)
-                price = subtotal_bad * (1 - (discount or 0.0) / 100.0)
+                price = round(subtotal_bad * (1 - (discount or 0.0) / 100.0), 5)
                 taxes = line.tax_id.compute_all(price, line.order_id.currency_id, quantity=1,
                                                 product=line.product_template_id, partner=line.order_id.partner_id)
                 line.update({
                     'price_tax': taxes['total_included'] - taxes['total_excluded'],
                     'price_total': taxes['total_included'],
                     'price_subtotal': taxes['total_excluded'],
-                    'computed_discount': comp_discount,
+                    'computed_discount': round(comp_discount, 2),
                     'actual_unit_price': unit_price,
                     'price_unit': price_unit,
                     'discount': discount,
@@ -501,11 +501,11 @@ class SaleOrderLine(models.Model):
                                          string='Company')
     discount_dummy = fields.Float(related='discount', string='Agency Commission (%)', readonly=True )
     price_unit_dummy = fields.Float(related='price_unit', string='Unit Price', readonly=True)
-    actual_unit_price = fields.Float(compute='_compute_amount', string='Actual Unit Price', digits=dp.get_precision('Product Price'),
+    actual_unit_price = fields.Float(compute='_compute_amount', string='Actual Unit Price', digits=dp.get_precision('Account'),
                                         default=0.0, readonly=True)
     comb_list_price = fields.Monetary(compute='_multi_price', string='Combined_List Price', default=0.0, store=True,
                                 digits=dp.get_precision('Account'))
-    computed_discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Product Price'), default=0.0)
+    computed_discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Account'), default=0.0)
     subtotal_before_agency_disc = fields.Monetary(string='Subtotal before Commission', digits=dp.get_precision('Account'))
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
     multi_line = fields.Boolean(string='Multi Line')
@@ -795,14 +795,14 @@ class SaleOrderLine(models.Model):
         if comp_discount < 0.0:
             comp_discount = self.computed_discount = 0.000
         price = self.price_unit or 0.0
-        subtotal_bad = 0.0
         if self.multi_line:
             clp = self.comb_list_price or 0.0
             subtotal_bad = round((float(clp) + float(csa)) * (1.0 - float(comp_discount) / 100.0), 2)
         else:
-            aup = round((float(price) + float(csa)) * (1.0 - float(comp_discount) / 100.0), 2)
-            subtotal_bad = round(float(aup) * float(self.product_uom_qty), 2)
-        result['subtotal_before_agency_disc'] = subtotal_bad
+            price = (float(price) + float(csa)) * float(self.product_uom_qty)
+            subtotal_bad = round(float(price) * (1.0 - float(comp_discount) / 100.0), 2)
+        if subtotal_bad > 0 and abs((subtotal_bad - self.subtotal_before_agency_disc) / subtotal_bad) > 0.01:
+            result['subtotal_before_agency_disc'] = subtotal_bad
         return {'value': result}
 
 

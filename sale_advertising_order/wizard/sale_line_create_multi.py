@@ -71,8 +71,8 @@ class sale_order_line_create_multi_lines(models.TransientModel):
 
                 for ad_iss in ol.issue_product_ids:
                     ad_issue = self.env['sale.advertising.issue'].search([('id', '=', ad_iss.adv_issue_id.id)])
-                    csa = ol.color_surcharge_amount / ol.comb_list_price * ad_iss.price_unit * ol.product_uom_qty if ol.color_surcharge else 0.0
-                    sbad = (ad_iss.price_unit * ol.product_uom_qty + csa) * (1 - ol.computed_discount / 100.0)
+                    csa = ol.color_surcharge_amount * (ad_iss.price / ol.comb_list_price)  / ol.product_uom_qty if ol.color_surcharge else 0.0
+                    sbad = (ad_iss.price_unit + csa) * ol.product_uom_qty  * (1 - ol.computed_discount / 100.0)
                     aup = sbad / ol.product_uom_qty
                     res = {'title': ad_issue.parent_id.id,
                            'adv_issue': ad_issue.id,
