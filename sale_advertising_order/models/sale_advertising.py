@@ -799,10 +799,11 @@ class SaleOrderLine(models.Model):
             clp = self.comb_list_price or 0.0
             subtotal_bad = round((float(clp) + float(csa)) * (1.0 - float(comp_discount) / 100.0), 2)
         else:
-            price = (float(price) + float(csa)) * float(self.product_uom_qty)
-            subtotal_bad = round(float(price) * (1.0 - float(comp_discount) / 100.0), 2)
+            gross_price = (float(price) + float(csa)) * float(self.product_uom_qty)
+            fraction = gross_price * 0.0001
+            subtotal_bad = round(float(gross_price) * (1.0 - float(comp_discount) / 100.0), 2)
         if self.subtotal_before_agency_disc == 0 or (self.subtotal_before_agency_disc > 0 and
-                abs(abs((float(subtotal_bad) - float(self.subtotal_before_agency_disc)) / float(self.subtotal_before_agency_disc)) - 1.0) > 0.0001):
+                abs(float(subtotal_bad) - float(self.subtotal_before_agency_disc)) > fraction):
             result['subtotal_before_agency_disc'] = subtotal_bad
         return {'value': result}
 
