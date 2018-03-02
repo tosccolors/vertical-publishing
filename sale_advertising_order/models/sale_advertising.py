@@ -797,6 +797,7 @@ class SaleOrderLine(models.Model):
         price = self.price_unit or 0.0
         if self.multi_line:
             clp = self.comb_list_price or 0.0
+            fraction = (float(clp) + float(csa)) / 10000
             subtotal_bad = round((float(clp) + float(csa)) * (1.0 - float(comp_discount) / 100.0), 2)
         else:
             gross_price = (float(price) + float(csa)) * float(self.product_uom_qty)
