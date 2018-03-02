@@ -801,7 +801,8 @@ class SaleOrderLine(models.Model):
         else:
             price = (float(price) + float(csa)) * float(self.product_uom_qty)
             subtotal_bad = round(float(price) * (1.0 - float(comp_discount) / 100.0), 2)
-        if subtotal_bad > 0 and abs((subtotal_bad - self.subtotal_before_agency_disc) / self.subtotal_before_agency_disc) - 1.0 > 0.0001:
+        if self.subtotal_before_agency_disc == 0 or (self.subtotal_before_agency_disc > 0 and
+                abs((float(subtotal_bad) - float(self.subtotal_before_agency_disc)) / float(self.subtotal_before_agency_disc)) - 1.0 > 0.0001):
             result['subtotal_before_agency_disc'] = subtotal_bad
         return {'value': result}
 
