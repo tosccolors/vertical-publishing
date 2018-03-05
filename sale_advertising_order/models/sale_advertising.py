@@ -749,7 +749,7 @@ class SaleOrderLine(models.Model):
         self.product_uom_qty = 1
         self.computed_discount = 0.0
         if not self.multi_line:
-            self.subtotal_before_agency_disc = self.actual_unit_price = self.price_unit
+            self.subtotal_before_agency_disc = self.price_unit
         else:
             self.price_unit = 0.0
             self.subtotal_before_agency_disc = self.comb_list_price
