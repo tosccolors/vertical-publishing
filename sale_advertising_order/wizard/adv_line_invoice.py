@@ -108,7 +108,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         OrderLine = self.env['sale.order.line']
 
         for line in OrderLine.browse(lids):
-            key = (line.order_partner_id, line.order_id.published_customer)
+            key = (line.order_id.partner_invoice_id, line.order_id.published_customer)
 
             if (not line.invoice_lines) and (line.state in ('sale', 'done')) :
                 if not key in invoices:
