@@ -749,7 +749,7 @@ class SaleOrderLine(models.Model):
         self.product_uom_qty = 1
         self.computed_discount = 0.0
         if not self.multi_line:
-            self.subtotal_before_agency_disc = self.actual_unit_price = self.price_unit
+            self.subtotal_before_agency_disc = self.price_unit
         else:
             self.price_unit = 0.0
             self.subtotal_before_agency_disc = self.comb_list_price
@@ -797,11 +797,14 @@ class SaleOrderLine(models.Model):
         price = self.price_unit or 0.0
         if self.multi_line:
             clp = self.comb_list_price or 0.0
+            fraction = (float(clp) + float(csa)) / 10000
             subtotal_bad = round((float(clp) + float(csa)) * (1.0 - float(comp_discount) / 100.0), 2)
         else:
-            price = (float(price) + float(csa)) * float(self.product_uom_qty)
-            subtotal_bad = round(float(price) * (1.0 - float(comp_discount) / 100.0), 2)
-        if subtotal_bad > 0 and abs((subtotal_bad - self.subtotal_before_agency_disc) / subtotal_bad) > 0.01:
+            gross_price = (float(price) + float(csa)) * float(self.product_uom_qty)
+            fraction = gross_price * 0.0001
+            subtotal_bad = round(float(gross_price) * (1.0 - float(comp_discount) / 100.0), 2)
+        if self.subtotal_before_agency_disc == 0 or (self.subtotal_before_agency_disc > 0 and
+                abs(float(subtotal_bad) - float(self.subtotal_before_agency_disc)) > fraction):
             result['subtotal_before_agency_disc'] = subtotal_bad
         return {'value': result}
 

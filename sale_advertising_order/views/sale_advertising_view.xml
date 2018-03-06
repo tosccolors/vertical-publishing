@@ -603,8 +603,9 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,calendar,graph</field>
             <field name="search_view_id" ref="advertising_order_view_search_inherit_sale"/>
-            <field name="domain">[('advertising','=',True),('state','in',('sale','done'))]</field>
-            <field name="context">{'default_advertising':True,'search_default_partner_id': active_id}</field>
+            <field name="domain">[('advertising','=',True),('state','in',('sale','done')),'|',('published_customer','=',active_id),
+                                    ('advertising_agency','=',active_id)]</field>
+            <field name="context">{'default_advertising':True,'default_published_customer': active_id}</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
                 Create a Quotation, the first step of a new sale.
