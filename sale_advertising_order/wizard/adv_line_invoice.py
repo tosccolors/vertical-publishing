@@ -27,6 +27,8 @@ class AdOrderMakeInvoice(models.TransientModel):
     _name = "ad.order.make.invoice"
     _description = "Advertising Order Make_invoice"
 
+    invoice_date = fields.Date('Invoice Date', default=fields.Date.today)
+
     @api.multi
     def make_invoices_from_ad_orders(self):
         context = self._context
@@ -38,6 +40,7 @@ class AdOrderMakeInvoice(models.TransientModel):
 
         ctx = context.copy()
         ctx['active_ids'] = lines.ids
+        ctx['invoice_date'] = self.invoice_date
         his_obj.with_context(ctx).make_invoices_from_lines()
         return True
 
@@ -47,8 +50,10 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     _name = "ad.order.line.make.invoice"
     _description = "Advertising Order Line Make_invoice"
 
+    invoice_date = fields.Date('Invoice Date', default=fields.Date.today)
+
     @api.model
-    def _prepare_invoice(self, partner, published_customer, lines):
+    def _prepare_invoice(self, partner, published_customer, lines, date):
         self.ensure_one()
         line_ids = [x.id for x in lines['lines']]
         journal_id = self.env['account.invoice'].default_get(['journal_id'])['journal_id']
@@ -57,6 +62,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         return {
 #            'name': '',
 #            'origin': ls.name,
+            'date_invoice': date,
             'ad': True,
             'type': 'out_invoice',
             'account_id': partner.property_account_receivable_id.id,
@@ -83,15 +89,19 @@ class AdOrderLineMakeInvoice(models.TransientModel):
              @return: A dictionary which exists of fields with values.
         """
         context = self._context
+        inv_date = self.invoice_date
         if not context.get('active_ids', []):
             raise UserError(_('No Ad Order lines are selected for invoicing:\n'))
-        else: lids = context.get('active_ids', [])
-
+        else:
+            lids = context.get('active_ids', [])
+            invoice_date_ctx = context.get('invoice_date', False)
+        if invoice_date_ctx and not inv_date:
+            inv_date = invoice_date_ctx
         invoices = {}
 
-        def make_invoice(partner, published_customer, lines):
+        def make_invoice(partner, published_customer, lines, inv_date):
 
-            vals = self._prepare_invoice(partner, published_customer, lines)
+            vals = self._prepare_invoice(partner, published_customer, lines, inv_date)
             invoice = self.env['account.invoice'].create(vals)
             return invoice.id
 
@@ -121,7 +131,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             partner = key[0]
             published_customer = key[1]
 
-            newInv = make_invoice(partner, published_customer, il)
+            newInv = make_invoice(partner, published_customer, il, inv_date)
             newInvoices.append(newInv)
 
         if context.get('open_invoices', False):

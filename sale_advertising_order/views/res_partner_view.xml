@@ -8,16 +8,7 @@
             <field eval="19" name="priority"/>
             <field name="arch" type="xml">
                 <data>
-                    <button name="%(sale.act_res_partner_2_sale_order)d" position="attributes">
-                        <attribute name="groups" >sale_advertising_order.group_regular_sales_user</attribute>
-                    </button>
-                    <div name="button_box" position="inside" >
-                        <button class="oe_stat_button" type="action" name="%(action_orders_advertising_smart_button)d"
-                            attrs="{'invisible': [('customer', '=', False)]}"
-                            icon="fa-usd" groups="sale_advertising_order.group_advertising_sales_user">
-                            <field string="Advertising Sales" name="adv_sale_order_count" widget="statinfo"/>
-                        </button>
-                    </div>
+
                     <field name="category_id" position="attributes">
                         <attribute name="readonly">True</attribute>
                     </field>
@@ -32,6 +23,24 @@
                         <field name="agency_discount" attrs="{'invisible': [('is_ad_agency', '=', False)]}"/>
                     </field>
                 </data>
+            </field>
+        </record>
+
+        <record id="res_partner_view_buttons" model="ir.ui.view">
+            <field name="name">res.partner.view.buttons</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="sale.res_partner_view_buttons" />
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(sale.act_res_partner_2_sale_order)d']" position="attributes">
+                    <attribute name="groups" >sale_advertising_order.group_regular_sales_user</attribute>
+                </xpath>
+                <div name="button_box" position="inside" >
+                    <button class="oe_stat_button" type="action" name="%(action_orders_advertising_smart_button)d"
+                        attrs="{'invisible': [('customer', '=', False)]}"
+                        icon="fa-usd" groups="sale_advertising_order.group_advertising_sales_user">
+                        <field string="Advertising Sales" name="adv_sale_order_count" widget="statinfo"/>
+                    </button>
+                </div>
             </field>
         </record>
 

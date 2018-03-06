@@ -6,12 +6,13 @@
             <field name="model">ad.order.line.make.invoice</field>
             <field name="arch" type="xml">
                 <form string="Create invoices" >
+                    <field name="invoice_date" />
                     <p class="oe_grey">
                         All selected and eligible order lines will be invoiced.
                     </p>
                     <footer>
                         <button name="make_invoices_from_lines" string="Create Invoices" type="object" class="oe_highlight"/>
-                        <!--button string="Cancel" class="oe_link" special="cancel" /-->
+                        <button string="Cancel" class="oe_link" special="cancel" />
                     </footer>
                 </form>
             </field>
@@ -21,12 +22,13 @@
             <field name="model">ad.order.make.invoice</field>
             <field name="arch" type="xml">
                 <form string="Create invoices" >
+                    <field name="invoice_date" />
                     <p class="oe_grey">
                         All eligible items in these orders will be invoiced.
                     </p>
                     <footer>
                         <button name="make_invoices_from_ad_orders" string="Create Invoices" type="object" class="oe_highlight"/>
-                        <!--button string="Cancel" class="oe_link" special="cancel" /-->
+                        <button string="Cancel" class="oe_link" special="cancel" />
                     </footer>
                 </form>
             </field>
