@@ -6,7 +6,7 @@
             <field name="model">ad.order.line.make.invoice</field>
             <field name="arch" type="xml">
                 <form string="Create invoices" >
-                    <field name="invoice_date" />
+                    <field name="invoice_date" string="Invoice Date"/>
                     <p class="oe_grey">
                         All selected and eligible order lines will be invoiced.
                     </p>
@@ -22,7 +22,7 @@
             <field name="model">ad.order.make.invoice</field>
             <field name="arch" type="xml">
                 <form string="Create invoices" >
-                    <field name="invoice_date" />
+                    <field name="invoice_date" string="Invoice Date"/>
                     <p class="oe_grey">
                         All eligible items in these orders will be invoiced.
                     </p>
