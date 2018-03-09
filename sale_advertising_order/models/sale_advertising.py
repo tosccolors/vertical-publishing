@@ -297,9 +297,7 @@ class SaleOrder(models.Model):
                     'resubmit it or ask Sales Support for help'))
             olines = []
             for line in order.order_line:
-                if not line.multi_line:
-                    line.page_qty_check_update()
-                else:
+                if line.multi_line:
                     olines.append(line.id)
                     continue
             if not olines == []:
@@ -451,7 +449,7 @@ class SaleOrderLine(models.Model):
     mig_remark = fields.Text('Migration Remark')
     layout_remark = fields.Text('Material Remark')
     title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)])
-    page_class_domain = fields.Char(compute=_compute_tags_domain, readonly=True, store=False,)
+    page_class_domain = fields.Char(compute='_compute_tags_domain', readonly=True, store=False,)
     title_ids = fields.Many2many('sale.advertising.issue', 'sale_order_line_adv_issue_title_rel', 'order_line_id', 'adv_issue_id', 'Titles')
     adv_issue_ids = fields.Many2many('sale.advertising.issue','sale_order_line_adv_issue_rel', 'order_line_id', 'adv_issue_id',  'Advertising Issues')
     issue_product_ids = fields.One2many('sale.order.line.issues.products', 'order_line_id', 'Adv. Issues with Product Prices')
@@ -469,9 +467,9 @@ class SaleOrderLine(models.Model):
     issue_date = fields.Date(related='adv_issue.issue_date', string='Issue Date', store=True)
     medium = fields.Many2one('product.category', string='Medium')
     ad_class = fields.Many2one('product.category', 'Advertising Class')
-    deadline_passed = fields.Boolean(compute=_compute_deadline, string='Deadline Passed')
-    deadline = fields.Datetime(compute=_compute_deadline, string='Deadline', store=False)
-    deadline_offset = fields.Datetime(compute=_compute_deadline)
+    deadline_passed = fields.Boolean(compute='_compute_deadline', string='Deadline Passed')
+    deadline = fields.Datetime(compute='_compute_deadline', string='Deadline', store=False)
+    deadline_offset = fields.Datetime(compute='_compute_deadline')
     product_template_id = fields.Many2one('product.template', string='Product', domain=[('sale_ok', '=', True)],
                                  change_default=True, ondelete='restrict')
     page_reference = fields.Char('Page Preference', size=32)
@@ -510,7 +508,7 @@ class SaleOrderLine(models.Model):
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
     multi_line = fields.Boolean(string='Multi Line')
     color_surcharge = fields.Boolean(string='Color Surcharge')
-    price_edit = fields.Boolean(compute=_compute_price_edit, string='Price Editable')
+    price_edit = fields.Boolean(compute='_compute_price_edit', string='Price Editable')
     color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Account'))
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
 
@@ -918,6 +916,14 @@ class SaleOrderLine(models.Model):
             for line in lines:
                 line.page_qty_check_create()
             return
+        return result
+
+    @api.multi
+    def write(self, vals):
+        result = super(SaleOrderLine, self).write(vals)
+        for line in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
+            if not line.multi_line and ('product_id' in vals or 'adv_issue_id' in vals or 'product_uom_qty' in vals):
+                line.page_qty_check_update()
         return result
 
     @api.multi
