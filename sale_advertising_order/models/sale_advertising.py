@@ -937,7 +937,7 @@ class SaleOrderLine(models.Model):
     def deadline_check(self):
         self.ensure_one()
         user = self.env['res.users'].browse(self.env.uid)
-        if self.issue_date and fields.Datetime.from_string(self.issue_date) < datetime.now():
+        if self.issue_date and fields.Datetime.from_string(self.issue_date) <= datetime.now():
             return False
         elif not user.has_group('sale_advertising_order.group_no_deadline_check') and self.deadline:
             if fields.Datetime.from_string(self.deadline) < datetime.now():
