@@ -583,7 +583,7 @@ class SaleOrderLine(models.Model):
 
     @api.onchange('title_ids')
     def title_ids_oc(self):
-        vals, data = {}, {}
+        vals = {}
         if not self.advertising:
             return {'value': vals}
         if self.title_ids and self.adv_issue_ids:
@@ -618,10 +618,6 @@ class SaleOrderLine(models.Model):
         elif self.title_ids:
             self.product_template_id = False
             self.product_id = False
-#            data.update({'adv_issue_ids':
-#                             [('parent_id', 'in', self.title_ids.ids),
-#                              '|', ('deadline', '>=', self.deadline_offset), ('deadline', '=', False),
-#                              ('issue_date', '>=', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]})
         else:
             self.adv_issue = False
             self.adv_issue_ids = [(6, 0, [])]
@@ -629,7 +625,6 @@ class SaleOrderLine(models.Model):
             self.product_id = False
             self.product_template_id = False
             self.product_uom = False
-        return {'value': vals, 'domain': data}
 
 
     @api.onchange('product_template_id')
@@ -923,7 +918,8 @@ class SaleOrderLine(models.Model):
         result = super(SaleOrderLine, self).write(vals)
         for line in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
             if not line.multi_line and ('product_id' in vals or 'adv_issue_id' in vals or 'product_uom_qty' in vals):
-                line.page_qty_check_update()
+                if line.deadline_check():
+                    line.page_qty_check_update()
         return result
 
     @api.multi
