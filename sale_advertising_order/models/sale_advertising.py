@@ -328,7 +328,7 @@ class SaleOrderLine(models.Model):
             qty = line.product_uom_qty or 0.0
             csa = line.color_surcharge_amount or 0.0
             subtotal_bad = line.subtotal_before_agency_disc or 0.0
-            if line.order_id.partner_id.agency_discount and not line.order_id.nett_nett:
+            if line.order_id.partner_id.is_ad_agency and not line.order_id.nett_nett:
                 discount = line.order_id.partner_id.agency_discount
             else:
                 discount = 0.0
@@ -405,19 +405,23 @@ class SaleOrderLine(models.Model):
         """
         Compute the deadline for this placement.
         """
+        user = self.env['res.users'].browse(self.env.uid)
         for line in self.filtered('advertising'):
-            user = self.env['res.users'].browse(self.env.uid)
+            line.deadline_passed = False
+            line.deadline = False
+            line.deadline_offset = False
             if line.ad_class:
-                if user.has_group('sale_advertising_order.group_no_deadline_check') and line.issue_date:
-                    line.deadline = False
-                    line.deadline_passed = datetime.now() >= fields.Datetime.from_string(line.issue_date)
-                elif not user.has_group('sale_advertising_order.group_no_deadline_check'):
+#                if user.has_group('sale_advertising_order.group_no_deadline_check'):
+#                   if line.issue_date:
+#                        line.deadline_passed = True
+                if not user.has_group('sale_advertising_order.group_no_deadline_check'):
                     dt_offset = timedelta(hours=line.ad_class.deadline_offset or 0)
                     line.deadline_offset = fields.Datetime.to_string(datetime.now() + dt_offset)
-                    if line.adv_issue and line.adv_issue.deadline:
+                    if line.adv_issue and line.adv_issue.deadline and line.adv_issue.issue_date:
                         dt_deadline = fields.Datetime.from_string(line.adv_issue.deadline)
                         line.deadline = fields.Datetime.to_string(dt_deadline - dt_offset)
-                        line.deadline_passed = datetime.now() > (dt_deadline - dt_offset)
+                        line.deadline_passed = datetime.now() > (dt_deadline - dt_offset) and \
+                                               datetime.now() < fields.Datetime.from_string(line.adv_issue.issue_date)
 
 
 
