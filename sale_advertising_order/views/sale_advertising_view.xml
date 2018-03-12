@@ -162,8 +162,8 @@
                                             <field name="adv_issue_ids" string="Advertising Issues" readonly="0"
                                                    attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
                                                    domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
-                                                            '|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
-                                                            ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
+                                                            '|',('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),('deadline','&gt;=', deadline_offset),
+                                                            ('deadline','=', False),('issue_date','&gt;', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
                                                 <tree create="true" edit="false" delete="true" copy="false">
@@ -206,8 +206,8 @@
                                                 <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
                                             </div>
                                             <field name="adv_issue" options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                                   domain="[('parent_id','=', title),'|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
-                                                            ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
+                                                   domain="[('parent_id','=', title),'|',('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),('deadline','&gt;=', deadline_offset),
+                                                            ('deadline','=', False),('issue_date','&gt;', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
                                                    attrs="{'invisible': [('adv_issue','=', False)]}"/>
                                             <field name="issue_date" readonly="1"
                                                    attrs="{'invisible': [('adv_issue','=', False)]}"/>
@@ -455,7 +455,7 @@
             <field name="arch" type="xml">
                 <field name="adv_issue_ids" position="attributes">
                      <attribute name="domain" >['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
-                                                    ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]</attribute>
+                                               ]</attribute>
                 </field>
                 <field name="product_template_id" position="attributes">
                      <attribute name="attrs" >{'readonly': ['|',('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}</attribute>
@@ -882,8 +882,8 @@
                                 <field name="adv_issue_ids" string="Advertising Issues" readonly="0"
                                        attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
                                        domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
-                                                '|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
-                                                ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
+                                                '|',('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),('deadline','&gt;=', deadline_offset),
+                                                    ('deadline','=', False),('issue_date','&gt;', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
                                        options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                        context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
                                     <tree create="true" edit="false" delete="true" copy="false">
@@ -929,8 +929,9 @@
                                 <div invisible="context.get('hide_sale')" groups="base.group_no_one">
                                     <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
                                 </div>
-                                <field name="adv_issue" domain="[('parent_id','=', title),'|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
-                                                                ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
+                                <field name="adv_issue" domain="[('parent_id','=', title),'|',('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
+                                                                                            ('deadline','&gt;=', deadline_offset),('deadline','=', False),
+                                                                                            ('issue_date','&gt;', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
                                        options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                        attrs="{'invisible': [('adv_issue','=', False)]}"/>
                                 <field name="issue_date" readonly="1"
