@@ -91,18 +91,20 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     def make_invoices_from_lines(self):
         """
              To make invoices.
-             @return: A dictionary which exists of fields with values.
         """
         context = self._context
         inv_date = self.invoice_date
+        jq = self.job_queue
         if not context.get('active_ids', []):
             raise UserError(_('No Ad Order lines are selected for invoicing:\n'))
         else:
             lids = context.get('active_ids', [])
             invoice_date_ctx = context.get('invoice_date', False)
-            jq = context.get('job_queue', False)
+            jq_ctx = context.get('job_queue', False)
         if invoice_date_ctx and not inv_date:
             inv_date = invoice_date_ctx
+        if jq_ctx or jq:
+            jq = True
         if jq:
             self.with_delay().make_invoices_job_queue(inv_date,lids)
         else:
@@ -148,6 +150,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 
             newInv = make_invoice(partner, published_customer, il, inv_date)
             newInvoices.append(newInv)
+        return True
 
 #        if context.get('open_invoices', False):
 #            return self.open_invoices(invoice_ids=newInvoices)
