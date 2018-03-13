@@ -7,6 +7,7 @@
             <field name="arch" type="xml">
                 <form string="Create invoices" >
                     <field name="invoice_date" string="Invoice Date"/>
+                    <field name="job_queue" string="Via Job Queue"/>
                     <p class="oe_grey">
                         All selected and eligible order lines will be invoiced.
                     </p>
@@ -23,6 +24,7 @@
             <field name="arch" type="xml">
                 <form string="Create invoices" >
                     <field name="invoice_date" string="Invoice Date"/>
+                    <field name="job_queue" string="Via Job Queue"/>
                     <p class="oe_grey">
                         All eligible items in these orders will be invoiced.
                     </p>

@@ -36,7 +36,7 @@ class SaleOrder(models.Model):
         """
         Compute the total amounts of the SO.
         """
-        super(SaleOrder, self)._amount_all()
+        super(SaleOrder, self.filtered(lambda record: record.advertising != True))._amount_all()
         for order in self.filtered('advertising'):
             amount_untaxed = amount_tax = max_cdiscount = 0.0
             cdiscount = []
@@ -44,8 +44,6 @@ class SaleOrder(models.Model):
             for line in order.order_line:
                 amount_untaxed += line.price_subtotal
                 cdiscount.append(line.computed_discount)
-                if cdiscount:
-                    max_cdiscount = max(cdiscount)
                 if order.company_id.tax_calculation_rounding_method == 'round_globally':
                     if not line.multi_line:
                         price = line.acual_unit_price * (1 - (line.discount or 0.0) / 100.0)
@@ -59,9 +57,11 @@ class SaleOrder(models.Model):
                         amount_tax += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
                 else:
                     amount_tax += line.price_tax
-                if order.company_id.verify_order_setting != -1.00 and order.company_id.verify_order_setting < amount_untaxed \
+            if cdiscount:
+                max_cdiscount = max(cdiscount)
+            if order.company_id.verify_order_setting != -1.00 and order.company_id.verify_order_setting < amount_untaxed \
                                                                   or order.company_id.verify_discount_setting < max_cdiscount:
-                    ver_tr_exc = True
+                ver_tr_exc = True
 
             order.update({
                 'amount_untaxed': order.pricelist_id.currency_id.round(amount_untaxed),
@@ -163,11 +163,6 @@ class SaleOrder(models.Model):
             self.partner_id = self.advertising_agency = False
         if self.advertising_agency:
             self.partner_id = self.advertising_agency
-#        if self.agency_is_publish:
-#            if self.advertising_agency:
-#                self.published_customer = self.advertising_agency
-#            else:
-#                self.advertising_agency = self.published_customer
         if not self.partner_id:
             self.update({
                 'customer_contact': False

@@ -21,6 +21,8 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+from odoo.addons.queue_job.job import job, related_action
+from odoo.addons.queue_job.exception import FailedJobError
 
 
 class AdOrderMakeInvoice(models.TransientModel):
@@ -28,6 +30,7 @@ class AdOrderMakeInvoice(models.TransientModel):
     _description = "Advertising Order Make_invoice"
 
     invoice_date = fields.Date('Invoice Date', default=fields.Date.today)
+    job_queue = fields.Boolean('Process via Job Queue', default=False)
 
     @api.multi
     def make_invoices_from_ad_orders(self):
@@ -41,6 +44,7 @@ class AdOrderMakeInvoice(models.TransientModel):
         ctx = context.copy()
         ctx['active_ids'] = lines.ids
         ctx['invoice_date'] = self.invoice_date
+        ctx['job_queue'] = self.job_queue
         his_obj.with_context(ctx).make_invoices_from_lines()
         return True
 
@@ -51,6 +55,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     _description = "Advertising Order Line Make_invoice"
 
     invoice_date = fields.Date('Invoice Date', default=fields.Date.today)
+    job_queue = fields.Boolean('Process via Job Queue', default=False)
 
     @api.model
     def _prepare_invoice(self, partner, published_customer, lines, date):
@@ -95,8 +100,18 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         else:
             lids = context.get('active_ids', [])
             invoice_date_ctx = context.get('invoice_date', False)
+            jq = context.get('job_queue', False)
         if invoice_date_ctx and not inv_date:
             inv_date = invoice_date_ctx
+        if jq:
+            self.with_delay().make_invoices_job_queue(inv_date,lids)
+        else:
+            self.make_invoices_job_queue(inv_date, lids)
+
+
+    @job
+    @api.multi
+    def make_invoices_job_queue(self, inv_date, lids):
         invoices = {}
 
         def make_invoice(partner, published_customer, lines, inv_date):
@@ -134,9 +149,9 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             newInv = make_invoice(partner, published_customer, il, inv_date)
             newInvoices.append(newInv)
 
-        if context.get('open_invoices', False):
-            return self.open_invoices(invoice_ids=newInvoices)
-        return {'type': 'ir.actions.act_window_close'}
+#        if context.get('open_invoices', False):
+#            return self.open_invoices(invoice_ids=newInvoices)
+#        return {'type': 'ir.actions.act_window_close'}
 
     @api.model
     def open_invoices(self, invoice_ids):

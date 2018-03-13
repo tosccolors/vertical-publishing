@@ -149,10 +149,9 @@
                                             <field name="deadline" invisible="0" />
                                             <field name="adv_issue_ids" string="Advertising Issues" readonly="0"
                                                    attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
-                                                   domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
-                                                            '|',('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-                                                                ('issue_date','&gt;', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-                                                                '|',('deadline','&gt;=', deadline_offset),('deadline','=', False)]"
+                                                   domain="[('parent_id','!=', False),('issue_date','&gt;', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
+                                                            '|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
+                                                            '|',('deadline','&gt;=', deadline_offset),('deadline','=', False)]"
 
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
