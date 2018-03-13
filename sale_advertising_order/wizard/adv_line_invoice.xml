@@ -8,6 +8,7 @@
                 <form string="Create invoices" >
                     <group>
                         <field name="invoice_date" string="Invoice Date"/>
+                        <field name="posting_date" string="Posting Date"/>
                         <field name="job_queue" string="Via Job Queue"/>
                     </group>
                     <p class="oe_grey">
@@ -27,6 +28,7 @@
                 <form string="Create invoices" >
                     <group>
                         <field name="invoice_date" string="Invoice Date"/>
+                        <field name="posting_date" string="Posting Date"/>
                         <field name="job_queue" string="Via Job Queue"/>
                     </group>
                     <p class="oe_grey">

@@ -30,6 +30,7 @@ class AdOrderMakeInvoice(models.TransientModel):
     _description = "Advertising Order Make_invoice"
 
     invoice_date = fields.Date('Invoice Date', default=fields.Date.today)
+    posting_date = fields.Date('Posting Date', default=False)
     job_queue = fields.Boolean('Process via Job Queue', default=False)
 
     @api.multi
@@ -44,6 +45,7 @@ class AdOrderMakeInvoice(models.TransientModel):
         ctx = context.copy()
         ctx['active_ids'] = lines.ids
         ctx['invoice_date'] = self.invoice_date
+        ctx['posting_date'] = self.posting_date
         ctx['job_queue'] = self.job_queue
         his_obj.with_context(ctx).make_invoices_from_lines()
         return True
@@ -55,10 +57,11 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     _description = "Advertising Order Line Make_invoice"
 
     invoice_date = fields.Date('Invoice Date', default=fields.Date.today)
+    posting_date = fields.Date('Posting Date', default=False)
     job_queue = fields.Boolean('Process via Job Queue', default=False)
 
     @api.model
-    def _prepare_invoice(self, partner, published_customer, lines, date):
+    def _prepare_invoice(self, partner, published_customer, lines, invoice_date, posting_date):
         self.ensure_one()
         line_ids = [x.id for x in lines['lines']]
         journal_id = self.env['account.invoice'].default_get(['journal_id'])['journal_id']
@@ -67,7 +70,8 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         return {
 #            'name': '',
 #            'origin': ls.name,
-            'date_invoice': date,
+            'date_invoice': invoice_date,
+            'date': posting_date or False,
             'ad': True,
             'type': 'out_invoice',
             'account_id': partner.property_account_receivable_id.id,
@@ -94,31 +98,35 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         """
         context = self._context
         inv_date = self.invoice_date
+        post_date = self.posting_date
         jq = self.job_queue
         if not context.get('active_ids', []):
             raise UserError(_('No Ad Order lines are selected for invoicing:\n'))
         else:
             lids = context.get('active_ids', [])
             invoice_date_ctx = context.get('invoice_date', False)
+            posting_date_ctx = context.get('posting_date', False)
             jq_ctx = context.get('job_queue', False)
         if invoice_date_ctx and not inv_date:
             inv_date = invoice_date_ctx
+        if posting_date_ctx and not post_date:
+            post_date = posting_date_ctx
         if jq_ctx or jq:
             jq = True
         if jq:
-            self.with_delay().make_invoices_job_queue(inv_date,lids)
+            self.with_delay().make_invoices_job_queue(inv_date, post_date, lids)
         else:
-            self.make_invoices_job_queue(inv_date, lids)
+            self.make_invoices_job_queue(inv_date, post_date, lids)
 
 
     @job
     @api.multi
-    def make_invoices_job_queue(self, inv_date, lids):
+    def make_invoices_job_queue(self, inv_date, post_date, lids):
         invoices = {}
 
-        def make_invoice(partner, published_customer, lines, inv_date):
+        def make_invoice(partner, published_customer, lines, inv_date, post_date):
 
-            vals = self._prepare_invoice(partner, published_customer, lines, inv_date)
+            vals = self._prepare_invoice(partner, published_customer, lines, inv_date, post_date)
             invoice = self.env['account.invoice'].create(vals)
             return invoice.id
 
@@ -148,7 +156,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             partner = key[0]
             published_customer = key[1]
 
-            newInv = make_invoice(partner, published_customer, il, inv_date)
+            newInv = make_invoice(partner, published_customer, il, inv_date, post_date)
             newInvoices.append(newInv)
         return True
 
