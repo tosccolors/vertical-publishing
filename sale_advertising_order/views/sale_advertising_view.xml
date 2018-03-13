@@ -144,8 +144,8 @@
                                                     <field name="name" string="Name" readonly="1"/>
                                                 </tree>
                                             </field>
-                                            <field name="deadline_offset" invisible="0" />
-                                            <field name="deadline_passed" invisible="0" />
+                                            <field name="deadline_offset" invisible="1" />
+                                            <field name="deadline_passed" invisible="1" />
                                             <field name="deadline" invisible="0" />
                                             <field name="adv_issue_ids" string="Advertising Issues" readonly="0"
                                                    attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
@@ -195,10 +195,11 @@
                                                 <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
                                             </div>
                                             <field name="adv_issue" options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                                   domain="[('parent_id','=', title),
-                                                            '|',('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-                                                                ('issue_date','&gt;', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-                                                                '|',('deadline','&gt;=', deadline_offset),('deadline','=', False)]"
+                                                   domain="[('parent_id','!=', False),
+                                                            ('parent_id','=', title),
+                                                            ('issue_date','&gt;', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
+                                                            '|',('deadline','&gt;=', deadline_offset),
+                                                                ('deadline','=', False)]"
                                                    attrs="{'invisible': [('adv_issue','=', False)]}"/>
                                             <field name="issue_date" readonly="1"
                                                    attrs="{'invisible': [('adv_issue','=', False)]}"/>
@@ -451,13 +452,16 @@
                      <attribute name="attrs" >{'readonly': ['|',('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}</attribute>
                 </field>
                 <field name="product_uom_qty" position="attributes">
-                     <attribute name="attrs" ></attribute>
+                     <attribute name="readonly" >False</attribute>
                 </field>
                 <field name="product_uom" position="attributes">
                      <attribute name="attrs" >{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}</attribute>
                 </field>
                 <field name="analytic_tag_ids" position="attributes">
                     <attribute name="attrs" ></attribute>
+                </field>
+                <field name="adv_issue" position="attributes">
+                     <attribute name="domain" >[('parent_id','!=', False),('parent_id','=', title)]</attribute>
                 </field>
 
             </field>
@@ -871,10 +875,12 @@
                                 <field name="deadline" invisible="0" />
                                 <field name="adv_issue_ids" string="Advertising Issues" readonly="0"
                                        attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
-                                       domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
-                                                '|',('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-                                                    ('issue_date','&gt;', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-                                                     '|',('deadline','&gt;=', deadline_offset),('deadline','=', False)]"
+                                       domain="[('parent_id','!=', False),
+                                                ('issue_date','&gt;', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
+                                                 '|',('parent_id','in', title_ids and title_ids[0][2]),
+                                                     ('parent_id','=', title),
+                                                 '|',('deadline','&gt;=', deadline_offset),
+                                                     ('deadline','=', False)]"
                                        options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                        context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
                                     <tree create="true" edit="false" delete="true" copy="false">
@@ -920,10 +926,11 @@
                                 <div invisible="context.get('hide_sale')" groups="base.group_no_one">
                                     <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
                                 </div>
-                                <field name="adv_issue" domain="[('parent_id','=', title),
-                                                                '|',('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-                                                                    ('issue_date','&gt;', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-                                                                    '|',('deadline','&gt;=', deadline_offset),('deadline','=', False)]"
+                                <field name="adv_issue" domain="[('parent_id','!=', False),
+                                                                 ('parent_id','=', title),
+                                                                 ('issue_date','&gt;', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
+                                                                  '|',('deadline','&gt;=', deadline_offset),
+                                                                      ('deadline','=', False)]"
                                        options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                        attrs="{'invisible': [('adv_issue','=', False)]}"/>
                                 <field name="issue_date" readonly="1"
