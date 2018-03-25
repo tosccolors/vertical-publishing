@@ -10,6 +10,9 @@
                         <field name="invoice_date" string="Invoice Date"/>
                         <field name="posting_date" string="Posting Date"/>
                         <field name="job_queue" string="Via Job Queue"/>
+                        <field name="chunk_size" string="Chunk Size Job Queue"
+                               attrs="{'required':[('job_queue','=',True)],
+                                       'invisible': [('job_queue','!=', True)]}"/>
                     </group>
                     <p class="oe_grey">
                         All selected and eligible order lines will be invoiced.
@@ -30,6 +33,9 @@
                         <field name="invoice_date" string="Invoice Date"/>
                         <field name="posting_date" string="Posting Date"/>
                         <field name="job_queue" string="Via Job Queue"/>
+                        <field name="chunk_size" string="Chunk Size Job Queue"
+                               attrs="{'required':[('job_queue','=',True)],
+                                       'invisible': [('job_queue','!=', True)]}"/>
                     </group>
                     <p class="oe_grey">
                         All eligible items in these orders will be invoiced.

@@ -23,6 +23,7 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from odoo.addons.queue_job.job import job, related_action
 from odoo.addons.queue_job.exception import FailedJobError
+from unidecode import unidecode
 
 
 class AdOrderMakeInvoice(models.TransientModel):
@@ -32,6 +33,7 @@ class AdOrderMakeInvoice(models.TransientModel):
     invoice_date = fields.Date('Invoice Date', default=fields.Date.today)
     posting_date = fields.Date('Posting Date', default=False)
     job_queue = fields.Boolean('Process via Job Queue', default=False)
+    chunk_size = fields.Integer('Chunk Size Job Queue', default=50)
 
     @api.multi
     def make_invoices_from_ad_orders(self):
@@ -46,6 +48,7 @@ class AdOrderMakeInvoice(models.TransientModel):
         ctx['active_ids'] = lines.ids
         ctx['invoice_date'] = self.invoice_date
         ctx['posting_date'] = self.posting_date
+        ctx['chunk_size'] = self.chunk_size
         ctx['job_queue'] = self.job_queue
         his_obj.with_context(ctx).make_invoices_from_lines()
         return True
@@ -59,6 +62,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     invoice_date = fields.Date('Invoice Date', default=fields.Date.today)
     posting_date = fields.Date('Posting Date', default=False)
     job_queue = fields.Boolean('Process via Job Queue', default=False)
+    chunk_size = fields.Integer('Chunk Size Job Queue', default=50)
 
     @api.model
     def _prepare_invoice(self, partner, published_customer, lines, invoice_date, posting_date):
@@ -100,6 +104,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         inv_date = self.invoice_date
         post_date = self.posting_date
         jq = self.job_queue
+        size = self.chunk_size
         if not context.get('active_ids', []):
             raise UserError(_('No Ad Order lines are selected for invoicing:\n'))
         else:
@@ -107,32 +112,47 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             invoice_date_ctx = context.get('invoice_date', False)
             posting_date_ctx = context.get('posting_date', False)
             jq_ctx = context.get('job_queue', False)
+            size_ctx = context.get('chunk_size', False)
         if invoice_date_ctx and not inv_date:
             inv_date = invoice_date_ctx
         if posting_date_ctx and not post_date:
             post_date = posting_date_ctx
-        if jq_ctx or jq:
-            jq = True
-        if jq:
-            self.with_delay().make_invoices_job_queue(inv_date, post_date, lids)
-        else:
-            self.make_invoices_job_queue(inv_date, post_date, lids)
+        if size_ctx and not size:
+            size = size_ctx
+        if jq_ctx and not jq:
+            jq = self.job_queue = True
+
+        OrderLines = self.env['sale.order.line'].browse(lids)
+        partners = OrderLines.mapped('order_id.partner_invoice_id')
+        chunk = False
+        for partner in partners:
+            lines = OrderLines.filtered(lambda r: r.order_id.partner_invoice_id.id == partner.id)
+            chunk = lines if not chunk else chunk | lines
+            if len(chunk) < size:
+                continue
+            if jq:
+                self.with_delay().make_invoices_job_queue(inv_date, post_date, chunk)
+            else:
+                self.make_invoices_job_queue(inv_date, post_date, chunk)
+            chunk = False
+        if chunk:
+            if jq:
+                self.with_delay().make_invoices_job_queue(inv_date, post_date, chunk)
+            else:
+                self.make_invoices_job_queue(inv_date, post_date, chunk)
 
 
     @job
     @api.multi
-    def make_invoices_job_queue(self, inv_date, post_date, lids):
+    def make_invoices_job_queue(self, inv_date, post_date, chunk):
         invoices = {}
-
         def make_invoice(partner, published_customer, lines, inv_date, post_date):
 
             vals = self._prepare_invoice(partner, published_customer, lines, inv_date, post_date)
             invoice = self.env['account.invoice'].create(vals)
             return invoice.id
 
-        OrderLine = self.env['sale.order.line']
-
-        for line in OrderLine.browse(lids):
+        for line in chunk:
             key = (line.order_id.partner_invoice_id, line.order_id.published_customer)
 
             if (not line.invoice_lines) and (line.state in ('sale', 'done')) :
@@ -144,12 +164,16 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                 for lid in inv_line_id:
                     invoices[key]['lines'].append(lid)
                     invoices[key]['subtotal'] += line.price_subtotal
-                    invoices[key]['name'] += str(line.name)+' / '
+                    invoices[key]['name'] += unidecode(line.name)+' / '
 
-        if not invoices:
+        if not invoices and not self.job_queue:
             raise UserError(_('Invoice cannot be created for this Advertising Order Line due to one of the following reasons:\n'
                               '1.The state of these ad order lines are not "sale" or "done"!\n'
                               '2.The Lines are already Invoiced!\n'))
+        elif not invoices:
+            raise FailedJobError(_('Invoice cannot be created for this Advertising Order Line due to one of the following reasons:\n'
+                                  '1.The state of these ad order lines are not "sale" or "done"!\n'
+                                  '2.The Lines are already Invoiced!\n'))
 
         newInvoices = []
         for key, il in invoices.items():
