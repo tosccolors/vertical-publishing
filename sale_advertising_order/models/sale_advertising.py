@@ -786,6 +786,8 @@ class SaleOrderLine(models.Model):
         comp_discount = self.computed_discount
         if comp_discount < 0.0:
             comp_discount = self.computed_discount = 0.000
+        if comp_discount > 100.0:
+            comp_discount = self.computed_discount = 100.0
         price = self.price_unit or 0.0
         if self.multi_line:
             clp = self.comb_list_price or 0.0
