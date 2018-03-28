@@ -291,11 +291,11 @@
                                             <field name="page_reference" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
                                             <field name="url_to_material" />
                                         </group>
-                                        <group attrs="{'invisible':[('date_type','!=','validity')]}">
+                                        <group attrs="{'invisible':[('date_type','not in',['validity','online'])]}">
                                             <field name="from_date"
-                                                   attrs="{'invisible':[('date_type','!=','validity')]}"/>
+                                                   attrs="{'invisible':[('date_type','not in',['validity','online'])],'required':[('date_type','=','online')]}"/>
                                             <field name="to_date"
-                                                   attrs="{'invisible':[('date_type','!=','validity')]}"/>
+                                                   attrs="{'invisible':[('date_type','not in',['validity','online'])],'required':[('date_type','=','online')]}"/>
                                         </group>
                                     </group>
                                     <group>
@@ -1019,11 +1019,11 @@
                                 <field name="page_reference" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
                                 <field name="url_to_material" />
                             </group>
-                            <group attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')]}">
+                            <group attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','not in',['validity','online'])]}">
                                 <field name="from_date"
-                                       attrs="{'invisible':['|',('multi_line','!=', False),('date_type','!=','validity')]}"/>
+                                       attrs="{'invisible':['|',('multi_line','!=', False),('date_type','not in',['validity','online'])],'required':[('date_type','=','online')]}"/>
                                 <field name="to_date"
-                                       attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')]}"/>
+                                       attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','not in',['validity','online'])],'required':[('date_type','=','online')]}"/>
                             </group>
                         </group>
                         <group>
