@@ -51,7 +51,7 @@ class AdOrderMakeInvoice(models.TransientModel):
         ctx['posting_date'] = self.posting_date
         ctx['chunk_size'] = self.chunk_size
         ctx['job_queue'] = self.job_queue
-        ctx['execution_datetime'] = self.execution_date_time
+        ctx['execution_datetime'] = self.execution_datetime
         his_obj.with_context(ctx).make_invoices_from_lines()
         return True
 
@@ -75,8 +75,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         if not journal_id:
             raise UserError(_('Please define an accounting sale journal for this company.'))
         return {
-#            'name': '',
-#            'origin': ls.name,
             'date_invoice': invoice_date,
             'date': posting_date or False,
             'ad': True,
@@ -95,19 +93,8 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'partner_bank_id': payment_mode.fixed_journal_id.bank_account_id.id
                                if payment_mode.bank_account_link == 'fixed'
                                else partner.bank_ids and partner.bank_ids[0].id or False,
-#            'team_id': partner.team_id.id
         }
 
-    @api.multi
-    def _prepare_invoice(self):
-        """Copy bank partner from sale order to invoice"""
-        vals = super(SaleOrder, self)._prepare_invoice()
-        if self.payment_mode_id:
-            vals['payment_mode_id'] = self.payment_mode_id.id
-            if self.payment_mode_id.bank_account_link == 'fixed':
-                vals['partner_bank_id'] = \
-                    self.payment_mode_id.fixed_journal_id.bank_account_id.id
-        return vals
 
 
 
