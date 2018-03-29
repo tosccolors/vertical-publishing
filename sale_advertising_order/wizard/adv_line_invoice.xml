@@ -60,6 +60,7 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_ad_order_line_make_invoice"/>
             <field name="target">new</field>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
         </record>
         <record id="action_view_ad_order_make_invoice" model="ir.actions.act_window">
             <field name="name">Make Invoices</field>
@@ -69,6 +70,7 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_ad_order_make_invoice"/>
             <field name="target">new</field>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
         </record>
 
         <record model="ir.values" id="ad_order_line_make_invoice">
@@ -77,7 +79,7 @@
             <field name="key2">client_action_multi</field>
             <field name="value" eval="'ir.actions.act_window,' + str(ref('action_view_ad_order_line_make_invoice'))" />
             <field name="key">action</field>
-            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales'))]"/>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
             <field name="model">sale.order.line</field>
         </record>
 
@@ -87,7 +89,7 @@
             <field name="key2">client_action_multi</field>
             <field name="value" eval="'ir.actions.act_window,' + str(ref('action_view_ad_order_make_invoice'))" />
             <field name="key">action</field>
-            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales'))]"/>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
             <field name="model">sale.order</field>
         </record>
     </data>
