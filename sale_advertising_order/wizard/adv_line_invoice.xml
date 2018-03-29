@@ -77,6 +77,7 @@
             <field name="key2">client_action_multi</field>
             <field name="value" eval="'ir.actions.act_window,' + str(ref('action_view_ad_order_line_make_invoice'))" />
             <field name="key">action</field>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales'))]"/>
             <field name="model">sale.order.line</field>
         </record>
 
@@ -86,6 +87,7 @@
             <field name="key2">client_action_multi</field>
             <field name="value" eval="'ir.actions.act_window,' + str(ref('action_view_ad_order_make_invoice'))" />
             <field name="key">action</field>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales'))]"/>
             <field name="model">sale.order</field>
         </record>
     </data>

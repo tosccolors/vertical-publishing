@@ -68,7 +68,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     execution_datetime = fields.Datetime('Job Execution not before', default=fields.Datetime.now())
 
     @api.model
-    def _prepare_invoice(self, partner, published_customer, lines, invoice_date, posting_date):
+    def _prepare_invoice(self, partner, published_customer, payment_mode, lines, invoice_date, posting_date):
         self.ensure_one()
         line_ids = [x.id for x in lines['lines']]
         journal_id = self.env['account.invoice'].default_get(['journal_id'])['journal_id']
@@ -91,10 +91,23 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'fiscal_position_id': partner.property_account_position_id.id or False,
             'user_id': self.env.user.id,
             'company_id': self.env.user.company_id.id,
-            'partner_bank_id': partner.bank_ids and partner.bank_ids[0].id or False,
-#            'check_total': lines['subtotal'],
+            'payment_mode_id': payment_mode.id,
+            'partner_bank_id': payment_mode.fixed_journal_id.bank_account_id.id
+                               if payment_mode.bank_account_link == 'fixed'
+                               else partner.bank_ids and partner.bank_ids[0].id or False,
 #            'team_id': partner.team_id.id
         }
+
+    @api.multi
+    def _prepare_invoice(self):
+        """Copy bank partner from sale order to invoice"""
+        vals = super(SaleOrder, self)._prepare_invoice()
+        if self.payment_mode_id:
+            vals['payment_mode_id'] = self.payment_mode_id.id
+            if self.payment_mode_id.bank_account_link == 'fixed':
+                vals['partner_bank_id'] = \
+                    self.payment_mode_id.fixed_journal_id.bank_account_id.id
+        return vals
 
 
 
@@ -152,14 +165,14 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     @api.multi
     def make_invoices_job_queue(self, inv_date, post_date, chunk):
         invoices = {}
-        def make_invoice(partner, published_customer, lines, inv_date, post_date):
+        def make_invoice(partner, published_customer, payment_mode, lines, inv_date, post_date):
 
-            vals = self._prepare_invoice(partner, published_customer, lines, inv_date, post_date)
+            vals = self._prepare_invoice(partner, published_customer, payment_mode, lines, inv_date, post_date)
             invoice = self.env['account.invoice'].create(vals)
             return invoice.id
 
         for line in chunk:
-            key = (line.order_id.partner_invoice_id, line.order_id.published_customer)
+            key = (line.order_id.partner_invoice_id, line.order_id.published_customer, line.order_id.payment_mode_id or False )
 
             if (not line.invoice_lines) and (line.state in ('sale', 'done')) :
                 if not key in invoices:
@@ -183,8 +196,9 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         for key, il in invoices.items():
             partner = key[0]
             published_customer = key[1]
+            payment_mode = key[2]
             try:
-                make_invoice(partner, published_customer, il, inv_date, post_date)
+                make_invoice(partner, published_customer, payment_mode, il, inv_date, post_date)
             except Exception, e:
                 if self.job_queue:
                     raise FailedJobError(_("The details of the error:'%s' regarding '%s' and '%s'") % (unicode(e), il['name'], il['lines'][0].sale_line_ids))
