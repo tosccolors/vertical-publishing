@@ -326,7 +326,7 @@
                                     <field name="state" invisible="1"/>
                                 </form>
 
-                                <tree string="Sales Order Lines"  decoration-info="invoice_status=='to invoice'">
+                                <tree string="Sales Order Lines"  decoration-info="invoice_status=='to invoice'" default_order='issue_date'>
                                     <field name="sequence" widget="handle"/>
                                     <field name="id"/>
                                     <field name="title" />
