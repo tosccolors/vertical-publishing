@@ -277,13 +277,12 @@ class SaleOrder(models.Model):
                 for newline in newlines:
                     if newline.deadline_check():
                         newline.page_qty_check_create()
-        return super(SaleOrder, self.with_context(confirm=True)).action_confirm()
+        return super(SaleOrder, self.with_context(no_checks=True)).action_confirm()
 
     @api.multi
     def write(self, vals):
         result = super(SaleOrder, self).write(vals)
-        for order in self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('pubble_call')
-                                                                                and not s.env.context.get('confirm')):
+        for order in self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks')):
             user = self.env['res.users'].browse(self.env.uid)
             if not user.has_group('sale_advertising_order.group_no_discount_check') \
                and self.ver_tr_exc:
