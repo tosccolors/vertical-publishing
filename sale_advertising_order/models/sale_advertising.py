@@ -249,7 +249,7 @@ class SaleOrder(models.Model):
             if not olines == []:
                 self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
         self._cr.commit()
-        # self.write({'state': 'sent'}) # OAL 190 Fix: mail wizard will change status to sent
+        self.write({'state': 'sent'})
         return super(SaleOrder, self).action_quotation_send()
 
 
@@ -529,7 +529,6 @@ class SaleOrderLine(models.Model):
             else:
                 vals['title'] = False
                 vals['title_ids'] = [(6, 0, [])]
-            vals['date_type'] = self.medium.date_type
         else:
             vals['ad_class'] = False
             vals['title'] = False
@@ -551,9 +550,7 @@ class SaleOrderLine(models.Model):
                 else:
                     vals['product_template_id'] = False
             date_type = self.ad_class.date_type
-            if self.medium and self.medium.date_type == 'online':
-                vals['date_type'] = self.medium.date_type
-            elif date_type:
+            if date_type:
                 vals['date_type'] = date_type
             else: result = {'title':_('Warning'),
                                  'message':_('The Ad Class has no Date Type. You have to define one')}
