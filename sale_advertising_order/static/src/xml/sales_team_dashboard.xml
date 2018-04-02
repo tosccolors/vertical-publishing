@@ -28,7 +28,7 @@
                                 </a>
                             </td>
                             <td class="o_main" title="To Activities">
-                                <a href="#" class="o_dashboard_action" name="sale_advertising_order.crm_lead_action_activities_advertising" data-extra="today">
+                                <a href="#" class="o_dashboard_action" name="crm.crm_lead_action_activities" data-extra="today">
                                     <span class="o_highlight">
                                         <t t-if="!show_demo">
                                             <t t-esc="values['activity']['today']"/>
@@ -54,7 +54,7 @@
                                 </a>
                             </td>
                             <td class="o_main" title="My Pipeline" rowspan="2">
-                                <a href="#" class="o_dashboard_action" name="sale_advertising_order.action_your_pipeline_advertising">
+                                <a href="#" class="o_dashboard_action" name="crm.action_your_pipeline">
                                     <span class="fa fa-th-large fa-3x"/><br/>
                                     My Pipeline
                                 </a>
@@ -73,7 +73,7 @@
                                 </a>
                             </td>
                             <td class="o_main" title="To Activities">
-                                <a href="#" class="o_dashboard_action" name="sale_advertising_order.crm_lead_action_activities_advertising" data-extra="this_week">
+                                <a href="#" class="o_dashboard_action" name="crm.crm_lead_action_activities" data-extra="this_week">
                                     <t t-if="!show_demo">
                                         <t t-esc="values['activity']['next_7_days']"/>
                                     </t>
@@ -98,7 +98,7 @@
                             <td></td>
                             <!-- Hide overdue when there is none -->
                             <td t-if="show_demo or (values and values['activity']['overdue'] != 0)" class="o_warning" title="To Activities">
-                                <a href="#" class="o_dashboard_action" name="sale_advertising_order.crm_lead_action_activities_advertising" data-extra="overdue">
+                                <a href="#" class="o_dashboard_action" name="crm.crm_lead_action_activities" data-extra="overdue">
                                     <t t-if="!show_demo">
                                         <t t-esc="values['activity']['overdue']"/> overdue
                                     </t>
@@ -109,7 +109,7 @@
                             </td>
                             <td></td>
                             <td  t-if="show_demo or (values and values['closing']['overdue'] != 0)" class="o_warning" title="To Opportunities">
-                                <a href="#" class="o_dashboard_action" name="sale_advertising_order.action_your_pipeline_advertising" data-extra="overdue_opp">
+                                <a href="#" class="o_dashboard_action" name="crm.action_your_pipeline" data-extra="overdue_opp">
                                     <t t-if="!show_demo">
                                         <t t-esc="values['closing']['overdue']"/> exp. closing
                                     </t>
@@ -238,7 +238,7 @@
                         <h2>Hi there!</h2>
                         <h4>Great sales journeys start with a clean pipeline.</h4>
                         <h4>Create a few opportunities in it.</h4>
-                        <a class="btn btn-primary o_dashboard_action" name="sale_advertising_order.action_your_pipeline_advertising">My Pipeline</a>
+                        <a class="btn btn-primary o_dashboard_action" name="crm.action_your_pipeline">My Pipeline</a>
                     </div>
                 </div>
             </div>

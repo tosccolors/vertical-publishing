@@ -21,21 +21,7 @@ odoo.define('advertising_sales_team.dashboard', function (require) {
                 } else if (action_extra === 'overdue') {
                     additional_context.search_default_overdue = 1;
                 }
-            } else if (action_name === 'sale_advertising_order.crm_lead_action_activities_advertising') {
-                if (action_extra === 'today') {
-                    additional_context.search_default_today = 1;
-                } else if (action_extra === 'this_week') {
-                    additional_context.search_default_this_week = 1;
-                } else if (action_extra === 'overdue') {
-                    additional_context.search_default_overdue = 1;
-                }
             } else if (action_name === 'crm.action_your_pipeline') {
-                if (action_extra === 'overdue') {
-                    additional_context['search_default_overdue'] = 1;
-                } else if (action_extra === 'overdue_opp') {
-                    additional_context['search_default_overdue_opp'] = 1;
-                }
-            } else if (action_name === 'sale_advertising_order.action_your_pipeline_advertising') {
                 if (action_extra === 'overdue') {
                     additional_context['search_default_overdue'] = 1;
                 } else if (action_extra === 'overdue_opp') {
