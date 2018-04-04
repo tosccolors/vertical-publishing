@@ -27,6 +27,7 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_sale_order_line_create_multi"/>
             <field name="target">new</field>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
         </record>
 
         <record model="ir.values" id="sale_order_line_create_multi">

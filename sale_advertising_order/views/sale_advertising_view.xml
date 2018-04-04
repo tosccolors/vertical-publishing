@@ -10,8 +10,8 @@
         <menuitem id="menu_partner_form1" parent="menu_advsales"
                   action="action_partner_form_crm" sequence="2"/>
 
-        <menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_advsales"
-                  action="crm.crm_lead_action_activities" sequence="5" />
+        <!--<menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_advsales"-->
+                  <!--action="crm.crm_lead_action_activities" sequence="5" />-->
 
 		<menuitem id="menu_product_template_action2" parent="menu_advsales"
                   action="product.product_template_action" sequence="13" />
@@ -41,32 +41,20 @@
 							groups="sales_team.group_sale_salesman"/>
 					<button name="action_approve1" states="submitted" type="object" string="Approval Sales Support" class="oe_highlight"
 							groups="sale_advertising_order.group_traffic_user, sale_advertising_order.group_senior_sales "/>
-					<!--button name="action_approve2" states="approved1" string="Approval Traffic" type="object"  class="oe_highlight"
-							groups="sale_advertising_order.group_traffic_user"/-->
 					<button name="action_refuse" string="Refuse" type="object" states="submitted"
 							groups="sale_advertising_order.group_traffic_user,sale_advertising_order.group_senior_sales"/>
-					<!--button name="%(sale_advertising_order.action_view_sale_order_line_create_multi)d"
-							string="Create Multiple Order Lines" type="action"  class="btn-primary"
-							attrs="{'invisible': [('state','in',['cancel','sale','done'])]}"/-->
                     <button name="action_confirm" string="Confirm Sale" class="btn-primary o_sale_confirm"
                             attrs="{'invisible': ['|','|',('state','in',['cancel','sale','done']),('id','=',False),
                                                           ('ver_tr_exc','=',True),('state','in',['draft','submitted'])]}"
                             groups="sales_team.group_sale_salesman" type="object" />
-                    <!--button name="action_confirm" string="Confirm Sale" class="btn-primary o_sale_confirm" type="object"
-                            attrs="{'invisible': [('state','in',['cancel','sale','done'])]}"
-                            groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/-->
                     <button name="action_quotation_send" string="Send by Email" type="object"
                             attrs="{'invisible': ['|','|',('state','in',['cancel','sent','sale','done']),('id','=',False),
                                                       ('ver_tr_exc','=',True),('state','in',['draft','submitted'])]}"
                             class="btn-primary"	groups="sales_team.group_sale_salesman"/>
-                    <!--button name="action_quotation_send" string="Send by Email" type="object" attrs="{'invisible': [('state', 'in',['cancel','sale','done'])]}"
-                            class="btn-primary"	groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/-->
                     <button name="print_quotation" string="Print" type="object"
                             attrs="{'invisible': ['|','|',('state','in',['cancel','submitted','sent','sale','done']),('id','=',False),
                                                       ('ver_tr_exc','=',True),('state','in',['draft','submitted'])]}"
                             class="btn-primary" groups="sales_team.group_sale_salesman"/>
-                    <!--button name="print_quotation" string="Print" type="object" states="draft,submitted,approved1,sent,sale,done"
-                            groups="sales_team.group_sale_manager, sale_advertising_order.group_senior_sales"/-->
                     <button name="action_cancel" states="draft,submitted,approved1,sent,sale" type="object" string="Cancel"/>
                     <button name="action_draft" states="cancel" type="object" string="Set to Quotation"/>
                     <button name="action_done" type="object" string="Lock" states="sale" groups="sale_advertising_order.group_traffic_user"/>
@@ -156,14 +144,16 @@
                                                     <field name="name" string="Name" readonly="1"/>
                                                 </tree>
                                             </field>
-                                            <field name="deadline_offset" invisible="1" groups="base.group_no_one"/>
+                                            <field name="deadline_offset" invisible="1" />
                                             <field name="deadline_passed" invisible="1" />
                                             <field name="deadline" invisible="0" />
                                             <field name="adv_issue_ids" string="Advertising Issues" readonly="0"
                                                    attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
-                                                   domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
-                                                            '|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
-                                                            ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
+                                                   domain="[('parent_id','!=', False),
+                                                            '|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
+                                                            '|','|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
+                                                                    ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
+
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
                                                 <tree create="true" edit="false" delete="true" copy="false">
@@ -206,8 +196,11 @@
                                                 <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
                                             </div>
                                             <field name="adv_issue" options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                                   domain="[('parent_id','=', title),'|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
-                                                            ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
+                                                   domain="[('parent_id','!=', False),
+                                                            ('parent_id','=', title),
+                                                            '|','|',('deadline','&gt;=', deadline_offset),
+                                                                    ('deadline','=', False),
+                                                                    ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),]"
                                                    attrs="{'invisible': [('adv_issue','=', False)]}"/>
                                             <field name="issue_date" readonly="1"
                                                    attrs="{'invisible': [('adv_issue','=', False)]}"/>
@@ -298,11 +291,11 @@
                                             <field name="page_reference" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
                                             <field name="url_to_material" />
                                         </group>
-                                        <group attrs="{'invisible':[('date_type','!=','validity')]}">
+                                        <group attrs="{'invisible':[('date_type','not in',['validity','online'])]}">
                                             <field name="from_date"
-                                                   attrs="{'invisible':[('date_type','!=','validity')]}"/>
+                                                   attrs="{'invisible':[('date_type','not in',['validity','online'])],'required':[('date_type','=','online')]}"/>
                                             <field name="to_date"
-                                                   attrs="{'invisible':[('date_type','!=','validity')]}"/>
+                                                   attrs="{'invisible':[('date_type','not in',['validity','online'])],'required':[('date_type','=','online')]}"/>
                                         </group>
                                     </group>
                                     <group>
@@ -326,7 +319,7 @@
                                     <field name="state" invisible="1"/>
                                 </form>
 
-                                <tree string="Sales Order Lines"  decoration-info="invoice_status=='to invoice'">
+                                <tree string="Sales Order Lines"  decoration-info="invoice_status=='to invoice'" default_order='issue_date'>
                                     <field name="sequence" widget="handle"/>
                                     <field name="id"/>
                                     <field name="title" />
@@ -454,20 +447,22 @@
             <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_no_deadline_check'))]"/>
             <field name="arch" type="xml">
                 <field name="adv_issue_ids" position="attributes">
-                     <attribute name="domain" >['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
-                                                    ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]</attribute>
+                     <attribute name="domain" >[('parent_id','!=', False),'|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title)]</attribute>
                 </field>
                 <field name="product_template_id" position="attributes">
                      <attribute name="attrs" >{'readonly': ['|',('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}</attribute>
                 </field>
                 <field name="product_uom_qty" position="attributes">
-                     <attribute name="attrs" ></attribute>
+                     <attribute name="readonly" >False</attribute>
                 </field>
                 <field name="product_uom" position="attributes">
                      <attribute name="attrs" >{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}</attribute>
                 </field>
                 <field name="analytic_tag_ids" position="attributes">
                     <attribute name="attrs" ></attribute>
+                </field>
+                <field name="adv_issue" position="attributes">
+                     <attribute name="domain" >[('parent_id','!=', False),('parent_id','=', title)]</attribute>
                 </field>
 
             </field>
@@ -510,7 +505,7 @@
                     <field name="partner_acc_mgr"/>
                     <field name="user_id"/>
                     <field name="amount_untaxed" sum="Total Amount Untaxed" widget="monetary"/>
-                    <field name="traffic_appr_date" string="Traffic Date"/>
+                    <field name="traffic_appr_date" string="Traffic Date" invisible="1"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="invoice_status"/>
                     <field name="state" invisible="1"/>
@@ -534,19 +529,19 @@
                     <field name="advertising_agency"/>
                     <separator/>
                     <filter string="To Invoice" domain="[('invoice_status','=','to invoice')]" />
-                    <filter string="Upselling" domain="[('invoice_status','=','upselling')]" />
+                    <!--filter string="Upselling" domain="[('invoice_status','=','upselling')]" /-->
 
                     <separator/>
                     <filter string="Submitted" name="submitted" domain="[('state','in',('submitted',))]"/>
                     <filter string="Sales Mgr Approved" name="approved1" domain="[('state','in',('approved1',))]"/>
-                    <filter string="Traffic Approved" name="approved2" domain="[('state','in',('approved2',))]"/>
+                    <!--filter string="Traffic Approved" name="approved2" domain="[('state','in',('approved2',))]"/-->
                 </xpath>
 
                 <field name="project_id" position="after" >
                     <field name="date_from" string="Order Date From" filter_domain="[('date_order','&gt;=',self)]"/>
                     <field name="date_to" string="Order Date To" filter_domain="[('date_order','&lt;=',self)]"/>
-                    <field name="date_from" string="Traffic Date From" filter_domain="[('traffic_appr_date','&gt;=',self)]"/>
-                    <field name="date_to" string="Traffic Date To" filter_domain="[('traffic_appr_date','&lt;=',self)]"/>
+                    <!--field name="date_from" string="Traffic Date From" filter_domain="[('traffic_appr_date','&gt;=',self)]"/>
+                    <field name="date_to" string="Traffic Date To" filter_domain="[('traffic_appr_date','&lt;=',self)]"/-->
                 </field>
                 <xpath expr="." position="inside">
                     <filter string="Account Manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
@@ -881,9 +876,10 @@
                                 <field name="deadline" invisible="0" />
                                 <field name="adv_issue_ids" string="Advertising Issues" readonly="0"
                                        attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
-                                       domain="['|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
-                                                '|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
-                                                ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
+                                       domain="[('parent_id','!=', False),
+                                                '|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
+                                                '|','|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
+                                                        ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
                                        options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                        context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
                                     <tree create="true" edit="false" delete="true" copy="false">
@@ -929,8 +925,11 @@
                                 <div invisible="context.get('hide_sale')" groups="base.group_no_one">
                                     <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
                                 </div>
-                                <field name="adv_issue" domain="[('parent_id','=', title),'|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
-                                                                ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
+                                <field name="adv_issue" domain="[('parent_id','!=', False),
+                                                                ('parent_id','=', title),
+                                                                '|','|',('deadline','&gt;=', deadline_offset),
+                                                                        ('deadline','=', False),
+                                                                        ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),]"
                                        options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                        attrs="{'invisible': [('adv_issue','=', False)]}"/>
                                 <field name="issue_date" readonly="1"
@@ -1020,11 +1019,11 @@
                                 <field name="page_reference" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
                                 <field name="url_to_material" />
                             </group>
-                            <group attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')]}">
+                            <group attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','not in',['validity','online'])]}">
                                 <field name="from_date"
-                                       attrs="{'invisible':['|',('multi_line','!=', False),('date_type','!=','validity')]}"/>
+                                       attrs="{'invisible':['|',('multi_line','!=', False),('date_type','not in',['validity','online'])],'required':[('date_type','=','online')]}"/>
                                 <field name="to_date"
-                                       attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')]}"/>
+                                       attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','not in',['validity','online'])],'required':[('date_type','=','online')]}"/>
                             </group>
                         </group>
                         <group>

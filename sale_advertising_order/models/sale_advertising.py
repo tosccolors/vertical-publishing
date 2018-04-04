@@ -36,7 +36,7 @@ class SaleOrder(models.Model):
         """
         Compute the total amounts of the SO.
         """
-        super(SaleOrder, self)._amount_all()
+        super(SaleOrder, self.filtered(lambda record: record.advertising != True))._amount_all()
         for order in self.filtered('advertising'):
             amount_untaxed = amount_tax = max_cdiscount = 0.0
             cdiscount = []
@@ -44,8 +44,6 @@ class SaleOrder(models.Model):
             for line in order.order_line:
                 amount_untaxed += line.price_subtotal
                 cdiscount.append(line.computed_discount)
-                if cdiscount:
-                    max_cdiscount = max(cdiscount)
                 if order.company_id.tax_calculation_rounding_method == 'round_globally':
                     if not line.multi_line:
                         price = line.acual_unit_price * (1 - (line.discount or 0.0) / 100.0)
@@ -59,9 +57,11 @@ class SaleOrder(models.Model):
                         amount_tax += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
                 else:
                     amount_tax += line.price_tax
-                if order.company_id.verify_order_setting != -1.00 and order.company_id.verify_order_setting < amount_untaxed \
+            if cdiscount:
+                max_cdiscount = max(cdiscount)
+            if order.company_id.verify_order_setting != -1.00 and order.company_id.verify_order_setting < amount_untaxed \
                                                                   or order.company_id.verify_discount_setting < max_cdiscount:
-                    ver_tr_exc = True
+                ver_tr_exc = True
 
             order.update({
                 'amount_untaxed': order.pricelist_id.currency_id.round(amount_untaxed),
@@ -163,11 +163,6 @@ class SaleOrder(models.Model):
             self.partner_id = self.advertising_agency = False
         if self.advertising_agency:
             self.partner_id = self.advertising_agency
-#        if self.agency_is_publish:
-#            if self.advertising_agency:
-#                self.published_customer = self.advertising_agency
-#            else:
-#                self.advertising_agency = self.published_customer
         if not self.partner_id:
             self.update({
                 'customer_contact': False
@@ -254,7 +249,7 @@ class SaleOrder(models.Model):
             if not olines == []:
                 self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
         self._cr.commit()
-        self.write({'state': 'sent'})
+        # self.write({'state': 'sent'}) # OAL 190 Fix: mail wizard will change status to sent
         return super(SaleOrder, self).action_quotation_send()
 
 
@@ -282,13 +277,12 @@ class SaleOrder(models.Model):
                 for newline in newlines:
                     if newline.deadline_check():
                         newline.page_qty_check_create()
-        return super(SaleOrder, self.with_context(confirm=True)).action_confirm()
+        return super(SaleOrder, self.with_context(no_checks=True)).action_confirm()
 
     @api.multi
     def write(self, vals):
         result = super(SaleOrder, self).write(vals)
-        for order in self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('pubble_call')
-                                                                                and not s.env.context.get('confirm')):
+        for order in self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks')):
             user = self.env['res.users'].browse(self.env.uid)
             if not user.has_group('sale_advertising_order.group_no_discount_check') \
                and self.ver_tr_exc:
@@ -328,7 +322,7 @@ class SaleOrderLine(models.Model):
             qty = line.product_uom_qty or 0.0
             csa = line.color_surcharge_amount or 0.0
             subtotal_bad = line.subtotal_before_agency_disc or 0.0
-            if line.order_id.partner_id.agency_discount and not line.order_id.nett_nett:
+            if line.order_id.partner_id.is_ad_agency and not line.order_id.nett_nett:
                 discount = line.order_id.partner_id.agency_discount
             else:
                 discount = 0.0
@@ -405,19 +399,23 @@ class SaleOrderLine(models.Model):
         """
         Compute the deadline for this placement.
         """
+        user = self.env['res.users'].browse(self.env.uid)
         for line in self.filtered('advertising'):
-            user = self.env['res.users'].browse(self.env.uid)
+            line.deadline_passed = False
+            line.deadline = False
+            line.deadline_offset = False
             if line.ad_class:
-                if user.has_group('sale_advertising_order.group_no_deadline_check') and line.issue_date:
-                    line.deadline = False
-                    line.deadline_passed = datetime.now() >= fields.Datetime.from_string(line.issue_date)
-                elif not user.has_group('sale_advertising_order.group_no_deadline_check'):
+#                if user.has_group('sale_advertising_order.group_no_deadline_check'):
+#                   if line.issue_date:
+#                        line.deadline_passed = True
+                if not user.has_group('sale_advertising_order.group_no_deadline_check'):
                     dt_offset = timedelta(hours=line.ad_class.deadline_offset or 0)
                     line.deadline_offset = fields.Datetime.to_string(datetime.now() + dt_offset)
-                    if line.adv_issue and line.adv_issue.deadline:
+                    if line.adv_issue and line.adv_issue.deadline and line.adv_issue.issue_date:
                         dt_deadline = fields.Datetime.from_string(line.adv_issue.deadline)
                         line.deadline = fields.Datetime.to_string(dt_deadline - dt_offset)
-                        line.deadline_passed = datetime.now() > (dt_deadline - dt_offset)
+                        line.deadline_passed = datetime.now() > (dt_deadline - dt_offset) and \
+                                               datetime.now() < fields.Datetime.from_string(line.adv_issue.issue_date)
 
 
 
@@ -531,6 +529,7 @@ class SaleOrderLine(models.Model):
             else:
                 vals['title'] = False
                 vals['title_ids'] = [(6, 0, [])]
+            vals['date_type'] = self.medium.date_type
         else:
             vals['ad_class'] = False
             vals['title'] = False
@@ -552,7 +551,9 @@ class SaleOrderLine(models.Model):
                 else:
                     vals['product_template_id'] = False
             date_type = self.ad_class.date_type
-            if date_type:
+            if self.medium and self.medium.date_type == 'online':
+                vals['date_type'] = self.medium.date_type
+            elif date_type:
                 vals['date_type'] = date_type
             else: result = {'title':_('Warning'),
                                  'message':_('The Ad Class has no Date Type. You have to define one')}
@@ -787,6 +788,8 @@ class SaleOrderLine(models.Model):
         comp_discount = self.computed_discount
         if comp_discount < 0.0:
             comp_discount = self.computed_discount = 0.000
+        if comp_discount > 100.0:
+            comp_discount = self.computed_discount = 100.0
         price = self.price_unit or 0.0
         if self.multi_line:
             clp = self.comb_list_price or 0.0
