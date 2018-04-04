@@ -89,7 +89,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'fiscal_position_id': partner.property_account_position_id.id or False,
             'user_id': self.env.user.id,
             'company_id': self.env.user.company_id.id,
-            'payment_mode_id': payment_mode.id,
+            'payment_mode_id': payment_mode.id or False,
             'partner_bank_id': payment_mode.fixed_journal_id.bank_account_id.id
                                if payment_mode.bank_account_link == 'fixed'
                                else partner.bank_ids and partner.bank_ids[0].id or False,
