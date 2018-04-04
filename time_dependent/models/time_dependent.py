@@ -7,51 +7,65 @@ class TimeDependent(models.AbstractModel):
     _name = 'time.dependent'
 
     @api.multi
-    def write(self, values):
+    def track_changes(self, rec, values, time_dependent_model_rec, validation_to):
+        tracking_vals = []
+        for field in time_dependent_model_rec.field_ids:
+            #Capture changes if selected field's value is changed.
+            if values.has_key(field.name):
+                field_dict = rec.read([field.name])[0]
+                if field.ttype == 'boolean':
+                    old_value = field_dict.get(field.name, False)
+                    new_value = values.get(field.name, False)
+                elif field.ttype == 'integer' or field.ttype == 'float':
+                    old_value = field_dict.get(field.name) if field_dict.get(field.name, False) else "0"
+                    new_value = values.get(field.name) if values.get(field.name, False) else "0"
+                else:
+                    old_value = field_dict.get(field.name) if field_dict.get(field.name, False) else "NA"
+                    new_value = values.get(field.name) if values.get(field.name, False) else "NA"
+                tracking_vals.append((0, 0, {'field_name': field.field_description, 'old_value': old_value, 'new_value': new_value}))
+        if tracking_vals:
+            values['date_start'] = date.today() #Update Validity From with today's date
+            validity_periods_tracking_vals = [(0, 0, {'validity_from': date.today(), 'validity_to': validation_to, 'tracking_ids': tracking_vals})]
+            record = rec.env['time.dependent.record'].search([('rec_id', '=', rec.id), ('model_id', '=', time_dependent_model_rec.id)], limit=1)
+            #Create new record with Validity Periods and Tracking Values.
+            if not record: time_dependent_model_rec.record_ids = [(0, 0, {'rec_id': rec.id, 'model_id': time_dependent_model_rec.id, 'validity_period_ids': validity_periods_tracking_vals})]
+            #Update record with Validity Periods and Tracking Values.
+            elif record:
+                validity_period_rec = self.env['time.validity.period'].search([('record_id', '=', record.id)], order='id desc', limit=1)
+                if not validity_period_rec:
+                    record.validity_period_ids = validity_periods_tracking_vals
+                elif validity_period_rec:
+                    if validity_period_rec.validity_from == date.today().strftime("%Y-%m-%d"):
+                        validity_period_rec.tracking_ids = tracking_vals
+                        validity_period_rec.validity_to = validation_to
+                    elif validity_period_rec.validity_from != date.today().strftime("%Y-%m-%d"):
+                        validity_period_rec.validity_to = date.today() - timedelta(days=1)
+                        record.validity_period_ids = validity_periods_tracking_vals
+        return True
+
+    @api.multi
+    def check_validity(self, values):
         for rec in self:
             time_dependent_model_rec = rec.env['time.dependent.model'].search([('model_id.model', '=', rec._name)])
             if time_dependent_model_rec:
                 #Check validation period
-                validation_from = values.get('date_start', False)
-                validation_to = values.get('date_end', False)
-                if not validation_from and not values.has_key('date_start'):
-                    validation_from = rec.env[rec._name].browse(rec.id).date_start
-                if not validation_to and not values.has_key('date_end'):
-                    validation_to = rec.env[rec._name].browse(rec.id).date_end
-                if not ((validation_to and datetime.strptime(validation_to, "%Y-%m-%d").date() < date.today()) or (validation_from and datetime.strptime(validation_from, "%Y-%m-%d").date() > date.today()) or (not validation_from and not validation_to)):
-                    tracking_vals = []
-                    for field in time_dependent_model_rec.field_ids:
-                        #Capture changes if selected field's value is changed.
-                        if values.has_key(field.name):
-                            field_dict = rec.read([field.name])[0]
-                            if field.ttype == 'boolean':
-                                old_value = field_dict.get(field.name, False)
-                                new_value = values.get(field.name, False)
-                            elif field.ttype == 'integer' or field.ttype == 'float':
-                                old_value = field_dict.get(field.name) if field_dict.get(field.name, False) else "0"
-                                new_value = values.get(field.name) if values.get(field.name, False) else "0"
-                            else:
-                                old_value = field_dict.get(field.name) if field_dict.get(field.name, False) else "NA"
-                                new_value = values.get(field.name) if values.get(field.name, False) else "NA"
-                            tracking_vals.append((0, 0, {'field_name': field.field_description, 'old_value': old_value, 'new_value': new_value}))
-                    if tracking_vals:
-                        values['date_start'] = date.today() #Update Validity From with today's date
-                        validity_periods_tracking_vals = [(0, 0, {'validity_from': date.today(), 'validity_to': validation_to, 'tracking_ids': tracking_vals})]
-                        record = rec.env['time.dependent.record'].search([('rec_id', '=', rec.id), ('model_id', '=', time_dependent_model_rec.id)], limit=1)
-                        #Create new record with Validity Periods and Tracking Values.
-                        if not record: time_dependent_model_rec.record_ids = [(0, 0, {'rec_id': rec.id, 'model_id': time_dependent_model_rec.id, 'validity_period_ids': validity_periods_tracking_vals})]
-                        #Update record with Validity Periods and Tracking Values.
-                        elif record:
-                            validity_period_rec = self.env['time.validity.period'].search([('record_id', '=', record.id)], order='id desc', limit=1)
-                            if not validity_period_rec:
-                                record.validity_period_ids = validity_periods_tracking_vals
-                            elif validity_period_rec:
-                                if validity_period_rec.validity_from == date.today().strftime("%Y-%m-%d"):
-                                    validity_period_rec.tracking_ids = tracking_vals
-                                    validity_period_rec.validity_to = validation_to
-                                elif validity_period_rec.validity_from != date.today().strftime("%Y-%m-%d"):
-                                    validity_period_rec.validity_to = date.today() - timedelta(days=1)
-                                    record.validity_period_ids = validity_periods_tracking_vals
+                self_obj = rec.env[rec._name].browse(rec.id)
+                validation_from = values['date_start'] if values.has_key('date_start') else self_obj.date_start
+                validation_to = values['date_end'] if values.has_key('date_end') else self_obj.date_end
+                if validation_from and validation_to:
+                    if datetime.strptime(validation_from, "%Y-%m-%d").date() <= date.today() and datetime.strptime(validation_to, "%Y-%m-%d").date() >= date.today():
+                        rec.track_changes(rec, values, time_dependent_model_rec, validation_to)
+                elif validation_from:
+                    if datetime.strptime(validation_from, "%Y-%m-%d").date() <= date.today():
+                        rec.track_changes(rec, values, time_dependent_model_rec, validation_to)
+                elif validation_to:
+                    if datetime.strptime(validation_to, "%Y-%m-%d").date() >= date.today():
+                        rec.track_changes(rec, values, time_dependent_model_rec, validation_to)
+        return True
+
+    @api.multi
+    def write(self, values):
+        self.check_validity(values)
         return super(TimeDependent, self).write(values)
 
     @api.multi
