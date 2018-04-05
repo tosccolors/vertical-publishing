@@ -20,7 +20,7 @@
                 <sheet>
                     <group>
                         <field name="model_id" options='{"no_open": True, "no_create": True}'/>
-                        <field name="field_ids" widget="many2many_tags" options='{"no_open": True, "no_create": True}'/>
+                        <field name="field_ids" widget="many2many_tags" options='{"no_open": True, "no_create": True}' domain = "[('model_id', '=', model_id), ('ttype','in',['boolean', 'char', 'text', 'integer', 'float', 'date', 'datetime'])]" />
                     </group>
                     <div name="records">
                         <field name="record_ids" readonly="True">

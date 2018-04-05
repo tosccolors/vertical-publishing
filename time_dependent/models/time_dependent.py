@@ -83,16 +83,12 @@ class TimeDependentModel(models.Model):
     _rec_name = 'model_id'
 
     model_id = fields.Many2one('ir.model', string='Model', ondelete='cascade', required=True, index=True)
-    field_ids = fields.Many2many('ir.model.fields', column1='dependent_id', column2='field_id', string='Fields', required=True, index=True, domain = [('ttype','in',['boolean', 'char', 'text', 'integer', 'float', 'date', 'datetime'])])
+    field_ids = fields.Many2many('ir.model.fields', column1='dependent_id', column2='field_id', string='Fields', required=True, index=True)
     record_ids = fields.One2many('time.dependent.record', 'model_id', string='Record Ref#')
 
     @api.onchange('model_id')
     def _onchange_model_id(self):
         self.field_ids = []
-        if self.model_id:
-            return {'domain': {'field_ids': [('id', 'in', self.model_id.field_id.ids)]}}
-        else:
-            return {'domain': {'field_ids': [('id', 'in', [])]}}
 
     @api.constrains('model_id')
     def _check_model_sequence(self):
