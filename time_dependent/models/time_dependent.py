@@ -19,6 +19,9 @@ class TimeDependent(models.AbstractModel):
                 elif field.ttype == 'integer' or field.ttype == 'float':
                     old_value = field_dict.get(field.name) if field_dict.get(field.name, False) else "0"
                     new_value = values.get(field.name) if values.get(field.name, False) else "0"
+                elif field.ttype == 'selection':
+                    old_value = dict(rec._fields[field.name].selection)[field_dict.get(field.name)] if field_dict.get(field.name, False) else "NA"
+                    new_value = dict(rec._fields[field.name].selection)[values.get(field.name)] if values.get(field.name, False) else "NA"
                 else:
                     old_value = field_dict.get(field.name) if field_dict.get(field.name, False) else "NA"
                     new_value = values.get(field.name) if values.get(field.name, False) else "NA"
@@ -48,19 +51,25 @@ class TimeDependent(models.AbstractModel):
         for rec in self:
             time_dependent_model_rec = rec.env['time.dependent.model'].search([('model_id.model', '=', rec._name)])
             if time_dependent_model_rec:
-                #Check validation period
-                self_obj = rec.env[rec._name].browse(rec.id)
-                validation_from = values['date_start'] if values.has_key('date_start') else self_obj.date_start
-                validation_to = values['date_end'] if values.has_key('date_end') else self_obj.date_end
-                if validation_from and validation_to:
-                    if datetime.strptime(validation_from, "%Y-%m-%d").date() <= date.today() and datetime.strptime(validation_to, "%Y-%m-%d").date() >= date.today():
-                        rec.track_changes(rec, values, time_dependent_model_rec, validation_to)
-                elif validation_from:
-                    if datetime.strptime(validation_from, "%Y-%m-%d").date() <= date.today():
-                        rec.track_changes(rec, values, time_dependent_model_rec, validation_to)
-                elif validation_to:
-                    if datetime.strptime(validation_to, "%Y-%m-%d").date() >= date.today():
-                        rec.track_changes(rec, values, time_dependent_model_rec, validation_to)
+                # Check extra filter
+                changes_tracking = True
+                field = time_dependent_model_rec.field_id
+                if field:
+                    if rec.read([field.name])[0].get(field.name, False) != time_dependent_model_rec.value:
+                        changes_tracking = False
+                if changes_tracking:
+                    #Check validation period
+                    validation_from = values['date_start'] if values.has_key('date_start') else self.date_start
+                    validation_to = values['date_end'] if values.has_key('date_end') else self.date_end
+                    if validation_from and validation_to:
+                        if datetime.strptime(validation_from, "%Y-%m-%d").date() <= date.today() and datetime.strptime(validation_to, "%Y-%m-%d").date() >= date.today():
+                            rec.track_changes(rec, values, time_dependent_model_rec, validation_to)
+                    elif validation_from:
+                        if datetime.strptime(validation_from, "%Y-%m-%d").date() <= date.today():
+                            rec.track_changes(rec, values, time_dependent_model_rec, validation_to)
+                    elif validation_to:
+                        if datetime.strptime(validation_to, "%Y-%m-%d").date() >= date.today():
+                            rec.track_changes(rec, values, time_dependent_model_rec, validation_to)
         return True
 
     @api.multi
@@ -84,11 +93,15 @@ class TimeDependentModel(models.Model):
 
     model_id = fields.Many2one('ir.model', string='Model', ondelete='cascade', required=True, index=True)
     field_ids = fields.Many2many('ir.model.fields', column1='dependent_id', column2='field_id', string='Fields', required=True, index=True)
+    field_id = fields.Many2one('ir.model.fields', string='Field to Filter', help="Boolean fields to filter based on time faced tracking is done.")
+    value = fields.Boolean(string="Value", default=True, help="Value for selected boolean field to filter based on time faced tracking is done.")
     record_ids = fields.One2many('time.dependent.record', 'model_id', string='Record Ref#')
 
+    # Clear value for field_ids and field_id when model_id is changed
     @api.onchange('model_id')
     def _onchange_model_id(self):
         self.field_ids = []
+        self.field_id = False
 
     @api.constrains('model_id')
     def _check_model_sequence(self):

@@ -20,7 +20,15 @@
                 <sheet>
                     <group>
                         <field name="model_id" options='{"no_open": True, "no_create": True}'/>
-                        <field name="field_ids" widget="many2many_tags" options='{"no_open": True, "no_create": True}' domain = "[('model_id', '=', model_id), ('ttype','in',['boolean', 'char', 'text', 'integer', 'float', 'date', 'datetime'])]" />
+                        <field name="field_ids" widget="many2many_tags" options='{"no_open": True, "no_create": True}' domain="[('model_id', '=', model_id), ('ttype','in',['boolean', 'char', 'text', 'integer', 'float', 'date', 'datetime', 'selection'])]" />
+                    </group>
+                    <group>
+                        <group>
+                            <field name="field_id" options='{"no_open": True, "no_create": True}' domain="[('model_id', '=', model_id), ('ttype','in',['boolean'])]" />
+                        </group>
+                        <group>
+                            <field name="value" nolabel="1" attrs="{'invisible': [('field_id', '=', False)]}"/>
+                        </group>
                     </group>
                     <div name="records">
                         <field name="record_ids" readonly="True">
