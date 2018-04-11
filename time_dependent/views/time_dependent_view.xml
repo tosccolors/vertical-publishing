@@ -20,7 +20,15 @@
                 <sheet>
                     <group>
                         <field name="model_id" options='{"no_open": True, "no_create": True}'/>
-                        <field name="field_ids" widget="many2many_tags" options='{"no_open": True, "no_create": True}'/>
+                        <field name="field_ids" widget="many2many_tags" options='{"no_open": True, "no_create": True}' domain="[('model_id', '=', model_id), ('ttype','in',['boolean', 'char', 'text', 'integer', 'float', 'date', 'datetime', 'selection'])]" />
+                    </group>
+                    <group>
+                        <group>
+                            <field name="field_id" options='{"no_open": True, "no_create": True}' domain="[('model_id', '=', model_id), ('ttype','in',['boolean'])]" />
+                        </group>
+                        <group>
+                            <field name="value" nolabel="1" attrs="{'invisible': [('field_id', '=', False)]}"/>
+                        </group>
                     </group>
                     <div name="records">
                         <field name="record_ids" readonly="True">
@@ -107,7 +115,7 @@
         <field name="name">time.dependent.record.tree</field>
         <field name="model">time.dependent.record</field>
         <field name="arch" type="xml">
-            <tree string="Time Dependent Records">
+            <tree string="Time Dependent Records" create="false">
                 <field name="name" class="oe_inline"/>
                 <field name="rec_id" invisible="1"/>
             </tree>
@@ -119,7 +127,7 @@
         <field name="name">time.dependent.record.form</field>
         <field name="model">time.dependent.record</field>
         <field name="arch" type="xml">
-            <form string="Time Dependent Records">
+            <form string="Time Dependent Records" create="false" edit="false">
                 <sheet>
                     <group>
                         <label for="name"/>
