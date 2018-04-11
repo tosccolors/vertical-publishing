@@ -28,10 +28,6 @@
                     <field name="id" invisible="1"/>
 
                     <button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"
-                        type="action" class="btn-primary"
-						groups="sale_advertising_order.group_traffic_user"
-                        attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}"/>
-                    <button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"
                         type="action" context="{'default_advance_payment_method': 'percentage'}"
                         attrs="{'invisible': ['|',('invoice_status', '!=', 'no'), ('state', '!=', 'sale')]}"
                         groups="sale_advertising_order.group_traffic_user"/>
@@ -45,15 +41,15 @@
 							groups="sale_advertising_order.group_traffic_user,sale_advertising_order.group_senior_sales"/>
                     <button name="action_confirm" string="Confirm Sale" class="btn-primary o_sale_confirm"
                             attrs="{'invisible': ['|','|',('state','in',['cancel','sale','done']),('id','=',False),
-                                                          ('ver_tr_exc','=',True),('state','in',['draft','submitted'])]}"
+                                                          ('ver_tr_exc','=',True),('state','in',['cancel','draft','submitted'])]}"
                             groups="sales_team.group_sale_salesman" type="object" />
                     <button name="action_quotation_send" string="Send by Email" type="object"
                             attrs="{'invisible': ['|','|',('state','in',['cancel','sent','sale','done']),('id','=',False),
-                                                      ('ver_tr_exc','=',True),('state','in',['draft','submitted'])]}"
+                                                      ('ver_tr_exc','=',True),('state','in',['cancel','draft','submitted'])]}"
                             class="btn-primary"	groups="sales_team.group_sale_salesman"/>
                     <button name="print_quotation" string="Print" type="object"
                             attrs="{'invisible': ['|','|',('state','in',['cancel','submitted','sent','sale','done']),('id','=',False),
-                                                      ('ver_tr_exc','=',True),('state','in',['draft','submitted'])]}"
+                                                      ('ver_tr_exc','=',True),('state','in',['cancel','draft','submitted'])]}"
                             class="btn-primary" groups="sales_team.group_sale_salesman"/>
                     <button name="action_cancel" states="draft,submitted,approved1,sent,sale" type="object" string="Cancel"/>
                     <button name="action_draft" states="cancel" type="object" string="Set to Quotation"/>

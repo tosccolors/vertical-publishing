@@ -74,7 +74,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         journal_id = self.env['account.invoice'].default_get(['journal_id'])['journal_id']
         if not journal_id:
             raise UserError(_('Please define an accounting sale journal for this company.'))
-        return {
+        vals = {
             'date_invoice': invoice_date,
             'date': posting_date or False,
             'ad': True,
@@ -89,12 +89,12 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'fiscal_position_id': partner.property_account_position_id.id or False,
             'user_id': self.env.user.id,
             'company_id': self.env.user.company_id.id,
-            'payment_mode_id': payment_mode.id,
+            'payment_mode_id': payment_mode.id or False,
             'partner_bank_id': payment_mode.fixed_journal_id.bank_account_id.id
                                if payment_mode.bank_account_link == 'fixed'
                                else partner.bank_ids and partner.bank_ids[0].id or False,
         }
-
+        return vals
 
 
 
@@ -159,7 +159,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             return invoice.id
 
         for line in chunk:
-            key = (line.order_id.partner_invoice_id, line.order_id.published_customer, line.order_id.payment_mode_id or False )
+            key = (line.order_id.partner_invoice_id, line.order_id.published_customer, line.order_id.payment_mode_id )
 
             if (not line.invoice_lines) and (line.state in ('sale', 'done')) :
                 if not key in invoices:

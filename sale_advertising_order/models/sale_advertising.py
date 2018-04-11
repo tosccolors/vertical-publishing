@@ -472,7 +472,7 @@ class SaleOrderLine(models.Model):
                                  change_default=True, ondelete='restrict')
     page_reference = fields.Char('Page Preference', size=32)
     ad_number = fields.Char('External Reference', size=32)
-    url_to_material = fields.Char('URL Material', size=64)
+    url_to_material = fields.Char('URL Material')
     from_date = fields.Date('Start of Validity')
     to_date = fields.Date('End of Validity')
     state = fields.Selection([
