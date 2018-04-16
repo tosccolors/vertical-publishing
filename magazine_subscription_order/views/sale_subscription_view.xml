@@ -84,6 +84,21 @@
         <menuitem id="menu_sale_advertising_order_lines" parent="sale.menu_sale_invoicing"
                   groups="sales_team.group_sale_salesman,sales_team.group_sale_manager" action="all_subscription_order_lines_action"/>
 
+        <record id="view_order_form_subscription" model="ir.ui.view">
+            <field name="name">sale.order.form.subscription</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="subscription" invisible="1"/>
+                </xpath>
+                <field name="partner_invoice_id" position="attributes">
+                    <attribute name="attrs">{'invisible':[('subscription', '=', True)], 'required':[('subscription', '=', False)]}</attribute>
+                </field>
+            </field>
+        </record>
+
+
 
 
     </data>

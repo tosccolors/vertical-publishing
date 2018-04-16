@@ -20,7 +20,10 @@
 #
 ##############################################################################
 
-from odoo import api, fields, models, _
+from odoo import api, fields, exceptions, models, _
+from datetime import datetime
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
+from odoo.exceptions import UserError
 
 
 class SaleOrder(models.Model):
@@ -28,8 +31,55 @@ class SaleOrder(models.Model):
 
     subscription = fields.Boolean('Subscription', default=False)
 
+    @api.multi
+    def check_limit(self):
+        """Check if credit limit for partner was exceeded."""
+        self.ensure_one()
+        partner = self.partner_id
+        moveline_obj = self.env['account.move.line']
+        movelines = moveline_obj.\
+            search([('partner_id', '=', partner.id),
+                    ('account_id.user_type_id.type', 'in',
+                    ['receivable', 'payable']),
+                    ('full_reconcile_id', '=', False)])
+
+        debit, credit = 0.0, 0.0
+        today_dt = datetime.strftime(datetime.now().date(), DF)
+        for line in movelines:
+            if line.date_maturity < today_dt:
+                credit += line.debit
+                debit += line.credit
+
+        if (credit - debit + self.amount_total) > partner.credit_limit:
+            # Consider partners who are under a company.
+            msg = 'Can not confirm Sale Order,Total mature due Amount ' \
+                  '%s as on %s !\nCheck Partner Accounts or Credit ' \
+                  'Limits !' % (credit - debit, today_dt)
+            raise UserError(_('Credit Over Limits !\n' + msg))
+        else:
+            return True
+
+    @api.multi
+    def action_confirm(self):
+        """Extend to check credit limit before confirming sale order."""
+        for order in self:
+            if order.subscription:
+                order.check_limit()
+        return super(SaleOrder, self).action_confirm()
+
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     subscription = fields.Boolean(related='order_id.subscription', string='Subscription', store=True)
+
+    @api.multi
+    def _prepare_invoice_line(self, qty):
+        res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
+        if self.product_id.subscription_product:
+            account = self.product_id.subscription_revenue_account
+            fpos = self.order_id.fiscal_position_id or self.order_id.partner_id.property_account_position_id
+            if fpos:
+                account = fpos.map_account(account)
+            res['account_id'] = account.id
+        return res

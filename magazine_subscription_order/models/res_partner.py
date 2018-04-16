@@ -20,21 +20,24 @@
 
 from odoo import api, fields, exceptions, models, _
 from odoo.exceptions import ValidationError
+from datetime import datetime
 
 class Partner(models.Model):
-    _inherit = 'res.partner'
+    _name = 'res.partner'
+    _inherit = ['res.partner', 'time.dependent']
 
     is_subscription_customer = fields.Boolean('Subscription Customer', default=False)
-    date_start = fields.Date(string='Date From', default=fields.Date.context_today)
-    date_end = fields.Date(string='Date To', index=True)
-    subscription_payment_id = fields.Many2one('account.payment',string='Subscription Payment Method', ondelete='set null', index=True, default=False)
+    date_start = fields.Date(string='Validity From')
+    date_end = fields.Date(string='Validity To', index=True)
+    # subscription_payment_id = fields.Many2one('account.journal',string='Subscription Payment Method', ondelete='set null', index=True, default=False)
+    property_subscription_subscription = fields.Many2one('account.journal', string="Subscription Payment Method", company_dependent=True)
     subs_sale_order_count = fields.Integer(compute='_compute_subs_sale_order_count', string='Subscription Sales Order')
 
     @api.constrains('date_start', 'date_end')
     def _check_start_end_dates(self):
         for partner in self.filtered('date_end'):
-            if partner.date_start > partner.date_end:
-                raise ValidationError(_("Subscription Validity start date can't be later than end date"))
+            if partner.date_start and partner.date_start > partner.date_end:
+                raise ValidationError(_("'Validity From' can't be future date than 'Validity To'!"))
 
     def _compute_subs_sale_order_count(self):
         sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('subscription','=',True),('state','in',('sale','done'))],
@@ -49,9 +52,16 @@ class Partner(models.Model):
             # then we can sum for all the partner's child
             partner.subs_sale_order_count = sum(mapped_data.get(child, 0) for child in partner_ids)
 
-    # @api.multi
-    # @api.onchange('date_start','date_end')
-    # def validatity_date(self):
-    #     print 'self.date_start, self.date_end',self.date_start, self.date_end
-    #     for partner in
-    #     pass
+    @api.multi
+    @api.onchange('date_start','date_end')
+    def date_validation(self):
+        if self._origin.date_start and self.date_start:
+            old_validity_from = datetime.strptime(self._origin.date_start, "%Y-%m-%d")
+            new_validity_from = datetime.strptime(self.date_start, "%Y-%m-%d")
+            if new_validity_from < old_validity_from:
+                raise ValidationError(_("'Validity From' can't be later than previous 'Validity From'!"))
+        if self._origin.date_end and self.date_end:
+            old_validity_to = datetime.strptime(self._origin.date_end, "%Y-%m-%d")
+            new_validity_to = datetime.strptime(self.date_end, "%Y-%m-%d")
+            if new_validity_to < old_validity_to:
+                raise ValidationError(_("'Validity To' can't be later than previous 'Validity To'!"))

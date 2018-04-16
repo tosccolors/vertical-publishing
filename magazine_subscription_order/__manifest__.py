@@ -35,6 +35,7 @@ This module allows you to use Sales Management to run your subscription sales
     'data': [
         "views/res_partner_view.xml",
         "views/sale_subscription_view.xml",
+        "views/product_view.xml",
     ],
     'installable': True
 }
