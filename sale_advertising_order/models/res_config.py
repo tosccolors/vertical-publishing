@@ -164,7 +164,7 @@ class ActivityLog(models.TransientModel):
         result = super(ActivityLog, self).action_log()
         stage_logged = self.env.ref("sale_advertising_order.stage_logged")
         for log in self:
-            log.lead_id.write({'stage_id': stage_logged.id})
+            log.lead_id.write({'stage_id': stage_logged.id, 'next_activity_id': log.next_activity_id.id})
         return result
 
 

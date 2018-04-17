@@ -474,7 +474,7 @@ action = model.with_context(ctx).action_your_pipeline()</field>
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('sale_advertising_order.crm_case_form_view_oppor_advertising')}),
                           (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
-            <field name="domain">[('type','=','opportunity'), ('date_action', '!=', False),('advertising', '=', True)]</field>
+            <field name="domain">[('type','=','opportunity'), '|', ('date_action', '!=', False), ('next_activity_id', '!=', False), ('advertising', '=', True)]</field>
             <field name="context">{
                     'default_type': 'opportunity',
                     'default_user_id': uid,
@@ -532,6 +532,21 @@ action = model.with_context(ctx).action_your_pipeline()</field>
                  <xpath expr="//button[@name='%(crm.crm_lead_opportunities)d']" position="attributes">
                     <attribute name="name">%(crm_lead_opportunities_advertising)d</attribute>
                  </xpath>
+            </field>
+        </record>
+
+        <!--Schedule Next Activity Wizard inherited for Advertising-->
+        <record id="crm_activity_log_view_form_schedule_advertising" model="ir.ui.view">
+            <field name="name">Schedule next Activity</field>
+            <field name="model">crm.activity.log</field>
+            <field name="inherit_id" ref="crm.crm_activity_log_view_form_schedule" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='next_activity_id']" position="attributes">
+                    <attribute name="required">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_action']" position="attributes">
+                    <attribute name="required">True</attribute>
+                </xpath>
             </field>
         </record>
     </data>
