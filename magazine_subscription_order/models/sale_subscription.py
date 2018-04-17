@@ -23,7 +23,7 @@
 from odoo import api, fields, exceptions, models, _
 from datetime import datetime
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
-from odoo.exceptions import UserError
+from odoo.exceptions import ValidationError, UserError
 
 
 class SaleOrder(models.Model):
@@ -72,12 +72,46 @@ class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     subscription = fields.Boolean(related='order_id.subscription', string='Subscription', store=True)
+    start_date = fields.Date('Start Date')
+    end_date = fields.Date('End Date')
+    must_have_dates = fields.Boolean(related='product_id.subscription_product', readonly=True)
+
+    @api.multi
+    @api.onchange('product_id')
+    def set_start_date(self):
+        for order_line in self:
+            if order_line.product_id.subscription_product:
+                order_line.start_date = datetime.today()
+
+
+    @api.multi
+    @api.constrains('start_date', 'end_date')
+    def _check_start_end_dates(self):
+        for orderline in self:
+            if orderline.start_date and not orderline.end_date:
+                raise ValidationError(
+                    _("Missing End Date for order line with "
+                      "Description '%s'.")
+                    % (orderline.name))
+            if orderline.end_date and not orderline.start_date:
+                raise ValidationError(
+                    _("Missing Start Date for order line with "
+                      "Description '%s'.")
+                    % (orderline.name))
+            if orderline.end_date and orderline.start_date and \
+                    orderline.start_date > orderline.end_date:
+                raise ValidationError(
+                    _("Start Date should be before or be the same as "
+                      "End Date for order line with Description '%s'.")
+                    % (orderline.name))
 
     @api.multi
     def _prepare_invoice_line(self, qty):
         res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
         if self.product_id.subscription_product:
-            account = self.product_id.subscription_revenue_account
+            res['start_date'] = self.start_date
+            res['end_date'] = self.end_date
+            account = self.product_id.delivery_obligation_account
             fpos = self.order_id.fiscal_position_id or self.order_id.partner_id.property_account_position_id
             if fpos:
                 account = fpos.map_account(account)
