@@ -1352,6 +1352,7 @@
                     <field name="name"/>
                     <field name="parent_id" operator="child_of"/>
                     <field name="medium"/>
+                    <field name="analytic_account_id"/>
                     <group expand="0" string="Group By">
                         <filter string="Weeknumbers" domain="[]" context="{'group_by':'issue_week_number'}"/>
                         <filter string="Title" domain="[]" context="{'group_by':'parent_id'}"/>
