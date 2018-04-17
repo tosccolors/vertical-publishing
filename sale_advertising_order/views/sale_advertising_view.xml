@@ -1426,6 +1426,7 @@
 					<sheet>
 						<group >
                             <field name="adv_issue_id" string="Issue"/>
+                            <field name="issue_date" />
 							<field name="name" string="Page Name"/>
                             <field name="page_id" string="Ad Page"/>
                             <field name="order_line_id" string="Ad Placement" readonly="1"/>
@@ -1443,6 +1444,7 @@
 			<field name="arch" type="xml">
                 <tree name="page_available" string="Page Availablity" create="0" delete="0" readonly="1">
                     <field name="adv_issue_id" string="Issue" />
+                    <field name="issue_date" />
                     <field name="name" string="Name" />
                     <field name="page_id" string="Ad Page" />
                     <field name="order_line_id" string="Ad Placement" />
