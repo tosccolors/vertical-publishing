@@ -282,9 +282,9 @@
                                             </tree>
                                         </field>
 
-                                        <group name="ad_refs" attrs="{'invisible':[('date_type','in',['date','validity'])]}">
-                                            <field name="ad_number" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
-                                            <field name="page_reference" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
+                                        <group name="ad_refs">
+                                            <field name="ad_number"/>
+                                            <field name="page_reference"/>
                                             <field name="url_to_material" />
                                         </group>
                                         <group attrs="{'invisible':[('date_type','not in',['validity','online'])]}">
@@ -1013,9 +1013,9 @@
                                 </tree>
                             </field>
 
-                            <group name="ad_refs" attrs="{'invisible':['|',('multi_line','!=', False),('date_type','in',['date','validity'])]}">
-                                <field name="ad_number" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
-                                <field name="page_reference" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
+                            <group name="ad_refs" attrs="{'invisible':[('multi_line','!=', False)]}">
+                                <field name="ad_number"/>
+                                <field name="page_reference"/>
                                 <field name="url_to_material" />
                             </group>
                             <group attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','not in',['validity','online'])]}">
