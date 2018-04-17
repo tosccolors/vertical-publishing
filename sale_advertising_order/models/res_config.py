@@ -156,6 +156,17 @@ class Company(models.Model):
 
         return res
 
+class ActivityLog(models.TransientModel):
+    _inherit = "crm.activity.log"
+
+    @api.multi
+    def action_log(self):
+        result = super(ActivityLog, self).action_log()
+        stage_logged = self.env.ref("sale_advertising_order.stage_logged")
+        for log in self:
+            log.lead_id.write({'stage_id': stage_logged.id})
+        return result
+
 
 
 

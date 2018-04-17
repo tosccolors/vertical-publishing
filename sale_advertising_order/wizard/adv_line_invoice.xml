@@ -6,7 +6,16 @@
             <field name="model">ad.order.line.make.invoice</field>
             <field name="arch" type="xml">
                 <form string="Create invoices" >
-                    <field name="invoice_date" string="Invoice Date"/>
+                    <group>
+                        <field name="invoice_date" string="Invoice Date"/>
+                        <field name="posting_date" string="Posting Date"/>
+                        <field name="job_queue" string="Via Job Queue"/>
+                        <field name="chunk_size" string="Chunk Size Job Queue"
+                               attrs="{'required':[('job_queue','=',True)],
+                                       'invisible': [('job_queue','!=', True)]}"/>
+                        <field name="execution_datetime"
+                               attrs="{'invisible': [('job_queue','!=', True)]}"/>
+                    </group>
                     <p class="oe_grey">
                         All selected and eligible order lines will be invoiced.
                     </p>
@@ -22,7 +31,16 @@
             <field name="model">ad.order.make.invoice</field>
             <field name="arch" type="xml">
                 <form string="Create invoices" >
-                    <field name="invoice_date" string="Invoice Date"/>
+                    <group>
+                        <field name="invoice_date" string="Invoice Date"/>
+                        <field name="posting_date" string="Posting Date"/>
+                        <field name="job_queue" string="Via Job Queue"/>
+                        <field name="chunk_size" string="Chunk Size Job Queue"
+                               attrs="{'required':[('job_queue','=',True)],
+                                       'invisible': [('job_queue','!=', True)]}"/>
+                        <field name="execution_datetime"
+                               attrs="{'invisible': [('job_queue','!=', True)]}"/>
+                    </group>
                     <p class="oe_grey">
                         All eligible items in these orders will be invoiced.
                     </p>
@@ -42,6 +60,7 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_ad_order_line_make_invoice"/>
             <field name="target">new</field>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
         </record>
         <record id="action_view_ad_order_make_invoice" model="ir.actions.act_window">
             <field name="name">Make Invoices</field>
@@ -51,6 +70,7 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_ad_order_make_invoice"/>
             <field name="target">new</field>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
         </record>
 
         <record model="ir.values" id="ad_order_line_make_invoice">

@@ -352,6 +352,7 @@ class Team(models.Model):
             form_view_id = self.env.ref('sale_advertising_order.crm_case_form_view_oppor_advertising').id
             action_context['default_advertising'] = True
             action_domain.append(('advertising','=', True))
+            action_domain.append(('date_action','=', False))
         else:
             action_domain.append(('advertising','=', False))
 
