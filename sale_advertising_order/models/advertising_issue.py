@@ -96,6 +96,7 @@ class AdvertisingIssueAvailability(models.Model):
     _description="Sale Advertising Issue Availability"
 
     adv_issue_id = fields.Many2one('sale.advertising.issue', string='Advertising Issue Reference', ondelete='cascade', index=True)
+    issue_date = fields.Date(related='adv_issue_id.issue_date', string='Issue Date')
     name = fields.Char('Description', size=64, required=True)
     available_qty = fields.Integer('Available', required=True, default=0)
     page_id = fields.Many2one('sale.advertising.page', required=True, string='Advertising Page')
