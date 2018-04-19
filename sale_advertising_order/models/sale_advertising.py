@@ -279,6 +279,16 @@ class SaleOrder(models.Model):
                         newline.page_qty_check_create()
         return super(SaleOrder, self.with_context(no_checks=True)).action_confirm()
 
+    @api.model
+    def create(self, vals):
+        if vals.get('partner_id', False):
+            partner = self.env['res.partner'].browse(vals.get('partner_id'))
+            if partner.sale_warn == 'block':
+                raise UserError(_(partner.sale_warn_msg))
+
+        result = super(SaleOrder, self).create(vals)
+        return result
+
     @api.multi
     def write(self, vals):
         result = super(SaleOrder, self).write(vals)

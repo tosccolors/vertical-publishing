@@ -25,6 +25,8 @@ from odoo import api, fields, models, _
 from odoo.tools.safe_eval import safe_eval
 from odoo.tools import email_re, email_split
 from datetime import datetime, timedelta, date
+from lxml import etree
+from odoo.osv.orm import setup_modifiers
 
 
 class Lead(models.Model):
@@ -48,6 +50,24 @@ class Lead(models.Model):
     advertising = fields.Boolean('Advertising', default=False)
 
 
+    @api.model
+    def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
+        action_id = self.env.ref("crm.crm_lead_opportunities_tree_view")
+        ctx = self.env.context
+        if ctx['params']['action'] == action_id.id:
+            if groupby and groupby[0] == "stage_id":
+                stage_logged = self.env.ref("sale_advertising_order.stage_logged")
+                states_read = self.env['crm.stage'].search_read([('id', '!=', stage_logged.id)], ['name'])
+                states = [(state['id'], state['name']) for state in states_read]
+                read_group_res = super(Lead, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby)
+                result = []
+                for state_value, state_name in states:
+                    res = filter(lambda x: x['stage_id'] == (state_value, state_name), read_group_res)
+                    res[0]['stage_id'] = [state_value, state_name]
+                    result.append(res[0])
+                return result
+        else:
+            return super(Lead, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby)
 
     @api.onchange('published_customer')
     def onchange_published_customer(self):
@@ -317,6 +337,25 @@ class Lead(models.Model):
                         result['task']['next_7_days'] += 1
         return result
 
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(Lead, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+
+        if view_type == 'form':
+            doc = etree.XML(res['arch'])
+            if self.env.context['params']['action'] == self.env.ref("crm.crm_lead_opportunities_tree_view").id and doc.xpath("//field[@name='stage_id']"):
+                stage = doc.xpath("//field[@name='stage_id']")[0]
+                stage_logged = self.env.ref("sale_advertising_order.stage_logged")
+                stage.set('domain', "['|', ('team_id', '=', team_id), ('team_id', '=', False), ('id', '!=', %d)]" %(stage_logged.id))
+
+            elif self.env.context['params']['action'] == self.env.ref("sale_advertising_order.crm_lead_action_activities_advertising").id and doc.xpath("//field[@name='next_activity_id']"):
+                next_activity = doc.xpath("//field[@name='next_activity_id']")[0]
+                next_activity.set('required', '1')
+                setup_modifiers(next_activity, res['fields']['next_activity_id'])
+
+            res['arch'] = etree.tostring(doc)
+        return res
+
 
 
 
@@ -352,7 +391,7 @@ class Team(models.Model):
             form_view_id = self.env.ref('sale_advertising_order.crm_case_form_view_oppor_advertising').id
             action_context['default_advertising'] = True
             action_domain.append(('advertising','=', True))
-            action_domain.append(('date_action','=', False))
+            action_domain.append(('next_activity_id','=', False))
         else:
             action_domain.append(('advertising','=', False))
 

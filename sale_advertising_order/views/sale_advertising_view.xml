@@ -282,9 +282,9 @@
                                             </tree>
                                         </field>
 
-                                        <group name="ad_refs" attrs="{'invisible':[('date_type','in',['date','validity'])]}">
-                                            <field name="ad_number" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
-                                            <field name="page_reference" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
+                                        <group name="ad_refs">
+                                            <field name="ad_number"/>
+                                            <field name="page_reference"/>
                                             <field name="url_to_material" />
                                         </group>
                                         <group attrs="{'invisible':[('date_type','not in',['validity','online'])]}">
@@ -1013,9 +1013,9 @@
                                 </tree>
                             </field>
 
-                            <group name="ad_refs" attrs="{'invisible':['|',('multi_line','!=', False),('date_type','in',['date','validity'])]}">
-                                <field name="ad_number" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
-                                <field name="page_reference" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
+                            <group name="ad_refs" attrs="{'invisible':[('multi_line','!=', False)]}">
+                                <field name="ad_number"/>
+                                <field name="page_reference"/>
                                 <field name="url_to_material" />
                             </group>
                             <group attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','not in',['validity','online'])]}">
@@ -1355,6 +1355,7 @@
                     <field name="name"/>
                     <field name="parent_id" operator="child_of"/>
                     <field name="medium"/>
+                    <field name="analytic_account_id"/>
                     <group expand="0" string="Group By">
                         <filter string="Weeknumbers" domain="[]" context="{'group_by':'issue_week_number'}"/>
                         <filter string="Title" domain="[]" context="{'group_by':'parent_id'}"/>
@@ -1425,6 +1426,7 @@
 					<sheet>
 						<group >
                             <field name="adv_issue_id" string="Issue"/>
+                            <field name="issue_date" />
 							<field name="name" string="Page Name"/>
                             <field name="page_id" string="Ad Page"/>
                             <field name="order_line_id" string="Ad Placement" readonly="1"/>
@@ -1442,6 +1444,7 @@
 			<field name="arch" type="xml">
                 <tree name="page_available" string="Page Availablity" create="0" delete="0" readonly="1">
                     <field name="adv_issue_id" string="Issue" />
+                    <field name="issue_date" />
                     <field name="name" string="Name" />
                     <field name="page_id" string="Ad Page" />
                     <field name="order_line_id" string="Ad Placement" />
