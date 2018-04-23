@@ -127,7 +127,7 @@
             <field name="arch" type="xml">
                 <form string="Opportunities" class="o_opportunity_form">
                     <header>
-                        <button string="New Quotation" name="%(sale_advertising_order.sale_action_quotations_new_adv)d" type="action" class="oe_highlight"
+                        <button string="New Quotation" name="%(sale_advertising_order.sale_action_quotations_new_adv)d" type="action" class="oe_highlight" attrs="{'invisible': [('active', '=', False)]}"
                         context="{'search_default_partner_id': partner_id,
                                       'default_partner_id': partner_id,
                                       'default_team_id': team_id,
@@ -148,8 +148,7 @@
                             attrs="{'invisible': [('active', '=', False)]}"/>
                         <field name="stage_id" widget="statusbar" clickable="True"
                             options="{'fold_field': 'fold'}"
-                            domain="['|', ('team_id', '=', team_id), ('team_id', '=', False)]"
-                            attrs="{'invisible': [('active', '=', False)]}"/>
+                            domain="['|', ('team_id', '=', team_id), ('team_id', '=', False)]" />
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">

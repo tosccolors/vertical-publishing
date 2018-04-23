@@ -356,6 +356,12 @@ class Lead(models.Model):
             res['arch'] = etree.tostring(doc)
         return res
 
+    @api.multi
+    def action_set_lost(self):
+        for lead in self:
+            stage_lost = lead.env.ref("sale_advertising_order.stage_lost")
+            lead.write({'stage_id': stage_lost.id})
+        return super(Lead, self).action_set_lost()
 
 
 
