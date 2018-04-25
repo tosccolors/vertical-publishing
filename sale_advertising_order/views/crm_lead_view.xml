@@ -473,12 +473,13 @@ action = model.with_context(ctx).action_your_pipeline()</field>
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('sale_advertising_order.crm_case_form_view_oppor_advertising')}),
                           (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
-            <field name="domain">[('type','=','opportunity'), '|', ('date_action', '!=', False), ('next_activity_id', '!=', False), ('advertising', '=', True)]</field>
+            <field name="domain">[('type','=','opportunity'), ('advertising', '=', True), ('is_activity', '=', True)]</field>
             <field name="context">{
                     'default_type': 'opportunity',
                     'default_user_id': uid,
                     'search_default_assigned_to_me': 1,
                     'default_advertising': True,
+                    'default_is_activity': True,
                 }
             </field>
             <field name="help" type="html">
