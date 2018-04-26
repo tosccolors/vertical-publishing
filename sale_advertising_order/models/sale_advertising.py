@@ -141,7 +141,12 @@ class SaleOrder(models.Model):
     advertising = fields.Boolean('Advertising', default=False)
     max_discount = fields.Integer(compute='_amount_all', track_visibility='always', store=True, string="Maximum Discount")
 
-
+    @api.model
+    def default_get(self, fields):
+        result = super(SaleOrder, self).default_get(fields)
+        lead = self.env[self._context.get('active_model')].browse(self._context.get('active_ids'))
+        result.update({'campaign_id': lead.campaign_id.id, 'source_id': lead.source_id.id, 'medium_id': lead.medium_id.id, 'tag_ids': [[6, False, lead.tag_ids.ids]]})
+        return result
 
     # overridden:
     @api.multi

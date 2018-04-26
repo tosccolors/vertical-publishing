@@ -364,6 +364,12 @@ class Lead(models.Model):
             lead.write({'stage_id': stage_lost.id})
         return super(Lead, self).action_set_lost()
 
+    @api.multi
+    def redirect_opportunity_view(self):
+        adv_opportunity_view = super(Lead, self).redirect_opportunity_view()
+        form_view = self.env.ref('sale_advertising_order.crm_case_form_view_oppor_advertising')
+        adv_opportunity_view['views'][0] = (form_view.id, 'form')
+        return adv_opportunity_view
 
 
 class Team(models.Model):
