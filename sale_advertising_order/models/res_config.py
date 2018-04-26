@@ -28,11 +28,18 @@ class Partner(models.Model):
     agency_discount = fields.Float('Agency Discount (%)', digits=(16, 2), default=0.0)
     is_ad_agency = fields.Boolean('Agency', default=False)
     adv_sale_order_count = fields.Integer(compute='_compute_adv_sale_order_count', string='# of Sales Order')
+    next_activities_count = fields.Integer(compute='_compute_next_activities_count', string='Next Activities')
 
     def _compute_adv_sale_order_count(self):
         for partner in self:
             partner.adv_sale_order_count = self.env['sale.order'].search_count(['|', ('published_customer', 'child_of', partner.ids), ('advertising_agency', 'child_of', partner.ids),
                  ('advertising', '=', True), ('state', 'in', ('sale', 'done'))])
+
+    @api.multi
+    def _compute_next_activities_count(self):
+        for partner in self:
+            operator = 'child_of' if partner.is_company else '='  # the opportunity count should counts the opportunities of this company and all its contacts
+            partner.next_activities_count = self.env['crm.lead'].search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('advertising', '=', True), ('is_activity', '=', True)])
 
     def _compute_sale_order_count(self):
         sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','not in',('draft','sent','cancel')), ('advertising','=',False)],
@@ -164,7 +171,7 @@ class ActivityLog(models.TransientModel):
         result = super(ActivityLog, self).action_log()
         stage_logged = self.env.ref("sale_advertising_order.stage_logged")
         for log in self:
-            log.lead_id.write({'stage_id': stage_logged.id, 'next_activity_id': log.next_activity_id.id})
+            log.lead_id.write({'stage_id': stage_logged.id, 'next_activity_id': log.next_activity_id.id, 'is_activity': True})
         return result
 
 

@@ -48,6 +48,7 @@ class Lead(models.Model):
     partner_acc_mgr = fields.Many2one(related='partner_id.user_id', relation='res.users',
                                       string='Account Manager', store=True)
     advertising = fields.Boolean('Advertising', default=False)
+    is_activity = fields.Boolean(string='Activity', default=False)
 
 
     @api.model
@@ -356,7 +357,19 @@ class Lead(models.Model):
             res['arch'] = etree.tostring(doc)
         return res
 
+    @api.multi
+    def action_set_lost(self):
+        for lead in self:
+            stage_lost = lead.env.ref("sale_advertising_order.stage_lost")
+            lead.write({'stage_id': stage_lost.id})
+        return super(Lead, self).action_set_lost()
 
+    @api.multi
+    def redirect_opportunity_view(self):
+        adv_opportunity_view = super(Lead, self).redirect_opportunity_view()
+        form_view = self.env.ref('sale_advertising_order.crm_case_form_view_oppor_advertising')
+        adv_opportunity_view['views'][0] = (form_view.id, 'form')
+        return adv_opportunity_view
 
 
 class Team(models.Model):
@@ -391,7 +404,7 @@ class Team(models.Model):
             form_view_id = self.env.ref('sale_advertising_order.crm_case_form_view_oppor_advertising').id
             action_context['default_advertising'] = True
             action_domain.append(('advertising','=', True))
-            action_domain.append(('next_activity_id','=', False))
+            action_domain.append(('is_activity','=', False))
         else:
             action_domain.append(('advertising','=', False))
 

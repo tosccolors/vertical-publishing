@@ -127,7 +127,7 @@
             <field name="arch" type="xml">
                 <form string="Opportunities" class="o_opportunity_form">
                     <header>
-                        <button string="New Quotation" name="%(sale_advertising_order.sale_action_quotations_new_adv)d" type="action" class="oe_highlight"
+                        <button string="New Quotation" name="%(sale_advertising_order.sale_action_quotations_new_adv)d" type="action" class="oe_highlight" attrs="{'invisible': [('active', '=', False)]}"
                         context="{'search_default_partner_id': partner_id,
                                       'default_partner_id': partner_id,
                                       'default_team_id': team_id,
@@ -148,8 +148,7 @@
                             attrs="{'invisible': [('active', '=', False)]}"/>
                         <field name="stage_id" widget="statusbar" clickable="True"
                             options="{'fold_field': 'fold'}"
-                            domain="['|', ('team_id', '=', team_id), ('team_id', '=', False)]"
-                            attrs="{'invisible': [('active', '=', False)]}"/>
+                            domain="['|', ('team_id', '=', team_id), ('team_id', '=', False)]" />
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
@@ -474,12 +473,13 @@ action = model.with_context(ctx).action_your_pipeline()</field>
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('sale_advertising_order.crm_case_form_view_oppor_advertising')}),
                           (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
-            <field name="domain">[('type','=','opportunity'), '|', ('date_action', '!=', False), ('next_activity_id', '!=', False), ('advertising', '=', True)]</field>
+            <field name="domain">[('type','=','opportunity'), ('advertising', '=', True), ('is_activity', '=', True)]</field>
             <field name="context">{
                     'default_type': 'opportunity',
                     'default_user_id': uid,
                     'search_default_assigned_to_me': 1,
                     'default_advertising': True,
+                    'default_is_activity': True,
                 }
             </field>
             <field name="help" type="html">
