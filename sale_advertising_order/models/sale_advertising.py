@@ -46,7 +46,7 @@ class SaleOrder(models.Model):
                 cdiscount.append(line.computed_discount)
                 if order.company_id.tax_calculation_rounding_method == 'round_globally':
                     if not line.multi_line:
-                        price = line.acual_unit_price * (1 - (line.discount or 0.0) / 100.0)
+                        price = line.actual_unit_price * (1 - (line.discount or 0.0) / 100.0)
                         taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty,
                                                         product=line.product_id, partner=order.partner_id)
                         amount_tax += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
