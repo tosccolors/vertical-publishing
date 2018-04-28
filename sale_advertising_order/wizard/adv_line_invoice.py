@@ -242,6 +242,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'invoice_line_tax_ids': [(6, 0, line.tax_id.ids or [])],
             'account_analytic_id': line.adv_issue.analytic_account_id and line.adv_issue.analytic_account_id.id or False,
             'analytic_tag_ids': [(6, 0, line.analytic_tag_ids.ids or [])],
+            'so_line_id': line.id,
         }
         return res
 

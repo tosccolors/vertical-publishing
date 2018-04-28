@@ -39,3 +39,4 @@ class InvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
 
     date_publish = fields.Date('Publishing Date')
+    so_line_id = fields.Many2one('sale.order.line', 'link between Sale Order Line and Invoice Line')

@@ -897,6 +897,7 @@ class SaleOrderLine(models.Model):
         res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
         if self.advertising:
             res['account_analytic_id'] = self.adv_issue.analytic_account_id.id
+            res['so_line_id'] = self.id
         return res
 
     @api.model
