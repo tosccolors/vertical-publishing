@@ -144,8 +144,9 @@ class SaleOrder(models.Model):
     @api.model
     def default_get(self, fields):
         result = super(SaleOrder, self).default_get(fields)
-        lead = self.env[self._context.get('active_model')].browse(self._context.get('active_ids'))
-        result.update({'campaign_id': lead.campaign_id.id, 'source_id': lead.source_id.id, 'medium_id': lead.medium_id.id, 'tag_ids': [[6, False, lead.tag_ids.ids]]})
+        if self._context.get('active_model') and self._context.get('active_ids'):
+            lead = self.env[self._context.get('active_model')].browse(self._context.get('active_ids'))
+            result.update({'campaign_id': lead.campaign_id.id, 'source_id': lead.source_id.id, 'medium_id': lead.medium_id.id, 'tag_ids': [[6, False, lead.tag_ids.ids]]})
         return result
 
     # overridden:
