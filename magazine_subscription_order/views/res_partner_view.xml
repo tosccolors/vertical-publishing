@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="partner_view_buttons_inherit" model="ir.ui.view">
+        <field name="inherit_id" ref="account.partner_view_buttons"/>
+        <field name="model">res.partner</field>
+        <field type="xml" name="arch">
+            <xpath expr="//group[@name='banks']" position="after">
+                <group string="Subscription" name="subscription">
+                    <field name="is_subscription_customer"/>
+                    <field name="credit_limit" attrs="{'invisible': [('is_subscription_customer', '=', False)]}"/>
+                    <field name="property_subscription_subscription" attrs="{'invisible': [('is_subscription_customer', '=', False)]}"/>
+                </group>
+                <group string="Subscription Validity" attrs="{'invisible': [('is_subscription_customer', '=', False)]}">
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

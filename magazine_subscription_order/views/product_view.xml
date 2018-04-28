@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+<record id="product_template_form_view_subscription" model="ir.ui.view">
+    <field name="name">product.template.form.subscription</field>
+    <field name="model">product.template</field>
+    <field name="inherit_id" ref="account.product_template_form_view" />
+    <field name="arch" type="xml">
+        <group name="properties" position="inside">
+            <group name="enable_subscription">
+                <field name="subscription_product"/>
+                <field name="subscription_length" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}"/>
+                <field name="delivery_obligation_account" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}"/>
+                <field name="subscription_revenue_account" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}"/>
+            </group>
+        </group>
+    </field>
+</record>
+
+
+</odoo>

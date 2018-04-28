@@ -282,9 +282,9 @@
                                             </tree>
                                         </field>
 
-                                        <group name="ad_refs" attrs="{'invisible':[('date_type','in',['date','validity'])]}">
-                                            <field name="ad_number" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
-                                            <field name="page_reference" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
+                                        <group name="ad_refs">
+                                            <field name="ad_number"/>
+                                            <field name="page_reference"/>
                                             <field name="url_to_material" />
                                         </group>
                                         <group attrs="{'invisible':[('date_type','!=','validity')]}">
@@ -315,7 +315,7 @@
                                     <field name="state" invisible="1"/>
                                 </form>
 
-                                <tree string="Sales Order Lines"  decoration-info="invoice_status=='to invoice'">
+                                <tree string="Sales Order Lines"  decoration-info="invoice_status=='to invoice'" default_order='issue_date'>
                                     <field name="sequence" widget="handle"/>
                                     <field name="id"/>
                                     <field name="title" />
@@ -847,6 +847,10 @@
                     <form string="Sales Order Lines">
                         <group>
                             <group>
+                                <field name="order_partner_id" readonly="0" required="True"
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}" />
+                                <field name="order_advertiser_id" required="True"
+                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}" />
                                 <field name="medium" required="True"
                                        domain="[('parent_id','=', %(sale_advertising_order.advertising_category)d)]"
                                        options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
@@ -882,7 +886,6 @@
                                         <field name="name" string="Name" readonly="1"/>
                                     </tree>
                                 </field>
-                                <field name="order_partner_id" invisible="1"/>
                                 <field name="order_id" invisible="1"/>
                                 <field name="order_pricelist_id" invisible="1"/>
                                 <field name="order_company_id" invisible="1"/>
@@ -1010,9 +1013,9 @@
                                 </tree>
                             </field>
 
-                            <group name="ad_refs" attrs="{'invisible':['|',('multi_line','!=', False),('date_type','in',['date','validity'])]}">
-                                <field name="ad_number" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
-                                <field name="page_reference" attrs="{'invisible':[('date_type','in',['date','validity'])]}"/>
+                            <group name="ad_refs" attrs="{'invisible':[('multi_line','!=', False)]}">
+                                <field name="ad_number"/>
+                                <field name="page_reference"/>
                                 <field name="url_to_material" />
                             </group>
                             <group attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')]}">
@@ -1352,6 +1355,7 @@
                     <field name="name"/>
                     <field name="parent_id" operator="child_of"/>
                     <field name="medium"/>
+                    <field name="analytic_account_id"/>
                     <group expand="0" string="Group By">
                         <filter string="Weeknumbers" domain="[]" context="{'group_by':'issue_week_number'}"/>
                         <filter string="Title" domain="[]" context="{'group_by':'parent_id'}"/>
@@ -1422,6 +1426,7 @@
 					<sheet>
 						<group >
                             <field name="adv_issue_id" string="Issue"/>
+                            <field name="issue_date" />
 							<field name="name" string="Page Name"/>
                             <field name="page_id" string="Ad Page"/>
                             <field name="order_line_id" string="Ad Placement" readonly="1"/>
@@ -1439,6 +1444,7 @@
 			<field name="arch" type="xml">
                 <tree name="page_available" string="Page Availablity" create="0" delete="0" readonly="1">
                     <field name="adv_issue_id" string="Issue" />
+                    <field name="issue_date" />
                     <field name="name" string="Name" />
                     <field name="page_id" string="Ad Page" />
                     <field name="order_line_id" string="Ad Placement" />

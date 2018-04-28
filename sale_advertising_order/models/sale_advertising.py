@@ -46,7 +46,7 @@ class SaleOrder(models.Model):
                 cdiscount.append(line.computed_discount)
                 if order.company_id.tax_calculation_rounding_method == 'round_globally':
                     if not line.multi_line:
-                        price = line.acual_unit_price * (1 - (line.discount or 0.0) / 100.0)
+                        price = line.actual_unit_price * (1 - (line.discount or 0.0) / 100.0)
                         taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty,
                                                         product=line.product_id, partner=order.partner_id)
                         amount_tax += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
@@ -141,7 +141,13 @@ class SaleOrder(models.Model):
     advertising = fields.Boolean('Advertising', default=False)
     max_discount = fields.Integer(compute='_amount_all', track_visibility='always', store=True, string="Maximum Discount")
 
-
+    @api.model
+    def default_get(self, fields):
+        result = super(SaleOrder, self).default_get(fields)
+        if self._context.get('active_model') and self._context.get('active_ids'):
+            lead = self.env[self._context.get('active_model')].browse(self._context.get('active_ids'))
+            result.update({'campaign_id': lead.campaign_id.id, 'source_id': lead.source_id.id, 'medium_id': lead.medium_id.id, 'tag_ids': [[6, False, lead.tag_ids.ids]]})
+        return result
 
     # overridden:
     @api.multi
@@ -278,6 +284,16 @@ class SaleOrder(models.Model):
                     if newline.deadline_check():
                         newline.page_qty_check_create()
         return super(SaleOrder, self.with_context(no_checks=True)).action_confirm()
+
+    @api.model
+    def create(self, vals):
+        if vals.get('partner_id', False):
+            partner = self.env['res.partner'].browse(vals.get('partner_id'))
+            if partner.sale_warn == 'block':
+                raise UserError(_(partner.sale_warn_msg))
+
+        result = super(SaleOrder, self).create(vals)
+        return result
 
     @api.multi
     def write(self, vals):
@@ -897,6 +913,7 @@ class SaleOrderLine(models.Model):
         res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
         if self.advertising:
             res['account_analytic_id'] = self.adv_issue.analytic_account_id.id
+            res['so_line_id'] = self.id
         return res
 
     @api.model

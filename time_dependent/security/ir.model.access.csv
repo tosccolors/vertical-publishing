@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_time_dependent_model_user,time.dependent.model.user,model_time_dependent_model,base.group_user,1,1,1,0
+access_time_dependent_record_user,time.dependent.record.user,model_time_dependent_record,base.group_user,1,1,1,0
+access_time_validity_period_user,time.validity.period.user,model_time_validity_period,base.group_user,1,1,1,0
+access_time_tracking_values_user,time.tracking.values.user,model_time_tracking_values,base.group_user,1,1,1,0
+
+access_time_dependent_model_manager,time.dependent.model.manager,model_time_dependent_model,base.group_erp_manager,1,1,1,1
+access_time_dependent_record_manager,time.dependent.record.manager,model_time_dependent_record,base.group_erp_manager,1,1,1,1
+access_time_validity_period_manager,time.validity.period.manager,model_time_validity_period,base.group_erp_manager,1,1,1,1
+access_time_tracking_values_manager,time.tracking.values.manager,model_time_tracking_values,base.group_erp_manager,1,1,1,1
