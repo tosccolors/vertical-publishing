@@ -255,7 +255,7 @@ class SaleOrder(models.Model):
             if not olines == []:
                 self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
         self._cr.commit()
-        self.write({'state': 'sent'})
+        # self.write({'state': 'sent'}) #Task: SMA-1 Action button for state [sent] in sale.order
         return super(SaleOrder, self).action_quotation_send()
 
 
