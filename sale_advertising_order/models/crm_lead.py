@@ -359,10 +359,11 @@ class Lead(models.Model):
 
     @api.multi
     def action_set_lost(self):
-        for lead in self:
-            stage_lost = lead.env.ref("sale_advertising_order.stage_lost")
-            lead.write({'stage_id': stage_lost.id})
-        return super(Lead, self).action_set_lost()
+        lead = super(Lead, self).action_set_lost()
+        for rec in self:
+            stage_lost = rec.env.ref("sale_advertising_order.stage_lost")
+            rec.write({'stage_id': stage_lost.id, 'active': True})
+        return lead
 
     @api.multi
     def redirect_opportunity_view(self):
