@@ -8,7 +8,7 @@
                 <group string="Subscription" name="subscription">
                     <field name="is_subscription_customer"/>
                     <field name="credit_limit" attrs="{'invisible': [('is_subscription_customer', '=', False)]}"/>
-                    <field name="subscription_payment_id" attrs="{'invisible': [('is_subscription_customer', '=', False)]}"/>
+                    <field name="property_subscription_subscription" attrs="{'invisible': [('is_subscription_customer', '=', False)]}"/>
                 </group>
                 <group string="Subscription Validity" attrs="{'invisible': [('is_subscription_customer', '=', False)]}">
                     <field name="date_start"/>

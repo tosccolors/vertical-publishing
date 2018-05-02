@@ -10,8 +10,8 @@
         <menuitem id="menu_partner_form1" parent="menu_advsales"
                   action="action_partner_form_crm" sequence="2"/>
 
-        <!--<menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_advsales"-->
-                  <!--action="crm.crm_lead_action_activities" sequence="5" />-->
+        <menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_advsales"
+                  action="crm.crm_lead_action_activities" sequence="5" />
 
 		<menuitem id="menu_product_template_action2" parent="menu_advsales"
                   action="product.product_template_action" sequence="13" />
@@ -287,11 +287,11 @@
                                             <field name="page_reference"/>
                                             <field name="url_to_material" />
                                         </group>
-                                        <group attrs="{'invisible':[('date_type','not in',['validity','online'])]}">
+                                        <group attrs="{'invisible':[('date_type','!=','validity')]}">
                                             <field name="from_date"
-                                                   attrs="{'invisible':[('date_type','not in',['validity','online'])],'required':[('date_type','=','online')]}"/>
+                                                   attrs="{'invisible':[('date_type','!=','validity')]}"/>
                                             <field name="to_date"
-                                                   attrs="{'invisible':[('date_type','not in',['validity','online'])],'required':[('date_type','=','online')]}"/>
+                                                   attrs="{'invisible':[('date_type','!=','validity')]}"/>
                                         </group>
                                     </group>
                                     <group>
@@ -1018,11 +1018,11 @@
                                 <field name="page_reference"/>
                                 <field name="url_to_material" />
                             </group>
-                            <group attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','not in',['validity','online'])]}">
+                            <group attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')]}">
                                 <field name="from_date"
-                                       attrs="{'invisible':['|',('multi_line','!=', False),('date_type','not in',['validity','online'])],'required':[('date_type','=','online')]}"/>
+                                       attrs="{'invisible':['|',('multi_line','!=', False),('date_type','!=','validity')]}"/>
                                 <field name="to_date"
-                                       attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','not in',['validity','online'])],'required':[('date_type','=','online')]}"/>
+                                       attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')]}"/>
                             </group>
                         </group>
                         <group>

@@ -31,9 +31,17 @@ class Partner(models.Model):
     next_activities_count = fields.Integer(compute='_compute_next_activities_count', string='Next Activities')
 
     def _compute_adv_sale_order_count(self):
+        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('advertising','=',True),('state','in',('sale','done'))],
+                                                      fields=['partner_id'], groupby=['partner_id'])
+        # read to keep the child/parent relation while aggregating the read_group result in the loop
+        partner_child_ids = self.read(['child_ids'])
+        mapped_data = dict([(m['partner_id'][0], m['partner_id_count']) for m in sale_data])
         for partner in self:
-            partner.adv_sale_order_count = self.env['sale.order'].search_count(['|', ('published_customer', 'child_of', partner.ids), ('advertising_agency', 'child_of', partner.ids),
-                 ('advertising', '=', True), ('state', 'in', ('sale', 'done'))])
+            # let's obtain the partner id and all its child ids from the read up there
+            partner_ids = filter(lambda r: r['id'] == partner.id, partner_child_ids)[0]
+            partner_ids = [partner_ids.get('id')] + partner_ids.get('child_ids')
+            # then we can sum for all the partner's child
+            partner.adv_sale_order_count = sum(mapped_data.get(child, 0) for child in partner_ids)
 
     @api.multi
     def _compute_next_activities_count(self):
