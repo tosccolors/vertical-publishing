@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="crm.stage" id="stage_logged">
+        <field name="name">Logged</field>
+        <field name="probability">20</field>
+        <field name="on_change">1</field>
+        <field name="sequence">2</field>
+    </record>
+    <record model="crm.stage" id="stage_lost">
+        <field name="name">Lost</field>
+        <field name="probability">0</field>
+        <field name="on_change">1</field>
+        <field name="sequence">20</field>
+    </record>
+</odoo>

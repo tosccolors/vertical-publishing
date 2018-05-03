@@ -1,0 +1,234 @@
+<?xml version="1.0"?>
+<odoo>
+    <!--Model: Tree View-->
+    <record id="view_time_dependent_model_tree" model="ir.ui.view">
+        <field name="name">time.dependent.model.tree</field>
+        <field name="model">time.dependent.model</field>
+        <field name="arch" type="xml">
+            <tree string="Time Dependent">
+                <field name="model_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!--Model: Form View-->
+    <record id="view_time_dependent_model_form" model="ir.ui.view">
+        <field name="name">time.dependent.model.form</field>
+        <field name="model">time.dependent.model</field>
+        <field name="arch" type="xml">
+            <form string="Time Dependent">
+                <sheet>
+                    <group>
+                        <field name="model_id" options='{"no_open": True, "no_create": True}'/>
+                        <field name="field_ids" widget="many2many_tags" options='{"no_open": True, "no_create": True}' domain="[('model_id', '=', model_id), ('ttype','in',['boolean', 'char', 'text', 'integer', 'float', 'date', 'datetime', 'selection'])]" />
+                    </group>
+                    <group>
+                        <group>
+                            <field name="field_id" options='{"no_open": True, "no_create": True}' domain="[('model_id', '=', model_id), ('ttype','in',['boolean'])]" />
+                        </group>
+                        <group>
+                            <field name="value" nolabel="1" attrs="{'invisible': [('field_id', '=', False)]}"/>
+                        </group>
+                    </group>
+                    <div name="records">
+                        <field name="record_ids" readonly="True">
+                            <tree>
+                                <field name="name" class="oe_inline"/>
+                                <button name="action_view_reference_record" string="⇒View Reference" type="object"
+                                        class="oe_link" />
+                                <field name="rec_id" invisible="1"/>
+                            </tree>
+                            <form>
+                                <group>
+                                    <label for="name"/>
+                                    <div>
+                                        <field name="name" class="oe_inline"/>
+                                        <button name="action_view_reference_record" string="⇒View Reference"
+                                                type="object" class="oe_link" />
+                                    </div>
+                                    <field name="rec_id" invisible="1"/>
+                                    <field name="model_id" invisible="1"/>
+                                </group>
+                                <label string="Validity Periods"/>
+                                <div name=" validity_periods">
+                                    <field name="validity_period_ids">
+                                        <tree>
+                                            <field name="validity_from"/>
+                                            <field name="validity_to"/>
+                                        </tree>
+                                        <form>
+                                            <group>
+                                                <group>
+                                                    <field name="validity_from"/>
+                                                </group>
+                                                <group>
+                                                    <field name="validity_to"/>
+                                                </group>
+                                            </group>
+                                            <label for="tracking_ids"/>
+                                            <div>
+                                                <field name="tracking_ids">
+                                                    <tree default_order='field_name'>
+                                                        <field name="field_name"/>
+                                                        <field name="old_value"/>
+                                                        <field name="new_value"/>
+                                                    </tree>
+                                                    <form>
+                                                        <group>
+                                                            <group>
+                                                                <field name="field_name"/>
+                                                            </group>
+                                                            <group>
+                                                                <field name="old_value"/>
+                                                                <field name="new_value"/>
+                                                            </group>
+                                                        </group>
+                                                    </form>
+                                                </field>
+                                            </div>
+                                            <p>Note: NA is displayed when tracking field has no value.</p>
+                                        </form>
+                                    </field>
+                                </div>
+                            </form>
+                        </field>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--Model: Search View-->
+    <record id="view_time_dependent_model_search" model="ir.ui.view">
+        <field name="model">time.dependent.model</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="model_id"/>
+                <filter name="model_id" string="Model"
+                        context="{'group_by': 'model_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!--Record: Tree View-->
+    <record id="view_time_dependent_record_tree" model="ir.ui.view">
+        <field name="name">time.dependent.record.tree</field>
+        <field name="model">time.dependent.record</field>
+        <field name="arch" type="xml">
+            <tree string="Time Dependent Records" create="false">
+                <field name="name" class="oe_inline"/>
+                <field name="rec_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!--Record: Form View-->
+    <record id="view_time_dependent_record_form" model="ir.ui.view">
+        <field name="name">time.dependent.record.form</field>
+        <field name="model">time.dependent.record</field>
+        <field name="arch" type="xml">
+            <form string="Time Dependent Records" create="false" edit="false">
+                <sheet>
+                    <group>
+                        <label for="name"/>
+                        <div>
+                            <field name="name" class="oe_inline"/>
+                            <button name="action_view_reference_record" string="⇒View Reference" type="object"
+                                    class="oe_link" />
+                        </div>
+                        <field name="rec_id" invisible="1"/>
+                        <field name="model_id" invisible="1"/>
+                    </group>
+                    <label string="Validity Periods"/>
+                    <div name=" validity_periods">
+                        <field name="validity_period_ids" readonly="True">
+                            <tree>
+                                <field name="validity_from"/>
+                                <field name="validity_to"/>
+                            </tree>
+                            <form>
+                                <group>
+                                    <group>
+                                        <field name="validity_from"/>
+                                    </group>
+                                    <group>
+                                        <field name="validity_to"/>
+                                    </group>
+                                </group>
+                                <label for="tracking_ids"/>
+                                <div>
+                                    <field name="tracking_ids">
+                                        <tree default_order='field_name'>
+                                            <field name="field_name"/>
+                                            <field name="old_value"/>
+                                            <field name="new_value"/>
+                                        </tree>
+                                        <form>
+                                            <group>
+                                                <group>
+                                                    <field name="field_name"/>
+                                                </group>
+                                                <group>
+                                                    <field name="old_value"/>
+                                                    <field name="new_value"/>
+                                                </group>
+                                            </group>
+                                        </form>
+                                    </field>
+                                </div>
+                                <p>Note: NA is displayed when tracking field has no value.</p>
+                            </form>
+                        </field>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--Record: Search View-->
+    <record id="view_time_dependent_record_search" model="ir.ui.view">
+        <field name="model">time.dependent.record</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter name="model_id" string="Time Dependent"
+                        context="{'group_by': 'model_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!--Record: Action-->
+    <record id="action_time_dependent_record" model="ir.actions.act_window">
+        <field name="name">Time Dependent Record</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">time.dependent.record</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Create time depedent record model and fields.
+            </p>
+        </field>
+    </record>
+
+    <!--Model: Action-->
+    <record id="action_time_dependent_model" model="ir.actions.act_window">
+        <field name="name">Time Dependent</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">time.dependent.model</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Create time depedent model and fields.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="time_dependent_menu" name="Time Dependent" parent="base.menu_custom" />
+    <menuitem id="time_dependent" name="Model" parent="time_dependent_menu" action="action_time_dependent_model" />
+    <menuitem id="time_dependent_record" name="Record" parent="time_dependent_menu" action="action_time_dependent_record" />
+
+</odoo>
