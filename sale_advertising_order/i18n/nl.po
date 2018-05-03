@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-04-19 09:21+0000\n"
-"PO-Revision-Date: 2018-04-19 11:53+0200\n"
+"PO-Revision-Date: 2018-05-03 12:01+0200\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
 "Language: nl\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.0.7\n"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_partner_adv_sale_order_count
@@ -131,7 +131,7 @@ msgstr "Ad"
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_res_partner_filter_crm
 msgid "Ad Agencies"
-msgstr "Mediabureau’s"
+msgstr "Mediabureaus"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_res_partner_filter_crm
@@ -388,7 +388,7 @@ msgstr "Bureau commissie (%)"
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_partner_agency_discount
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_users_agency_discount
 msgid "Agency Discount (%)"
-msgstr "Bureau korting (%)"
+msgstr "Bureau commissie (%)"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_agency_is_publish
@@ -540,7 +540,7 @@ msgstr "Plaats"
 #. module: sale_advertising_order
 #: model:ir.actions.act_window,help:sale_advertising_order.action_partner_form_crm
 msgid "Click to add a contact in your address book."
-msgstr "Klik om een contact toe te voegen in uw adresboek."
+msgstr "Klik om een contact toe te voegen aan uw adresboek."
 
 #. module: sale_advertising_order
 #. openerp-web
@@ -583,7 +583,7 @@ msgstr "Code"
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_color_surcharge
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_color_surcharge_amount
 msgid "Color Surcharge"
-msgstr "Kleurtoeslag"
+msgstr "Toeslag"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_comb_list_price
@@ -951,7 +951,7 @@ msgstr "Even weeknummers"
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "External Ref."
-msgstr "External Ref."
+msgstr "Externe Ref."
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_ad_number
@@ -1398,13 +1398,13 @@ msgstr "Berichten"
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_mig_remark
 msgid "Migration Remark"
-msgstr "Opmerking Zeno migratie"
+msgstr "Opmerking migratie"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Migration Remarks"
-msgstr "Opmerkingen Zeno migratie"
+msgstr "Opmerkingen migratie"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.crm_case_form_view_oppor_advertising
@@ -1503,7 +1503,7 @@ msgstr "Nieuwsbrief"
 #. module: sale_advertising_order
 #: model:product.category,name:sale_advertising_order.newspaper_advertising_category
 msgid "Newspapers/Specials"
-msgstr "Newspapers/Specials"
+msgstr "LNM Kranten/Specials"
 
 #. module: sale_advertising_order
 #. openerp-web
@@ -1626,7 +1626,7 @@ msgstr ""
 #: selection:product.category,date_type:0
 #: model:product.category,name:sale_advertising_order.online_advertising_category
 msgid "Online"
-msgstr "Online"
+msgstr "LNM Online"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_available_filter
@@ -1657,7 +1657,7 @@ msgstr "Operating units"
 #: model:ir.ui.view,arch_db:sale_advertising_order.crm_case_form_view_oppor_advertising
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_crm_lead2opportunity_partner_adv
 msgid "Opportunities"
-msgstr "Prospects"
+msgstr "Opportunities"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_opportunity_subject
@@ -1705,7 +1705,7 @@ msgstr "Ordernummer"
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Ordered Quantity"
-msgstr "Aantal"
+msgstr "Aantal besteld"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
@@ -1741,12 +1741,12 @@ msgstr "Pagina naam"
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Page Pref"
-msgstr "Page Pref"
+msgstr "Voorkeurspositie"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Page Pref."
-msgstr "Page Pref."
+msgstr "Voorkeurspositie"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_date_page_reference
@@ -1876,7 +1876,7 @@ msgstr "Print"
 #: model:ir.model.fields,field_description:sale_advertising_order.field_ad_order_line_make_invoice_job_queue
 #: model:ir.model.fields,field_description:sale_advertising_order.field_ad_order_make_invoice_job_queue
 msgid "Process via Job Queue"
-msgstr "Process via Job Queue"
+msgstr "Verwerk via Job Queue"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_issues_products_product_id
@@ -1900,7 +1900,7 @@ msgstr "Product template"
 #. module: sale_advertising_order
 #: model:ir.ui.menu,name:sale_advertising_order.menu_products_adv
 msgid "Product Variants"
-msgstr "Productvarianten"
+msgstr "Product varianten"
 
 #. module: sale_advertising_order
 #: model:ir.ui.menu,name:sale_advertising_order.menu_product_template_action2
@@ -2190,7 +2190,7 @@ msgstr "Startdatum online product"
 #: model:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_issue_form
 #: model:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_issue_tree
 msgid "State"
-msgstr "Staat / Provincie"
+msgstr "Status"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.crm_case_form_view_leads_adv
@@ -2701,4 +2701,4 @@ msgstr "over tijd"
 #. module: sale_advertising_order
 #: model:product.attribute,name:sale_advertising_order.attribute_title
 msgid "title"
-msgstr "Titel"
+msgstr "titel"
