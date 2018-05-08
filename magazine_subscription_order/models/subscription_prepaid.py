@@ -68,9 +68,11 @@ class SubscriptionPrepaid(models.Model):
             domain = [
                 ('start_date', '<=', prepaid.end_date),
                 ('end_date', '>=', prepaid.start_date),
+                ('id', '!=', prepaid.id),
+                ('state', '!=', 'done'),
                 ('company_id', '=', prepaid.company_id.id),
             ]
-            nprepaid = self.search_count(domain)
+            nprepaid = prepaid.search_count(domain)
             if nprepaid:
                 raise ValidationError(_('You can not have 2 prepaid record that overlaps on same date range for same company!'))
 
@@ -103,7 +105,7 @@ class SubscriptionPrepaid(models.Model):
         self.ensure_one()
         movelines_to_create = []
         amount_total = 0
-        move_label = 'Subscription Prepaid'
+        move_label = 'Subscription Revenue Recognition'
         merge_keys = self._get_merge_keys()
         for merge_values, amount in to_provision.items():
             vals = {
@@ -124,6 +126,7 @@ class SubscriptionPrepaid(models.Model):
             'debit': counterpart_amount < 0 and counterpart_amount * -1 or 0,
             'credit': counterpart_amount >= 0 and counterpart_amount or 0,
             'analytic_account_id': False,
+            'date':self.end_date,
         }))
 
         res = {
@@ -199,6 +202,27 @@ class SubscriptionPrepaid(models.Model):
         return action
 
     @api.multi
+    def search_prepaid_move(self, amls):
+        self.ensure_one()
+        found_amls = []
+        self_domain = [
+            ('start_date', '<=', self.end_date),
+            ('end_date', '>=', self.start_date),
+            ('id', '!=', self.id),
+        ]
+        subscription_ids = self.search(self_domain)
+        if subscription_ids:
+            domain = [
+                ('parent_id', 'in', subscription_ids.ids),
+                ('move_line_id', 'in', amls.ids),
+            ]
+            for data in self.env['subscription.prepaid.line'].search_read(domain, ['move_line_id']):
+                found_amls.append(data['move_line_id'][0])
+        if found_amls:
+            amls = amls.filtered(lambda aml: aml.id not in found_amls)
+        return amls
+
+    @api.multi
     def get_prepaid_lines(self):
         self.ensure_one()
         aml_obj = self.env['account.move.line']
@@ -218,7 +242,7 @@ class SubscriptionPrepaid(models.Model):
         ]
 
         # Search for account move lines in the source journals
-        amls = aml_obj.search(domain)
+        amls = self.search_prepaid_move(aml_obj.search(domain))
         for aml in amls:
             line_obj.create(self._prepare_prepaid_lines(aml))
         self.state = 'process'
@@ -246,12 +270,16 @@ class SubscriptionPrepaid(models.Model):
         monthly_editions = int(aml.product_id.subscription_length/total_months)
         monthly_editions_cost = ((aml.debit - aml.credit)/aml.product_id.subscription_length)*monthly_editions
         prepaid_amount = monthly_editions_cost * prepaid_months
-
+        title = aml.name
+        invoice_line_obj = aml.invoice_id.invoice_line_ids.filtered(lambda invline: invline.product_id == aml.product_id)
+        for inv_line in invoice_line_obj:
+            title = inv_line.sale_line_ids.title.name or aml.name
         res = {
             'parent_id': self.id,
             'move_line_id': aml.id,
             'partner_id': aml.partner_id.id or False,
-            'name': aml.name,
+            # 'name': aml.name,
+            'name': title,
             'start_date': start_date_dt,
             'end_date': end_date_dt,
             'account_id': aml.account_id.id,
@@ -269,7 +297,7 @@ class SubscriptionPrepaidLine(models.Model):
     _description = 'Subscription Prepaid Lines'
 
     parent_id = fields.Many2one('subscription.prepaid', string='Subscription Prepaid', ondelete='cascade')
-    name = fields.Char('Description')
+    name = fields.Char('Title')
     company_currency_id = fields.Many2one(related='parent_id.company_currency_id', string="Company Currency", readonly=True)
     partner_id = fields.Many2one('res.partner', string='Partner', readonly=True)
     account_id = fields.Many2one('account.account', 'Account',  domain=[('deprecated', '=', False)], required=True, readonly=True)

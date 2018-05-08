@@ -93,10 +93,8 @@
                                             <field name="ad_class" required="True"
                                                    domain="[('type','!=', 'view')]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
-                                            <!--<field name="title" string="Title"-->
-                                                   <!--domain="[('child_ids','!=', False)]"-->
-                                                   <!--options="{'no_open': True,'no_create': True, 'no_create_edit': True}"-->
-                                                   <!--attrs="{'invisible': [('title','=', False)]}"/>-->
+                                            <field name="title" string="Title"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                                             <!--<field name="title_ids" string="Titles"-->
                                                    <!--attrs="{'invisible': [('title','!=', False),('title_ids','=', [])]}"-->
                                                    <!--domain="[('parent_id','=', False)]"-->
@@ -196,7 +194,7 @@
                                 <tree string="Sales Order Lines"  decoration-info="invoice_status=='to invoice'" default_order='issue_date'>
                                     <field name="sequence" widget="handle"/>
                                     <field name="id"/>
-                                    <!--<field name="title" />-->
+                                    <field name="title" />
                                     <field name="ad_class" groups="base.group_no_one"/>
                                     <field name="product_id"
                                         attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
@@ -502,10 +500,7 @@
                             <field name="ad_class" required="True"
                                    domain="[('type','!=', 'view')]"
                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
-                            <!--<field name="title" string="Title"-->
-                                   <!--domain="[('child_ids','!=', False)]"-->
-                                   <!--options="{'no_open': True,'no_create': True, 'no_create_edit': True}"-->
-                                   <!--attrs="{'invisible': [('title','=', False)]}"/>-->
+                            <field name="title" string="Title"  options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                             <!--<field name="title_ids" string="Titles"-->
                                    <!--attrs="{'invisible': [('title','!=', False),('title_ids','=', [])]}"-->
                                    <!--domain="[('parent_id','=', False)]"-->
@@ -606,7 +601,7 @@
                         <field name="id"/>
                         <field name="order_id" />
                         <field name="order_partner_id" />
-                        <!--<field name="title" />-->
+                        <field name="title" />
                         <field name="ad_class" />
                         <field name="product_id" />
                         <field name="layout_category_id" groups="sale.group_sale_layout"/>
