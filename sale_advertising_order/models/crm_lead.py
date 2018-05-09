@@ -53,22 +53,21 @@ class Lead(models.Model):
 
     @api.model
     def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
-        action_id = self.env.ref("crm.crm_lead_opportunities_tree_view")
         ctx = self.env.context
-        if ctx['params']['action'] == action_id.id:
-            if groupby and groupby[0] == "stage_id":
-                stage_logged = self.env.ref("sale_advertising_order.stage_logged")
-                states_read = self.env['crm.stage'].search_read([('id', '!=', stage_logged.id)], ['name'])
-                states = [(state['id'], state['name']) for state in states_read]
-                read_group_res = super(Lead, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby)
-                result = []
-                for state_value, state_name in states:
-                    res = filter(lambda x: x['stage_id'] == (state_value, state_name), read_group_res)
-                    res[0]['stage_id'] = [state_value, state_name]
-                    result.append(res[0])
-                return result
-        else:
-            return super(Lead, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby)
+        if 'params' in ctx and 'action' in ctx['params']:
+            if ctx['params']['action'] == self.env.ref("crm.crm_lead_opportunities_tree_view").id:
+                if groupby and groupby[0] == "stage_id":
+                    stage_logged = self.env.ref("sale_advertising_order.stage_logged")
+                    states_read = self.env['crm.stage'].search_read([('id', '!=', stage_logged.id)], ['name'])
+                    states = [(state['id'], state['name']) for state in states_read]
+                    read_group_res = super(Lead, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby)
+                    result = []
+                    for state_value, state_name in states:
+                        res = filter(lambda x: x['stage_id'] == (state_value, state_name), read_group_res)
+                        res[0]['stage_id'] = [state_value, state_name]
+                        result.append(res[0])
+                    return result
+        return super(Lead, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby)
 
     @api.onchange('published_customer')
     def onchange_published_customer(self):
@@ -343,18 +342,15 @@ class Lead(models.Model):
         res = super(Lead, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
 
         if view_type == 'form':
-            doc = etree.XML(res['arch'])
-            if self.env.context['params']['action'] == self.env.ref("crm.crm_lead_opportunities_tree_view").id and doc.xpath("//field[@name='stage_id']"):
-                stage = doc.xpath("//field[@name='stage_id']")[0]
-                stage_logged = self.env.ref("sale_advertising_order.stage_logged")
-                stage.set('domain', "['|', ('team_id', '=', team_id), ('team_id', '=', False), ('id', '!=', %d)]" %(stage_logged.id))
+            ctx = self.env.context
+            if 'params' in ctx and 'action' in ctx['params']:
+                doc = etree.XML(res['arch'])
+                if ctx['params']['action'] == self.env.ref("crm.crm_lead_opportunities_tree_view").id and doc.xpath("//field[@name='stage_id']"):
+                    stage = doc.xpath("//field[@name='stage_id']")[0]
+                    stage_logged = self.env.ref("sale_advertising_order.stage_logged")
+                    stage.set('domain', "['|', ('team_id', '=', team_id), ('team_id', '=', False), ('id', '!=', %d)]" %(stage_logged.id))
 
-            elif self.env.context['params']['action'] == self.env.ref("sale_advertising_order.crm_lead_action_activities_advertising").id and doc.xpath("//field[@name='next_activity_id']"):
-                next_activity = doc.xpath("//field[@name='next_activity_id']")[0]
-                next_activity.set('required', '1')
-                setup_modifiers(next_activity, res['fields']['next_activity_id'])
-
-            res['arch'] = etree.tostring(doc)
+                res['arch'] = etree.tostring(doc)
         return res
 
     @api.multi
@@ -408,6 +404,9 @@ class Team(models.Model):
             action_domain.append(('is_activity','=', False))
         else:
             action_domain.append(('advertising','=', False))
+
+        if self._context.get('search_default_partner_id', False):
+            action_context['search_default_partner_id'] = self._context['active_id']
 
         action['views'] = [
                 [kanb_view_id, 'kanban'],
