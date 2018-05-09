@@ -934,6 +934,8 @@ class SaleOrderLine(models.Model):
     def write(self, vals):
         result = super(SaleOrderLine, self).write(vals)
         for line in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
+            if line.invoice_status == 'invoiced' and not 'invoice_status' in vals:
+                raise UserError(_('You cannot change an order line after it has been fully invoiced.'))
             if not line.multi_line and ('product_id' in vals or 'adv_issue_id' in vals or 'product_uom_qty' in vals):
                 if line.deadline_check():
                     line.page_qty_check_update()
