@@ -2,33 +2,16 @@
 <odoo>
 
 
-<record id="invoice_form" model="ir.ui.view">
-    <field name="name">subscription.invoice_form</field>
+<record id="subscription_invoice_form" model="ir.ui.view">
+    <field name="name">account.invoice.form</field>
     <field name="model">account.invoice</field>
     <field name="inherit_id" ref="account.invoice_form" />
     <field name="arch" type="xml">
-        <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='account_analytic_id']" position="after">
-            <field name="start_date"
-                attrs="{'required': [('must_have_dates', '=', True)]}"/>
-            <field name="end_date"
-                attrs="{'required': [('must_have_dates', '=', True)]}"/>
-            <field name="must_have_dates" invisible="1"/>
+        <xpath expr="//page/field[@name='invoice_line_ids']/tree/field[@name='account_analytic_id']" position="after">
+            <field name="start_date"/>
+            <field name="end_date"/>
         </xpath>
     </field>
 </record>
 
-<record id="invoice_supplier_form" model="ir.ui.view">
-    <field name="name">subscription.invoice_supplier_form</field>
-    <field name="model">account.invoice</field>
-    <field name="inherit_id" ref="account.invoice_supplier_form" />
-    <field name="arch" type="xml">
-        <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='account_analytic_id']" position="after">
-            <field name="start_date"
-                attrs="{'required': [('must_have_dates', '=', True)]}"/>
-            <field name="end_date"
-                attrs="{'required': [('must_have_dates', '=', True)]}"/>
-            <field name="must_have_dates" invisible="1"/>
-        </xpath>
-    </field>
-</record>
 </odoo>

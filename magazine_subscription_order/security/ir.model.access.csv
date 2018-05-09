@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_subscription_prepaid_user,subscription.prepaid.user,model_subscription_prepaid,base.group_user,1,1,1,0
+access_subscription_prepaid_line_user,subscription.prepaid.line.user,model_subscription_prepaid_line,base.group_user,1,1,1,0
+access_subscription_prepaid_manager,subscription.prepaid.manager,model_subscription_prepaid,base.group_erp_manager,1,1,1,1
+access_subscription_prepaid_line_manager,subscription.prepaid.line.manager,model_subscription_prepaid_line,base.group_erp_manager,1,1,1,1
+
+
+

@@ -6,30 +6,20 @@ from odoo.exceptions import ValidationError, UserError
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
 
-    start_date = fields.Date('Start Date')
-    end_date = fields.Date('End Date')
-    must_have_dates = fields.Boolean(related='product_id.subscription_product', readonly=True)
+    start_date = fields.Date(string='Start Date')
+    end_date = fields.Date(string='End Date')
 
     @api.multi
     @api.constrains('start_date', 'end_date')
     def _check_start_end_dates(self):
         for invline in self:
             if invline.start_date and not invline.end_date:
-                raise ValidationError(
-                    _("Missing End Date for invoice line with "
-                        "Description '%s'.")
-                    % (invline.name))
+                raise ValidationError(_("Missing End Date for invoice line with Description '%s'.")% (invline.name))
             if invline.end_date and not invline.start_date:
-                raise ValidationError(
-                    _("Missing Start Date for invoice line with "
-                        "Description '%s'.")
-                    % (invline.name))
-            if invline.end_date and invline.start_date and \
-                    invline.start_date > invline.end_date:
-                raise ValidationError(
-                    _("Start Date should be before or be the same as "
-                        "End Date for invoice line with Description '%s'.")
-                    % (invline.name))
+                raise ValidationError(_("Missing Start Date for invoice line with Description '%s'.")% (invline.name))
+            if invline.end_date and invline.start_date and invline.start_date > invline.end_date:
+                raise ValidationError(_("Start Date should be before or be the same as End Date for invoice line with Description '%s'.")% (invline.name))
+
 
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
@@ -71,11 +61,11 @@ class AccountInvoice(models.Model):
         Start and End Dates"""
         for invoice in self:
             for iline in invoice.invoice_line_ids:
-                if iline.product_id and iline.product_id.must_have_dates:
+                if iline.product_id and iline.product_id.subscription_product:
                     if not iline.start_date or not iline.end_date:
                         raise UserError(_(
                             "Missing Start Date and End Date for invoice "
                             "line with Product '%s' which has the "
-                            "property 'Must Have Start and End Dates'.")
+                            "property 'Must have Start and End Dates'.")
                             % (iline.product_id.name))
         return super(AccountInvoice, self).action_move_create()

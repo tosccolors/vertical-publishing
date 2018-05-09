@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--  Add payment options to sale.order and invoice forms -->
+        <record model="ir.ui.view" id="subscription_account_settings">
+            <field name="model">account.config.settings</field>
+            <field name="inherit_id" ref="account.view_account_config_settings"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='followup']" position="after">
+                    <separator name="subscription_account" string="Subscription Configuration"/>
+                    <group groups="account.group_account_user">
+                        <field name="delivery_obligation_account_id" domain="[('company_id', '=', company_id)]"/>
+                        <field name="subscription_revenue_account_id" domain="[('company_id', '=', company_id)]"/>
+                        <field name="susbcription_journal_id" domain="[('company_id', '=', company_id)]"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
