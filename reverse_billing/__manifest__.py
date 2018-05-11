@@ -29,11 +29,11 @@
 
 
 {
-    'name' : 'Honorarium Module - Accounting',
-    'version' : '0.5',
+    'name' : 'Reverse Billing Module - Accounting',
+    'version' : '10.0.1.0',
     'category': 'purchasing/supplier invoices',
     'description': """
-This is the module to manage the purchased services for NSM/OneBusiness in OpenERP.
+This is the module to manage reverse billing of supplier services/deliveries.
 ===================================================================================================================
 This module creates a model, in which the written articles/ photoshoots for a specific issue
 of a magazine are listed, related to the freelancer/photographer, who created te material, to the analytic_account
@@ -42,21 +42,18 @@ representing the Issue and to the products representing the type and price of th
     """,
     'author'  : 'Magnus - Willem Hulshof',
     'website' : 'http://www.magnus.nl',
-    'depends' : ['product',
-                 'analytic_secondaxis',
+    'depends' : ['account_operating_unit',
                  'partner_firstname',
-                 'publishing_accounts',
+                 'sale_advertising_order',
     ],
-    'data' : ["data/product_category_hon.xml",
+    'data' : ["data/reverse_billing_data.xml",
+              "data/product_category_revbil.xml",
               "security/security.xml",
               'security/ir.model.access.csv',
-
-              'wizard/hon_line_invoice.xml',
+              'wizard/revbil_line_invoice.xml',
               "wizard/wizard_view.xml",
-
-
               'views/account_invoice_view.xml',
-              "views/hon.xml",
+              "views/reverse_billing.xml",
               "views/partner_view.xml",
               "views/product_view.xml",
               "views/account_invoice_report.xml",

@@ -245,24 +245,62 @@ class HonIssue(models.Model):
                 raise UserError(_('In order to delete a confirmed issue, you must cancel it before!'))
         return super(HonIssue, self).unlink()
 
-class HonIssueLine(models.Model):
+class RevBilStatementOfWork(models.Model):
 
-    _name = "hon.issue.line"
+    _name = "revbil.statement.of.work"
+
+    @api.one
+    @api.depends('invoice_line_id', 'employee', 'gratis')
+    def _invoiced(self):
+        for line in self:
+            flag = True
+            if not line.invoice_line_id and not line.employee and not line.gratis:
+                flag = False
+            line.invoiced = flag
+
+    '''def _invoiced_search(self, operator, value):
+        cursor = self._cr
+
+        clause = ''
+        issue_clause = ''
+        no_invoiced = False
+
+        if (operator == '=' and value) or (operator == '!=' and not value):
+            clause += 'AND inv.state = \'paid\''
+        else:
+            clause += 'AND inv.state != \'cancel\' AND issue.state != \'cancel\'  AND inv.state <> \'paid\'  AND rel.issue_id = issue.id '
+            issue_clause = ',  hon_issue AS issue '
+            no_invoiced = True
+
+        cursor.execute('SELECT rel.issue_id ' \
+                       'FROM hon_issue_invoice_rel AS rel, account_invoice AS inv ' + issue_clause + \
+                       'WHERE rel.invoice_id = inv.id ' + clause)
+        res = cursor.fetchall()
+        if no_invoiced:
+            cursor.execute('SELECT issue.id ' \
+                           'FROM hon_issue AS issue ' \
+                           'WHERE issue.id NOT IN ' \
+                           '(SELECT rel.issue_id ' \
+                           'FROM hon_issue_invoice_rel AS rel) and issue.state != \'cancel\'')
+            res.extend(cursor.fetchall())
+        if not res:
+            return [('id', '=', 0)]
+        return [('id', 'in', [x[0] for x in res])]'''
 
     @api.one
     @api.depends('price_unit', 'quantity')
     def _amount_line(self):
         self.price_subtotal = self.price_unit * self.quantity
 
-    sequence = fields.Integer('Sequence', default=10, help="Gives the sequence of this line when displaying the honorarium issue.")
+#    sequence = fields.Integer('Sequence', default=10, help="Gives the sequence of this line when displaying the statement of work.")
     name = fields.Char('Description', required=True, size=64)
     page_number = fields.Char('Pgnr', size=32)
     nr_of_columns = fields.Float('#Cols', digits=dp.get_precision('Number of Columns'), required=True)
-    issue_id = fields.Many2one('hon.issue', 'Issue Reference', ondelete='cascade', index=True)
+    issue_id = fields.Many2one('sale.advertising.issue', 'Issue Reference', index=True)
     partner_id = fields.Many2one('res.partner', 'Partner', required=True)
     employee = fields.Boolean('Employee',  help="It indicates that the partner is an employee.",
                               default=False)
-    product_category_id = fields.Many2one('product.category', 'T/B',required=True, domain=[('parent_id.supportal', '=', True)])
+    product_category_id = fields.Many2one('product.category', 'Category', required=True, domain=[('parent_id.revbil', '=', True)])
     product_id = fields.Many2one('product.product', 'Product', required=True,)
     account_id = fields.Many2one('account.account', 'Account', required=True,
                                  domain=[('internal_type','<>','view')],
@@ -273,16 +311,15 @@ class HonIssueLine(models.Model):
                             required=True, default=1)
     account_analytic_id = fields.Many2one(related='issue_id.account_analytic_id', relation='account.analytic.account',
                                           string='Issue',store=True, readonly=True )
-
-    date_publish = fields.Date(related='account_analytic_id.date_publish', readonly=True, string='Publishing Date', store=True,)
-
-    activity_id = fields.Many2one('project.activity_al', 'Page Type', ondelete='set null', index=True)
+    date_publish = fields.Date(related='issue_id.date_publish', readonly=True, string='Publishing Date', store=True,)
     company_id = fields.Many2one(related='issue_id.company_id', relation='res.company',string='Company', store=True, readonly=True)
-    price_subtotal = fields.Float(compute='_amount_line', string='Amount',
-       digits = dp.get_precision('Account'), store=True)
+    price_subtotal = fields.Float(compute='_amount_line', string='Amount',digits = dp.get_precision('Account'), store=True)
     estimated_price = fields.Float('Estimate',)
     invoice_line_id = fields.Many2one('account.invoice.line', 'Invoice Line', readonly=True)
     invoice_id = fields.Many2one(related='invoice_line_id.invoice_id', relation='account.invoice', string='Invoice', readonly=True)
+    invoiced = fields.Boolean(compute='_invoiced', string='Invoiced', store=True,
+#                              search='_invoiced_search',
+                              help="It indicates that the line has been invoiced.")
     state = fields.Selection(
         [('cancel', 'Cancelled'),
          ('draft', 'Draft'),
@@ -290,22 +327,22 @@ class HonIssueLine(models.Model):
          ('exception', 'Exception'),
          ('done', 'Done')],
         'Status', required=True, readonly=True, default='draft',
-        help='* The \'Draft\' status is set when the related hon issue in draft status. \
-                    \n* The \'Confirmed\' status is set when the related hon issue is confirmed. \
-                    \n* The \'Exception\' status is set when the related hon issue is set as exception. \
-                    \n* The \'Done\' status is set when the hon line has been picked. \
-                    \n* The \'Cancelled\' status is set when a user cancel the hon issue related.')
+        help='* The \'Draft\' status is set when the statement of work is in draft status. \
+                    \n* The \'Confirmed\' status is set when the statement of work is confirmed. \
+                    \n* The \'Exception\' status is set when the statement of work is set as exception. \
+                    \n* The \'Done\' status is set when the statement of work has been picked. \
+                    \n* The \'Cancelled\' status is set when a user cancels the statement of work.')
     gratis = fields.Boolean('Gratis',  help="It indicates that no letter/invoice is generated.")
 
 
     @api.model
-    def _prepare_hon_issue_line_invoice_line(self, account_id=False):
+    def _prepare_revbil_statement_of_work_invoice_line(self, account_id=False):
         """Prepare the dict of values to create the new invoice line for a
-           honorarium line. This method may be overridden to implement custom
+           revbil_statement_of_work. This method may be overridden to implement custom
            invoice generation (making sure to call super() to establish
            a clean extension chain).
 
-           :param browse_record line: hon.issue.line record to invoice
+           :param browse_record line: revbil.statement.of.work record to invoice
            :param int account_id: optional ID of a G/L account to force
                (this is used for returning products including service)
            :return: dict of values to create() the invoice line
@@ -332,7 +369,7 @@ class HonIssueLine(models.Model):
                 raise UserError(_('There is no Fiscal Position defined or Expense category account defined for default properties of Product categories.'))
 
             res = {
-                'hon_issue_line_id': self.id,
+                'revbil_statement_of_work_id': self.id,
                 'account_analytic_id': self.account_analytic_id.id,
                 'name': self.name,
                 'sequence': self.sequence,
@@ -342,7 +379,6 @@ class HonIssueLine(models.Model):
                 'quantity': qty,
                 # 'uos_id': self.uos_id,
                 'product_id': self.product_id.id,
-                'activity_id': self.activity_id.id,
             }
 
         return res
@@ -350,23 +386,20 @@ class HonIssueLine(models.Model):
     @api.multi
     def invoice_line_create(self):
         create_ids = []
-        # hon = set()
 
         for line in self:
-            vals = line._prepare_hon_issue_line_invoice_line(account_id=False)
+            vals = line._prepare_revbil_statement_of_work_invoice_line(account_id=False)
             if vals:
                 invln = self.env['account.invoice.line'].create(vals)
                 line.write({'invoice_line_id': invln.id})
-                # hon.add(line.issue_id.id)
                 create_ids.append(invln.id)
-
         return create_ids
 
     # TODO: This method is not in use
     @api.multi
     def button_cancel(self):
         if self.invoice_line_id:
-            raise UserError(_('You cannot cancel a Hon line that has already been invoiced.'))
+            raise UserError(_('You cannot cancel a Statement of Work that has already been invoiced.'))
         self.write({'state': 'cancel'})
 
     @api.multi
@@ -386,11 +419,11 @@ class HonIssueLine(models.Model):
 
     @api.multi
     def unlink(self):
-        """Allows to delete hon lines in draft,cancel states"""
+        """Allows to delete Statement of Work lines in draft,cancel states"""
         for rec in self:
             if rec.state not in ['draft', 'cancel']:
-                raise UserError(_('Cannot delete a hon line which is in state \'%s\'.') %(rec.state,))
-        return super(HonIssueLine, self).unlink()
+                raise UserError(_('Cannot delete a Statement of Work line which is in state \'%s\'.') %(rec.state,))
+        return super(RevBilStatementOfWork, self).unlink()
 
 
     @api.onchange('product_category_id')
@@ -425,15 +458,7 @@ class HonIssueLine(models.Model):
             a = res.categ_id.property_account_expense_categ_id.id
         if a:
             self.account_id = a
-
-        pricelist = self.env['partner.product.price'].search([('product_id','=',self.product_id.id),
-                             ('partner_id','=', self.partner_id.id),
-                             ('company_id','=', company_id)])
-
-        if len(pricelist) >= 1 :
-            price = pricelist
-            if price :
-                self.price_unit = price[0].price_unit
+        self.price_unit = self.partner_id.pricelist_id.get_product_price(self.product_id, self.quantity or 1.0, self.partner_id)
 
 
 

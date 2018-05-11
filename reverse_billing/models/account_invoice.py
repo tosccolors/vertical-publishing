@@ -23,23 +23,21 @@
 from odoo import api, fields, models, _
 from lxml import etree
 
-class Analytic(models.Model):
-    _inherit = 'account.analytic.account'
+class AdvertisingIssue(models.Model):
+    _name = "sale.advertising.issue"
 
-    is_hon = fields.Boolean('HON Issue')
+    is_revbil = fields.Boolean('Reverse Billing Relevant')
 
 
 class Invoice(models.Model):
-    """ Inherits invoice and adds hon boolean to invoice to flag hon-invoices"""
+    """ Inherits invoice and adds revbil boolean to invoice to flag revbil-invoices"""
     _inherit = 'account.invoice'
 
 
-    hon = fields.Boolean('HON', help="It indicates that the invoice is a Hon Invoice.", default=False)
-    date_publish = fields.Date('Publishing Date')
-    is_portal = fields.Boolean('Portal')
-    product_category = fields.Many2one('product.category', 'Cost Category')
+    revbil = fields.Boolean('Reverse Billing', help="It indicates that the invoice is a Reverse Billing Invoice.", default=False)
+    product_category_id = fields.Many2one('product.category', 'Cost Category')
 
-    @api.model
+    '''@api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         res = super(Invoice, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
         print "res", res
@@ -60,7 +58,7 @@ class Invoice(models.Model):
 
             res['arch'] = etree.tostring(doc)
 
-        return res
+        return res'''
 
     @api.multi
     def invoice_print(self):
@@ -70,8 +68,8 @@ class Invoice(models.Model):
         self.ensure_one()
         self.sent = True
 
-        if self.hon == True:
-            return self.env['report'].get_action(self, 'account.invoice.hon')
+        if self.revbil == True:
+            return self.env['report'].get_action(self, 'account.invoice.revbil')
 
         return super(Invoice, self).invoice_print()
 
@@ -83,8 +81,8 @@ class Invoice(models.Model):
         """
         self.ensure_one()
 
-        if self.hon:
-            template = self.env.ref('freelancer_self_billing.email_template_hon_invoice', False)
+        if self.revbil:
+            template = self.env.ref('reverse_billing.email_template_revbil_invoice', False)
             custom_layout = False
         else:
             template = self.env.ref('account.email_template_edi_invoice', False)
@@ -120,4 +118,4 @@ class InvoiceLine(models.Model):
 
 
     activity_id = fields.Many2one('project.activity_al', 'Activity')
-    hon_issue_line_id = fields.Many2one('hon.issue.line', 'Hon Issue Line')
+    revbil_sow_id = fields.Many2one('revbil.statement.of.work', 'Reverse Billing Statement of Work')

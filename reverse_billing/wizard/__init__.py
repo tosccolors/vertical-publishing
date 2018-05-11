@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    Copyright 2014 BAS Solutions
+#    OpenERP, Open Source Management Solution
+#    Copyright (C) 2004-2010 Tiny SPRL (<http://tiny.be>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -18,27 +19,8 @@
 #
 ##############################################################################
 
-
-from odoo import api, fields, models, _
-
-class Partner(models.Model):
-    _inherit = "res.partner"
-
-    product_price_ids = fields.One2many('partner.product.price', 'partner_id',
-                                        'Product Price for this Supplier', copy=True)
-
-
-
-class Company(models.Model):
-    _inherit = 'res.company'
-
-    hon_journal = fields.Many2one('account.journal', 'Honorarium Journal')
-    report_background_image_hon1 = fields.Binary('Background Image for HON Frontpage',
-            help='Set Background Image for HON Frontpage')
-
-    report_background_image_hon2 = fields.Binary('Background Image for HON Following Pages',
-            help='Set Background Image for HON Following Pages')
-
+import wizard
+import revbil_line_invoice
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
