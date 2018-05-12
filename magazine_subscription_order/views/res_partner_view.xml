@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <delete model="ir.ui.view" id="magazine_subscription_order.view_partner_form_susbcription_inherit"/>
-    
     <record id="view_partner_form_subscription_inherit" model="ir.ui.view">
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="model">res.partner</field>
