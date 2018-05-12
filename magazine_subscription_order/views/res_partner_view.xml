@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_partner_form_susbcription_inherit" model="ir.ui.view">
+    <delete model="ir.ui.view" id="magazine_subscription_order.view_partner_form_susbcription_inherit"/>
+    
+    <record id="view_partner_form_subscription_inherit" model="ir.ui.view">
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="model">res.partner</field>
         <field type="xml" name="arch">
             <xpath expr="//page[last()]" position="after">
-                <page name='sales_purchases' string="Subscription">
+                <page name='subscription' string="Subscription">
                     <group cols="4">
                         <group name="subscription">
                             <field name="is_subscription_customer"/>
