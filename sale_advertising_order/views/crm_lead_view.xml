@@ -238,9 +238,7 @@
                                 <label for="next_activity_id"/>
                                 <div>
                                     <div class="o_row mr16">
-                                        <field name="is_activity" invisible="1"/>
                                         <field name="next_activity_id"
-                                               attrs="{'required': [('is_activity', '=', True)]}"
                                                options="{'no_create': True, 'no_open': True}"
                                                domain="['|',('team_id','=',False),('team_id','=',team_id)]"/>
                                         <span class="oe_form_field"
@@ -532,7 +530,7 @@ action = model.with_context(ctx).action_your_pipeline()</field>
             <field name="inherit_id" ref="crm.view_partners_form_crm1"/>
             <field name="arch" type="xml">
                  <xpath expr="//button[@name='%(crm.crm_lead_opportunities)d']" position="attributes">
-                     <attribute name="invisible">1</attribute>
+                    <attribute name="name">%(crm_lead_opportunities_advertising)d</attribute>
                  </xpath>
             </field>
         </record>
