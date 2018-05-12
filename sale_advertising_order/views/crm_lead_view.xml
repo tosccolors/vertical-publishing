@@ -531,7 +531,7 @@ action = model.with_context(ctx).action_your_pipeline()</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="crm.view_partners_form_crm1"/>
             <field name="arch" type="xml">
-                 <xpath expr="//button[@name='%(crm.crm_lead_opportunities)d']" position="attributes">
+                 <xpath expr="//button[@name='%(crm_lead_opportunities_advertising)d']" position="attributes">
                      <attribute name="invisible">1</attribute>
                  </xpath>
             </field>
