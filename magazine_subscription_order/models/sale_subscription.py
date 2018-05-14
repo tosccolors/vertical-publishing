@@ -93,7 +93,7 @@ class SaleOrder(models.Model):
         return super(SaleOrder, self).action_confirm()
 
         # overridden:
-    @api.multi
+    '''@api.multi
     @api.onchange('partner_id')
     def onchange_partner_id(self):
         """
@@ -104,7 +104,7 @@ class SaleOrder(models.Model):
             return super(SaleOrder, self).onchange_partner_id()
         super(SaleOrder, self).onchange_partner_id()
         # Subscription:
-        self.payment_term_id = self.partner_id.property_subscription_payment_term_id and self.partner_id.property_subscription_payment_term_id.id or False
+        self.payment_term_id = self.partner_id.property_subscription_payment_term_id and self.partner_id.property_subscription_payment_term_id.id or False'''
 
     @api.model
     def _prepare_invoice(self,):
