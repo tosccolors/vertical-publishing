@@ -37,20 +37,13 @@
                 <xpath expr="//field[@name='activities_count']" position="attributes">
                     <attribute name="string">Activities Report</attribute>
                 </xpath>
-                <xpath expr="//button[@name='%(crm_lead_opportunities_advertising)d']" position="replace">
-                    <button class="oe_stat_button o_res_partner_tip_opp" type="action"
-                        attrs="{'invisible': [('customer', '=', False)]}"
-                        name="%(sale_advertising_order.action_your_pipeline_advertising)d"
-                        icon="fa-star"
-                        context="{'search_default_partner_id': active_id}">
-                        <field string="Opportunities" name="adv_opportunity_count" widget="statinfo"/>
-                    </button>
+                <xpath expr="//button[@name='%(crm_lead_opportunities_advertising)d']" position="after">
                     <button class="oe_stat_button o_res_partner_tip_opp" type="action"
                         attrs="{'invisible': [('customer', '=', False)]}"
                         name="%(sale_advertising_order.crm_lead_action_activities_advertising)d"
                         icon="fa-star"
                         context="{'search_default_partner_id': active_id}">
-                        <field string="Next Activities" name="adv_next_activities_count" widget="statinfo"/>
+                        <field string="Next Activities" name="next_activities_count" widget="statinfo"/>
                     </button>
                  </xpath>
                 <div name="button_box" position="inside" >
