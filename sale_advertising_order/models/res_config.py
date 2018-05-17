@@ -29,7 +29,7 @@ class Partner(models.Model):
     is_ad_agency = fields.Boolean('Agency', default=False)
     adv_sale_order_count = fields.Integer(compute='_compute_adv_sale_order_count', string='# of Sales Order')
     adv_opportunity_count = fields.Integer("Opportunity", compute='_compute_adv_opportunity_count')
-    adv_next_activities_count = fields.Integer(compute='_compute_adv_next_activities_count', string='Next Activities')
+    next_activities_count = fields.Integer(compute='_compute_next_activities_count', string='Next Activities')
 
     def _compute_adv_sale_order_count(self):
         sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('advertising','=',True),('state','in',('sale','done'))],
@@ -51,10 +51,10 @@ class Partner(models.Model):
             partner.adv_opportunity_count = self.env['crm.lead'].search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('advertising', '=', True), ('is_activity', '=', False)])
 
     @api.multi
-    def _compute_adv_next_activities_count(self):
+    def _compute_next_activities_count(self):
         for partner in self:
             operator = 'child_of' if partner.is_company else '='  # the activity count should counts the activities of this company and all its contacts
-            partner.adv_next_activities_count = self.env['crm.lead'].search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('advertising', '=', True), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False)])
+            partner.next_activities_count = self.env['crm.lead'].search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('advertising', '=', True), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False)])
 
     def _compute_sale_order_count(self):
         sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','not in',('draft','sent','cancel')), ('advertising','=',False)],
