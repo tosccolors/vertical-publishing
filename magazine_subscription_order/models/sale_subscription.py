@@ -94,17 +94,16 @@ class SaleOrder(models.Model):
 
         # overridden:
     @api.multi
-    @api.onchange('partner_id')
+    @api.onchange('partner_id', 'published_customer', 'advertising_agency', 'agency_is_publish')
     def onchange_partner_id(self):
         """
         Update the following fields when the partner is changed:
         - Subscription Payment term
         """
-        if not self.subscription:
-            return super(SaleOrder, self).onchange_partner_id()
         super(SaleOrder, self).onchange_partner_id()
-        # Subscription:
-        self.payment_term_id = self.partner_id.property_subscription_payment_term_id and self.partner_id.property_subscription_payment_term_id.id or False
+        if self.subscription:
+            # Subscription:
+            self.payment_term_id = self.partner_id.property_subscription_payment_term_id and self.partner_id.property_subscription_payment_term_id.id or False
 
     @api.model
     def _prepare_invoice(self,):
@@ -130,7 +129,7 @@ class SaleOrderLine(models.Model):
                 order_line.start_date = datetime.today()
 
     @api.onchange('ad_class')
-    def onchange_ad_class(self):
+    def onchange_ad_class_subs(self):
         vals, data, result = {}, {}, {}
         if not self.subscription:
             return {'value': vals}
@@ -164,7 +163,7 @@ class SaleOrderLine(models.Model):
         return {'value': vals, 'domain' : data, 'warning': result}
 
     @api.onchange('product_template_id')
-    def onchange_product_template(self):
+    def onchange_product_template_subs(self):
         vals = {}
         if not self.subscription:
             return {'value': vals}

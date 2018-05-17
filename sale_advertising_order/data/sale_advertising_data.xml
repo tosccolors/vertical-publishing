@@ -27,6 +27,12 @@
 			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
 			<field name="date_type">date</field>
 		</record>
+		<record id="magazine_online_advertising_category" model="product.category">
+			<field name="name">Magazines Online</field>
+            <field name="type">view</field>
+			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
+			<field name="date_type">validity</field>
+		</record>
 
 		<record id="online_advertising_category" model="product.category">
 			<field name="name">Online</field>

@@ -421,9 +421,6 @@ class SaleOrderLine(models.Model):
             line.deadline = False
             line.deadline_offset = False
             if line.ad_class:
-#                if user.has_group('sale_advertising_order.group_no_deadline_check'):
-#                   if line.issue_date:
-#                        line.deadline_passed = True
                 if not user.has_group('sale_advertising_order.group_no_deadline_check'):
                     dt_offset = timedelta(hours=line.ad_class.deadline_offset or 0)
                     line.deadline_offset = fields.Datetime.to_string(datetime.now() + dt_offset)
@@ -934,7 +931,9 @@ class SaleOrderLine(models.Model):
     def write(self, vals):
         result = super(SaleOrderLine, self).write(vals)
         for line in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
-            if line.invoice_status == 'invoiced' and not 'invoice_status' in vals:
+            if 'pubble_sent' in vals:
+                return result
+            if line.invoice_status == 'invoiced' and not vals.get('product_uom_qty') == 0:
                 raise UserError(_('You cannot change an order line after it has been fully invoiced.'))
             if not line.multi_line and ('product_id' in vals or 'adv_issue_id' in vals or 'product_uom_qty' in vals):
                 if line.deadline_check():
