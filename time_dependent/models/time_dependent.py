@@ -66,18 +66,18 @@ class TimeDependentThread(models.AbstractModel):
         for field in mapFields:
             value = values.get(field.name, False)
             field_type = field.ttype
+            found = RecordObj.filtered(lambda r: r.field_id.id == field.id)
+            if not values and not found:
+                continue
             if not value and field_type in ('boolean', 'integer'):
                 # convert boolean False to string False
                 if field_type == 'boolean':
                     value = 'False' if not value else True
                 else:
                     value = '0' #interger 0 set to character '0'
-            elif not value and field_type != 'selection':
-                continue
-            found = RecordObj.filtered(lambda r: r.field_id.id == field.id)
             if found:
-                if field_type == 'selection' and not value:
-                    Reclines.append([2, found.id, {'name': value}])#unlink selection record with False value
+                if not value:
+                    Reclines.append([2, found.id])#unlink selection record with False value
                 else:
                     Reclines.append([1,found.id,{'name': value}])
             else:
