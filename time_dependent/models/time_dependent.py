@@ -47,10 +47,16 @@ class TimeDependentThread(models.AbstractModel):
                 self.mapped(filter_field.name)[0]
                 canTrack = True if res_value == filter_value else False
             if canTrack:
-                mapFields = filter(lambda f: f.name in values, [field for field in config.field_ids])
+                if not self.env['time.dependent'].search([('model','=',self._name),('res_id','=',self.id)]):
+                    mapFields = [field for field in config.field_ids]
+                    for field in mapFields:
+                        if field.name not in values:
+                            values[field.name] = self.mapped(field.name)[0] or False
+                else:
+                    mapFields = filter(lambda f: f.name in values, [field for field in config.field_ids])
                 if not mapFields:
                     canTrack = False
-        return canTrack, config, mapFields
+        return canTrack, config, mapFields, values
 
     @api.multi
     def _prepare_record_lines(self, dependentObj, values, mapFields):
@@ -58,18 +64,29 @@ class TimeDependentThread(models.AbstractModel):
         RecordObj = dependentRecord.search([('dependent_id', '=', dependentObj.id)])
         Reclines = []
         for field in mapFields:
-            if not values.get(field.name, False):
+            value = values.get(field.name, False)
+            field_type = field.ttype
+            if not value and field_type in ('boolean', 'integer'):
+                # convert boolean False to string False
+                if field_type == 'boolean':
+                    value = 'False' if not value else True
+                else:
+                    value = '0' #interger 0 set to character '0'
+            elif not value and field_type != 'selection':
                 continue
             found = RecordObj.filtered(lambda r: r.field_id.id == field.id)
             if found:
-                Reclines.append([1,found.id,{'name': values.get(field.name, False)}])
+                if field_type == 'selection' and not value:
+                    Reclines.append([2, found.id, {'name': value}])#unlink selection record with False value
+                else:
+                    Reclines.append([1,found.id,{'name': value}])
             else:
-                Reclines.append([0,0,{'field_id': field.id, 'name': values.get(field.name, False), 'dependent_id': dependentObj.id}])
+                Reclines.append([0,0,{'field_id': field.id, 'name': value, 'dependent_id': dependentObj.id}])
         return Reclines
 
     @api.multi
     def post_values(self, values):
-        canTrack, config, mapFields = self._can_track(values)
+        canTrack, config, mapFields, values = self._can_track(values)
         timeDependent = self.env['time.dependent']
         
         def _set_ValidTo(self, validity_date):
@@ -84,20 +101,18 @@ class TimeDependentThread(models.AbstractModel):
             dependentObj = timeDependent.search([('model','=',self._name),('res_id','=',self.id),('validity_from','=',validity_date)], limit=1)
             Reclines = self._prepare_record_lines(dependentObj, values, mapFields)
 
-            if not Reclines:
-                return
-
-            data = {}
-            data['record_ids'] = Reclines
-            if dependentObj:
-                dependentObj.write(data)
-            else:
-                _set_ValidTo(self,str(validity_date))
-                data['model'] = self._name
-                data['res_id'] = self.id
-                data['validity_from'] = validity_date
-                data['validity_to'] = '9999/12/31'
-                timeDependent.create(data)
+            if Reclines:
+                data = {}
+                data['record_ids'] = Reclines
+                if dependentObj:
+                    dependentObj.write(data)
+                else:
+                    _set_ValidTo(self,str(validity_date))
+                    data['model'] = self._name
+                    data['res_id'] = self.id
+                    data['validity_from'] = validity_date
+                    data['validity_to'] = '9999/12/31'
+                    timeDependent.create(data)
             values = self.env['time.dependent.config'].filter_values(self, values, mapFields)
         return values
 
@@ -168,12 +183,15 @@ class TimeDependentConfig(models.Model):
         ]
         dependent_obj = self.env['time.dependent'].search(domain, order='id desc', limit=1)
         if not dependent_obj:
-            return
+            return values
         for field in mapFields:
             record_obj = dependent_obj.record_ids.filtered(lambda r: r.field_id.id == field.id)
             if not record_obj:
                 continue
-            values[field.name] = record_obj.name
+            val = record_obj.name
+            #convert False string to boolean False
+            val = False if field.ttype == 'boolean'and val == 'False' else record_obj.name
+            values[field.name] = val
 
         return values
 
