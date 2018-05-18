@@ -67,7 +67,7 @@ class TimeDependentThread(models.AbstractModel):
             value = values.get(field.name, False)
             field_type = field.ttype
             found = RecordObj.filtered(lambda r: r.field_id.id == field.id)
-            if not values and not found:
+            if not value and not found:
                 continue
             if not value and field_type in ('boolean', 'integer'):
                 # convert boolean False to string False
