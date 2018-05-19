@@ -34,6 +34,7 @@ In this module, user can input an object (such as res.partner) and it's fields (
     'depends': ['base'],
     'data': [
         'security/ir.model.access.csv',
+        'data/cron_data.xml',
         'views/time_dependent_view.xml',
         ],
     'installable': True
