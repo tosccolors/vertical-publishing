@@ -932,7 +932,7 @@ class SaleOrderLine(models.Model):
         result = super(SaleOrderLine, self).write(vals)
         for line in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
             if 'pubble_sent' in vals:
-                return result
+                continue
             if line.invoice_status == 'invoiced' and not vals.get('product_uom_qty') == 0:
                 raise UserError(_('You cannot change an order line after it has been fully invoiced.'))
             if not line.multi_line and ('product_id' in vals or 'adv_issue_id' in vals or 'product_uom_qty' in vals):
