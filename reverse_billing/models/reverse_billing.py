@@ -251,13 +251,13 @@ class RevBilStatementOfWork(models.Model):
     def _amount_line(self):
         self.price_subtotal = self.price_unit * self.quantity
 
-#    sequence = fields.Integer('Sequence', default=10, help="Gives the sequence of this line when displaying the statement of work.")
+    sequence = fields.Integer('Sequence', default=10, help="Gives the sequence of this line when displaying the statement of work.")
     name = fields.Char('Description', required=True, size=64)
     page_number = fields.Char('Pgnr', size=32)
     nr_of_columns = fields.Float('#Cols', digits=dp.get_precision('Number of Columns'), required=True)
     batch_id = fields.Many2one('sow.batch', 'Batch Reference', index=True)
-    issue_id = fields.Many2one('sale.advertising.issue', 'Issue Reference', index=True)
-    partner_id = fields.Many2one('res.partner', 'Partner', required=True)
+    issue_id = fields.Many2one('sale.advertising.issue', 'Issue Reference', index=True, required=True)
+    partner_id = fields.Many2one('res.partner', 'Freelancer', required=True)
     employee = fields.Boolean('Employee',  help="It indicates that the partner is an employee.",
                               default=False)
     product_category_id = fields.Many2one('product.category', 'Category', required=True, domain=[('parent_id.revbil', '=', True)])
