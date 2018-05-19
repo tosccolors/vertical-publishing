@@ -19,7 +19,7 @@
 #
 ##############################################################################
 
-import wizard
+# import portal_back
 import revbil_line_invoice
 
 

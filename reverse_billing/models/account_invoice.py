@@ -116,6 +116,4 @@ class InvoiceLine(models.Model):
     """ Inherits invoice.line and adds activity from analytic_secondaxis to invoice """
     _inherit = 'account.invoice.line'
 
-
-    activity_id = fields.Many2one('project.activity_al', 'Activity')
     revbil_sow_id = fields.Many2one('revbil.statement.of.work', 'Reverse Billing Statement of Work')

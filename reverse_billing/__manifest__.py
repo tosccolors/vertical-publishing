@@ -51,7 +51,7 @@ representing the Issue and to the products representing the type and price of th
               "security/security.xml",
               'security/ir.model.access.csv',
               'wizard/revbil_line_invoice.xml',
-              "wizard/wizard_view.xml",
+#              "wizard/portal_back_view.xml",
               'views/account_invoice_view.xml',
               "views/reverse_billing.xml",
               "views/partner_view.xml",
