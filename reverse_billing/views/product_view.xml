@@ -1,25 +1,25 @@
 <?xml version="1.0"?>
-<openerp>
+<odoo>
     <data>
 
-        <record id="product_category_form_view_ext" model="ir.ui.view">
-            <field name="name">product.category.form.ext</field>
+        <record id="product_category_form_view_revbil" model="ir.ui.view">
+            <field name="name">product.category.form.revbil</field>
             <field name="model">product.category</field>
             <field name="inherit_id" ref="product.product_category_form_view"/>
             <field name="arch" type="xml">
                 <field name="parent_id" position="after">
-                    <field name="hon_type" />
+                    <field name="revbil_type" />
                 </field>
             </field>
         </record>
 
-        <record id="product_category_list_view_inherit" model="ir.ui.view">
-            <field name="name">product.category.list.inherit</field>
+        <record id="product_category_list_view_revbil" model="ir.ui.view">
+            <field name="name">product.category.list.revbil</field>
             <field name="model">product.category</field>
             <field name="inherit_id" ref="product.product_category_list_view"/>
             <field name="arch" type="xml">
                 <field name="display_name" position="after" >
-                    <field name="hon_type"/>
+                    <field name="revbil_type"/>
                 </field>
             </field>
         </record>
@@ -27,4 +27,4 @@
 
 
     </data>
-</openerp>
+</odoo>

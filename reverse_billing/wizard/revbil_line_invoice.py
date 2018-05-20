@@ -82,7 +82,7 @@ class RevBilStatementOfWorkMakeInvoice(models.TransientModel):
             'comment': batch.comment,
             'payment_term': pay_term,
             'journal_id': RevbilJournalID,
-
+            'operating_unit_id': 
             'fiscal_position_id': partner.property_account_position_id.id,
             'supplier_invoice_number': "RB%dNo%d" % (batch.id, inv_count),
 

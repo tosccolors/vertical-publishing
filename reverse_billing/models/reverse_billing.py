@@ -251,7 +251,8 @@ class RevBilStatementOfWork(models.Model):
     def _amount_line(self):
         self.price_subtotal = self.price_unit * self.quantity
 
-    sequence = fields.Integer('Sequence', default=10, help="Gives the sequence of this line when displaying the statement of work.")
+    sequence = fields.Integer('Sequence', default=10,
+                              help="Gives the sequence of this line when displaying the statement of work.")
     name = fields.Char('Description', required=True, size=64)
     page_number = fields.Char('Pgnr', size=32)
     nr_of_columns = fields.Float('#Cols', digits=dp.get_precision('Number of Columns'), required=True)
@@ -260,7 +261,8 @@ class RevBilStatementOfWork(models.Model):
     partner_id = fields.Many2one('res.partner', 'Freelancer', required=True)
     employee = fields.Boolean('Employee',  help="It indicates that the partner is an employee.",
                               default=False)
-    product_category_id = fields.Many2one('product.category', 'Category', required=True, domain=[('parent_id.revbil', '=', True)])
+    product_category_id = fields.Many2one('product.category', 'Category', required=True,
+                                          domain=[('parent_id.revbil', '=', True)])
     product_id = fields.Many2one('product.product', 'Product', required=True,)
     account_id = fields.Many2one('account.account', 'Account', required=True,
                                  domain=[('internal_type','<>','view')],
@@ -271,12 +273,15 @@ class RevBilStatementOfWork(models.Model):
                             required=True, default=1)
     analytic_account_id = fields.Many2one(related='issue_id.analytic_account_id', relation='account.analytic.account',
                                           string='Analytic Account', store=True, readonly=True )
-    date_publish = fields.Date(related='issue_id.date_publish', readonly=True, string='Publishing Date', store=True,)
-    company_id = fields.Many2one(related='issue_id.company_id', relation='res.company',string='Company', store=True, readonly=True)
-    price_subtotal = fields.Float(compute='_amount_line', string='Amount',digits = dp.get_precision('Account'), store=True)
+    date_publish = fields.Date(related='issue_id.issue_date', readonly=True, string='Publishing Date', store=True,)
+    company_id = fields.Many2one(related='batch_id.company_id', relation='res.company',string='Company', store=True,
+                                 readonly=True)
+    price_subtotal = fields.Float(compute='_amount_line', string='Amount',digits = dp.get_precision('Account'),
+                                  store=True)
     estimated_price = fields.Float('Estimate',)
     invoice_line_id = fields.Many2one('account.invoice.line', 'Invoice Line', readonly=True)
-    invoice_id = fields.Many2one(related='invoice_line_id.invoice_id', relation='account.invoice', string='Invoice', readonly=True)
+    invoice_id = fields.Many2one(related='invoice_line_id.invoice_id', relation='account.invoice', string='Invoice',
+                                 readonly=True)
     invoiced = fields.Boolean(compute='_invoiced', string='Invoiced', store=True,
 #                              search='_invoiced_search',
                               help="It indicates that the line has been invoiced.")
@@ -397,28 +402,26 @@ class RevBilStatementOfWork(models.Model):
 
     @api.onchange('partner_id', 'product_id')
     def _onchange_calculatePrice(self):
+        if not (self.partner_id and self.product_id):
+            return {}
         user = self.env.user
         context = dict(self._context)
         company_id = context.get('company_id', user.company_id.id)
         context.update({'company_id': company_id, 'force_company': company_id})
-
         part = self.partner_id
         if part.lang:
             context.update({'lang': part.lang})
-
         self.employee = True if part.employee else False
-
         if 'nsm_supplier_portal' in self.env['ir.module.module']._installed():
             if part.product_category_ids:
                 self.product_category_id = part.product_category_ids[0].id
-
         res = self.product_id
         a = res.property_account_expense_id.id
         if not a:
             a = res.categ_id.property_account_expense_categ_id.id
         if a:
             self.account_id = a
-        self.price_unit = self.partner_id.pricelist_id.get_product_price(self.product_id, self.quantity or 1.0, self.partner_id)
+        self.price_unit = self.partner_id.property_product_pricelist.get_product_price(self.product_id, self.quantity or 1.0, self.partner_id)
 
 
 

@@ -23,8 +23,8 @@
 from odoo import api, fields, models, _
 from lxml import etree
 
-class AdvertisingIssue(models.Model):
-    _name = "sale.advertising.issue"
+class AnalyticAccount(models.Model):
+    _inherit = "account.analytic.account"
 
     is_revbil = fields.Boolean('Reverse Billing Relevant')
 
@@ -35,30 +35,8 @@ class Invoice(models.Model):
 
 
     revbil = fields.Boolean('Reverse Billing', help="It indicates that the invoice is a Reverse Billing Invoice.", default=False)
-    product_category_id = fields.Many2one('product.category', 'Cost Category')
 
-    '''@api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super(Invoice, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        print "res", res
 
-        nsmModule = True if 'nsm_supplier_portal' in self.env['ir.module.module']._installed() else False
-
-        if view_type == 'form':
-            doc = etree.XML(res['arch'])
-            if nsmModule:
-                for node in doc.xpath("//button[@name='action_portalback' and @class='btn-nsm']"):
-                    node.getparent().remove(node)
-            else:
-                for node in doc.xpath("//button[@name='action_portalback' and @class='oe_highlight btn-bill-1']"):
-                    node.getparent().remove(node)
-
-                for node in doc.xpath("//button[@name='action_portalback' and @class='btn-bill-2']"):
-                    node.getparent().remove(node)
-
-            res['arch'] = etree.tostring(doc)
-
-        return res'''
 
     @api.multi
     def invoice_print(self):

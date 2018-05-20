@@ -7,7 +7,6 @@
             <field name="model">sow.batch</field>
             <field name="arch" type="xml">
                 <tree string="Reverse Billing Batches">
-                    <field name="analytic_account_id"/>
                     <field name="date_batch"/>
                     <field name="invoiced" string="All Lines Invoiced"/>
                     <field name="state" invisible="0"/>
@@ -52,12 +51,12 @@
                                     <tree string="Statement of Work lines" editable="bottom">
                                         <field name="company_id" invisible="1"/>
                                         <field name="sequence" widget="handle" />
+                                        <field name="issue_id"  domain="[('is_revbil', '=',  True),('parent_id', '=',  True)]"/>
                                         <field name="partner_id"  domain="['|',('employee','=', True),('category_id', '=',  %(reverse_billing.revbil_partner_category)d)]"
                                                />
                                         <field name="product_category_id"
                                                domain="['|',('id', '=',  %(reverse_billing.revbil_categoryT)d),('id', '=',  %(reverse_billing.revbil_categoryB)d)]"/>
                                         <field name="page_number"/>
-                                        <field name="activity_id" invisible="0"  />
                                         <field name="product_id"
                                                domain="[('categ_id', '=', product_category_id)]"/>
                                         <field name="quantity"
@@ -97,13 +96,10 @@
             <field name="name">sow.batch</field>
             <field name="model">sow.batch</field>
             <field name="arch" type="xml">
-                <search string="Search Issue">
-                    <field name="analytic_account_id" string="Issue" filter_domain="[ ('analytic_account_id','ilike',self)]"/>
+                <search string="Search Batch">
                     <filter name="state" string="Draft" domain="[('state','=','draft')]" help="Draft issues"/>
                     <filter name="state" string="Confirmed" domain="[('state','=','open')]" help="Confirmed issues"/>
                     <filter name="state" string="Finalised" domain="[('state','=','done')]" help="Finalised issues"/>
-                    <separator/>
-                    <field name="analytic_account_id" operator="child_of"/>
                     <separator/>
                </search>
             </field>
@@ -157,7 +153,7 @@
                     <filter name="state" string="Exception" domain="[('state','=','exception')]" help="Issue Exception"/>
                     <filter name="employee" string="Employee Lines" domain="[('employee','=',True)]" help="Employee Issue Lines"/>
                     <separator/>
-                    <field name="analytic_account_id" operator="child_of"/>
+                    <!--field name="analytic_account_id" operator="child_of"/-->
                     <separator/>
                     <group expand="0" string="Group By">
                     	<filter name="group_by_issue" string="Issue" context="{'group_by':'analytic_account_id'}"/>
