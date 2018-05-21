@@ -135,7 +135,7 @@ class SowBatch(models.Model):
 
         ctx = self._context.copy()
         ctx.update({'active_ids': self.sow_batch_line.ids})
-        return self.env['sow.batch.line.make.invoice'].with_context(ctx).make_invoices_from_lines()
+        return self.env['revbil.statement.of.work.make.invoice'].with_context(ctx).make_invoices_from_lines()
 
 
     @api.multi

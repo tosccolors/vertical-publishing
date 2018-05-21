@@ -48,7 +48,7 @@ class RevBilStatementOfWorkMakeInvoice(models.TransientModel):
     _description = "Statement of Work Make Invoice"
 
     @api.model
-    def _prepare_invoice(self, partner, batch, category, lines):
+    def _prepare_invoice(self, partner, ou, batch, lines):
         batch_invoices = batch
         invoices = self.env['account.invoice'].search([('id','in', [x.id for x in batch_invoices.invoice_ids]),('partner_id','=',partner.id)])
         if len(invoices) >= 1:
@@ -62,7 +62,7 @@ class RevBilStatementOfWorkMakeInvoice(models.TransientModel):
             pay_term = False
 
         # -- deep: validation added
-        RevbilJournalID = batch.company_id.revbil_journal and batch.company_id.revbil_journal.id or False
+        RevbilJournalID = ou.company_id.revbil_journal and ou.company_id.revbil_journal.id or False
         if not RevbilJournalID:
             raise UserError(_('Please map "Reverse Billing Journal" in the Company master.'))
 
@@ -82,17 +82,14 @@ class RevBilStatementOfWorkMakeInvoice(models.TransientModel):
             'comment': batch.comment,
             'payment_term': pay_term,
             'journal_id': RevbilJournalID,
-            'operating_unit_id': 
+            'operating_unit_id': ou.id,
             'fiscal_position_id': partner.property_account_position_id.id,
             'supplier_invoice_number': "RB%dNo%d" % (batch.id, inv_count),
-
-#            'team_id': Section and Section[0].id or False,
-
             'user_id': self._uid,
             'company_id': batch.company_id.id,
             'date_invoice': dateInvoice,
             'partner_bank_id': partner.bank_ids and partner.bank_ids[0].id or False,
-            'product_category': category.id,
+#            'product_category': category.id,
             'check_total': lines['subtotal'],
         }
 
@@ -110,8 +107,8 @@ class RevBilStatementOfWorkMakeInvoice(models.TransientModel):
         res = False
         invoices = {}
 
-        def make_invoice(partner, batch, category, lines):
-            vals = self._prepare_invoice(partner, batch, category, lines)
+        def make_invoice(partner, ou, batch, lines):
+            vals = self._prepare_invoice(partner, ou, batch, lines)
             invoice = self.env['account.invoice'].create(vals)
             self._cr.execute('insert into sow_batch_invoice_rel (batch_id,invoice_id) values (%s,%s)', (batch.id, invoice.id))
             return invoice.id
@@ -120,7 +117,7 @@ class RevBilStatementOfWorkMakeInvoice(models.TransientModel):
         Batch = self.env['sow.batch']
 
         for line in RevbilSow.browse(lids):
-            key = (line.batch_id, line.partner_id, line.product_category_id)
+            key = (line.analytic_account_id.operating_unit_ids[0], line.partner_id, line.batch_id)
 
             if (not line.invoice_line_id) and (line.state not in ('draft', 'cancel')) and (not line.employee) and (not line.gratis):
                 if not key in invoices:
@@ -142,11 +139,11 @@ class RevBilStatementOfWorkMakeInvoice(models.TransientModel):
 
         newInvoices = []
         for key, il in invoices.items():
-            batch = key[0]
+            ou = key[0]
             partner = key[1]
-            category = key[2]
+            batch = key[2]
 
-            newInv = make_invoice(partner, batch, category, il)
+            newInv = make_invoice(partner, ou, batch, il)
             newInvoices.append(newInv)
 
         if context.get('open_invoices', False):

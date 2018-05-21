@@ -51,7 +51,7 @@
                                     <tree string="Statement of Work lines" editable="bottom">
                                         <field name="company_id" invisible="1"/>
                                         <field name="sequence" widget="handle" />
-                                        <field name="issue_id"  domain="[('is_revbil', '=',  True),('parent_id', '=',  True)]"/>
+                                        <field name="issue_id"  domain="[('is_revbil', '=',  True),('parent_id', '!=',  False)]"/>
                                         <field name="partner_id"  domain="['|',('employee','=', True),('category_id', '=',  %(reverse_billing.revbil_partner_category)d)]"
                                                />
                                         <field name="product_category_id"
