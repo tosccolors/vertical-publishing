@@ -25,5 +25,10 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         for invline in lines['lines']:
             if invline.sale_line_ids.filtered('subscription'):
                 res['payment_term_id'] = partner.property_subscription_payment_term_id.id or False
+                pay_mode = partner.subscription_customer_payment_mode_id
+                res['payment_mode_id'] = pay_mode.id or False
+                if res['type'] == 'out_invoice':
+                    if pay_mode and pay_mode.bank_account_link == 'fixed':
+                        res['partner_bank_id'] = pay_mode.fixed_journal_id.bank_account_id
                 break
         return res

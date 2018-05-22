@@ -10,7 +10,8 @@
         <group name="properties" position="inside">
             <group name="enable_subscription">
                 <field name="subscription_product"/>
-                <field name="subscription_length" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}"/>
+                <field name="number_of_issues" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}"/>
+                <field name="subscr_number_of_days" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}"/>
                 <field name="delivery_obligation_account_id" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}"/>
                 <field name="subscription_revenue_account_id" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}"/>
             </group>
