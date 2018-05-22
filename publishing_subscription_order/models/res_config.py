@@ -7,7 +7,6 @@ class AccountConfigSettings(models.TransientModel):
 
     delivery_obligation_account_id = fields.Many2one('account.account', string="Delivery Obligation Account", domain=[('deprecated', '=', False)])
     subscription_revenue_account_id = fields.Many2one('account.account', string='Subscription Revenue Account', domain=[('deprecated', '=', False)])
-    # source_journal_id = fields.Many2one('account.journal', string="Source Journal")
     susbcription_journal_id = fields.Many2one('account.journal', string="Subscription Journal")
 
 

@@ -20,7 +20,7 @@
 #
 ##############################################################################
 {
-    'name': 'magazine_subscription_order',
+    'name': 'publishing_subscription_order',
     'version': '1.0',
     'category': 'Sale',
     'description': """
@@ -31,10 +31,12 @@ This module allows you to use Sales Management to run your subscription sales
     """,
     'author': 'Magnus - Willem Hulshof',
     'website': 'http://www.magnus.nl',
-    'depends': ['sale_advertising_order','sale_operating_unit','time_dependent'],
+    'depends': ['sale_advertising_order','sale_operating_unit','account_payment_mode','time_dependent'],
     'data': [
         "security/ir.model.access.csv",
-#        "views/res_partner_view.xml",
+        "data/cron_data.xml",
+        "data/payment_data.xml",
+        "views/res_partner_view.xml",
         "views/sale_subscription_view.xml",
         "views/product_view.xml",
         "views/account_invoice_view.xml",

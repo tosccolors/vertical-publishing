@@ -9,7 +9,8 @@ class ProductTemplate(models.Model):
     subscription_product = fields.Boolean(string='Is subscription product?')
     delivery_obligation_account_id = fields.Many2one('account.account', string="Delivery Obligation Account", domain=[('deprecated', '=', False)])
     subscription_revenue_account_id = fields.Many2one('account.account', string='Subscription Revenue Account', domain=[('deprecated', '=', False)])
-    subscription_length = fields.Integer('Subscription Length')
+    number_of_issues = fields.Integer('No. Of Issues')
+    subscr_number_of_days = fields.Integer('No. Of Days')
 
     @api.multi
     def _get_product_accounts(self):

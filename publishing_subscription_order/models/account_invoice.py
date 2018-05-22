@@ -24,6 +24,18 @@ class AccountInvoiceLine(models.Model):
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
+    @api.onchange('partner_id')
+    def _onchange_partner_id(self):
+        res = super(AccountInvoice, self)._onchange_partner_id()
+        if self.partner_id and self.partner_id.is_subscription_customer:
+            if self.type == 'out_invoice':
+                pay_mode = self.partner_id.subscription_customer_payment_mode_id
+                self.payment_mode_id = pay_mode
+                if pay_mode and pay_mode.bank_account_link == 'fixed':
+                    self.partner_bank_id = pay_mode.fixed_journal_id. \
+                        bank_account_id
+        return res
+
     def inv_line_characteristic_hashcode(self, invoice_line):
         """Add start and end dates to hashcode used when the option "Group
         Invoice Lines" is active on the Account Journal"""

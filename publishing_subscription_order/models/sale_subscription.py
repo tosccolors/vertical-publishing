@@ -21,7 +21,7 @@
 ##############################################################################
 
 from odoo import api, fields, exceptions, models, _
-from datetime import datetime
+from datetime import datetime, timedelta
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.exceptions import ValidationError, UserError
 
@@ -30,6 +30,7 @@ class SaleOrder(models.Model):
     _inherit = ["sale.order"]
 
     subscription = fields.Boolean('Subscription', default=False)
+    subscription_payment_mode_id = fields.Many2one(related='partner_id.subscription_customer_payment_mode_id', relation='account.payment.mode', string='Subscription Payment Mode', company_dependent=True,domain=[('payment_type', '=', 'inbound')],help="Select the default subscription payment mode for this customer.",readonly=True, copy=False, store=True)
 
     @api.depends('order_line.price_total','partner_id')
     def _amount_all(self):
@@ -60,9 +61,19 @@ class SaleOrder(models.Model):
         """Check if credit limit for partner was exceeded."""
         self.ensure_one()
         partner = self.partner_id
-        if not self.partner_id.is_subscription_customer:
+        partner.is_subscription_customer = True
+        if partner.credit_limit <= 0 or not partner.subscription_customer_payment_mode_id or not partner.property_subscription_payment_term_id:
+            raise UserError(_("Can not confirm Sale Order Partner subscription's details are not completed"))
+
+        if not partner.is_subscription_customer:
             raise UserError(_("Can not confirm Sale Order Partner is not subscription partner"
                               ))
+        #set payment term and payment mode from customer
+        if not self.payment_term_id:
+            self.payment_term_id = partner.property_subscription_payment_term_id and partner.property_subscription_payment_term_id.id or False
+        if not self.payment_mode_id:
+            self.payment_mode_id = partner.subscription_customer_payment_mode_id
+
         moveline_obj = self.env['account.move.line']
         movelines = moveline_obj.search([('partner_id', '=', partner.id),
                     ('account_id.user_type_id.type', 'in',
@@ -89,10 +100,10 @@ class SaleOrder(models.Model):
     def action_confirm(self):
         """Extend to check credit limit before confirming sale order."""
         for order in self.filtered('subscription'):
+            if order.partner_id:
                 order.check_limit()
         return super(SaleOrder, self).action_confirm()
 
-        # overridden:
     @api.multi
     @api.onchange('partner_id', 'published_customer', 'advertising_agency', 'agency_is_publish')
     def onchange_partner_id(self):
@@ -101,9 +112,10 @@ class SaleOrder(models.Model):
         - Subscription Payment term
         """
         super(SaleOrder, self).onchange_partner_id()
-        if self.subscription:
+        if self.subscription and self.partner_id:
             # Subscription:
             self.payment_term_id = self.partner_id.property_subscription_payment_term_id and self.partner_id.property_subscription_payment_term_id.id or False
+            self.payment_mode_id = self.partner_id.subscription_customer_payment_mode_id
 
     @api.model
     def _prepare_invoice(self,):
@@ -112,21 +124,31 @@ class SaleOrder(models.Model):
             res['payment_term_id'] = self.partner_id.property_subscription_payment_term_id.id or False
         return res
 
+    @api.multi
+    def action_draft(self):
+        res = super(SaleOrder, self).action_draft()
+        orders = self.filtered('subscription')
+        for line in orders.order_line:
+            if line.can_cancel and line.subscription_cancel:
+                line.can_cancel  = False
+                line.subscription_cancel = False
+                line.date_cancel = False
+        return res
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    subscription = fields.Boolean(related='order_id.subscription', string='Subscription', store=True)
+    subscription = fields.Boolean(related='order_id.subscription', string='Subscription', readonly=True, store=True)
     start_date = fields.Date('Start Date')
     end_date = fields.Date('End Date')
-    must_have_dates = fields.Boolean(related='product_id.product_tmpl_id.subscription_product', readonly=True)
-
-    @api.multi
-    @api.onchange('product_id')
-    def set_start_date(self):
-        for order_line in self:
-            if order_line.product_id.subscription_product:
-                order_line.start_date = datetime.today()
+    must_have_dates = fields.Boolean(related='product_id.product_tmpl_id.subscription_product', readonly=True, copy=False, store=True)
+    number_of_issues = fields.Integer(related='product_id.product_tmpl_id.number_of_issues', readonly=True, copy=False, store=True, string='No. Of Issues')
+    can_cancel = fields.Boolean('Can cancelled?')
+    can_renew = fields.Boolean('Can Renewed?', default=False)
+    date_cancel = fields.Date('Cancelled date', help="Cron will cancel this line on selected date.")
+    renew_product_id = fields.Many2one('product.product','Renewal Product')
+    subscription_cancel = fields.Boolean('Subscription cancelled',copy=False)
+    line_renewed = fields.Boolean('Subscription Renewed', copy=False)
 
     @api.onchange('ad_class')
     def onchange_ad_class_subs(self):
@@ -142,13 +164,8 @@ class SaleOrderLine(models.Model):
                     vals['product_uom'] = product_ids.uom_id
                 else:
                     vals['product_template_id'] = False
-            #titles = self.env['sale.advertising.issue'].search([('parent_id', '=', False), ('medium', '=', self.ad_class.id)]).ids
-            # if titles and len(titles) == 1:
-            #     vals['title'] = titles[0]
-            #     vals['title_ids'] = [(6, 0, [])]
-            # else:
-            #     vals['title'] = False
-            #     vals['title_ids'] = [(6, 0, [])]
+            else:
+                vals['product_template_id'] = False
             date_type = self.ad_class.date_type
             if date_type:
                 vals['date_type'] = date_type
@@ -158,11 +175,29 @@ class SaleOrderLine(models.Model):
             vals['product_template_id'] = False
             vals['product_id'] = False
             vals['date_type'] = False
-            # vals['title'] = False
-            # vals['title_ids'] = [(6, 0, [])]
         return {'value': vals, 'domain' : data, 'warning': result}
 
-    @api.onchange('product_template_id')
+
+    @api.onchange('can_renew','can_cancel', 'date_cancel')
+    def onchange_renewal_cancel(self):
+        vals, result = {}, {}
+        if self.can_renew:
+            vals['can_cancel'] = False
+            vals['date_cancel'] = False
+            vals['renew_product_id'] = self.product_id or False
+        if self.can_cancel:
+            vals['can_renew'] = False
+            vals['renew_product_id'] = self.product_id or False
+            if self.date_cancel:
+                result = {'title': _('Warning'),
+                          'message': _('This Order line would be canceled on %s')%self.date_cancel}
+            if self.date_cancel and self.date_cancel < str(datetime.now().date()):
+                vals['date_cancel'] = False
+                result = {'title': _('Warning'),
+                          'message': _("'Cancel date' can't be past date!")}
+        return {'value': vals, 'warning':result}
+
+    @api.onchange('product_template_id', 'start_date', 'end_date')
     def onchange_product_template_subs(self):
         vals = {}
         if not self.subscription:
@@ -174,6 +209,16 @@ class SaleOrderLine(models.Model):
                 [('product_tmpl_id', '=', self.product_template_id.id), ('attribute_value_ids', '=', False)])
             if product_id:
                 vals['product_id'] = product_id.id
+            start_date = self.start_date
+            if not start_date:
+                start_date = datetime.today().date()
+                vals['start_date'] = start_date
+            if start_date:
+                vals['end_date'] = datetime.strptime(str(start_date), "%Y-%m-%d").date() + timedelta(days=product_id.subscr_number_of_days)
+        else:
+            vals['product_id'] = False
+            vals['start_date'] = False
+            vals['end_date'] = False
         return {'value': vals}
 
     @api.multi
@@ -232,8 +277,8 @@ class SaleOrderLine(models.Model):
 
         return True
 
-    @api.depends('product_template_id')
     @api.multi
+    @api.depends('product_template_id')
     def _compute_price_edit(self):
         """
         Compute if price_unit should be editable.
@@ -241,3 +286,41 @@ class SaleOrderLine(models.Model):
         for line in self.filtered('subscription'):
             if line.product_template_id.price_edit :
                 line.price_edit = True
+
+    @api.multi
+    def create_renewal_line(self, order_lines=[]):
+        sol_obj = self.env['sale.order.line']
+        for line in order_lines:
+            res = {
+                'start_date': datetime.today().date(),
+                'end_date': datetime.today().date() + timedelta(days=line.renew_product_id.subscr_number_of_days),
+                'order_id': line.order_id.id,
+                'price_unit': line.renew_product_id.lst_price or False,
+                'can_renew': False,
+                'renew_product_id': False,
+                'discount':0
+            }
+            if line.product_id != line.renew_product_id:
+                res.update({
+                    'product_template_id':line.renew_product_id.product_tmpl_id.id or False,
+                    'product_id':line.renew_product_id.id or False,
+                })
+
+            vals = line.copy_data(default=res)[0]
+            sol_obj.create(vals)
+
+            line.line_renewed = True
+
+
+    @api.model
+    def run_order_line_cancel(self):
+        order_lines = self.search([('subscription','=',True),('state','in',('sale','done')),('subscription_cancel','=',False),('can_cancel','=',True),('date_cancel','<=',datetime.today().date())])
+        return order_lines.write({'subscription_cancel': True})
+
+    @api.model
+    def run_order_line_renew(self):
+        order_lines = self.search(
+            [('subscription','=',True),('state', 'in', ('sale', 'done')), ('can_renew', '=', True),('line_renewed', '=' ,False), ('end_date', '<', datetime.today().date())])
+        self.create_renewal_line(order_lines)
+        return True
+

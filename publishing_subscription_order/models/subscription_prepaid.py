@@ -267,8 +267,8 @@ class SubscriptionPrepaid(models.Model):
 
         assert total_months > 0, \
             'Should never happen. Total Months should always be > 0'
-        monthly_editions = int(aml.product_id.subscription_length/total_months)
-        monthly_editions_cost = ((aml.debit - aml.credit)/aml.product_id.subscription_length)*monthly_editions
+        monthly_editions = int(aml.product_id.number_of_issues/total_months)
+        monthly_editions_cost = ((aml.debit - aml.credit)/aml.product_id.number_of_issues)*monthly_editions
         prepaid_amount = monthly_editions_cost * prepaid_months
         title = aml.name
         invoice_line_obj = aml.invoice_id.invoice_line_ids.filtered(lambda invline: invline.product_id == aml.product_id)
