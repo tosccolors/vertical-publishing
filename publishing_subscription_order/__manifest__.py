@@ -33,7 +33,7 @@ This module allows you to use Sales Management to run your subscription sales
     'website': 'http://www.magnus.nl',
     'depends': ['sale_advertising_order','sale_operating_unit','account_payment_mode','time_dependent'],
     'data': [
-        "security/ir.model.access.csv",
+#        "security/ir.model.access.csv",
         "data/cron_data.xml",
         "data/payment_data.xml",
         "views/res_partner_view.xml",
@@ -42,7 +42,7 @@ This module allows you to use Sales Management to run your subscription sales
         "views/account_invoice_view.xml",
         "views/account_move_view.xml",
         "views/res_config_view.xml",
-        "views/subscription_prepaid_view.xml",
+#        "views/subscription_prepaid_view.xml",
     ],
     'installable': True
 }
