@@ -23,18 +23,18 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 
-class IssueMakeInvoice(models.TransientModel):
-    _name = "hon.issue.make.invoice"
-    _description = "Honorarium Issue Make_invoice"
+class BatchMakeInvoice(models.TransientModel):
+    _name = "sow.batch.make.invoice"
+    _description = "Statement of Work Batch Make_invoice"
 
     @api.multi
-    def make_invoices_from_issues(self):
+    def make_invoices_from_batches(self):
         context = self._context
 
-        issue_ids = context.get('active_ids', [])
-        his_obj = self.env['hon.issue.line.make.invoice']
+        batch_ids = context.get('active_ids', [])
+        his_obj = self.env['revbil.statement.of.work.make.invoice']
 
-        lines = self.env['hon.issue.line'].search([('issue_id','in', issue_ids)])
+        lines = self.env['revbil.statement.of.work'].search([('batch_id','in', batch_ids)])
 
         ctx = context.copy()
         ctx['active_ids'] = lines.ids
@@ -43,14 +43,14 @@ class IssueMakeInvoice(models.TransientModel):
 
 
 
-class IssueLineMakeInvoice(models.TransientModel):
-    _name = "hon.issue.line.make.invoice"
-    _description = "Honorarium Issue Line Make_invoice"
+class RevBilStatementOfWorkMakeInvoice(models.TransientModel):
+    _name = "revbil.statement.of.work.make.invoice"
+    _description = "Statement of Work Make Invoice"
 
     @api.model
-    def _prepare_invoice(self, partner, issue, category, lines):
-        issue_invoices = issue
-        invoices = self.env['account.invoice'].search([('id','in', [x.id for x in issue_invoices.invoice_ids]),('partner_id','=',partner.id)])
+    def _prepare_invoice(self, partner, ou, batch, lines):
+        batch_invoices = batch
+        invoices = self.env['account.invoice'].search([('id','in', [x.id for x in batch_invoices.invoice_ids]),('partner_id','=',partner.id)])
         if len(invoices) >= 1:
             inv_count = len(invoices) + 1
         else:
@@ -62,39 +62,35 @@ class IssueLineMakeInvoice(models.TransientModel):
             pay_term = False
 
         # -- deep: validation added
-        HonJournalID = issue.company_id.hon_journal and issue.company_id.hon_journal.id or False
-        if not HonJournalID:
-            raise UserError(_('Please map "Honorarium Journal" in the Company master.'))
+        RevbilJournalID = ou.company_id.revbil_journal and ou.company_id.revbil_journal.id or False
+        if not RevbilJournalID:
+            raise UserError(_('Please map "Reverse Billing Journal" in the Company master.'))
 
         dateInvoice = self._context.get('date_invoice', False) or fields.Date.today()
-        Section = issue.account_analytic_id.section_ids
+#        Section = issue.account_analytic_id.section_ids
 
         return {
             'name': lines['name'] or '',
-            'hon': True,
-            'origin': issue.account_analytic_id.name,
+            'revbil': True,
+            'origin': batch.name,
             'type': 'in_invoice',
             'reference': False,
-            'date_publish': issue.date_publish,
+            'date_batch': batch.date_batch,
             'account_id': a,
             'partner_id': partner.id,
             'invoice_line_ids': [(6, 0, lines['lines'])],
-            'comment': issue.comment,
+            'comment': batch.comment,
             'payment_term': pay_term,
-            'journal_id': HonJournalID,
-
+            'journal_id': RevbilJournalID,
+            'operating_unit_id': ou.id,
             'fiscal_position_id': partner.property_account_position_id.id,
-            'supplier_invoice_number': "HON%dNo%d" % (issue.id, inv_count),
-
-            'team_id': Section and Section[0].id or False,
-
+            'supplier_invoice_number': "RB%dNo%d" % (batch.id, inv_count),
             'user_id': self._uid,
-            'company_id': issue.company_id.id,
+            'company_id': batch.company_id.id,
             'date_invoice': dateInvoice,
             'partner_bank_id': partner.bank_ids and partner.bank_ids[0].id or False,
-            'product_category': category.id,
+#            'product_category': category.id,
             'check_total': lines['subtotal'],
-            # 'main_account_analytic_id': issue.account_analytic_id.parent_id.id
         }
 
     @api.multi
@@ -105,23 +101,23 @@ class IssueLineMakeInvoice(models.TransientModel):
         """
         context = self._context
         if not context.get('active_ids', []):
-            raise UserError(_('No Issue lines are selected for invoicing:\n'))
+            raise UserError(_('No Reverse Billing sow lines are selected for invoicing:\n'))
         else: lids = context.get('active_ids', [])
 
         res = False
         invoices = {}
 
-        def make_invoice(partner, issue, category, lines):
-            vals = self._prepare_invoice(partner, issue, category, lines)
+        def make_invoice(partner, ou, batch, lines):
+            vals = self._prepare_invoice(partner, ou, batch, lines)
             invoice = self.env['account.invoice'].create(vals)
-            self._cr.execute('insert into hon_issue_invoice_rel (issue_id,invoice_id) values (%s,%s)', (issue.id, invoice.id))
+            self._cr.execute('insert into sow_batch_invoice_rel (batch_id,invoice_id) values (%s,%s)', (batch.id, invoice.id))
             return invoice.id
 
-        IssueLine = self.env['hon.issue.line']
-        Issue = self.env['hon.issue']
+        RevbilSow = self.env['revbil.statement.of.work']
+        Batch = self.env['sow.batch']
 
-        for line in IssueLine.browse(lids):
-            key = (line.issue_id, line.partner_id, line.product_category_id)
+        for line in RevbilSow.browse(lids):
+            key = (line.analytic_account_id.operating_unit_ids[0], line.partner_id, line.batch_id)
 
             if (not line.invoice_line_id) and (line.state not in ('draft', 'cancel')) and (not line.employee) and (not line.gratis):
                 if not key in invoices:
@@ -135,19 +131,19 @@ class IssueLineMakeInvoice(models.TransientModel):
                     invoices[key]['name'] += str(line.name)+' / '
 
         if not invoices:
-            raise UserError(_('Invoice cannot be created for this Honorarium Issue Line due to one of the following reasons:\n'
-                              '1.The state of this hon issue line is either "draft" or "cancel"!\n'
-                              '2.The Honorarium Issue Line is Invoiced!\n'
-                              '3.The Honorarium Issue Line is marked "gratis"\n'
-                              '4.The Honorarium Issue Line has an Employee as Creditor\n'))
+            raise UserError(_('Invoice cannot be created for this RevBil Statement of Work due to one of the following reasons:\n'
+                              '1.The state of this sow line is either "draft" or "cancel"!\n'
+                              '2.The RevBil Statement of Work is Invoiced!\n'
+                              '3.The RevBil Statement of Work is marked "gratis"\n'
+                              '4.The RevBil Statement of Work has an Employee as Creditor\n'))
 
         newInvoices = []
         for key, il in invoices.items():
-            issue = key[0]
+            ou = key[0]
             partner = key[1]
-            category = key[2]
+            batch = key[2]
 
-            newInv = make_invoice(partner, issue, category, il)
+            newInv = make_invoice(partner, ou, batch, il)
             newInvoices.append(newInv)
 
         if context.get('open_invoices', False):

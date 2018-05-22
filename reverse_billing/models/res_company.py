@@ -21,23 +21,16 @@
 
 from odoo import api, fields, models, _
 
-class Partner(models.Model):
-    _inherit = "res.partner"
-
-    product_price_ids = fields.One2many('partner.product.price', 'partner_id',
-                                        'Product Price for this Supplier', copy=True)
-
-
 
 class Company(models.Model):
     _inherit = 'res.company'
 
-    hon_journal = fields.Many2one('account.journal', 'Honorarium Journal')
-    report_background_image_hon1 = fields.Binary('Background Image for HON Frontpage',
-            help='Set Background Image for HON Frontpage')
+    revbil_journal = fields.Many2one('account.journal', 'Reverse Billing Journal')
+    report_background_image_revbil1 = fields.Binary('Background Image for Reverse Bill Frontpage',
+            help='Set Background Image for Reverse Bill Frontpage')
 
-    report_background_image_hon2 = fields.Binary('Background Image for HON Following Pages',
-            help='Set Background Image for HON Following Pages')
+    report_background_image_revbil2 = fields.Binary('Background Image for Reverse Bill Following Pages',
+            help='Set Background Image for Reverse Bill Following Pages')
 
 
 

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sow_batch_user,sow.batch.user,model_sow_batch,reverse_billing.group_module_revbil_user,1,1,1,1
+access_revbil_statement_of_work_user,revbil.statement.of.work.user,model_revbil_statement_of_work,reverse_billing.group_module_revbil_user,1,1,1,1
+revbil_user_invoice,revbil_user_invoice,account.model_account_invoice,reverse_billing.group_module_revbil_user,1,1,1,1
+revbil_user_invoice_line,revbil_user_invoice_line,account.model_account_invoice_line,reverse_billing.group_module_revbil_user,1,1,1,1

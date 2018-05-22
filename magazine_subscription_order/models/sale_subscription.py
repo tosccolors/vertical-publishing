@@ -124,6 +124,9 @@ class SaleOrderLine(models.Model):
     @api.multi
     @api.onchange('product_id')
     def set_start_date(self):
+        vals = {}
+        if not self.subscription:
+            return {'value': vals}
         for order_line in self:
             if order_line.product_id.subscription_product:
                 order_line.start_date = datetime.today()

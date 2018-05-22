@@ -27,8 +27,8 @@
 #
 ##############################################################################
 
-import res_partner
-import hon
+import res_company
+import reverse_billing
 import product
 import account_invoice
 

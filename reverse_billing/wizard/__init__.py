@@ -19,8 +19,8 @@
 #
 ##############################################################################
 
-import wizard
-import hon_line_invoice
+# import portal_back
+import revbil_line_invoice
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
