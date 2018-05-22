@@ -130,22 +130,40 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                 size = size_ctx
             if eta_ctx and not eta:
                 eta = fields.Datetime.from_string(eta_ctx)
+        if jq:
+            self.with_delay(eta=eta).make_invoices_split_lines_jq(inv_date, post_date, eta, size)
+        else:
+            OrderLines = self.env['sale.order.line'].browse(lids)
+            self.make_invoices_job_queue(inv_date, post_date, OrderLines)
 
+    @job
+    @api.multi
+    def make_invoices_split_lines_jq(self, inv_date, post_date, lids, eta, size):
         OrderLines = self.env['sale.order.line'].browse(lids)
         partners = OrderLines.mapped('order_id.partner_invoice_id')
         chunk = False
-        if jq:
-            for partner in partners:
-                lines = OrderLines.filtered(lambda r: r.order_id.partner_invoice_id.id == partner.id)
+        for partner in partners:
+            lines = OrderLines.filtered(lambda r: r.order_id.partner_invoice_id.id == partner.id)
+            if len(lines) > size:
+                published_customer = lines.mapped('order_id.published_customer')
+                for pb in published_customer:
+                    linespb = lines.filtered(lambda r: r.order_id.published_customer.id == pb.id)
+                    chunk = linespb if not chunk else chunk | linespb
+                    if len(chunk) < size:
+                        continue
+                    self.with_delay(eta=eta).make_invoices_job_queue(inv_date, post_date, chunk)
+                    chunk = False
+                if chunk:
+                    self.with_delay(eta=eta).make_invoices_job_queue(inv_date, post_date, chunk)
+            else:
                 chunk = lines if not chunk else chunk | lines
                 if len(chunk) < size:
                     continue
                 self.with_delay(eta=eta).make_invoices_job_queue(inv_date, post_date, chunk)
                 chunk = False
-            if chunk:
-                    self.with_delay(eta=eta).make_invoices_job_queue(inv_date, post_date, chunk)
-        else:
-            self.make_invoices_job_queue(inv_date, post_date, OrderLines)
+        if chunk:
+                self.with_delay(eta=eta).make_invoices_job_queue(inv_date, post_date, chunk)
+
 
 
     @job
