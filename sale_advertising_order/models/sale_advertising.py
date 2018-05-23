@@ -125,7 +125,7 @@ class SaleOrder(models.Model):
         ])
     published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer','=',True)])
     advertising_agency = fields.Many2one('res.partner', 'Advertising Agency', domain=[('customer','=',True)])
-    nett_nett = fields.Boolean('Netto Netto Deal', default=False)
+    # nett_nett = fields.Boolean('Netto Netto Deal', default=False)
     pub_cust_domain = fields.Char(compute=_compute_pub_cust_domain, readonly=True, store=False, )
     agency_is_publish = fields.Boolean('Agency is Publishing Customer', default=False)
     customer_contact = fields.Many2one('res.partner', 'Payer Contact Person', domain=[('customer','=',True)])
@@ -323,7 +323,7 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'subtotal_before_agency_disc',
+    @api.depends('product_uom_qty', 'order_id.partner_id', 'nett_nett', 'subtotal_before_agency_disc',
                  'discount', 'price_unit', 'tax_id')
     @api.multi
     def _compute_amount(self):
@@ -338,7 +338,7 @@ class SaleOrderLine(models.Model):
             qty = line.product_uom_qty or 0.0
             csa = line.color_surcharge_amount or 0.0
             subtotal_bad = line.subtotal_before_agency_disc or 0.0
-            if line.order_id.partner_id.is_ad_agency and not line.order_id.nett_nett:
+            if line.order_id.partner_id.is_ad_agency and not line.nett_nett:
                 discount = line.order_id.partner_id.agency_discount
             else:
                 discount = 0.0
@@ -522,6 +522,7 @@ class SaleOrderLine(models.Model):
     price_edit = fields.Boolean(compute='_compute_price_edit', string='Price Editable')
     color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Account'))
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
+    nett_nett = fields.Boolean('Netto Netto Deal', default=False)
 
     @api.onchange('medium')
     def onchange_medium(self):
