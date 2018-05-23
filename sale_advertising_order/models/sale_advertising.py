@@ -935,7 +935,7 @@ class SaleOrderLine(models.Model):
                 continue
             if line.invoice_status == 'invoiced' and not vals.get('product_uom_qty') == 0:
                 raise UserError(_('You cannot change an order line after it has been fully invoiced.'))
-            if not line.multi_line and ('product_id' in vals or 'adv_issue_id' in vals or 'product_uom_qty' in vals):
+            if not line.multi_line and ('product_id' in vals or 'adv_issue' in vals or 'product_uom_qty' in vals):
                 if line.deadline_check():
                     line.page_qty_check_update()
         return result
