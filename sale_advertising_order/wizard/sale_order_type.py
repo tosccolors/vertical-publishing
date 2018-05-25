@@ -4,7 +4,7 @@ from odoo.exceptions import UserError
 
 class SaleOrderType(models.TransientModel):
     """
-    This wizard will allow to choose order type(Regular Sale Order/Advertising Sale Order/Subscription Sale Order)
+    This wizard will allow to choose order type(Regular Sale Order/Advertising Sale Order)
     """
     _name = "sale.order.type"
     _description = "Select sale order type"
@@ -13,16 +13,17 @@ class SaleOrderType(models.TransientModel):
 
     @api.multi
     def action_form_view(self):
+        if not self.order_type:
+            raise UserError(_("Please select order type."))
         context = self._context.copy()
         context['default_opportunity_id'] = context.get('active_id')
+        form_view_id = False
         if self.order_type == 'reg_order':
             form_view_id = self.env.ref('sale.view_order_form').id
             context['default_advertising'] = False
         elif self.order_type == 'adv_order':
             form_view_id = self.env.ref('sale_advertising_order.view_order_form_advertising').id
             context['default_advertising'] = True
-        else:
-            raise UserError(_("Please select order type."))
 
         return {
             'name':'Quotation',
