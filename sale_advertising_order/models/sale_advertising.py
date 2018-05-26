@@ -125,7 +125,7 @@ class SaleOrder(models.Model):
         ])
     published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer','=',True)])
     advertising_agency = fields.Many2one('res.partner', 'Advertising Agency', domain=[('customer','=',True)])
-    # nett_nett = fields.Boolean('Netto Netto Deal', default=False)
+    nett_nett = fields.Boolean('Netto Netto Deal', default=False)
     pub_cust_domain = fields.Char(compute=_compute_pub_cust_domain, readonly=True, store=False, )
     agency_is_publish = fields.Boolean('Agency is Publishing Customer', default=False)
     customer_contact = fields.Many2one('res.partner', 'Payer Contact Person', domain=[('customer','=',True)])
@@ -522,7 +522,7 @@ class SaleOrderLine(models.Model):
     price_edit = fields.Boolean(compute='_compute_price_edit', string='Price Editable')
     color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Account'))
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
-    nett_nett = fields.Boolean('Netto Netto Deal', default=False)
+    nett_nett = fields.Boolean(related='order_id.nett_nett', string='Netto Netto Line', store=True)
 
     @api.onchange('medium')
     def onchange_medium(self):

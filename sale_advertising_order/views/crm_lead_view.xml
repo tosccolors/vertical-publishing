@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<openerp>
+<odoo>
     <data>
 
         <!--
@@ -29,6 +29,8 @@
                         <group>
                             <group>
                                 <!-- Preload all the partner's information -->
+                                <field name="partner_name" string="Advertiser Name"
+                                       attrs="{'invisible': [('published_customer','!=',False)]}"/>
                                 <field name="partner_id" string="Customer" invisible="1"
                                     options='{"create_name_field": "name"}'
                                     context="{'default_name': contact_name, 'default_street': street, 'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_function': function, 'default_phone': phone, 'default_mobile': mobile, 'default_fax': fax, 'default_email': email_from, 'default_user_id': user_id, 'default_team_id': team_id}" groups="base.group_no_one"/>
@@ -39,8 +41,6 @@
                                        domain="[('is_ad_agency','!=', True),('is_company','=', True),('customer','=', True)]"/>
                                 <field name="ad_agency_id" string="Agency" domain="[('is_ad_agency','=', True),('customer','=',True), ('is_company','=', True)]"
                                        attrs="{'invisible': [('published_customer','=',False)]}"/>
-
-                                <field name="partner_name" string="Advertiser Name"/>
                                 <label for="street" string="Invoice Address Payer"/>
                                 <div class="o_address_format">
                                     <field name="street" placeholder="Street..." class="o_address_street"/>
@@ -207,6 +207,8 @@
                         </div>
                         <group>
                             <group>
+                                <field name="partner_name" string="Advertiser Name"
+                                       attrs="{'invisible': [('published_customer','!=',False)]}"/>
                                 <field name="partner_id"
                                     invisible="True"
                                     string="Customer" domain="[('customer', '=', True)]"
@@ -228,8 +230,7 @@
                                         />
                                 <field name="partner_contact_id" string="Contact Person" context="{'default_parent_id': partner_id}"
                                                            domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"
-                                                           attrs="{'invisible': [('published_customer','=',False)]}"
-                                                            />
+                                                           attrs="{'invisible': [('published_customer','=',False)]}"/>
                                 <field name="email_from" string="Email" widget="email"/>
                                 <field name="phone" widget="phone"/>
                             </group>
@@ -238,9 +239,11 @@
                                 <label for="next_activity_id"/>
                                 <div>
                                     <div class="o_row mr16">
+                                        <field name="is_activity" invisible="1"/>
                                         <field name="next_activity_id"
                                                options="{'no_create': True, 'no_open': True}"
-                                               domain="['|',('team_id','=',False),('team_id','=',team_id)]"/>
+                                               domain="['|',('team_id','=',False),('team_id','=',team_id)]"
+                                               attrs="{'required': [('is_activity', '=', True)]}" />
                                         <span class="oe_form_field"
                                               attrs="{'invisible': ['|', ('next_activity_id', '=', False), ('date_action', '=', False)]}">&#160;on&#160;</span>
                                         <field name="date_action" attrs="{'invisible': [('next_activity_id', '=', False)], 'required': [('next_activity_id', '!=', False)]}" placeholder="Choose a date..."/>
@@ -274,7 +277,6 @@
                         <page name="lead" string="Contact Information">
                             <group>
                                 <group>
-                                    <field name="partner_name" string="Advertiser Name"/>
                                     <label for="street" string="Invoice Address Payer"/>
                                     <div class="o_address_format">
                                         <field name="street" placeholder="Street..." class="o_address_street"/>
@@ -550,4 +552,4 @@ action = model.with_context(ctx).action_your_pipeline()</field>
             </field>
         </record>
     </data>
-</openerp>
+</odoo>

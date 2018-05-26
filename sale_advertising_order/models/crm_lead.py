@@ -381,7 +381,7 @@ class Team(models.Model):
             user_team_id = self.search([], limit=1).id
             action['help'] = """<p class='oe_view_nocontent_create'>Click here to add new opportunities</p><p>
     Looks like you are not a member of a sales team. You should add yourself
-    as a member of one of the sales team.
+    as a member of one of the sales teams.
 </p>"""
             if user_team_id:
                 action['help'] += "<p>As you don't belong to any sales team, Odoo opens the first one by default.</p>"
