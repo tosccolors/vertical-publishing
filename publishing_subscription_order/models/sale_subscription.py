@@ -32,7 +32,7 @@ class SaleOrder(models.Model):
     subscription = fields.Boolean('Subscription', default=False)
     subscription_payment_mode_id = fields.Many2one(related='partner_id.subscription_customer_payment_mode_id', relation='account.payment.mode', string='Subscription Payment Mode', company_dependent=True,domain=[('payment_type', '=', 'inbound')],help="Select the default subscription payment mode for this customer.",readonly=True, copy=False, store=True)
 
-    @api.depends('order_line.price_total','partner_id')
+    @api.depends('order_line.price_total', 'order_line.computed_discount', 'partner_id')
     def _amount_all(self):
         """
         Compute the total amounts of the SO.
