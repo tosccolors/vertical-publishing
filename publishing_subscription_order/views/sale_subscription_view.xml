@@ -8,11 +8,11 @@
 
         <menuitem id="menu_subscription_sales_main" name="Subscription Sales" parent="sales_team.menu_base_partner"
                   groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"
-                  sequence="1"/>
+                  sequence="4"/>
 
 
-        <menuitem id="menu_partner_form1" parent="menu_subscription_sales_main"
-                  action="action_partner_form_crm_publishing" sequence="2"/>
+        <!--<menuitem id="menu_partner_form1" parent="menu_subscription_sales_main"
+                  action="action_partner_form_crm_publishing" sequence="2"/>-->
 
 
 		<menuitem id="menu_product_template_action2" parent="menu_subscription_sales_main"
