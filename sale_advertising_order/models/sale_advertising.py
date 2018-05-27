@@ -323,8 +323,8 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    @api.depends('product_uom_qty', 'order_id.partner_id', 'nett_nett', 'subtotal_before_agency_disc',
-                 'discount', 'price_unit', 'tax_id')
+    @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'nett_nett', 'subtotal_before_agency_disc',
+                 'price_unit', 'tax_id')
     @api.multi
     def _compute_amount(self):
         """
@@ -332,13 +332,14 @@ class SaleOrderLine(models.Model):
         """
         super(SaleOrderLine, self.filtered(lambda record: record.advertising != True))._compute_amount()
         for line in self.filtered('advertising'):
+            nn = True if line.order_id.nett_nett or line.nett_nett else False
             comp_discount = line.computed_discount or 0.0
             price_unit = line.price_unit or 0.0
             unit_price = line.actual_unit_price or 0.0
             qty = line.product_uom_qty or 0.0
             csa = line.color_surcharge_amount or 0.0
             subtotal_bad = line.subtotal_before_agency_disc or 0.0
-            if line.order_id.partner_id.is_ad_agency and not line.nett_nett:
+            if line.order_id.partner_id.is_ad_agency and not nn:
                 discount = line.order_id.partner_id.agency_discount
             else:
                 discount = 0.0
@@ -431,8 +432,6 @@ class SaleOrderLine(models.Model):
                                                datetime.now() < fields.Datetime.from_string(line.adv_issue.issue_date)
 
 
-
-
     @api.depends('ad_class')
     @api.multi
     def _compute_tags_domain(self):
@@ -522,7 +521,7 @@ class SaleOrderLine(models.Model):
     price_edit = fields.Boolean(compute='_compute_price_edit', string='Price Editable')
     color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Account'))
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
-    nett_nett = fields.Boolean(related='order_id.nett_nett', string='Netto Netto Line', store=True)
+    nett_nett = fields.Boolean(string='Netto Netto Line')
 
     @api.onchange('medium')
     def onchange_medium(self):
