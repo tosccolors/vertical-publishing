@@ -256,7 +256,8 @@ class SaleOrderLine(models.Model):
             res['account_id'] = account.id
         return res
 
-    @api.depends('product_uom_qty', 'order_id.partner_id', 'discount', 'price_unit', 'tax_id')
+    @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'nett_nett', 'subtotal_before_agency_disc',
+                 'price_unit', 'tax_id', 'discount')
     @api.multi
     def _compute_amount(self):
         """
@@ -284,6 +285,7 @@ class SaleOrderLine(models.Model):
         """
         Compute if price_unit should be editable.
         """
+        super(SaleOrderLine, self.filtered(lambda record: record.subscription != True))._compute_price_edit()
         for line in self.filtered('subscription'):
             if line.product_template_id.price_edit :
                 line.price_edit = True
