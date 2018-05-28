@@ -29,6 +29,34 @@ class Partner(models.Model):
     is_subscription_customer = fields.Boolean('Subscription Customer', default=False)
     property_subscription_payment_term_id = fields.Many2one('account.payment.term', company_dependent=True, string='Subscription Payment Terms', help="This payment term will be used instead of the default one for subscription orders and subscription bills")
     subscription_customer_payment_mode_id = fields.Many2one('account.payment.mode', string='Subscription Customer Payment Mode',company_dependent=True,domain=[('payment_type', '=', 'inbound')],help="Select the default subscription payment mode for this customer.")
+    subs_quotation_count = fields.Integer(compute='_compute_subs_quotation_count', string='# of Quotations')
+    subs_sale_order_count = fields.Integer(compute='_compute_subs_sale_order_count', string='# of Sales Orders')
+
+    def _compute_subs_quotation_count(self):
+        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('subscription','=',True),('state','not in',('sale','done'))],
+                                                      fields=['partner_id'], groupby=['partner_id'])
+        # read to keep the child/parent relation while aggregating the read_group result in the loop
+        partner_child_ids = self.read(['child_ids'])
+        mapped_data = dict([(m['partner_id'][0], m['partner_id_count']) for m in sale_data])
+        for partner in self:
+            # let's obtain the partner id and all its child ids from the read up there
+            partner_ids = filter(lambda r: r['id'] == partner.id, partner_child_ids)[0]
+            partner_ids = [partner_ids.get('id')] + partner_ids.get('child_ids')
+            # then we can sum for all the partner's child
+            partner.subs_quotation_count = sum(mapped_data.get(child, 0) for child in partner_ids)
+
+    def _compute_subs_sale_order_count(self):
+        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('subscription','=',True),('state','in',('sale','done'))],
+                                                      fields=['partner_id'], groupby=['partner_id'])
+        # read to keep the child/parent relation while aggregating the read_group result in the loop
+        partner_child_ids = self.read(['child_ids'])
+        mapped_data = dict([(m['partner_id'][0], m['partner_id_count']) for m in sale_data])
+        for partner in self:
+            # let's obtain the partner id and all its child ids from the read up there
+            partner_ids = filter(lambda r: r['id'] == partner.id, partner_child_ids)[0]
+            partner_ids = [partner_ids.get('id')] + partner_ids.get('child_ids')
+            # then we can sum for all the partner's child
+            partner.subs_sale_order_count = sum(mapped_data.get(child, 0) for child in partner_ids)
 
     @api.model
     def _commercial_fields(self):

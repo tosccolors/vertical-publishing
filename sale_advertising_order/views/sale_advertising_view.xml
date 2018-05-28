@@ -598,7 +598,7 @@
                   action="action_orders_advertising"
                   groups="sale_advertising_order.group_advertising_sales_user" sequence="12" />
 
-        <!--Action for advertising smart button-->
+        <!--Action for Advertising Sales smart button in Customers-->
         <record id="action_orders_advertising_smart_button" model="ir.actions.act_window">
             <field name="name">Advertising Sales Orders</field>
             <field name="res_model">sale.order</field>
@@ -607,7 +607,7 @@
             <field name="search_view_id" ref="advertising_order_view_search_inherit_sale"/>
             <field name="domain">[('advertising','=',True),('state','in',('sale','done')),'|',('published_customer','=',active_id),
                                     ('advertising_agency','=',active_id)]</field>
-            <field name="context">{'default_advertising':True,'default_published_customer': active_id}</field>
+            <field name="context">{'search_default_published_customer':active_id, 'default_advertising':True,'default_published_customer': active_id}</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
                 Create a Quotation, the first step of a new sale.
