@@ -251,6 +251,8 @@
                                                        domain="page_class_domain"
                                                        attrs="{'readonly': [('deadline_passed','=', True)]}"/>
                                             </div>
+                                            <field name="proof_number_adv_customer" />
+                                            <field name="proof_number_payer" />
                                         </group>
                                     </group>
                                     <group>
@@ -916,6 +918,7 @@
                                 <field name="qty_to_invoice" invisible="1"/>
                                 <field name="qty_delivered_updateable" invisible="1"/>
                                 <field name="procurement_ids" invisible="1"/>
+                                <field name="nett_nett" />
                                 <field name="multi_line" invisible="0" groups="base.group_no_one"/>
                                 <field name="multi_line_number" invisible="0" readonly="True" groups="base.group_no_one"/>
                                 <label for="product_uom_qty" string="Ordered Quantity"/>
@@ -984,6 +987,8 @@
                                            domain="page_class_domain"
                                            attrs="{'readonly': [('deadline_passed','=', True)]}"/>
                                 </div>
+                                <field name="proof_number_adv_customer" />
+                                <field name="proof_number_payer" />
                             </group>
                         </group>
                         <group>
