@@ -19,31 +19,22 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-{
-    'name': 'publishing_subscription_order',
-    'version': '1.0',
-    'category': 'Sale',
-    'description': """
-This module allows you to use Sales Management to run your subscription sales
-==============================================================================
 
 
-    """,
-    'author': 'Magnus - Willem Hulshof',
-    'website': 'http://www.magnus.nl',
-    'depends': ['sale_advertising_order','sale_operating_unit','account_payment_mode','time_dependent'],
-    'data': [
-#        "security/ir.model.access.csv",
-        "data/cron_data.xml",
-        "data/payment_data.xml",
-        "views/sale_subscription_view.xml",
-        "views/res_partner_view.xml",
-        "views/product_view.xml",
-        "views/account_invoice_view.xml",
-        "views/account_move_view.xml",
-        "views/res_config_view.xml",
-        "views/crm_lead_view.xml",
-#        "views/subscription_prepaid_view.xml",
-    ],
-    'installable': True
-}
+from odoo import api, fields, models, _
+
+class Lead(models.Model):
+    _inherit = ["crm.lead"]
+
+    subs_quotations_count = fields.Integer("# of Subscription Quotations", compute='_compute_subs_quotations_count')
+
+    @api.multi
+    def _compute_subs_quotations_count(self):
+        for lead in self:
+            lead.subs_quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done')), ('subscription', '=', True)])
+
+    # Adding ('subscription', '=', False) in filter criteria to filter subscription records in regular quotations smart button
+    @api.multi
+    def _compute_quotations_count(self):
+        for lead in self:
+            lead.quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done')), ('advertising', '=', False), ('subscription', '=', False)])

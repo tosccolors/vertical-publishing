@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+        <!--Action for Subscription Quotations smart button in crm.lead-->
+        <record id="act_crm_lead_2_quotation_subscription" model="ir.actions.act_window">
+            <field name="name">Subscription Quotations</field>
+            <field name="res_model">sale.order</field>
+            <field name="domain">[('subscription','=',True), ('state','not in',('sale','done')), ('opportunity_id','=',active_id)]</field>
+            <field name="context">{'default_subscription':True, 'default_opportunity_id':active_id}</field>
+            <field name="view_ids"
+                       eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('view_order_subscription_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_order_form_subscriptions')})]"/>
+        </record>
+
+        <record id="crm_case_form_view_oppor_subscription" model="ir.ui.view">
+            <field name="name">crm.lead.form.opportunity</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="sale_advertising_order.crm_case_form_view_oppor_advertising"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(sale_advertising_order.act_crm_lead_2_quotation_adv)d']" position="after">
+                    <button class="oe_stat_button" type="action" name="%(publishing_subscription_order.act_crm_lead_2_quotation_subscription)d"
+                         icon="fa-pencil-square-o" context="{'default_partner_id':published_customer}">
+                        <field string="Subs. Quote(s)" name="subs_quotations_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+
+        <!--Inherited Action for Quotations smart button in crm.lead-->
+        <!--Adding ('subscription', '=', False) in domain to filter subscription records in regular quotations smart button-->
+        <record id="sale_advertising_order.act_crm_lead_2_quotation" model="ir.actions.act_window">
+            <field name="domain">[('advertising','=',False), ('state','not in',('sale','done')), ('opportunity_id','=',active_id), ('subscription','=',False)]</field>
+        </record>
+
+    </data>
+</odoo>

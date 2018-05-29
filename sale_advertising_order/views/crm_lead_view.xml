@@ -2,6 +2,39 @@
 <odoo>
     <data>
 
+        <!--Action for Quotations smart button in crm.lead-->
+        <record id="act_crm_lead_2_quotation" model="ir.actions.act_window">
+            <field name="name">Quotations</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('advertising','=',False), ('state','not in',('sale','done')), ('opportunity_id','=',active_id)]</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'default_advertising':False, 'default_opportunity_id':active_id}</field>
+            <field name="view_ids"
+                   eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('sale.view_quotation_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('sale.view_order_form')})]"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Create a Quotation, the first step of a new sale.
+              </p><p>
+                Your next actions should flow efficiently: confirm the Quotation to a Sale Order, then create the Invoice and collect the Payment.
+              </p><p>
+                Note that once a Quotation becomes a Sale Order, it will be moved from the Quotations list to the Sales Order list.
+              </p>
+            </field>
+        </record>
+
+        <!--Action for Advertising Quotations smart button in crm.lead-->
+        <record id="act_crm_lead_2_quotation_adv" model="ir.actions.act_window">
+            <field name="name">Advertising Quotations</field>
+            <field name="res_model">sale.order</field>
+            <field name="domain">[('advertising','=',True), ('state','not in',('sale','done')), ('opportunity_id','=',active_id)]</field>
+            <field name="context">{'default_advertising':True, 'default_opportunity_id':active_id}</field>
+            <field name="view_ids"
+                   eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('view_quotation_advertising_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_order_form_advertising')})]"/>
+        </record>
+
         <!--
             Form: Lead
         -->
@@ -166,11 +199,19 @@
                                 </div>
                             </button>
                             <button class="oe_stat_button" type="action"
-                                    name="%(sale_advertising_order.sale_action_quotations_adv)d" icon="fa-pencil-square-o"
-                                    context="{'default_partner_id': partner_id, 'search_default_draft': 1}">
+                                    name="%(sale_advertising_order.act_crm_lead_2_quotation)d" icon="fa-pencil-square-o"
+                                    context="{'default_partner_id':published_customer}">
                                 <div class="o_stat_info">
-                                    <field name="sale_number" class="o_stat_value"/>
-                                    <span class="o_stat_text"> Quote(s) </span>
+                                    <field name="quotations_count" class="o_stat_value"/>
+                                    <span class="o_stat_text">Quote(s)</span>
+                                </div>
+                            </button>
+                            <button class="oe_stat_button" type="action"
+                                    name="%(sale_advertising_order.act_crm_lead_2_quotation_adv)d" icon="fa-pencil-square-o"
+                                    context="{'default_published_customer':published_customer}" groups="sale_advertising_order.group_advertising_sales_user">
+                                <div class="o_stat_info">
+                                    <field name="adv_quotations_count" class="o_stat_value"/>
+                                    <span class="o_stat_text">Adv. Quote(s)</span>
                                 </div>
                             </button>
                             <button class="oe_stat_button" type="action" attrs="{'invisible': [('sale_amount_total', '=', 0)]}"

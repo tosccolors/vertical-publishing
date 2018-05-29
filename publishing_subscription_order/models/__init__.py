@@ -6,3 +6,4 @@ import product
 import res_config
 #import subscription_prepaid
 import account_move
+import crm_lead

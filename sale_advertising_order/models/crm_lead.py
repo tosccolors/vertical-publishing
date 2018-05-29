@@ -49,7 +49,18 @@ class Lead(models.Model):
                                       string='Account Manager', store=True)
     advertising = fields.Boolean('Advertising', default=False)
     is_activity = fields.Boolean(string='Activity', default=False)
+    quotations_count = fields.Integer("# of Quotations", compute='_compute_quotations_count')
+    adv_quotations_count = fields.Integer("# of Advertising Quotations", compute='_compute_adv_quotations_count')
 
+    @api.multi
+    def _compute_quotations_count(self):
+        for lead in self:
+            lead.quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done')), ('advertising', '=', False)])
+
+    @api.multi
+    def _compute_adv_quotations_count(self):
+        for lead in self:
+            lead.adv_quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done')), ('advertising', '=', True)])
 
     @api.model
     def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
