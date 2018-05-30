@@ -11,8 +11,8 @@
                   sequence="4"/>
 
 
-        <!--<menuitem id="menu_partner_form1" parent="menu_subscription_sales_main"
-                  action="action_partner_form_crm_publishing" sequence="2"/>-->
+        <menuitem id="menu_partner_form1" parent="menu_subscription_sales_main"
+                  action="action_partner_form_crm_publishing" sequence="2"/>
 
 
 		<menuitem id="menu_product_template_action2" parent="menu_subscription_sales_main"
