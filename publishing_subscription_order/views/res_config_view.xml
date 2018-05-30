@@ -12,7 +12,6 @@
                     <group groups="account.group_account_user">
                         <field name="delivery_obligation_account_id" domain="[('company_id', '=', company_id)]"/>
                         <field name="subscription_revenue_account_id" domain="[('company_id', '=', company_id)]"/>
-                        <field name="susbcription_journal_id" domain="[('company_id', '=', company_id)]"/>
                     </group>
                 </xpath>
             </field>
