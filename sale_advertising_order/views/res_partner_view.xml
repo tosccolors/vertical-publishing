@@ -1,6 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <!--Action for Quotations smart button in Customers-->
+        <record id="act_res_partner_2_quotation" model="ir.actions.act_window">
+            <field name="name">Quotations</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('advertising','=',False), ('state','not in',('sale','done')), ('partner_id','child_of',active_id)]</field>
+            <field name="view_mode">tree,form,graph</field>
+            <field name="context">{'search_default_partner_id':active_id, 'default_advertising':False, 'default_partner_id':active_id}</field>
+            <field name="view_ids"
+                   eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('sale.view_quotation_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('sale.view_order_form')})]"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Create a Quotation, the first step of a new sale.
+              </p><p>
+                Your next actions should flow efficiently: confirm the Quotation to a Sale Order, then create the Invoice and collect the Payment.
+              </p><p>
+                Note that once a Quotation becomes a Sale Order, it will be moved from the Quotations list to the Sales Order list.
+              </p>
+            </field>
+        </record>
+        <!--Action for Advertising Quotations smart button in Customers-->
+        <record id="act_res_partner_2_quotation_adv" model="ir.actions.act_window">
+            <field name="name">Advertising Quotations</field>
+            <field name="res_model">sale.order</field>
+            <field name="domain">[('advertising','=',True), ('state','not in',('sale','done')),'|',('published_customer','=',active_id),
+                                    ('advertising_agency','=',active_id)]</field>
+            <field name="context">{'search_default_partner_id':active_id, 'default_advertising':True, 'default_published_customer':active_id}</field>
+            <field name="view_ids"
+                   eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('view_quotation_advertising_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_order_form_advertising')})]"/>
+        </record>
+        <!--Action for Advertising Opportunities smart button in Customers-->
+        <record model="ir.actions.act_window" id="act_res_partner_2_opportunities_advertising">
+            <field name="name">Opportunities</field>
+            <field name="res_model">crm.lead</field>
+            <field name="view_mode">kanban,tree,graph,pivot,form,calendar</field>
+            <field name="view_ids"
+                   eval="[(5, 0, 0), (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('sale_advertising_order.crm_case_form_view_oppor_advertising')}),
+                          (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
+            <field name="domain">[('type','=','opportunity'), ('advertising','=',True), ('partner_id','child_of',active_id), ('is_activity', '=', False)]</field>
+            <field name="context">{
+                    'default_type': 'opportunity',
+                    'default_user_id': uid,
+                    'default_advertising': True,
+                    'default_published_customer': active_id,
+                    'default_partner_id': active_id
+                }
+            </field>
+            <field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
+            <field name="help" type="html">
+                <p>
+                    Odoo helps you keep track of your sales pipeline to follow
+                    up potential sales and better forecast your future revenues.
+                </p><p>
+                    You will be able to plan meetings and phone calls from
+                    opportunities, convert them into quotations, attach related
+                    documents, track all discussions, and much more.
+                </p>
+            </field>
+        </record>
+        <!--Action for Advertising Next Activities smart button in Customers-->
+        <record id="act_res_partner_2_next_activities_advertising" model="ir.actions.act_window">
+            <field name="name">Next Activities</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">crm.lead</field>
+            <field name="view_mode">tree,form,kanban,calendar,pivot,graph</field>
+            <field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
+            <field name="view_ids"
+                   eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('sale_advertising_order.crm_case_form_view_oppor_advertising')}),
+                          (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
+            <field name="domain">[('type','=','opportunity'), ('advertising', '=', True), ('partner_id','child_of',active_id), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False)]</field>
+            <field name="context">{
+                    'default_type': 'opportunity',
+                    'default_user_id': uid,
+                    'default_advertising': True,
+                    'default_published_customer': active_id,
+                    'default_partner_id': active_id,
+                    'default_is_activity': True,
+                }
+            </field>
+            <field name="help" type="html">
+                <p>
+                   Here is the list of your next activities. Those are linked to your opportunities.
+                   To set a next activity, go on an opportunity and add one. It will then appear in this list.
+                </p>
+            </field>
+        </record>
+
         <record id="view_partner_form" model="ir.ui.view">
             <field name="name">res.partner.form</field>
             <field name="model">res.partner</field>
@@ -40,26 +131,38 @@
                 <xpath expr="//button[@name='%(crm_lead_opportunities_advertising)d']" position="replace">
                     <button class="oe_stat_button o_res_partner_tip_opp" type="action"
                         attrs="{'invisible': [('customer', '=', False)]}"
-                        name="%(sale_advertising_order.action_your_pipeline_advertising)d"
+                        name="%(sale_advertising_order.act_res_partner_2_opportunities_advertising)d"
                         icon="fa-star"
                         context="{'search_default_partner_id': active_id}">
                         <field string="Opportunities" name="adv_opportunity_count" widget="statinfo"/>
                     </button>
                     <button class="oe_stat_button o_res_partner_tip_opp" type="action"
                         attrs="{'invisible': [('customer', '=', False)]}"
-                        name="%(sale_advertising_order.crm_lead_action_activities_advertising)d"
+                        name="%(sale_advertising_order.act_res_partner_2_next_activities_advertising)d"
                         icon="fa-star"
                         context="{'search_default_partner_id': active_id}">
                         <field string="Next Activities" name="next_activities_count" widget="statinfo"/>
                     </button>
                  </xpath>
-                <div name="button_box" position="inside" >
+                <xpath expr="//button[@name='%(sale.act_res_partner_2_sale_order)d']" position="before">
+                    <button class="oe_stat_button" type="action" name="%(sale_advertising_order.act_res_partner_2_quotation)d"
+                        attrs="{'invisible': [('customer', '=', False)]}"
+                         icon="fa-pencil-square-o">
+                        <field string="Quote(s)" name="quotation_count" widget="statinfo"/>
+                    </button>
+                    <button class="oe_stat_button" type="action" name="%(sale_advertising_order.act_res_partner_2_quotation_adv)d"
+                        attrs="{'invisible': [('customer', '=', False)]}"
+                         icon="fa-pencil-square-o" groups="sale_advertising_order.group_advertising_sales_user">
+                        <field string="Adv. Quote(s)" name="adv_quotation_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+                <xpath expr="//button[@name='%(sale.act_res_partner_2_sale_order)d']" position="after">
                     <button class="oe_stat_button" type="action" name="%(action_orders_advertising_smart_button)d"
                         attrs="{'invisible': [('customer', '=', False)]}"
                         icon="fa-usd" groups="sale_advertising_order.group_advertising_sales_user">
-                        <field string="Advertising Sales" name="adv_sale_order_count" widget="statinfo"/>
+                        <field string="Adv. Sales" name="adv_sale_order_count" widget="statinfo"/>
                     </button>
-                </div>
+                </xpath>
             </field>
         </record>
 
@@ -187,14 +290,14 @@
             <field name="view_id" ref="view_partner_tree_nsm_crm"/>
             <field name="act_window_id" ref="action_partner_form_crm"/>
         </record>
-        <!--Action Inherited: Sale Orders smart button-->
+        <!--Action Inherited for Sales Orders smart button in Customers-->
         <record id="sale.act_res_partner_2_sale_order" model="ir.actions.act_window">
-            <field name="name">Quotations and Sales</field>
+            <field name="name">Sales Orders</field>
             <field name="res_model">sale.order</field>
             <field name="view_type">form</field>
-            <field name="domain">[('state','not in',('draft','sent','cancel')), ('advertising','=',False)]</field>
+            <field name="domain">[('state','not in',('draft','sent','cancel')), ('advertising','=',False), ('partner_id','child_of',active_id)]</field>
             <field name="view_mode">tree,form,graph</field>
-            <field name="context">{'search_default_partner_id': active_id}</field>
+            <field name="context">{'search_default_partner_id': active_id, 'default_partner_id': active_id}</field>
             <field name="groups_id" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">

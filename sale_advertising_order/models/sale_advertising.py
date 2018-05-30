@@ -535,6 +535,8 @@ class SaleOrderLine(models.Model):
     color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Account'))
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
     nett_nett = fields.Boolean(string='Netto Netto Line')
+    proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False)
+    proof_number_payer = fields.Boolean('Proof Number Payer', default=False)
 
     @api.onchange('medium')
     def onchange_medium(self):

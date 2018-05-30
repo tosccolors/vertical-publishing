@@ -49,7 +49,18 @@ class Lead(models.Model):
                                       string='Account Manager', store=True)
     advertising = fields.Boolean('Advertising', default=False)
     is_activity = fields.Boolean(string='Activity', default=False)
+    quotations_count = fields.Integer("# of Quotations", compute='_compute_quotations_count')
+    adv_quotations_count = fields.Integer("# of Advertising Quotations", compute='_compute_adv_quotations_count')
 
+    @api.multi
+    def _compute_quotations_count(self):
+        for lead in self:
+            lead.quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done')), ('advertising', '=', False)])
+
+    @api.multi
+    def _compute_adv_quotations_count(self):
+        for lead in self:
+            lead.adv_quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done')), ('advertising', '=', True)])
 
     @api.model
     def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
@@ -400,10 +411,7 @@ class Team(models.Model):
         if self._context.get('advertising', False):
             form_view_id = self.env.ref('sale_advertising_order.crm_case_form_view_oppor_advertising').id
             action_context['default_advertising'] = True
-            action_domain.append(('advertising','=', True))
             action_domain.append(('is_activity','=', False))
-        else:
-            action_domain.append(('advertising','=', False))
 
         if self._context.get('search_default_partner_id', False):
             action_context['search_default_partner_id'] = self._context['active_id']
