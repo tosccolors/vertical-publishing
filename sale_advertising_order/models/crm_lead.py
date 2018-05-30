@@ -411,10 +411,7 @@ class Team(models.Model):
         if self._context.get('advertising', False):
             form_view_id = self.env.ref('sale_advertising_order.crm_case_form_view_oppor_advertising').id
             action_context['default_advertising'] = True
-            action_domain.append(('advertising','=', True))
             action_domain.append(('is_activity','=', False))
-        else:
-            action_domain.append(('advertising','=', False))
 
         if self._context.get('search_default_partner_id', False):
             action_context['search_default_partner_id'] = self._context['active_id']

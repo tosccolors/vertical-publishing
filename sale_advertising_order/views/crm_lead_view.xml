@@ -417,7 +417,7 @@ action = model.with_context(ctx).action_your_pipeline()</field>
             <field name="name">Leads</field>
             <field name="res_model">crm.lead</field>
             <field name="view_mode">tree,graph,pivot,calendar,form</field>
-            <field name="domain">[('advertising','=',True), '|', ('type','=','lead'), ('type','=',False)]</field>
+            <field name="domain">['|', ('type','=','lead'), ('type','=',False)]</field>
             <field name="view_id" ref="crm.crm_case_tree_view_leads"/>
             <field name="search_view_id" ref="crm.view_crm_case_leads_filter"/>
             <field name="context">{
@@ -527,7 +527,7 @@ action = model.with_context(ctx).action_your_pipeline()</field>
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('sale_advertising_order.crm_case_form_view_oppor_advertising')}),
                           (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
-            <field name="domain">[('type','=','opportunity'), ('advertising', '=', True), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False)]</field>
+            <field name="domain">[('type','=','opportunity'), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False)]</field>
             <field name="context">{
                     'default_type': 'opportunity',
                     'default_user_id': uid,
