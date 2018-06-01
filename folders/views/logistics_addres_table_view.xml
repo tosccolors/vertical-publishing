@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--Logistics Address Table List view-->
+        <record id="view_logistics_address_table_tree" model="ir.ui.view">
+            <field name="name">Logistics Address Table Tree</field>
+            <field name="model">logistics.address.table</field>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <tree string="Logistics Table">
+                    <field name="country_id" />
+                    <field name="region" />
+                    <field name="province_id" />
+                    <field name="municipality" />
+                    <field name="city" />
+                    <field name="zip" />
+                    <field name="title_id" />
+                    <field name="distribution_area" />
+                    <field name="total_addresses" />
+                    <field name="folder_addresses" />
+                    <field name="number_no_no" />
+                    <field name="number_yes_no" />
+                    <field name="logistics_serviceprovider" />
+                </tree>
+            </field>
+        </record>
+
+        <!--Logistics Address Table Pivot view-->
+        <record id="view_logistics_address_table_pivot" model="ir.ui.view">
+            <field name="name">Logistics Address Table Pivot</field>
+            <field name="model">logistics.address.table</field>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <pivot string="Logistics Table">
+                    <field name="country_id" type="row"/>
+                    <field name="province_id" type="row"/>
+                    <field name="city" type="row"/>
+                    <field name="distribution_area" type="row"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!--Logistics Address Table Graph view-->
+        <record id="view_logistics_address_table_graph" model="ir.ui.view">
+            <field name="name">Logistics Address Table Graph</field>
+            <field name="model">logistics.address.table</field>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <graph string="Logistics Table">
+                    <field name="country_id" type="row"/>
+                    <field name="province_id" type="col"/>
+                </graph>
+            </field>
+        </record>
+
+        <!--Logistics Address Table Form view-->
+        <record id="view_logistics_address_table_form" model="ir.ui.view">
+            <field name="name">Logistics Address Table Form</field>
+            <field name="model">logistics.address.table</field>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <form string="Logistics Table">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="country_id" required="True" />
+                                <field name="region" />
+                                <field name="province_id" />
+                                <field name="municipality" />
+                            </group>
+                            <group>
+                                <field name="city" />
+                                <field name="zip" />
+                                <field name="title_id" />
+                                <field name="distribution_area" />
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="total_addresses" />
+                                <field name="folder_addresses" />
+                            </group>
+                            <group>
+                                <field name="number_no_no" />
+                                <field name="number_yes_no" />
+                                <field name="logistics_serviceprovider" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_view_logistics_address_table" model="ir.actions.act_window">
+            <field name="name">Logistics Table</field>
+            <field name="res_model">logistics.address.table</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot,graph</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add an address.
+              </p>
+            </field>
+        </record>
+
+        <menuitem name= "Folder Sales" id= "menu_folder_sales" parent= "sales_team.menu_base_partner" sequence= "10"/>
+
+        <menuitem name= "Logistics Table" id= "menu_logistics_table" parent= "menu_folder_sales" sequence= "1" action= "action_view_logistics_address_table"/>
+
+    </data>
+</odoo>
