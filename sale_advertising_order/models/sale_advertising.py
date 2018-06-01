@@ -256,7 +256,20 @@ class SaleOrder(models.Model):
                 self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
         self._cr.commit()
         # self.write({'state': 'sent'}) #Task: SMA-1 Action button for state [sent] in sale.order
-        return super(SaleOrder, self).action_quotation_send()
+        result = super(SaleOrder, self).action_quotation_send()
+        if self.advertising:
+            ir_model_data = self.env['ir.model.data']
+            try:
+                template_id = ir_model_data.get_object_reference('sale_advertising_order', 'email_template_edi_sale_adver')[1]
+            except ValueError:
+                template_id = False
+            ctx = result['context']
+            ctx.update({
+                'default_use_template': bool(template_id),
+                'default_template_id': template_id,
+            })
+            result['context'] = ctx
+        return result
 
 
     @api.multi

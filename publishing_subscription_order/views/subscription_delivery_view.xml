@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+        <record id="subscription_delivery_form" model="ir.ui.view">
+            <field name="name">subscription.delivery.form</field>
+            <field name="model">subscription.delivery</field>
+            <field name="arch" type="xml">
+                <form string="Subscription delivery">
+                    <header>
+                        <button class="oe_highlight" name="get_delivery_lists" string="Generate Lines" type="object" states="draft"/>
+                        <button class="oe_highlight" name="get_delivery_lists" string="Re-Generate Lines" type="object" states="progress"/>
+                        <button class="oe_highlight" name="action_done" string="Delivery List Done" type="object" states="progress"/>
+                        <button class="oe_highlight" name="action_cancel" string="Cancel" type="object" states="progress"/>
+                        <field name="state" widget="statusbar" />
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="delivery_date" required="1"/>
+                        </group>
+                        <group name="Lists">
+                            <field name="delivery_list" nolabel="1" readonly="1"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree view -->
+        <record id="subscription_delivery_tree" model="ir.ui.view">
+            <field name="name">subscription.delivery.tree</field>
+            <field name="model">subscription.delivery</field>
+            <field name="arch" type="xml">
+                <tree string="Subscription Delivery" colors="blue:state=='draft'">
+                    <field name="name" />
+                    <field name="delivery_date" />
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Search view -->
+        <record id="subscription_delivery_filter" model="ir.ui.view">
+            <field name="name">subscription.delivery.filter</field>
+            <field name="model">subscription.delivery</field>
+            <field name="arch" type="xml">
+                <search string="Search Delivery">
+                    <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]" />
+                    <filter name="done" string="Done" domain="[('state', '=', 'done')]" />
+                    <group string="Group By" name="groupby">
+                        <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="subscription_delivery_action" model="ir.actions.act_window">
+            <field name="name">Subscription Delivery List</field>
+            <field name="res_model">subscription.delivery</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                Click to start preparing a new delivery list.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="subscription_delivery_menu" parent="menu_subscription_sales_main" action="subscription_delivery_action" sequence="22"/>
+
+        <record id="subscription_delivery_list_form" model="ir.ui.view">
+            <field name="name">subscription.delivery.list.form</field>
+            <field name="model">subscription.delivery.list</field>
+            <field name="arch" type="xml">
+                <form string="Subscription Delivery Lists">
+                    <group>
+                        <group>
+                            <field name="partner_id" context="{'show_address': 1}" options="{'always_reload': True}"/>
+                            <field name="delivery_id" invisible="1"/>
+                            <field name="title_ids" string="Titles"
+                               options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
+                               context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
+                                 'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
+                                    <tree create="true" edit="false" delete="true" copy="false">
+                                        <field name="name" string="Name" readonly="1"/>
+                                    </tree>
+                            </field>
+                            <field name="product_uom_qty"/>
+                        </group>
+                        <group>
+                            <field name="issue_ids" string="Issues"
+                               options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
+                               context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
+                                 'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
+                                    <tree create="true" edit="false" delete="true" copy="false">
+                                        <field name="name" string="Name" readonly="1"/>
+                                    </tree>
+                            </field>
+                            <field name="subscription_number"/>
+                            <field name="sub_order_line"/>
+
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree view for lines -->
+        <record id="subscription_delivery_list_tree" model="ir.ui.view">
+            <field name="name">subscription.delivery.list.tree</field>
+            <field name="model">subscription.delivery.list</field>
+            <field name="arch" type="xml">
+                <tree string="Delivery List">
+                    <field name="partner_id"/>
+                    <field name="subscription_number"/>
+                    <field name="product_uom_qty"/>
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</odoo>

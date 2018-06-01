@@ -131,7 +131,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             if eta_ctx and not eta:
                 eta = fields.Datetime.from_string(eta_ctx)
         if jq:
-            self.with_delay(eta=eta).make_invoices_split_lines_jq(inv_date, post_date, eta, size)
+            self.with_delay(eta=eta).make_invoices_split_lines_jq(inv_date, post_date, lids, eta, size)
         else:
             OrderLines = self.env['sale.order.line'].browse(lids)
             self.make_invoices_job_queue(inv_date, post_date, OrderLines)
@@ -145,7 +145,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         for partner in partners:
             lines = OrderLines.filtered(lambda r: r.order_id.partner_invoice_id.id == partner.id)
             if len(lines) > size:
-                published_customer = lines.mapped('order_id.published_customer')
+                published_customer = lines.filtered('order_id.published_customer').mapped('order_id.published_customer')
                 for pb in published_customer:
                     linespb = lines.filtered(lambda r: r.order_id.published_customer.id == pb.id)
                     chunk = linespb if not chunk else chunk | linespb
@@ -153,8 +153,9 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                         continue
                     self.with_delay(eta=eta).make_invoices_job_queue(inv_date, post_date, chunk)
                     chunk = False
-                if chunk:
-                    self.with_delay(eta=eta).make_invoices_job_queue(inv_date, post_date, chunk)
+                remaining_lines = lines.filtered(lambda r: not r.order_id.published_customer)
+                chunk = remaining_lines if not chunk else chunk | remaining_lines
+                self.with_delay(eta=eta).make_invoices_job_queue(inv_date, post_date, chunk)
             else:
                 chunk = lines if not chunk else chunk | lines
                 if len(chunk) < size:

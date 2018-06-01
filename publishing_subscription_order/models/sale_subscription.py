@@ -24,6 +24,7 @@ from odoo import api, fields, exceptions, models, _
 from datetime import datetime, timedelta
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.exceptions import ValidationError, UserError
+import odoo.addons.decimal_precision as dp
 
 
 class SaleOrder(models.Model):
@@ -142,7 +143,8 @@ class SaleOrderLine(models.Model):
     start_date = fields.Date('Start Date')
     end_date = fields.Date('End Date')
     must_have_dates = fields.Boolean(related='product_id.product_tmpl_id.subscription_product', readonly=True, copy=False, store=True)
-    number_of_issues = fields.Integer(related='product_id.product_tmpl_id.number_of_issues', readonly=True, copy=False, store=True, string='No. Of Issues')
+    number_of_issues = fields.Integer(string='No. Of Issues', digits=dp.get_precision('Product Unit of Measure'))
+    delivered_issues = fields.Integer(string='No. Of Issues delivered', digits=dp.get_precision('Product Unit of Measure'), copy=False)
     can_cancel = fields.Boolean('Can cancelled?')
     can_renew = fields.Boolean('Can Renewed?', default=False)
     date_cancel = fields.Date('Cancelled date', help="Cron will cancel this line on selected date.")
@@ -163,6 +165,7 @@ class SaleOrderLine(models.Model):
                 if len(product_ids) == 1:
                     vals['product_template_id'] = product_ids[0]
                     vals['product_uom'] = product_ids.uom_id
+                    vals['number_of_issues'] = product_ids.number_of_issues
                 else:
                     vals['product_template_id'] = False
             else:
@@ -205,6 +208,7 @@ class SaleOrderLine(models.Model):
             return {'value': vals}
         vals['product_id'] = False
         if self.product_template_id:
+            vals['number_of_issues'] = self.product_template_id.number_of_issues
             self.product_uom = self.product_template_id.uom_id
             product_id = self.env['product.product'].search(
                 [('product_tmpl_id', '=', self.product_template_id.id), ('attribute_value_ids', '=', False)])
@@ -287,6 +291,7 @@ class SaleOrderLine(models.Model):
         """
         super(SaleOrderLine, self.filtered(lambda record: record.subscription != True))._compute_price_edit()
         for line in self.filtered('subscription'):
+            line.number_of_issues = line.product_template_id.number_of_issues
             if line.product_template_id.price_edit :
                 line.price_edit = True
 
@@ -299,6 +304,7 @@ class SaleOrderLine(models.Model):
                 'end_date': datetime.today().date() + timedelta(days=line.renew_product_id.subscr_number_of_days),
                 'order_id': line.order_id.id,
                 'price_unit': line.renew_product_id.lst_price or False,
+                'number_of_issues': line.renew_product_id.product_tmpl_id.number_of_issues or 0,
                 'can_renew': False,
                 'renew_product_id': False,
                 'discount':0
@@ -307,6 +313,7 @@ class SaleOrderLine(models.Model):
                 res.update({
                     'product_template_id':line.renew_product_id.product_tmpl_id.id or False,
                     'product_id':line.renew_product_id.id or False,
+                    'number_of_issues':line.renew_product_id.product_tmpl_id.number_of_issues or 0,
                 })
 
             vals = line.copy_data(default=res)[0]
