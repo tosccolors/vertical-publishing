@@ -149,7 +149,6 @@
             </field>
         </record>
 
-
         <!--
             Form: Opportunity
         -->
@@ -166,7 +165,7 @@
                                       'default_team_id': team_id,
 							'default_published_customer': published_customer,
 							'default_advertising_agency': ad_agency_id,
-							'default_advetising': True}"/>
+							'default_advertising': True}"/>
 
                         <button name="action_set_won" string="Mark Won"
                                 type="object" class="oe_highlight o_wow"
@@ -365,7 +364,6 @@
             </field>
         </record>
 
-
         <record model="ir.ui.view" id="crm_case_form_view_oppor_manager">
             <field name="name">Opportunities</field>
             <field name="model">crm.lead</field>
@@ -380,8 +378,6 @@
                 </xpath>
             </field>
 		 </record>
-
-
 
         <record id="action_your_pipeline_advertising" model="ir.actions.server">
             <field name="name">My Pipeline</field>
@@ -437,10 +433,11 @@
                 </p>
             </field>
         </record>
+
         <record id="crm_lead_all_leads_advertising_form" model="ir.actions.act_window.view">
             <field eval="5" name="sequence"/>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="crm_case_form_view_leads_adv"/>
+            <field name="view_id" ref="crm.crm_case_form_view_leads"/>
             <field name="act_window_id" ref="crm_lead_all_leads_advertising"/>
         </record>
 
@@ -497,11 +494,12 @@
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('crm.crm_case_form_view_oppor')}),
                           (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
-            <field name="domain">[('type','=','opportunity'), ('date_action', '!=', False)]</field>
+            <field name="domain">[('type','=','opportunity'), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False)]</field>
             <field name="context">{
                     'default_type': 'opportunity',
                     'default_user_id': uid,
                     'search_default_assigned_to_me': 1,
+                    'default_is_activity': True,
                 }
             </field>
             <field name="help" type="html">
@@ -512,7 +510,7 @@
             </field>
         </record>
 
-        <!-- Advertising Next Activities Menu -->
+        <!-- Advertising Next Activities Menu (currently not used?)-->
         <record id="crm_lead_action_activities_advertising" model="ir.actions.act_window">
             <field name="name">Next Activities</field>
             <field name="type">ir.actions.act_window</field>
@@ -541,7 +539,7 @@
 
         <!--CRM: Next Activities-->
         <menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_crm_advertising"
-                  action="crm_lead_action_activities_advertising" sequence="5" />
+                  action="crm.crm_lead_action_activities" sequence="5" />
 
         <!--Regular Sales Next Activities-->
         <record model="ir.ui.menu" id="crm.crm_lead_menu_activities">
@@ -555,7 +553,7 @@
             <field name="view_mode">kanban,tree,graph,pivot,form,calendar</field>
             <field name="view_ids"
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('sale_advertising_order.crm_case_form_view_oppor_advertising')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('crm.crm_case_form_view_oppor')}),
                           (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
             <field name="domain">[('type','=','opportunity')]</field>
             <field name="context">{
@@ -573,6 +571,72 @@
                     opportunities, convert them into quotations, attach related
                     documents, track all discussions, and much more.
                 </p>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="crm_case_form_view_oppor_sector">
+            <field name="name">Add sector field, different place</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm_sector.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <field name="sector_id" position="replace"/>
+                <field name="secondary_sector_ids" position="replace" />
+            </field>
+        </record>
+
+        <record id="crm_case_form_view_oppor" model="ir.ui.view">
+            <field name="name">crm.lead.form.opportunity.sao</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='lead']/group/group/field[@name='partner_name']" position="replace" >
+                </xpath>
+                <xpath expr="//sheet/group/group/field[@name='partner_id']" position="after" >
+                    <field name="partner_name"/>
+                    <field name="is_activity" invisible="1"/>
+                </xpath>
+                <xpath expr="//sheet/group/group[2]/div/div/field[@name='next_activity_id']" position="attributes" >
+                    <attribute name="attrs" >{'required':[('is_activity', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//sheet/group/group[2]/div/div/field[@name='date_action']" position="attributes" >
+                    <attribute name="attrs" >{'invisible':[('next_activity_id', '=', False)],'required':[('is_activity', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//sheet/notebook/page[@name='lead']/group/group[1]/div" position="after" >
+                    <field name="sector_id" placeholder="Sector"
+                           options='{"no_open": True}'/>
+                    <field name="secondary_sector_ids" widget="many2many_tags"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="crm_case_form_view_leads">
+            <field name="name">Add sector field different place</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm_sector.crm_case_form_view_leads"/>
+            <field name="arch" type="xml">
+                <field name="sector_id" position="replace"/>
+                <field name="secondary_sector_ids" position="replace" />
+                <field name="user_id" position="before">
+                    <field name="sector_id" placeholder="Sector"
+                           options='{"no_open": True}'/>
+                    <field name="secondary_sector_ids" widget="many2many_tags"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="crm_case_form_view_oppor_button" model="ir.ui.view">
+            <field name="name">crm.lead.oppor.inherited.crm.button</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(sale_crm.sale_action_quotations_new)d']" position="attributes">
+                    <attribute name="name">%(sale_advertising_order.action_sale_order_type_wizard)d</attribute>
+                    <attribute name="context">{'search_default_partner_id': partner_id,
+                                                'default_partner_id': partner_id,
+                                                'default_team_id': team_id,
+                                               }</attribute>
+                </xpath>
             </field>
         </record>
 
