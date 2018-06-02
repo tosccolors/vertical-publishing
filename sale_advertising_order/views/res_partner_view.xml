@@ -33,21 +33,19 @@
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('view_quotation_advertising_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_order_form_advertising')})]"/>
         </record>
-        <!--Action for Advertising Opportunities smart button in Customers-->
+        <!--Action for Opportunities smart button in Customers-->
         <record model="ir.actions.act_window" id="act_res_partner_2_opportunities_advertising">
             <field name="name">Opportunities</field>
             <field name="res_model">crm.lead</field>
             <field name="view_mode">kanban,tree,graph,pivot,form,calendar</field>
             <field name="view_ids"
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('sale_advertising_order.crm_case_form_view_oppor_advertising')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('crm.crm_case_form_view_oppor')}),
                           (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
-            <field name="domain">[('type','=','opportunity'), ('advertising','=',True), ('partner_id','child_of',active_id), ('is_activity', '=', False)]</field>
+            <field name="domain">[('type','=','opportunity'), ('partner_id','child_of',active_id), ('is_activity', '=', False)]</field>
             <field name="context">{
                     'default_type': 'opportunity',
                     'default_user_id': uid,
-                    'default_advertising': True,
-                    'default_published_customer': active_id,
                     'default_partner_id': active_id
                 }
             </field>
@@ -72,14 +70,12 @@
             <field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
             <field name="view_ids"
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('sale_advertising_order.crm_case_form_view_oppor_advertising')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('crm.crm_case_form_view_oppor')}),
                           (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
-            <field name="domain">[('type','=','opportunity'), ('advertising', '=', True), ('partner_id','child_of',active_id), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False)]</field>
+            <field name="domain">[('type','=','opportunity'), ('partner_id','child_of',active_id), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False)]</field>
             <field name="context">{
                     'default_type': 'opportunity',
                     'default_user_id': uid,
-                    'default_advertising': True,
-                    'default_published_customer': active_id,
                     'default_partner_id': active_id,
                     'default_is_activity': True,
                 }
