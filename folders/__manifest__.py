@@ -26,7 +26,9 @@
     'description': """
 This module contains information about the geographic segmentation.
 ==============================================================================
-It will help in determining the number of valid addresses for a specific product in a specific zip code range. It also helps in linking a zip code / title to a specific logistics service provider.
+It will help in determining the number of valid addresses for a specific product
+in a specific zip code range. It also helps in linking a zip code / title to a 
+specific logistics service provider.
 
     """,
     'author': 'Magnus - Willem Hulshof',
