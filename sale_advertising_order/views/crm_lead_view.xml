@@ -475,7 +475,7 @@
             name="Leads"
             parent="menu_crm_advertising"
             sequence="1"
-            action="crm_lead_all_leads_advertising"
+            action="crm.crm_lead_all_leads"
             groups="crm.group_use_lead"/>
 
         <!--Regular Sales Leads-->
