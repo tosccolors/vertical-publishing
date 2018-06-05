@@ -9,7 +9,7 @@
                     <header>
                         <button class="oe_highlight" name="get_delivery_lists" string="Generate Lines" type="object" states="draft"/>
                         <button class="oe_highlight" name="get_delivery_lists" string="Re-Generate Lines" type="object" states="progress"/>
-                        <button class="oe_highlight" name="action_done" string="Delivery List Done" type="object" states="progress"/>
+                        <button class="oe_highlight" name="action_done" string="Issues Delivered" type="object" states="progress"/>
                         <button class="oe_highlight" name="action_cancel" string="Cancel" type="object" states="progress"/>
                         <field name="state" widget="statusbar" />
                     </header>
@@ -19,8 +19,9 @@
                                 <field name="name" readonly="1"/>
                             </h1>
                         </div>
-                        <group>
-                            <field name="delivery_date" required="1"/>
+                        <group col="4">
+                            <field name="start_date" required="1"/>
+                            <field name="end_date" required="1"/>
                         </group>
                         <group name="Lists">
                             <field name="delivery_list" nolabel="1" readonly="1"/>
@@ -41,7 +42,8 @@
             <field name="arch" type="xml">
                 <tree string="Subscription Delivery" colors="blue:state=='draft'">
                     <field name="name" />
-                    <field name="delivery_date" />
+                    <field name="start_date"/>
+                    <field name="end_date"/>
                     <field name="state"/>
                 </tree>
             </field>
@@ -103,8 +105,8 @@
                                         <field name="name" string="Name" readonly="1"/>
                                     </tree>
                             </field>
-                            <field name="subscription_number"/>
-                            <field name="sub_order_line"/>
+                            <field name="subscription_number" context="{'form_view_ref': 'publishing_subscription_order.view_order_form_subscriptions'}"/>
+                            <field name="sub_order_line" context="{'form_view_ref': 'publishing_subscription_order.view_subscription_order_line_form'}"/>
 
                         </group>
                     </group>
@@ -121,7 +123,43 @@
                     <field name="partner_id"/>
                     <field name="subscription_number"/>
                     <field name="product_uom_qty"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
                 </tree>
+            </field>
+        </record>
+
+        <record id="view_order_form_subscriptions_delivery_list" model="ir.ui.view">
+            <field name="name">sale.order.delivery.list</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="publishing_subscription_order.view_order_form_subscriptions" />
+            <field name="arch" type="xml">
+                <xpath expr="//notebook[last()]" position="inside">
+                    <page string="Delivery List" >
+                        <field name="delivery_list_ids" readonly="1">
+                            <tree>
+                                <field name="partner_id"/>
+                                <field name="product_uom_qty"/>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_subscription_order_line_form_delivery_list" model="ir.ui.view">
+            <field name="name">sale.order.line.delivery.list</field>
+            <field name="model">sale.order.line</field>
+            <field name="inherit_id" ref="publishing_subscription_order.view_subscription_order_line_form" />
+            <field name="arch" type="xml">
+                <field name="state" position="before">
+                    <div groups="base.group_no_one">
+                        <label for="delivery_list_ids"/>
+                        <field name="delivery_list_ids" readonly="1"/>
+                    </div>
+                </field>
             </field>
         </record>
 

@@ -24,6 +24,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         res = super(AdOrderLineMakeInvoice, self)._prepare_invoice(partner, published_customer, payment_mode, lines, invoice_date, posting_date)
         for invline in lines['lines']:
             if invline.sale_line_ids.filtered('subscription'):
+                res['ad'] = False
                 res['payment_term_id'] = partner.property_subscription_payment_term_id.id or False
                 pay_mode = partner.subscription_customer_payment_mode_id
                 res['payment_mode_id'] = pay_mode.id or False

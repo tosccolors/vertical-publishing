@@ -11,7 +11,8 @@ class SubscriptionDelivery(models.Model):
     _description = 'Subscription Delivery'
     
     name = fields.Char(string='Delivery Reference', required=True, copy=False, readonly=True, states={'draft': [('readonly', False)]}, index=True, default=lambda self: _('New'))
-    delivery_date = fields.Date('Delivery Date', default=fields.Date.today)
+    start_date = fields.Date('Start Date', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
+    end_date = fields.Date('End Date', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
     delivery_list = fields.One2many('subscription.delivery.list','delivery_id',string='Delivery List', states={'cancel': [('readonly', True)], 'done': [('readonly', True)]}, copy=True)
     state = fields.Selection([
         ('draft', 'New'),
@@ -43,7 +44,7 @@ class SubscriptionDelivery(models.Model):
                 continue
 
             item={}
-            issueObj = advIssue.search([('parent_id','in', line_obj.title_ids.ids),('issue_date','=',self.delivery_date)])
+            issueObj = advIssue.search([('parent_id','in', line_obj.title_ids.ids),('issue_date','<=',self.end_date),('issue_date','>=',self.start_date)])
             if issueObj:
                 item['delivery_id'] = self.id
                 item['partner_id'] = line_obj.order_id.partner_shipping_id.id
@@ -64,17 +65,20 @@ class SubscriptionDelivery(models.Model):
     def get_delivery_lists(self):
         orderline = self.env['sale.order.line']
         domain = [
-            ('start_date', '<=', self.delivery_date),
-            ('end_date', '>=', self.delivery_date),
+            ('start_date', '<=', self.end_date),
+            ('end_date', '>=', self.start_date),
             ('company_id', '=', self.company_id.id),
             ('subscription', '=', True),
             ('state', '=', 'sale'),
+            ('title_ids', '!=', False),
         ]
         self_sols = self.delivery_list.mapped('sub_order_line')
-        sub_list_objs = self.search([('delivery_date','=',self.delivery_date),('id','!=',self.id),('company_id','=',self.company_id.id),('state','!=','cancel')])
-        other_sols = sub_list_objs.delivery_list.mapped('sub_order_line')
+        sub_list_objs = self.search([('start_date', '<=', self.end_date), ('end_date', '>=', self.start_date),('id','!=',self.id),('company_id','=',self.company_id.id),('state','!=','cancel')])
+        other_sols = []
+        for found_obj in sub_list_objs:
+            other_sols += found_obj.delivery_list.mapped('sub_order_line').ids
         if other_sols or self_sols:
-            exists_sols = other_sols.ids+self_sols.ids
+            exists_sols = other_sols+self_sols.ids
             domain += [('id','not in',exists_sols)]
 
         sols = orderline.search(domain)
@@ -95,10 +99,11 @@ class SubscriptionDelivery(models.Model):
 class SubscriptionDeliveryList(models.Model):
     _name = 'subscription.delivery.list'
     _description = 'Subscription Delivery List'
-    _rec_name = 'delivery_date'
+    _rec_name = 'subscription_number'
 
     delivery_id = fields.Many2one('subscription.delivery', string='Delivery Reference', required=True, ondelete='cascade', index=True, copy=False)
-    delivery_date = fields.Date(related='delivery_id.delivery_date',string='Delivery Date',store=True, readonly=True)
+    start_date = fields.Date(related='delivery_id.start_date',string='Start Date',store=True, readonly=True)
+    end_date = fields.Date(related='delivery_id.end_date',string='End Date',store=True, readonly=True)
     company_id = fields.Many2one(related='delivery_id.company_id', string='Company', store=True, readonly=True)
     partner_id = fields.Many2one('res.partner', string='Delivery Address')
     title_ids = fields.Many2many('sale.advertising.issue', 'delivery_list_title_adv_issue_rel', 'delivery_list_id', 'adv_issue_id',string='Title')
@@ -106,6 +111,17 @@ class SubscriptionDeliveryList(models.Model):
     sub_order_line = fields.Many2one('sale.order.line', string='Subscription order line')
     subscription_number = fields.Many2one(related='sub_order_line.order_id',string='Subscription Number', store=True, readonly=True)
     product_uom_qty = fields.Float(string='Quantity', digits=dp.get_precision('Product Unit of Measure'), required=True)
+
+
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'
+
+    delivery_list_ids = fields.One2many('subscription.delivery.list','subscription_number',string='Delivery List', copy=False)
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    delivery_list_ids = fields.One2many('subscription.delivery.list','sub_order_line',string='Delivery List', copy=False)
 
 
 

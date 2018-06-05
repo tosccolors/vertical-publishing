@@ -31,7 +31,7 @@ This module allows you to use Sales Management to run your subscription sales
     """,
     'author': 'Magnus - Willem Hulshof',
     'website': 'http://www.magnus.nl',
-    'depends': ['sale_advertising_order','sale_operating_unit','account_payment_mode','time_dependent'],
+    'depends': ['sale_advertising_order','sale_operating_unit','account_payment_mode','time_dependent','account_invoice_start_end_dates'],
     'data': [
         "data/ir_sequence_data.xml",
 #        "security/ir.model.access.csv",
