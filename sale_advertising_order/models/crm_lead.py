@@ -372,12 +372,12 @@ class Lead(models.Model):
             rec.write({'stage_id': stage_lost.id, 'active': True})
         return lead
 
-    @api.multi
-    def redirect_opportunity_view(self):
-        adv_opportunity_view = super(Lead, self).redirect_opportunity_view()
-        form_view = self.env.ref('sale_advertising_order.crm_case_form_view_oppor_advertising')
-        adv_opportunity_view['views'][0] = (form_view.id, 'form')
-        return adv_opportunity_view
+#    @api.multi
+#    def redirect_opportunity_view(self):
+#        adv_opportunity_view = super(Lead, self).redirect_opportunity_view()
+#        form_view = self.env.ref('sale_advertising_order.crm_case_form_view_oppor_advertising')
+#        adv_opportunity_view['views'][0] = (form_view.id, 'form')
+#        return adv_opportunity_view
 
 
 class Team(models.Model):
@@ -409,7 +409,7 @@ class Team(models.Model):
 
         # Load Views for Advertising:
         if self._context.get('advertising', False):
-            form_view_id = self.env.ref('sale_advertising_order.crm_case_form_view_oppor_advertising').id
+            form_view_id = self.env.ref('crm.crm_case_form_view_oppor_advertising').id
             action_context['default_advertising'] = True
             action_domain.append(('is_activity','=', False))
 

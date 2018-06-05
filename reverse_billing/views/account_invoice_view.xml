@@ -3,23 +3,18 @@
     <data>
 
 
-        <record id="invoice_supplier_form_revbil" model="ir.ui.view">
+        <!--record id="invoice_supplier_form_revbil" model="ir.ui.view">
             <field name="name">account.invoice.supplier.form.revbil</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <data>
-                    <button name="action_invoice_open" position="replace">
-                        <button name="action_invoice_open" type="object" string="Validate"
-                                attrs="{'invisible': ['|','|',('state', 'not in', ['start_wf','proforma2']),('product_category','=', %(reverse_billing.revbil_categoryB)d ),
-                                '&amp;',('revbil','!=',True),('state', 'not in', ['start_wf','proforma2'])]}"
-                                class="oe_highlight" groups="account.group_account_invoice"/>
-                        <field name="sent" invisible="1"/>
-                        <field name="revbil" invisible="1"/>
+                    <button name="action_invoice_open" position="attributes">
+                        <attribute name="states" >'start_wf','proforma2'</attribute>
                     </button>
                 </data>
             </field>
-        </record>
+        </record-->
 
 
         <record id="view_account_invoice_filter_revbil" model="ir.ui.view">
