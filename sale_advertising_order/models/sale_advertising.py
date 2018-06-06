@@ -247,29 +247,48 @@ class SaleOrder(models.Model):
         This function opens a window to compose an email, with the edi sale template message loaded by default
         '''
         self.ensure_one()
-        if self.advertising and self.state in ['draft', 'approved1', 'submitted', 'approved2']:
+        if not self.advertising:
+            return super(SaleOrder, self).action_quotation_send()
+
+        elif self.state in ['draft', 'approved1', 'submitted', 'approved2']:
             olines = []
             for line in self.order_line:
                 if line.multi_line:
                     olines.append(line.id)
             if not olines == []:
                 self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
-        self._cr.commit()
+            self._cr.commit()
         # self.write({'state': 'sent'}) #Task: SMA-1 Action button for state [sent] in sale.order
-        result = super(SaleOrder, self).action_quotation_send()
-        if self.advertising:
-            ir_model_data = self.env['ir.model.data']
-            try:
-                template_id = ir_model_data.get_object_reference('sale_advertising_order', 'email_template_edi_sale_adver')[1]
-            except ValueError:
-                template_id = False
-            ctx = result['context']
-            ctx.update({
-                'default_use_template': bool(template_id),
-                'default_template_id': template_id,
-            })
-            result['context'] = ctx
-        return result
+
+        ir_model_data = self.env['ir.model.data']
+        try:
+            template_id = ir_model_data.get_object_reference('sale_advertising_order', 'email_template_edi_sale_adver')[1]
+        except ValueError:
+            template_id = False
+        try:
+            compose_form_id = ir_model_data.get_object_reference('mail', 'email_compose_message_wizard_form')[1]
+        except ValueError:
+            compose_form_id = False
+        ctx = dict()
+        ctx.update({
+            'default_model': 'sale.order',
+            'default_res_id': self.ids[0],
+            'default_use_template': bool(template_id),
+            'default_template_id': template_id,
+            'default_composition_mode': 'comment',
+            'mark_so_as_sent': True,
+            'custom_layout': "sale.mail_template_data_notification_email_sale_order"
+        })
+        return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'mail.compose.message',
+            'views': [(compose_form_id, 'form')],
+            'view_id': compose_form_id,
+            'target': 'new',
+            'context': ctx,
+        }
 
 
     @api.multi
