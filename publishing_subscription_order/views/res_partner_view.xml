@@ -140,4 +140,7 @@
         <field name="view_id" ref="sale_advertising_order.view_partner_tree_nsm_crm"/>
         <field name="act_window_id" ref="action_partner_form_crm_publishing"/>
     </record>
+
+    <menuitem id="menu_partner_form1" parent="menu_subscription_sales_main"
+                  action="action_partner_form_crm_publishing" sequence="2"/>
 </odoo>
