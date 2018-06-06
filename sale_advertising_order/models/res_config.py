@@ -34,17 +34,9 @@ class Partner(models.Model):
     adv_quotation_count = fields.Integer(compute='_compute_adv_quotation_count', string='# of Advertising Quotations')
 
     def _compute_adv_sale_order_count(self):
-        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('advertising','=',True),('state','in',('sale','done'))],
-                                                      fields=['partner_id'], groupby=['partner_id'])
-        # read to keep the child/parent relation while aggregating the read_group result in the loop
-        partner_child_ids = self.read(['child_ids'])
-        mapped_data = dict([(m['partner_id'][0], m['partner_id_count']) for m in sale_data])
         for partner in self:
-            # let's obtain the partner id and all its child ids from the read up there
-            partner_ids = filter(lambda r: r['id'] == partner.id, partner_child_ids)[0]
-            partner_ids = [partner_ids.get('id')] + partner_ids.get('child_ids')
-            # then we can sum for all the partner's child
-            partner.adv_sale_order_count = sum(mapped_data.get(child, 0) for child in partner_ids)
+            operator = 'child_of' if partner.is_company else '='  # the adv sales order count should counts the adv sales order of this company and all its contacts
+            partner.adv_sale_order_count = self.env['sale.order'].search_count(['|', ('published_customer', operator, partner.id), ('partner_id', operator, partner.id), ('state','in',('sale','done')), ('advertising','=',True)])
 
     @api.multi
     def _compute_adv_opportunity_count(self):
@@ -72,17 +64,9 @@ class Partner(models.Model):
             partner.quotation_count = sum(mapped_data.get(child, 0) for child in partner_ids)
 
     def _compute_adv_quotation_count(self):
-        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','not in',('sale','done')), ('advertising','=',True)],
-                                                      fields=['partner_id'], groupby=['partner_id'])
-        # read to keep the child/parent relation while aggregating the read_group result in the loop
-        partner_child_ids = self.read(['child_ids'])
-        mapped_data = dict([(m['partner_id'][0], m['partner_id_count']) for m in sale_data])
         for partner in self:
-            # let's obtain the partner id and all its child ids from the read up there
-            partner_ids = filter(lambda r: r['id'] == partner.id, partner_child_ids)[0]
-            partner_ids = [partner_ids.get('id')] + partner_ids.get('child_ids')
-            # then we can sum for all the partner's child
-            partner.adv_quotation_count = sum(mapped_data.get(child, 0) for child in partner_ids)
+            operator = 'child_of' if partner.is_company else '='  # the adv quotation count should counts the adv quotations of this company and all its contacts
+            partner.adv_quotation_count = self.env['sale.order'].search_count(['|', ('published_customer', operator, partner.id), ('partner_id', operator, partner.id), ('state','not in',('sale','done')), ('advertising','=',True)])
 
     def _compute_sale_order_count(self):
         sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','not in',('draft','sent','cancel')), ('advertising','=',False)],
