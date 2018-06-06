@@ -95,6 +95,9 @@ class SubscriptionDelivery(models.Model):
     def action_cancel(self):
         return self.write({'state': 'cancel'})
 
+    @api.multi
+    def print_xls_report(self):
+        return self.env['report'].get_action(self, 'report_subscription_delivery.xlsx')
 
 class SubscriptionDeliveryList(models.Model):
     _name = 'subscription.delivery.list'

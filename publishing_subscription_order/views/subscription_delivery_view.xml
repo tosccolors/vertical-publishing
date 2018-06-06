@@ -9,6 +9,7 @@
                     <header>
                         <button class="oe_highlight" name="get_delivery_lists" string="Generate Lines" type="object" states="draft"/>
                         <button class="oe_highlight" name="get_delivery_lists" string="Re-Generate Lines" type="object" states="progress"/>
+                        <button class="oe_highlight" name="print_xls_report" string="Print" type="object" states="progress,done"/>
                         <button class="oe_highlight" name="action_done" string="Issues Delivered" type="object" states="progress"/>
                         <button class="oe_highlight" name="action_cancel" string="Cancel" type="object" states="progress"/>
                         <field name="state" widget="statusbar" />
