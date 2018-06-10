@@ -46,6 +46,7 @@
 				 	<field name="page_id"/>
 					<field name="space"/>
 					<field name="price_edit"/>
+					<field name="volume_discount"/>
 			  	</field>
 		   	</field>
 		</record>
@@ -63,6 +64,7 @@
 					<field name="space"/>
 				 	<field name="page_id"/>
 					<field name="price_edit"/>
+					<field name="volume_discount"/>
 			  	</field>
 		   	</field>
 		</record>

@@ -677,13 +677,14 @@ class SaleOrderLine(models.Model):
         vals = {}
         if not self.advertising:
             return {'value': vals}
+        volume_discount = self.product_template_id.volume_discount
         if self.product_template_id and self.adv_issue_ids and len(self.adv_issue_ids) > 1:
             self.product_uom = self.product_template_id.uom_id
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', self.adv_issue_ids.ids)])
             values = []
             product_id = False
             price = 0
-            issues_count = 0
+            issues_count = len(adv_issues)
             for adv_issue in adv_issues:
                 if adv_issue.parent_id.id in self.title_ids.ids or adv_issue.parent_id.id == self.title.id:
                     value = {}
@@ -697,7 +698,7 @@ class SaleOrderLine(models.Model):
                         product = product_id.with_context(
                             lang=self.order_id.partner_id.lang,
                             partner=self.order_id.partner_id.id,
-                            quantity=self.product_uom_qty or 0,
+                            quantity=self.product_uom_qty or 0 if not volume_discount else issues_count,
                             date=self.order_id.date_order,
                             pricelist=self.order_id.pricelist_id.id,
                             uom=self.product_uom.id
@@ -711,7 +712,6 @@ class SaleOrderLine(models.Model):
 
                             price += value['price_unit'] * self.product_uom_qty
                             values.append(value)
-                issues_count += 1
             if product_id:
                 self.update({
                     'adv_issue_ids': [(6, 0, [])],
@@ -728,7 +728,7 @@ class SaleOrderLine(models.Model):
             values = []
             product_id = False
             price = 0
-            issues_count = 0
+            issues_count = len(adv_issues)
             for adv_issue in adv_issues:
                 if adv_issue.parent_id.id in self.title_ids.ids or adv_issue.parent_id.id == self.title.id:
                     value = {}
@@ -739,16 +739,23 @@ class SaleOrderLine(models.Model):
                     product_id = self.env['product.product'].search(
                         [('product_tmpl_id', '=', self.product_template_id.id), ('attribute_value_ids', '=', pav)])
                     if product_id:
+                        product = product_id.with_context(
+                            lang=self.order_id.partner_id.lang,
+                            partner=self.order_id.partner_id.id,
+                            quantity=self.product_uom_qty or 0 if not volume_discount else issues_count,
+                            date=self.order_id.date_order,
+                            pricelist=self.order_id.pricelist_id.id,
+                            uom=self.product_uom.id
+                        )
                         if self.order_id.pricelist_id and self.order_id.partner_id:
                             value['product_id'] = product_id.id
                             value['adv_issue_id'] = adv_issue.id
                             value['price_unit'] = self.env['account.tax']._fix_tax_included_price_company(
-                                self._get_display_price(product_id), product_id.taxes_id, self.tax_id,
+                                self._get_display_price(product), product.taxes_id, self.tax_id,
                                 self.company_id)
 
                             price += value['price_unit'] * self.product_uom_qty
                             values.append(value)
-                issues_count += 1
             if product_id:
                 self.update({
                     'issue_product_ids': values,

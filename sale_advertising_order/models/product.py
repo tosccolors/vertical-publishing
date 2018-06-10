@@ -65,6 +65,9 @@ class productTemplate(models.Model):
     page_id = fields.Many2one('sale.advertising.page', string='Issue Page')
     space = fields.Integer('Space', help="Space taken by ad")
     price_edit = fields.Boolean('Price Editable')
+    volume_discount = fields.Boolean('Volume Discount', help='Setting this flag makes that price finding in a multi-line '
+                                                             'advertising sale order line, uses the multi_line_number '
+                                                             'instead of product_uom_qty to implement volume discount' )
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
