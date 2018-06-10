@@ -11,10 +11,6 @@
                   sequence="4"/>
 
 
-        <menuitem id="menu_partner_form1" parent="menu_subscription_sales_main"
-                  action="action_partner_form_crm_publishing" sequence="2"/>
-
-
 		<menuitem id="menu_product_template_action2" parent="menu_subscription_sales_main"
                   action="product.product_template_action" sequence="13" />
 
@@ -25,12 +21,12 @@
             <field name="arch" type="xml">
                 <form string="Sales Order" class="o_sale_order">
                 <header>
-                    <button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"
-                        type="action" class="btn-primary"
-                        attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}"/>
-                    <button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"
-                        type="action" context="{'default_advance_payment_method': 'percentage'}"
-                        attrs="{'invisible': ['|',('invoice_status', '!=', 'no'), ('state', '!=', 'sale')]}"/>
+                    <!--<button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"-->
+                        <!--type="action" class="btn-primary"-->
+                        <!--attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}"/>-->
+                    <!--<button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"-->
+                        <!--type="action" context="{'default_advance_payment_method': 'percentage'}"-->
+                        <!--attrs="{'invisible': ['|',('invoice_status', '!=', 'no'), ('state', '!=', 'sale')]}"/>-->
                     <button name="action_quotation_send" string="Send by Email" type="object" states="draft" class="btn-primary"/>
                     <button name="print_quotation" string="Print" type="object" states="draft" class="btn-primary"/>
                     <button name="action_confirm" states="sent" string="Confirm Sale" class="btn-primary o_sale_confirm" type="object" />
@@ -83,15 +79,17 @@
 
                                     <group attrs="{'readonly': [('subscription_cancel', '=', True)]}">
                                         <group>
+                                            <field name="medium" required="True"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
 
                                             <field name="ad_class" required="True"
-                                                   domain="[('type','!=', 'view')]"
+                                                   domain="[('type','!=', 'view'), ('id','child_of', medium)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    attrs="{'readonly': [('subscription_cancel', '=', True)]}"
                                             />
                                             <field name="title_ids" string="Titles"
                                                    attrs="{'readonly': [('subscription_cancel', '=', True)]}"
-                                                   domain="[('parent_id','=', False),('medium','child_of', ad_class)]"
+                                                   domain="[('parent_id','=', False),('medium','child_of', medium)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
                                                              'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
@@ -486,19 +484,22 @@
                             <field name="order_partner_id" readonly="0" required="True"
                                    attrs="{'readonly': [('subscription_cancel', '=', True)]}"
                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}" />
+                            <field name="medium" required="True"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
+                                   attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
                             <field name="ad_class" required="True"
-                                   domain="[('type','!=', 'view')]"
-                                   attrs="{'readonly': [('subscription_cancel', '=', True)]}"
-                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
+                                   domain="[('type','!=', 'view'), ('id','child_of', medium)]"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
+                                   attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
                             <field name="title_ids" string="Titles"
-                                                   attrs="{'readonly': [('subscription_cancel', '=', True)]}"
-                                                   domain="[('parent_id','=', False),('medium','child_of', ad_class)]"
-                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                                   context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
+                                   attrs="{'readonly': [('subscription_cancel', '=', True)]}"
+                                   domain="[('parent_id','=', False),('medium','child_of', medium)]"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
+                                   context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
                                                              'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
-                                <tree create="true" edit="false" delete="true" copy="false">
-                                    <field name="name" string="Name" readonly="1"/>
-                                </tree>
+                                    <tree create="true" edit="false" delete="true" copy="false">
+                                        <field name="name" string="Name" readonly="1"/>
+                                    </tree>
                             </field>
                             <field name="order_id" invisible="1"/>
                             <field name="order_pricelist_id" invisible="1"/>
@@ -550,7 +551,7 @@
                                 </div>
                             <field name="discount_reason_id" attrs="{'invisible': [('discount','=', 0.0)],'required': [('discount','!=', 0.0)],'readonly': [('subscription_cancel', '=', True)]}"/>
                             <field name="price_subtotal" readonly="True" />
-                            <field name="date_type" invisible="True"/>
+                            <!--<field name="date_type" invisible="True"/>-->
                             <label for="customer_lead" groups="base.group_no_one"/>
                             <div groups="base.group_no_one">
                                 <field name="customer_lead" class="oe_inline" groups="base.group_no_one" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/> days

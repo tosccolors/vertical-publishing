@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    Copyright (C) 2004-2008 Tiny SPRL (<http://tiny.be>). All Rights Reserved
+#    Copyright (C) 2004-2016 Magnus (<http://www.magnus.nl>). All Rights Reserved
 #    $Id$
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -19,9 +19,23 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+{
+    'name': 'Folders',
+    'version': '1.0',
+    'category': 'Others',
+    'description': """
+This module contains information about the geographic segmentation.
+==============================================================================
+It will help in determining the number of valid addresses for a specific product
+in a specific zip code range. It also helps in linking a zip code / title to a 
+specific logistics service provider.
 
-import models
-import wizard
-import report
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
-
+    """,
+    'author': 'Magnus - Willem Hulshof',
+    'website': 'http://www.magnus.nl',
+    'depends': ['base', 'sale', 'sale_advertising_order'],
+    'data': [
+        "views/logistics_addres_table_view.xml",
+    ],
+    'installable': True
+}

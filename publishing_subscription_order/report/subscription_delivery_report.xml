@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+                id="report_delivery_list_report_xlsx"
+                model="subscription.delivery"
+                string="Delivery List XLSX"
+                report_type="xlsx"
+                name="report_subscription_delivery.xlsx"
+                file="report_subscription_delivery.xlsx"
+                attachment_use="False"
+            />
+
+    </data>
+</odoo>
