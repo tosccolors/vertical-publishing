@@ -81,13 +81,11 @@
                                         <group>
                                             <field name="medium" required="True"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
-
                                             <field name="ad_class" required="True"
                                                    domain="[('type','!=', 'view'), ('id','child_of', medium)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                                   attrs="{'readonly': [('subscription_cancel', '=', True)]}"
-                                            />
-                                            <field name="title_ids" string="Titles"
+                                                   attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
+                                            <!--field name="title_ids" string="Titles"
                                                    attrs="{'readonly': [('subscription_cancel', '=', True)]}"
                                                    domain="[('parent_id','=', False),('medium','child_of', medium)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
@@ -96,8 +94,10 @@
                                                 <tree create="true" edit="false" delete="true" copy="false">
                                                     <field name="name" string="Name" readonly="1"/>
                                                 </tree>
-                                            </field>
-
+                                            </field-->
+                                            <field name="title" string="Title"
+                                                   domain="[('child_ids','!=', False),('subscription_title','=', True),('medium','child_of', medium)]"
+                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                                             <field name="product_template_id" required="1"
                                                    context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                                    attrs="{'readonly': ['|','|','|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', []),('subscription_cancel', '=', True)]}"
@@ -702,6 +702,45 @@
         <record id="sale_crm.sale_action_quotations" model="ir.actions.act_window">
             <field name="domain">[('opportunity_id', '=', active_id), ('advertising','=',False),('subscription','=',False)]</field>
         </record>
+
+    <!-- View for sale.advertising.issue object -->
+		<record model="ir.ui.view" id="sale_advertising_issue_form">
+			<field name="name">sale.advertising.issue.form.subscr</field>
+			<field name="type">form</field>
+			<field name="model">sale.advertising.issue</field>
+            <field name="inherit_id" ref="sale_advertising_order.sale_advertising_issue_form"/>
+			<field name="arch" type="xml">
+                <field name="price_edit" position="after">
+                    <field name="subscription_title" string="Subscription Title"
+                           attrs="{'invisible':[('parent_id','=',True)]}"/>
+                </field>
+			</field>
+		</record>
+
+		<record id="sale_advertising_issue_tree" model="ir.ui.view" >
+			<field name="name">sale.advertising.issue.tree.subscr</field>
+			<field name="type">tree</field>
+			<field name="model">sale.advertising.issue</field>
+            <field name="inherit_id" ref="sale_advertising_order.sale_advertising_issue_tree"/>
+			<field name="arch" type="xml">
+                    <field name="parent_id" position="after">
+                        <field name="price_edit" string="Price edit"/>
+                        <field name="subscription_title" string="Subscription Title"/>
+                    </field>
+			</field>
+		</record>
+
+        <record id="view_advertising_issue_filter" model="ir.ui.view">
+            <field name="name">sale.advertising.issue.tree.subscr</field>
+            <field name="model">sale.advertising.issue</field>
+            <field name="inherit_id" ref="sale_advertising_order.view_advertising_issue_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="filter[1]"  position="after">
+                    <filter name="subs" string="Subscription Titles" domain="['|',('subscription_title','=', True),('parent_id.subscription_title','=', True)]"/>
+                </xpath>
+            </field>
+        </record>
+
 
 
     </data>

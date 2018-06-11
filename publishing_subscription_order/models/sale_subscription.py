@@ -413,3 +413,7 @@ class SaleOrderLine(models.Model):
         self.create_renewal_line(order_lines)
         return True
 
+class AdvertisingIssue(models.Model):
+    _inherit = "sale.advertising.issue"
+
+    subscription_title = fields.Boolean('Subscription Title')
