@@ -556,6 +556,7 @@ class SaleOrderLine(models.Model):
     nett_nett = fields.Boolean(string='Netto Netto Line')
     proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False)
     proof_number_payer = fields.Boolean('Proof Number Payer', default=False)
+    booklet_surface_area = fields.Float(string='Booklet Surface Area',digits=dp.get_precision('Product Unit of Measure'))
 
     @api.onchange('medium')
     def onchange_medium(self):
@@ -678,6 +679,9 @@ class SaleOrderLine(models.Model):
         if not self.advertising:
             return {'value': vals}
         volume_discount = self.product_template_id.volume_discount
+        self.update({
+            'booklet_surface_area': self.product_template_id.booklet_surface_area
+        })
         if self.product_template_id and self.adv_issue_ids and len(self.adv_issue_ids) > 1:
             self.product_uom = self.product_template_id.uom_id
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', self.adv_issue_ids.ids)])
