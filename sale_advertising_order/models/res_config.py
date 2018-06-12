@@ -30,6 +30,7 @@ class Partner(models.Model):
     adv_sale_order_count = fields.Integer(compute='_compute_adv_sale_order_count', string='# of Sales Order')
     adv_opportunity_count = fields.Integer("Opportunity", compute='_compute_adv_opportunity_count')
     next_activities_count = fields.Integer(compute='_compute_next_activities_count', string='Next Activities')
+    activities_report_count = fields.Integer(compute='_compute_activities_report_count', string='Activities Report')
     quotation_count = fields.Integer(compute='_compute_quotation_count', string='# of Quotations')
     adv_quotation_count = fields.Integer(compute='_compute_adv_quotation_count', string='# of Advertising Quotations')
 
@@ -42,13 +43,19 @@ class Partner(models.Model):
     def _compute_adv_opportunity_count(self):
         for partner in self:
             operator = 'child_of' if partner.is_company else '='  # the opportunity count should counts the opportunities of this company and all its contacts
-            partner.adv_opportunity_count = self.env['crm.lead'].search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('advertising', '=', True), ('is_activity', '=', False)])
+            partner.adv_opportunity_count = self.env['crm.lead'].search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('is_activity', '=', False), '|', ('stage_id.name','=','Qualified'), ('stage_id.name','=','Proposition')])
 
     @api.multi
     def _compute_next_activities_count(self):
         for partner in self:
             operator = 'child_of' if partner.is_company else '='  # the activity count should counts the activities of this company and all its contacts
-            partner.next_activities_count = self.env['crm.lead'].search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('advertising', '=', True), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False)])
+            partner.next_activities_count = self.env['crm.lead'].search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False), '|', ('stage_id.name','=','Qualified'), ('stage_id.name','=','Proposition')])
+
+    @api.multi
+    def _compute_activities_report_count(self):
+        for partner in self:
+            operator = 'child_of' if partner.is_company else '='  # the activity count should counts the activities of this company and all its contacts
+            partner.activities_report_count = self.env['crm.lead'].search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False), ('stage_id.name','!=','Qualified'), ('stage_id.name','!=','Proposition')])
 
     def _compute_quotation_count(self):
         sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','not in',('sale','done')), ('advertising','=',False)],
