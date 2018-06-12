@@ -71,6 +71,7 @@ class AdvertisingIssue(models.Model):
     default_note = fields.Text('Default Note')
     amount_total = fields.Integer(computed=_availability, string='Available Space', store=True, readonly=True,)
     price_edit = fields.Boolean('Price Editable')
+    active = fields.Boolean('Active', default=True)
 
 
     @api.onchange('parent_id')
