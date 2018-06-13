@@ -58,6 +58,25 @@ class Partner(models.Model):
             # then we can sum for all the partner's child
             partner.subs_sale_order_count = sum(mapped_data.get(child, 0) for child in partner_ids)
 
+    @api.multi
+    def _compute_total_sales_order(self):
+        for partner in self:
+            partner.total_sales_order = partner.sale_order_count + partner.adv_sale_order_count + partner.subs_sale_order_count
+
+    # Adding ('subscription', '=', False) in filter criteria to filter out subscription records from regular quotations smart button
+    @api.multi
+    def _compute_quotation_count(self):
+        for partner in self:
+            operator = 'child_of' if partner.is_company else '='
+            partner.quotation_count = self.env['sale.order'].search_count([('partner_id', operator, partner.id), ('state','not in',('sale','done')), ('advertising', '=', False), ('subscription', '=', False)])
+
+    # Adding ('subscription', '=', False) in filter criteria to filter out subscription records from regular sales orders smart button
+    @api.multi
+    def _compute_sale_order_count(self):
+        for partner in self:
+            operator = 'child_of' if partner.is_company else '='
+            partner.sale_order_count = self.env['sale.order'].search_count([('partner_id', operator, partner.id), ('state','in',('sale','done')), ('advertising', '=', False), ('subscription', '=', False)])
+
     @api.model
     def _commercial_fields(self):
         return super(Partner, self)._commercial_fields() + ['property_subscription_payment_term_id','subscription_customer_payment_mode_id','is_subscription_customer']
