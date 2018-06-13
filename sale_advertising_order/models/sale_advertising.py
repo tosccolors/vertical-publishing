@@ -350,6 +350,19 @@ class SaleOrder(models.Model):
                         newline.page_qty_check_update()
         return result
 
+    @api.multi
+    def _prepare_invoice(self):
+        """
+        Prepare the dict of values to create the new invoice for a sales order. This method may be
+        overridden to implement custom invoice generation (making sure to call super() to establish
+        a clean extension chain).
+        """
+        invoice_vals = super(SaleOrder, self)._prepare_invoice()
+        if self.advertising:
+            invoice_vals['ad'] = True
+            invoice_vals['published_customer'] = self.published_customer.id,
+        return invoice_vals
+
 
 
 class SaleOrderLine(models.Model):
