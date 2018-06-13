@@ -80,6 +80,7 @@
                                     <group attrs="{'readonly': [('subscription_cancel', '=', True)]}">
                                         <group>
                                             <field name="medium" required="True"
+                                                   domain="[('parent_id','=', %(sale_advertising_order.advertising_category)d)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                                             <field name="ad_class" required="True"
                                                    domain="[('type','!=', 'view'), ('id','child_of', medium)]"
