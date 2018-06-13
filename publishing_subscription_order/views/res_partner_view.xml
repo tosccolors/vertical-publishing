@@ -21,6 +21,18 @@
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_order_form_subscriptions')})]"/>
     </record>
 
+    <!--Inherited Action for Quotations smart button in res.partner-->
+    <!--Adding ('subscription', '=', False) in domain to filter out subscription records from regular quotations smart button-->
+    <record id="sale_advertising_order.act_res_partner_2_quotation" model="ir.actions.act_window">
+        <field name="domain">[('advertising','=',False), ('state','not in',('sale','done')), ('partner_id','child_of',active_id), ('subscription','=',False)]</field>
+    </record>
+
+    <!--Inherited Action for Sale Orders smart button in res.partner-->
+    <!--Adding ('subscription', '=', False) in domain to filter out subscription records from regular sales orders smart button-->
+    <record id="sale.act_res_partner_2_sale_order" model="ir.actions.act_window">
+        <field name="domain">[('state','not in',('draft','sent','cancel')), ('advertising','=',False), ('partner_id','child_of',active_id), ('subscription','=',False)]</field>
+    </record>
+
     <record id="view_partner_form_susbcription_inherit" model="ir.ui.view">
         <field name="name">res.partner.susbcription</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
