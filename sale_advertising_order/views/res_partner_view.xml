@@ -156,9 +156,6 @@
                         <field string="Activities Report" name="activities_report_count" widget="statinfo"/>
                     </button>
                 </xpath>
-                <xpath expr="//field[@name='activities_count']" position="attributes">
-                    <attribute name="string">Activities Report</attribute>
-                </xpath>
                 <xpath expr="//button[@name='%(crm_lead_opportunities_advertising)d']" position="replace">
                     <button class="oe_stat_button o_res_partner_tip_opp" type="action"
                         attrs="{'invisible': [('customer', '=', False)]}"
