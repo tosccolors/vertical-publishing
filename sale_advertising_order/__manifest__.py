@@ -52,6 +52,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
              "views/sale_advertising_view.xml",
              "views/crm_lead_view.xml",
              "views/res_partner_view.xml",
+             "views/account_invoice_view.xml",
              "views/crm_menu_view.xml",
              "views/sale_dashboard_view.xml",
              ],

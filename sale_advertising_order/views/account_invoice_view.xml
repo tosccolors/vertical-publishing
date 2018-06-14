@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Invoice -->
+        <record id="invoice_form" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form" />
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="published_customer"
+                           attrs="{'invisible': [('ad','!=',True)]}"/>
+                </field>
+                <field name="payment_term_id" position="after">
+                    <field name="ad" />
+                </field>
+                <xpath expr="//sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='product_id']" position="before">
+                    <field name="sale_order_id" widget="many2one_clickable"
+                           context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}"/>
+                </xpath>
+                <xpath expr="//sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='origin']" position="attributes">
+                    <attribute name="invisible" >1</attribute>
+                </xpath>
+                <xpath expr="//sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
+                    <field name="opportunity_subject" />
+                    <field name="ad_number" />
+                </xpath>
+                <xpath expr="//sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="after">
+                    <field name="computed_discount" />
+                    <field name="subtotal_before_agency_disc" />
+                    <field name="nett_nett" />
+                </xpath>
+            </field>
+        </record>
+        <!-- Invoice Lines -->
+        <record id="view_invoice_line_tree" model="ir.ui.view">
+            <field name="name">account.invoice.line.tree</field>
+            <field name="model">account.invoice.line</field>
+            <field name="inherit_id" ref="account.view_invoice_line_tree" />
+            <field name="arch" type="xml">
+                <field name="name" position="before">
+                    <field name="sale_order_id" widget="many2one_clickable"
+                           context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}"/>
+                </field>
+                <field name="name" position="after">
+                    <field name="opportunity_subject" />
+                    <field name="ad_number" />
+                </field>
+                <field name="price_unit" position="after">
+                    <field name="computed_discount" />
+                    <field name="subtotal_before_agency_disc" />
+                    <field name="nett_nett" />
+                </field>
+            </field>
+        </record>
+
+        <record id="view_invoice_line_form" model="ir.ui.view">
+            <field name="name">account.invoice.line.form</field>
+            <field name="model">account.invoice.line</field>
+            <field name="inherit_id" ref="account.view_invoice_line_form" />
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <field name="sale_order_id"
+                           context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}"/>
+                    <field name="opportunity_subject" />
+                    <field name="ad_number" />
+                    <field name="computed_discount" />
+                    <field name="subtotal_before_agency_disc" />
+                    <field name="nett_nett" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>
