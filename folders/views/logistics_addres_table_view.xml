@@ -21,7 +21,7 @@
                     <field name="folder_addresses" />
                     <field name="number_no_no" />
                     <field name="number_yes_no" />
-                    <field name="logistics_serviceprovider" />
+                    <field name="user_id" />
                 </tree>
             </field>
         </record>
@@ -84,7 +84,7 @@
                             <group>
                                 <field name="number_no_no" />
                                 <field name="number_yes_no" />
-                                <field name="logistics_serviceprovider" />
+                                <field name="user_id" />
                             </group>
                         </group>
                     </sheet>

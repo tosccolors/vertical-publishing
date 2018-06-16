@@ -18,4 +18,4 @@ class LogisticsAddressTable(models.Model):
     folder_addresses = fields.Integer(string='Folder Addresses')
     number_no_no = fields.Integer(string='Number No No')
     number_yes_no = fields.Integer(string='Number Yes No')
-    logistics_serviceprovider = fields.Char(string='Logistics Service Provider', size=50)
+    user_id = fields.Many2one('res.users', string='Logistics Service Provider')
