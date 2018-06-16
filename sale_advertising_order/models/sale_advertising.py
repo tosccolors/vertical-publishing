@@ -359,7 +359,6 @@ class SaleOrder(models.Model):
         """
         invoice_vals = super(SaleOrder, self)._prepare_invoice()
         if self.advertising:
-            invoice_vals['ad'] = True
             invoice_vals['published_customer'] = self.published_customer.id,
         return invoice_vals
 
@@ -969,6 +968,9 @@ class SaleOrderLine(models.Model):
         if self.advertising:
             res['account_analytic_id'] = self.adv_issue.analytic_account_id.id
             res['so_line_id'] = self.id
+            res['ad_number'] = self.ad_number
+            res['opportunity_subject'] = self.order_id.opportunity_subject
+            res['nett_nett'] = self.nett_nett
         return res
 
     @api.model
