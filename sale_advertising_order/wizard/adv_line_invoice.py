@@ -261,6 +261,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'account_analytic_id': line.adv_issue.analytic_account_id and line.adv_issue.analytic_account_id.id or False,
             'analytic_tag_ids': [(6, 0, line.analytic_tag_ids.ids or [])],
             'so_line_id': line.id,
+            'computed_discount': line.computed_discount,
             'ad_number': line.ad_number,
             'opportunity_subject': line.order_id.opportunity_subject,
             'nett_nett': line.nett_nett
