@@ -969,6 +969,7 @@ class SaleOrderLine(models.Model):
             res['account_analytic_id'] = self.adv_issue.analytic_account_id.id
             res['so_line_id'] = self.id
             res['ad_number'] = self.ad_number
+            res['computed_discount'] = self.computed_discount
             res['opportunity_subject'] = self.order_id.opportunity_subject
             res['nett_nett'] = self.nett_nett
         return res
