@@ -568,7 +568,7 @@ class SaleOrderLine(models.Model):
     nett_nett = fields.Boolean(string='Netto Netto Line')
     proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False)
     proof_number_payer = fields.Boolean('Proof Number Payer', default=False)
-    booklet_surface_area = fields.Float(string='Booklet Surface Area',digits=dp.get_precision('Product Unit of Measure'))
+    booklet_surface_area = fields.Float(related='product_template_id.booklet_surface_area', string='Booklet Surface Area',digits=dp.get_precision('Product Unit of Measure'))
 
     @api.onchange('medium')
     def onchange_medium(self):
