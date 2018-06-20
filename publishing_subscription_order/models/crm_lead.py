@@ -22,6 +22,7 @@
 
 
 from odoo import api, fields, models, _
+from datetime import date
 
 class Lead(models.Model):
     _inherit = ["crm.lead"]
@@ -38,3 +39,22 @@ class Lead(models.Model):
     def _compute_quotations_count(self):
         for lead in self:
             lead.quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done')), ('advertising', '=', False), ('subscription', '=', False)])
+
+    @api.model
+    def retrieve_sales_dashboard(self):
+        result = super(Lead, self).retrieve_sales_dashboard()
+        result['subs_quotes'] = {'overdue': 0}
+        quote_domain = [
+            ('state', 'not in', ['sale', 'done']),
+            ('user_id', '=', self.env.uid),
+            ('validity_date', '<', fields.Date.to_string(date.today())),
+            ('subscription', '=', True)
+        ]
+        quote_data = self.env['sale.order'].search(quote_domain)
+        for quote in quote_data:
+            if quote.subscription == True:
+                result['subs_quotes']['overdue'] += 1
+        #Deducting subscription quotes count from regular quotes count
+        result['reg_quotes']['overdue'] = result['reg_quotes']['overdue'] - result['subs_quotes']['overdue']
+
+        return result

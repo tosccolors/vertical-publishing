@@ -59,6 +59,18 @@
                                     My Pipeline
                                 </a>
                             </td>
+                            <td id="quote" class="o_main" title="To Regular Quotations" rowspan="2">
+                                <a href="#" class="o_dashboard_action" name="sale.action_quotations">
+                                    <span class="fa fa-th-large fa-3x"/><br/>
+                                    Reg. Quotes
+                                </a>
+                            </td>
+                            <td id="adv_quote" class="o_main" title="To Advertising Quotations" rowspan="2">
+                                <a href="#" class="o_dashboard_action" name="sale_advertising_order.action_quotations_advertising">
+                                    <span class="fa fa-th-large fa-3x"/><br/>
+                                    Adv. Quotes
+                                </a>
+                            </td>
                         </tr>
                         <tr>
                             <td class="o_text">Next 7 days</td>
@@ -107,6 +119,7 @@
                                     </t>
                                 </a>
                             </td>
+                            <td t-if="values and values['activity']['overdue'] == 0"></td>
                             <td></td>
                             <td  t-if="show_demo or (values and values['closing']['overdue'] != 0)" class="o_warning" title="To Opportunities">
                                 <a href="#" class="o_dashboard_action" name="crm.action_your_pipeline" data-extra="overdue_opp">
@@ -118,6 +131,29 @@
                                     </t>
                                 </a>
                             </td>
+                            <td t-if="values and values['closing']['overdue'] == 0"></td>
+                            <td id="quote_overdue" t-if="show_demo or (values and values['reg_quotes']['overdue'] != 0)" class="o_warning" title="To Regular Quotations">
+                                <a href="#" class="o_dashboard_action" name="sale.action_quotations" data-extra="overdue_quotes">
+                                    <t t-if="!show_demo">
+                                        <t t-esc="values['reg_quotes']['overdue']"/> exp. closing
+                                    </t>
+                                    <t t-if="show_demo">
+                                        3 exp. closing
+                                    </t>
+                                </a>
+                            </td>
+                            <td t-if="values and values['reg_quotes']['overdue'] == 0"></td>
+                            <td id="adv_quote_overdue" t-if="show_demo or (values and values['adv_quotes']['overdue'] != 0)" class="o_warning" title="To Advertising Quotations">
+                                <a href="#" class="o_dashboard_action" name="sale_advertising_order.action_quotations_advertising" data-extra="overdue_quote_adv">
+                                    <t t-if="!show_demo">
+                                        <t t-esc="values['adv_quotes']['overdue']"/> exp. closing
+                                    </t>
+                                    <t t-if="show_demo">
+                                        3 exp. closing
+                                    </t>
+                                </a>
+                            </td>
+                            <td t-if="values and values['adv_quotes']['overdue'] == 0"></td>
                         </tr>
                     </table>
                 </div><div t-attf-class="#{show_demo ? 'o_demo' : ''}">

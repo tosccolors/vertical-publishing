@@ -343,6 +343,11 @@
                     <filter string="Submitted" name="submitted" domain="[('state','in',('submitted',))]"/>
                     <filter string="Sales Mgr Approved" name="approved1" domain="[('state','in',('approved1',))]"/>
                     <!--filter string="Traffic Approved" name="approved2" domain="[('state','in',('approved2',))]"/-->
+
+                    <separator/>
+                    <filter string="Overdue Subscription Quotations" name="overdue_quote_subs"
+                            domain="[('validity_date', '&lt;', context_today().strftime('%Y-%m-%d'))]"
+                            help="Show all subscription quotations for which the expiration date is before today"/>
                 </xpath>
                 <field name="partner_id" position="after">
                     <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>
@@ -354,6 +359,30 @@
                 <xpath expr="//filter[1]" position="after">
                 <filter string="Department" domain="[]" groups="operating_unit.group_multi_operating_unit" context="{'group_by':'operating_unit_id'}"/>
             </xpath>
+            </field>
+        </record>
+
+        <record id="action_quotation_subscription" model="ir.actions.act_window">
+            <field name="name">Subscription Quotations</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field name="domain">[('state','not in',['sale','done']), ('subscription','=',True)]</field>
+            <field name="context">{'default_subscription':True}</field>
+            <field name="view_ids"
+                   eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('publishing_subscription_order.view_order_subscription_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('publishing_subscription_order.view_order_form_subscriptions')}),
+                          (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
+            <field name="search_view_id" ref="subscription_order_view_search_inherit_sale"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Create a Quotation, the first step of a new sale.
+              </p><p>
+                Your next actions should flow efficiently: confirm the Quotation to a Sale Order, then create the Invoice and collect the Payment.
+              </p><p>
+                Note that once a Quotation becomes a Sale Order, it will be moved from the Quotations list to the Sales Order list.
+              </p>
             </field>
         </record>
 
