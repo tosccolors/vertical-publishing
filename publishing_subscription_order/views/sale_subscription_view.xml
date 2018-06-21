@@ -345,7 +345,7 @@
                     <!--filter string="Traffic Approved" name="approved2" domain="[('state','in',('approved2',))]"/-->
 
                     <separator/>
-                    <filter string="Overdue Subscription Quotations" name="overdue_quote_subs"
+                    <filter string="Overdue Quotations" name="overdue_quotes"
                             domain="[('validity_date', '&lt;', context_today().strftime('%Y-%m-%d'))]"
                             help="Show all subscription quotations for which the expiration date is before today"/>
                 </xpath>

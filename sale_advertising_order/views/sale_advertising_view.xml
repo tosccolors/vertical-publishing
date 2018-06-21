@@ -670,7 +670,7 @@
                     <filter string="Quotations Sent" name="sent" domain="[('state','=','sent')]"/>
                     <filter string="Sales" name="sales" domain="[('state','in',('sale','done'))]"/>
                     <separator/>
-                    <filter string="Overdue Regular Quotations" name="overdue_quotes"
+                    <filter string="Overdue Quotations" name="overdue_quotes"
                             domain="[('validity_date', '&lt;', context_today().strftime('%Y-%m-%d'))]"
                             help="Show all regular quotations for which the expiration date is before today"/>
                 </xpath>
@@ -698,7 +698,7 @@
                     <filter string="Traffic Approved" name="approved2" domain="[('state','in',('approved2',))]"/>
 
                     <separator/>
-                    <filter string="Overdue Advertising Quotations" name="overdue_quote_adv"
+                    <filter string="Overdue Quotations" name="overdue_quotes"
                             domain="[('validity_date', '&lt;', context_today().strftime('%Y-%m-%d'))]"
                             help="Show all advertising quotations for which the expiration date is before today"/>
                 </xpath>
