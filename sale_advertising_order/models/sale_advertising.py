@@ -995,7 +995,8 @@ class SaleOrderLine(models.Model):
             if 'pubble_sent' in vals:
                 continue
             if line.invoice_status == 'invoiced' and not vals.get('product_uom_qty') == 0 \
-                                                 and not user.has_group('account.group_account_invoice'):
+                                                 and not user.has_group('account.group_account_invoice') \
+                                                 and not user.id == 1:
                 raise UserError(_('You cannot change an order line after it has been fully invoiced.'))
             if not line.multi_line and ('product_id' in vals or 'adv_issue' in vals or 'product_uom_qty' in vals):
                 if line.deadline_check():
