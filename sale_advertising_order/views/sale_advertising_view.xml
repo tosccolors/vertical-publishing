@@ -1274,13 +1274,16 @@
 						<group col="4" colspan="4" >
 							<field name="name" string="Name"/>
                             <field name="code" string="Code"/>
+                            <field name="medium_domain" invisible="1"/>
 							<field name="parent_id" string="Title" domain="[('parent_id','=', False)]"/>
                             <field name="price_edit" string="Price Editable"
                                    attrs="{'invisible':[('parent_id','=',True)]}"/>
-                            <field name="medium" string="Medium" domain="[('parent_id','=', %(sale_advertising_order.advertising_category)d)]"
+                            <field name="medium" string="Medium" domain="medium_domain"
                                    options="{'no_create': True, 'no_create_edit': True}"/>
                             <field name="product_attribute_value_id" string="Variant Title"
-                                   attrs="{'required':[('parent_id','=',False),('medium','=', %(sale_advertising_order.newspaper_advertising_category)d)]}"/>
+                                   attrs="{'required':[('parent_id','=',False),
+                                   ('medium','in', (%(sale_advertising_order.newspaper_advertising_category)d,
+                                                    %(sale_advertising_order.magazine_advertising_category)d))]}"/>
 							<field name="analytic_account_id" string="Related Analytic Account"/>
 							<field name="issue_date" string="Issue Date"/>
                             <field name="issue_week_number" string="Week Number"/>

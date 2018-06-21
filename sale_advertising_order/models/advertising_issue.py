@@ -2,7 +2,7 @@
 # Copyright 2017 Willem hulshof - <w.hulshof@magnus.nl>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-
+import json
 from odoo import api, fields, models, _
 import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
@@ -19,6 +19,32 @@ class AdvertisingIssue(models.Model):
     def _get_attribute_domain(self):
         id = self.env.ref('sale_advertising_order.attribute_title').id
         return [('attribute_id', '=', id)]
+
+    @api.depends('parent_id')
+    @api.multi
+    def _compute_medium_domain(self):
+        """
+        Compute the domain for the Medium domain.
+        """
+        for rec in self:
+            if rec.parent_id:
+                np = self.env.ref('sale_advertising_order.newspaper_advertising_category').id
+                mag = self.env.ref('sale_advertising_order.magazine_advertising_category').id
+                if rec.parent_id.medium.id in [np, mag]:
+                    ads = self.env.ref('sale_advertising_order.title_pricelist_category').id
+                    rec.medium_domain = json.dumps(
+                                        [('parent_id', '=', ads)]
+                    )
+                else:
+                    ads = [self.env.ref('sale_advertising_order.online_advertising_category').id]
+                    rec.medium_domain = json.dumps(
+                                        [('id', 'in', ads)]
+                    )
+            else:
+                ads = self.env.ref('sale_advertising_order.advertising_category').id
+                rec.medium_domain = json.dumps(
+                                    [('parent_id', '=', ads)]
+                )
 
     @api.one
     @api.depends('issue_date')
@@ -66,6 +92,7 @@ class AdvertisingIssue(models.Model):
     issue_week_number = fields.Integer(string='Week Number', store=True, readonly=True, compute='_week_number' )
     week_number_even = fields.Boolean(string='Even Week Number', store=True, readonly=True, compute='_week_number' )
     deadline = fields.Datetime('Deadline', help='Closing Time for Sales')
+    medium_domain = fields.Char(compute='_compute_medium_domain', readonly=True, store=False,)
     medium = fields.Many2one('product.category','Medium', required=True)
     state = fields.Selection([('open','Open'),('close','Close')], 'State', default='open')
     default_note = fields.Text('Default Note')
