@@ -691,9 +691,6 @@ class SaleOrderLine(models.Model):
         if not self.advertising:
             return {'value': vals}
         volume_discount = self.product_template_id.volume_discount
-        self.update({
-            'booklet_surface_area': self.product_template_id.booklet_surface_area
-        })
         if self.product_template_id and self.adv_issue_ids and len(self.adv_issue_ids) > 1:
             self.product_uom = self.product_template_id.uom_id
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', self.adv_issue_ids.ids)])
