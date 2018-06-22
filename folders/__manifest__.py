@@ -39,7 +39,7 @@ specific logistics service provider.
     """,
     'author': 'Magnus - Willem Hulshof',
     'website': 'http://www.magnus.nl',
-    'depends': ['base', 'sale', 'sale_advertising_order'],
+    'depends': ['base', 'sale', 'sale_advertising_order', 'bdu_crm'],
     'data': [
         "views/logistics_addres_table_view.xml",
         "security/ir.model.access.csv"
