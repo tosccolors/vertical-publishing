@@ -87,14 +87,10 @@
                         <group>
                             <field name="partner_id" context="{'show_address': 1}" options="{'always_reload': True}"/>
                             <field name="delivery_id" invisible="1"/>
-                            <field name="title_ids" string="Titles"
+                            <field name="title" string="Title"
                                options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
-                                 'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
-                                    <tree create="true" edit="false" delete="true" copy="false">
-                                        <field name="name" string="Name" readonly="1"/>
-                                    </tree>
-                            </field>
+                                 'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }"/>
                             <field name="product_uom_qty"/>
                         </group>
                         <group>

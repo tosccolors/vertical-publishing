@@ -158,37 +158,56 @@ class SaleOrderLine(models.Model):
         if not self.subscription:
             return {'value': vals}
         if self.medium:
-            child_id = [x.id for x in self.medium.child_id]
+            child_id = [x.id for x in self.medium.child_id.filtered('subscription_categ')]
             if len(child_id) == 1:
                 vals['ad_class'] = child_id[0]
             else:
                 vals['ad_class'] = False
-                data = {'ad_class': [('id', 'child_of', self.medium.id), ('type', '!=', 'view')]}
+                data['ad_class'] = [('id', 'child_of', self.medium.id), ('type', '!=', 'view'), ('subscription_categ','=',True)]
             titles = self.env['sale.advertising.issue'].search(
                 [('parent_id', '=', False), ('medium', '=', self.medium.id)]).ids
             if titles and len(titles) == 1:
-                # vals['title'] = titles[0]
-                vals['title_ids'] = [(6, 0, titles)]
+                vals['title'] = titles[0]
+                # vals['title_ids'] = [(6, 0, titles)]
             else:
-                # vals['title'] = False
-                vals['title_ids'] = [(6, 0, [])]
+                data['title'] = [('id','in',titles)]
+                vals['title'] = False
+                # vals['title_ids'] = [(6, 0, [])]
         else:
             vals['ad_class'] = False
-            # vals['title'] = False
-            vals['title_ids'] = [(6, 0, [])]
+            vals['title'] = False
+            # vals['title_ids'] = [(6, 0, [])]
             data = {'ad_class': []}
         return {'value': vals, 'domain': data}
 
-    @api.onchange('ad_class')
+    @api.onchange('ad_class','title')
     def onchange_ad_class_subs(self):
         vals, data, result = {}, {}, {}
-        data['product_template_id'] = [('subscription_product', '=', True)]
+
         if not self.subscription:
             return {'value': vals}
-        if self.ad_class:
-            product_ids = self.env['product.template'].search([('categ_id', '=', self.ad_class.id),('subscription_product','=',True)])
-            if product_ids:
+
+        data['product_template_id'] = [('subscription_product', '=', True)]
+        if self.ad_class or self.title:
+            if self.ad_class:
                 data['product_template_id'] += [('categ_id', '=', self.ad_class.id)]
+                vals['product_template_id'] = False
+            product_ids = self.env['product.template'].search(data['product_template_id'])
+            if self.title:
+                if self.title.product_attribute_value_id:
+                    pav = self.title.product_attribute_value_id.id
+                    self.env['product.attribute.line'].search([('product_tmpl_id','in',product_ids.ids),('attribute_id.id','=',pav)])
+
+                    prod_ids = []
+                    for prod in product_ids:
+                        attribute_lines = prod.attribute_line_ids.filtered(lambda attr: pav in attr.value_ids.ids)
+                        prod_ids += attribute_lines.mapped('product_tmpl_id').ids
+                    if prod_ids:
+                        product_ids = product_ids.filtered(lambda tmp: tmp.id in prod_ids)
+                else:
+                    product_ids = product_ids.filtered(lambda tmp: not tmp.attribute_line_ids)
+            if product_ids:
+                data['product_template_id'] += [('id', 'in', product_ids.ids)]
                 if len(product_ids) == 1:
                     vals['product_template_id'] = product_ids[0]
                     vals['product_uom'] = product_ids.uom_id
@@ -197,15 +216,10 @@ class SaleOrderLine(models.Model):
                     vals['product_template_id'] = False
             else:
                 vals['product_template_id'] = False
-            date_type = self.ad_class.date_type
-            # if date_type:
-            #     vals['date_type'] = date_type
-            # else: result = {'title':_('Warning'),
-            #                      'message':_('The Ad Class has no Date Type. You have to define one')}
         else:
             vals['product_template_id'] = False
             vals['product_id'] = False
-            # vals['date_type'] = False
+
         return {'value': vals, 'domain' : data, 'warning': result}
 
 
@@ -244,64 +258,29 @@ class SaleOrderLine(models.Model):
                 vals['end_date'] = datetime.strptime(str(start_date), "%Y-%m-%d").date() + timedelta(
                     days=line.product_template_id.subscr_number_of_days)
 
-        def _reset_line(line):
+        def _reset_line():
             return {'product_id': False,
                     'name': '',
                     'start_date': False,
                     'end_date': False,
                     'number_of_issues':0}
 
-        if self.product_template_id and self.title_ids and len(self.title_ids) > 1:
-            self.product_uom = self.product_template_id.uom_id
-            values = []
-            product_id = False
-            for subs_title in self.title_ids:
-                value = {}
-                if subs_title.product_attribute_value_id:
-                    pav = subs_title.product_attribute_value_id.id
-                else:
-                    pav = False
-                #     pav = subs_title.parent_id.product_attribute_value_id.id
-                product_id = self.env['product.product'].search(
-                    [('product_tmpl_id', '=', self.product_template_id.id), ('attribute_value_ids', '=', pav)])
-                if product_id:
-                    product = product_id.with_context(
-                        lang=self.order_id.partner_id.lang,
-                        partner=self.order_id.partner_id.id,
-                        quantity=self.product_uom_qty or 0,
-                        date=self.order_id.date_order,
-                        pricelist=self.order_id.pricelist_id.id,
-                        uom=self.product_uom.id
-                    )
-                    if self.order_id.pricelist_id and self.order_id.partner_id:
-                        value['product_id'] = product_id.id
-                        value['price_unit'] = self.env['account.tax']._fix_tax_included_price_company(
-                            self._get_display_price(product), product.taxes_id, self.tax_id,
-                            self.company_id)
-                        values.append(value)
+        if self.product_template_id and self.title:
+            if self.title.product_attribute_value_id:
+                pav = self.title.product_attribute_value_id.id
+            else:
+                pav = False
+            product_id = self.env['product.product'].search(
+                [('product_tmpl_id', '=', self.product_template_id.id), ('attribute_value_ids', '=', pav)])
             if product_id:
                 self.update({
                     'product_id': product_id.id,
                 })
                 _line_update(self)
             else:
-                self.update(_reset_line(self))
-        elif self.product_template_id and (self.title_ids or len(self.title_ids) == 1):
-            product_id = False
-            for title in self.title_ids:
-                if title.product_attribute_value_id:
-                    pav = title.product_attribute_value_id.id
-                else:
-                    pav = False
-                product_id = self.env['product.product'].search(
-                    [('product_tmpl_id', '=', self.product_template_id.id), ('attribute_value_ids', '=', pav)])
-            if product_id:
-                self.update({
-                    'product_id': product_id.id,
-                })
-                _line_update(self)
-            else:
-                self.update(_reset_line(self))
+                self.update(_reset_line())
+        else:
+            self.update(_reset_line())
 
         return {'value': vals}
 

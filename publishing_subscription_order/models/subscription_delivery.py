@@ -44,11 +44,11 @@ class SubscriptionDelivery(models.Model):
                 continue
 
             item={}
-            issueObj = advIssue.search([('parent_id','in', line_obj.title_ids.ids),('issue_date','<=',self.end_date),('issue_date','>=',self.start_date)])
+            issueObj = advIssue.search([('parent_id','in', line_obj.title.ids),('issue_date','<=',self.end_date),('issue_date','>=',self.start_date)])
             if issueObj:
                 item['delivery_id'] = self.id
                 item['partner_id'] = line_obj.order_id.partner_shipping_id.id
-                item['title_ids'] = [(6,0,line_obj.title_ids.ids)]
+                item['title'] = line_obj.title.id
                 item['issue_ids'] = [(6,0,issueObj.ids)]
                 item['sub_order_line'] = line_obj.id
                 item['product_uom_qty'] = line_obj.product_uom_qty
@@ -70,7 +70,7 @@ class SubscriptionDelivery(models.Model):
             ('company_id', '=', self.company_id.id),
             ('subscription', '=', True),
             ('state', '=', 'sale'),
-            ('title_ids', '!=', False),
+            ('title', '!=', False),
         ]
         self_sols = self.delivery_list.mapped('sub_order_line')
         sub_list_objs = self.search([('start_date', '<=', self.end_date), ('end_date', '>=', self.start_date),('id','!=',self.id),('company_id','=',self.company_id.id),('state','!=','cancel')])
@@ -109,7 +109,7 @@ class SubscriptionDeliveryList(models.Model):
     end_date = fields.Date(related='delivery_id.end_date',string='End Date',store=True, readonly=True)
     company_id = fields.Many2one(related='delivery_id.company_id', string='Company', store=True, readonly=True)
     partner_id = fields.Many2one('res.partner', string='Delivery Address')
-    title_ids = fields.Many2many('sale.advertising.issue', 'delivery_list_title_adv_issue_rel', 'delivery_list_id', 'adv_issue_id',string='Title')
+    title = fields.Many2one('sale.advertising.issue', string='Title')
     issue_ids = fields.Many2many('sale.advertising.issue', 'delivery_list_issue_adv_issue_rel', 'delivery_list_id', 'adv_issue_id', string='Issues')
     sub_order_line = fields.Many2one('sale.order.line', string='Subscription order line')
     subscription_number = fields.Many2one(related='sub_order_line.order_id',string='Subscription Number', store=True, readonly=True)
