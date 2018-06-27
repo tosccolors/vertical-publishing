@@ -64,15 +64,15 @@
                     <sheet>
                         <group>
                             <group>
-                                <field name="country_id" required="True" />
+                                <field name="country_id" required="True" options="{'no_create': True, 'no_create_edit':True}"/>
                                 <field name="region" />
-                                <field name="province_id" />
+                                <field name="province_id" domain="[('country_id', '=', country_id)]" options="{'no_create': True, 'no_create_edit':True, 'no_open':True}"/>
                                 <field name="municipality" />
                             </group>
                             <group>
                                 <field name="city" />
                                 <field name="zip" />
-                                <field name="title_id" />
+                                <field name="title_id" options="{'no_create': True, 'no_create_edit':True}"/>
                                 <field name="distribution_area" />
                             </group>
                         </group>
@@ -84,7 +84,7 @@
                             <group>
                                 <field name="number_no_no" />
                                 <field name="number_yes_no" />
-                                <field name="user_id" />
+                                <field name="user_id" options="{'no_create': True, 'no_create_edit':True}"/>
                             </group>
                         </group>
                     </sheet>

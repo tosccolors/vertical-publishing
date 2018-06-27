@@ -658,6 +658,25 @@
             </field>
         </record>
 
+        <record id="sale.sale_order_view_search_inherit_quotation" model="ir.ui.view">
+            <field name="name">sale.order.search.inherit.quotation</field>
+            <field name="model">sale.order</field>
+            <field name="mode">primary</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
+                    <separator/>
+                    <filter string="Quotations" name="draft" domain="[('state','=','draft')]"/>
+                    <filter string="Quotations Sent" name="sent" domain="[('state','=','sent')]"/>
+                    <filter string="Sales" name="sales" domain="[('state','in',('sale','done'))]"/>
+                    <separator/>
+                    <filter string="Overdue Quotations" name="overdue_quotes"
+                            domain="[('validity_date', '&lt;', context_today().strftime('%Y-%m-%d'))]"
+                            help="Show all regular quotations for which the expiration date is before today"/>
+                </xpath>
+            </field>
+        </record>
+
         <record id="advertising_order_view_search_inherit_quotation" model="ir.ui.view">
             <field name="name">advertising.sale.order.search.inherit.quotation</field>
             <field name="model">sale.order</field>
@@ -677,6 +696,11 @@
                     <filter string="Submitted" name="submitted" domain="[('state','in',('submitted',))]"/>
                     <filter string="Sales Mgr Approved" name="approved1" domain="[('state','in',('approved1',))]"/>
                     <filter string="Traffic Approved" name="approved2" domain="[('state','in',('approved2',))]"/>
+
+                    <separator/>
+                    <filter string="Overdue Quotations" name="overdue_quotes"
+                            domain="[('validity_date', '&lt;', context_today().strftime('%Y-%m-%d'))]"
+                            help="Show all advertising quotations for which the expiration date is before today"/>
                 </xpath>
 
                 <field name="project_id" position="after" >

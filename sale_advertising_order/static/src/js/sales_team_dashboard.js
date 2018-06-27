@@ -35,6 +35,11 @@ odoo.define('advertising_sales_team.dashboard', function (require) {
                 } else if (action_extra === 'this_week') {
                     additional_context.search_default_this_week = 1;
                 }
+            } else if (action_name === 'sale.action_quotations' || action_name === 'sale_advertising_order.action_quotations_advertising' || action_name === 'publishing_subscription_order.action_quotation_subscription') {
+                additional_context['search_default_my_sale_orders_filter'] = 1;
+                if (action_extra === 'overdue_quotes') {
+                    additional_context['search_default_overdue_quotes'] = 1;
+                }
             }
 
             this.do_action(action_name, {additional_context: additional_context});

@@ -366,6 +366,20 @@ class Lead(models.Model):
                 elif sale_date < current_datetime.replace(day=1) and sale_date >= current_datetime.replace(day=1) - relativedelta(months=+1):
                     result['sale_confirmed']['last_month'] += sale['amount_untaxed']
         result['invoiced']['target'] = self.env.user.target_sales_invoiced
+
+        result['reg_quotes'] = {'overdue': 0}
+        result['adv_quotes'] = {'overdue': 0}
+        quote_domain = [
+            ('state', 'not in', ['sale', 'done']),
+            ('user_id', '=', self.env.uid),
+            ('validity_date', '<', fields.Date.to_string(date.today())),
+        ]
+        quote_data = self.env['sale.order'].search(quote_domain)
+        for quote in quote_data:
+            if quote.advertising == False:
+                result['reg_quotes']['overdue'] += 1
+            elif quote.advertising == True:
+                result['adv_quotes']['overdue'] += 1
         return result
 
     @api.model

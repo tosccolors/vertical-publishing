@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-extend="sales_team.SalesDashboard">
+        <t t-jquery="#adv_quote" t-operation="append">
+            <td class="o_main" title="To Subscription Quotations" rowspan="2">
+                <a href="#" class="o_dashboard_action" name="publishing_subscription_order.action_quotation_subscription">
+                    <span class="fa fa-pencil-square-o fa-3x"/><br/>
+                    Subs. Quotes
+                </a>
+            </td>
+        </t>
+        <t t-jquery="#adv_quote_overdue" t-operation="append">
+            <td t-if="show_demo or (values and values['subs_quotes']['overdue'] != 0)" class="o_warning" title="To Subscription Quotations">
+                <a href="#" class="o_dashboard_action" name="publishing_subscription_order.action_quotation_subscription" data-extra="overdue_quotes">
+                    <t t-if="!show_demo">
+                        <t t-esc="values['subs_quotes']['overdue']"/> exp. closing
+                    </t>
+                    <t t-if="show_demo">
+                        3 exp. closing
+                    </t>
+                </a>
+            </td>
+            <td t-if="values and values['subs_quotes']['overdue'] == 0"></td>
+        </t>
+    </t>
+</templates>
