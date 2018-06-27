@@ -992,7 +992,7 @@ class SaleOrderLine(models.Model):
         for line in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
             if 'pubble_sent' in vals:
                 continue
-            if line.invoice_status == 'invoiced' and not vals.get('product_uom_qty') == 0 \
+            if line.invoice_status == 'invoiced' and not (vals.get('product_uom_qty') == 0 and line.qty_invoiced == 0) \
                                                  and not user.has_group('account.group_account_invoice') \
                                                  and not user.id == 1:
                 raise UserError(_('You cannot change an order line after it has been fully invoiced.'))
