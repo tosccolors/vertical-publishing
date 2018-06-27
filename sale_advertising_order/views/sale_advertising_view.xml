@@ -1298,13 +1298,16 @@
 						<group col="4" colspan="4" >
 							<field name="name" string="Name"/>
                             <field name="code" string="Code"/>
+                            <field name="medium_domain" invisible="1"/>
 							<field name="parent_id" string="Title" domain="[('parent_id','=', False)]"/>
                             <field name="price_edit" string="Price Editable"
                                    attrs="{'invisible':[('parent_id','=',True)]}"/>
-                            <field name="medium" string="Medium" domain="[('parent_id','=', %(sale_advertising_order.advertising_category)d)]"
+                            <field name="medium" string="Medium" domain="medium_domain"
                                    options="{'no_create': True, 'no_create_edit': True}"/>
                             <field name="product_attribute_value_id" string="Variant Title"
-                                   attrs="{'required':[('parent_id','=',False),('medium','=', %(sale_advertising_order.newspaper_advertising_category)d)]}"/>
+                                   attrs="{'required':[('parent_id','=',False),
+                                   ('medium','in', (%(sale_advertising_order.newspaper_advertising_category)d,
+                                                    %(sale_advertising_order.magazine_advertising_category)d))]}"/>
 							<field name="analytic_account_id" string="Related Analytic Account"/>
 							<field name="issue_date" string="Issue Date"/>
                             <field name="issue_week_number" string="Week Number"/>
@@ -1662,42 +1665,6 @@
         </record>
         <record id="sale_crm.sale_action_quotations" model="ir.actions.act_window">
             <field name="domain">[('opportunity_id', '=', active_id), ('advertising','=',False)]</field>
-        </record>
-
-        <record model="ir.ui.view" id="view_sale_order_graph2">
-            <field name="name">sale.order.graph</field>
-            <field name="model">sale.order</field>
-            <field name="arch" type="xml">
-                <graph string="Sales Orders">
-                    <field name="partner_id" type="row"/>
-                    <field name="date_order" type="col"/>
-                    <field name="amount_untaxed" type="measure"/>
-                </graph>
-            </field>
-        </record>
-        <record model="ir.ui.view" id="view_sale_order_pivot2">
-            <field name="name">sale.order.pivot</field>
-            <field name="model">sale.order</field>
-            <field name="arch" type="xml">
-                <pivot string="Sales Orders">
-                    <field name="partner_id" type="row"/>
-                    <field name="date_order" type="col"/>
-                    <field name="amount_untaxed" type="measure"/>
-                </pivot>
-            </field>
-        </record>
-
-        <record id="action_sale_order_report_all" model="ir.actions.act_window">
-            <field name="name">Sales Analysis</field>
-            <field name="res_model">sale.order</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">pivot,graph</field>
-            <field name="view_ids"
-               eval="[(5, 0, 0), (0, 0, {'view_mode': 'pivot', 'view_id': ref('sale_advertising_order.view_sale_order_pivot2')}),
-                      (0, 0, {'view_mode': 'graph', 'view_id': ref('sale_advertising_order.view_sale_order_graph2')})]"/>
-            <field name="context">{'search_default_sales':1}</field>
-            <field name="search_view_id" ref="sale_advertising_order.advertising_order_view_search_inherit_sale"/>
-            <field name="help">From this report, you can have an overview of the sale confirmed with your customers. The search tool can also be used to personalise your Sales reports and so, match this analysis to your needs.</field>
         </record>
 
 	</data>

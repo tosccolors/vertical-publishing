@@ -27,7 +27,7 @@
                     <field name="ad_number" />
                 </xpath>
                 <xpath expr="//sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="after">
-                    <field name="computed_discount" />
+                    <field name="computed_discount" invisible="1"/>
                     <field name="subtotal_before_agency_disc" />
                     <field name="nett_nett" />
                 </xpath>
@@ -48,7 +48,7 @@
                     <field name="ad_number" />
                 </field>
                 <field name="price_unit" position="after">
-                    <field name="computed_discount" />
+                    <field name="computed_discount" invisible="1"/>
                     <field name="subtotal_before_agency_disc" />
                     <field name="nett_nett" />
                 </field>
@@ -65,7 +65,7 @@
                            context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}"/>
                     <field name="opportunity_subject" />
                     <field name="ad_number" />
-                    <field name="computed_discount" />
+                    <field name="computed_discount" readonly="1"/>
                     <field name="subtotal_before_agency_disc" />
                     <field name="nett_nett" />
                 </field>

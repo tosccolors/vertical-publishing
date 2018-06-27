@@ -25,7 +25,6 @@ from odoo import api, fields, models, _
 from odoo.tools.safe_eval import safe_eval
 from odoo.tools import email_re, email_split
 from datetime import datetime, timedelta, date
-from dateutil.relativedelta import relativedelta
 from lxml import etree
 from odoo.osv.orm import setup_modifiers
 
@@ -417,17 +416,6 @@ class Lead(models.Model):
 class Team(models.Model):
     _inherit = ['crm.team']
 
-
-    @api.multi
-    def _compute_invoiced(self):
-        for team in self:
-            confirmed_sales = self.env['sale.order'].search([
-                ('state', 'in', ['sale', 'done']),
-                ('team_id', '=', team.id),
-                ('confirmation_date', '<=', datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-                ('confirmation_date', '>=', datetime.now().replace(day=1).strftime('%Y-%m-%d %H:%M:%S')),
-            ])
-            team.invoiced = sum(confirmed_sales.mapped('amount_untaxed'))
 
     @api.model
     def action_your_pipeline(self):
