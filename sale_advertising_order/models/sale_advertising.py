@@ -367,6 +367,8 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
+    
+
     @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'nett_nett', 'subtotal_before_agency_disc',
                  'price_unit', 'tax_id')
     @api.multi
@@ -497,7 +499,15 @@ class SaleOrderLine(models.Model):
             if line.product_template_id.price_edit or line.title.price_edit:
                 line.price_edit = True
 
-
+    @api.depends('medium')
+    @api.multi
+    def _compute_magazine(self):
+        """
+        Compute if order_line.magazine is True.
+        """
+        for line in self.filtered('advertising'):
+            if line.medium and line.medium in [self.env.ref('sale_advertising_order.advertising_category'),self.env.ref('publishing_subscription_order.payment_mode_inbound_subscriptiondd1')]:
+                line.magazine = True
 
 
     mig_remark = fields.Text('Migration Remark')
@@ -560,6 +570,7 @@ class SaleOrderLine(models.Model):
     computed_discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Account'), default=0.0)
     subtotal_before_agency_disc = fields.Monetary(string='Subtotal before Commission', digits=dp.get_precision('Account'))
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
+    magazine = fields.Boolean(compute='_compute_magazine', string='Magazine', store=True)
     multi_line = fields.Boolean(string='Multi Line')
     color_surcharge = fields.Boolean(string='Color Surcharge')
     price_edit = fields.Boolean(compute='_compute_price_edit', string='Price Editable')
