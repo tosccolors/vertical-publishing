@@ -48,8 +48,6 @@ This module allows you to use Sales Management to run your subscription sales
         "views/sale_subscription_view.xml",
         "views/res_partner_view.xml",
         "views/product_view.xml",
-        # "views/account_invoice_view.xml",
-        # "views/account_move_view.xml",
         "views/res_config_view.xml",
         "views/subscription_delivery_view.xml",
         "views/crm_lead_view.xml",
