@@ -506,7 +506,7 @@ class SaleOrderLine(models.Model):
         Compute if order_line.magazine is True.
         """
         for line in self.filtered('advertising'):
-            if line.medium and line.medium in [self.env.ref('sale_advertising_order.advertising_category'),self.env.ref('publishing_subscription_order.payment_mode_inbound_subscriptiondd1')]:
+            if line.medium and line.medium in [self.env.ref('sale_advertising_order.magazine_advertising_category'),self.env.ref('sale_advertising_order.magazine_online_advertising_category')]:
                 line.magazine = True
 
 

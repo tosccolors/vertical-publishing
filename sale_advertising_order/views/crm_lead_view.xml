@@ -606,6 +606,11 @@
                            options='{"no_open": True}'/>
                     <field name="secondary_sector_ids" widget="many2many_tags"/>
                 </xpath>
+                <xpath expr="//sheet/notebook/page[@name='lead']/group/group[2]/div" position="before" >
+                    <field name="partner_contact_id" string="Contact Person" context="{'default_parent_id': partner_id}"
+                           domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"/>
+                </xpath>
+
             </field>
         </record>
 

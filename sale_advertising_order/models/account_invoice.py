@@ -29,6 +29,7 @@ class Invoice(models.Model):
     _inherit = 'account.invoice'
 
     ad = fields.Boolean(related='invoice_line_ids.ad', string='Ad', help="It indicates that the invoice is an Advertising Invoice.", store=True)
+    magazine = fields.Boolean(string='Magazine', readonly=True)
     published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer', '=', True)])
     nett_nett = fields.Boolean(string='Nett Nett')
 

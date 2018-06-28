@@ -25,6 +25,7 @@ from odoo import api, fields, models, _
 from odoo.tools.safe_eval import safe_eval
 from odoo.tools import email_re, email_split
 from datetime import datetime, timedelta, date
+from dateutil.relativedelta import relativedelta
 from lxml import etree
 from odoo.osv.orm import setup_modifiers
 

@@ -186,6 +186,7 @@
                                             <field name="nett_nett" />
                                             <field name="multi_line" invisible="0" groups="base.group_no_one"/>
                                             <field name="multi_line_number" invisible="0" readonly="True" groups="base.group_no_one"/>
+                                            <field name="magazine" readonly="True" string="Vakmedia" />
                                             <label for="product_uom_qty" string="Ordered Quantity"/>
                                             <div>
                                                 <field name="product_uom_qty" class="oe_inline"
