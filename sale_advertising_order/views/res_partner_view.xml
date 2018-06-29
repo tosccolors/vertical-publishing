@@ -254,6 +254,7 @@
                    <field name="name"
                        filter_domain="['|','|',('name','ilike',self),('parent_id','ilike',self),('ref','=',self)]"/>
                    <field name="email" filter_domain="['|',('email','ilike',self),('email','=',self)]"/>
+                   <field name="city" filter_domain="['|',('city','ilike',self),('city','=',self)]"/>
                    <field name="zip" filter_domain="['|',('zip','ilike',self),('zip','=',self)]"/>
                    <filter help="My Customers" name="my_partners" icon="terp-personal+" domain="[('user_id','=',uid)]"/>
                    <separator/>
@@ -353,8 +354,16 @@
             </field>
         </record>
 
-
-
+        <record id="view_res_partner_filter" model="ir.ui.view">
+            <field name="name">res.partner.select</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="city" filter_domain="['|',('city','ilike',self),('city','=',self)]"/>
+                </field>
+            </field>
+        </record>
 
     </data>
 </odoo>

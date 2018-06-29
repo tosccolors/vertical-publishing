@@ -146,6 +146,12 @@ class Partner(models.Model):
                 return[]
         return super(Partner, self).name_search(name, args, operator=operator, limit=limit)
 
+    @api.onchange('zip')
+    def onchange_zip(self):
+        zip = self.zip
+        if zip:
+            self.zip = zip.replace(" ", "")
+
 
 class Company(models.Model):
     _inherit = 'res.company'
