@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+        <record id="group_folder_sales_menus" model="res.groups">
+            <field name="name">Folder Sales menus</field>
+            <field name="category_id" ref="base.module_category_sales_management"/>
+        </record>
+
+    </data>
+</odoo>

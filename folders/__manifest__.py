@@ -42,7 +42,8 @@ specific logistics service provider.
     'depends': ['base', 'sale', 'sale_advertising_order', 'bdu_crm'],
     'data': [
         "views/logistics_addres_table_view.xml",
-        "security/ir.model.access.csv"
+        "security/security.xml",
+        "security/ir.model.access.csv",
     ],
     'installable': True
 }
