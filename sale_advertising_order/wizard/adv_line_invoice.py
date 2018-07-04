@@ -114,6 +114,12 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             raise UserError(_('No Ad Order lines are selected for invoicing:\n'))
         else:
             lids = context.get('active_ids', [])
+            OrderLines = self.env['sale.order.line'].browse(lids)
+            magazines = OrderLines.filtered('magazine')
+            non_magazines = OrderLines - magazines
+            if not (len(magazines) == 0 or len(non_magazines) == 0):
+                raise UserError(_('You can only invoice either Magazine order lines '
+                                  'or Non-Magazine order lines, but not both'))
             invoice_date_ctx = context.get('invoice_date', False)
             posting_date_ctx = context.get('posting_date', False)
             jq_ctx = context.get('job_queue', False)
@@ -130,22 +136,18 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             if eta_ctx and not eta:
                 eta = fields.Datetime.from_string(eta_ctx)
         if jq:
-            self.with_delay(eta=eta).make_invoices_split_lines_jq(inv_date, post_date, lids, eta, size)
+            self.with_delay(eta=eta).make_invoices_split_lines_jq(inv_date, post_date, OrderLines, eta, size)
         else:
-            OrderLines = self.env['sale.order.line'].browse(lids)
             self.make_invoices_job_queue(inv_date, post_date, OrderLines)
 
     @job
     @api.multi
-    def make_invoices_split_lines_jq(self, inv_date, post_date, lids, eta, size):
-        OrderLines = self.env['sale.order.line'].browse(lids)
-        magazines = OrderLines.filtered('magazine')
-        non_magazines = OrderLines - magazines
-        for recordset in [magazines,non_magazines]:
-            partners = recordset.mapped('order_id.partner_invoice_id')
+    def make_invoices_split_lines_jq(self, inv_date, post_date, olines, eta, size):
+
+            partners = olines.mapped('order_id.partner_invoice_id')
             chunk = False
             for partner in partners:
-                lines = recordset.filtered(lambda r: r.order_id.partner_invoice_id.id == partner.id)
+                lines = olines.filtered(lambda r: r.order_id.partner_invoice_id.id == partner.id)
                 if len(lines) > size:
                     published_customer = lines.filtered('order_id.published_customer').mapped('order_id.published_customer')
                     for pb in published_customer:
