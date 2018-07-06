@@ -671,5 +671,23 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="crm_team_salesteams_view_form" model="ir.ui.view">
+        <field name="name">crm.team.form</field>
+        <field name="model">crm.team</field>
+        <field name="inherit_id" ref="sales_team.crm_team_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoiced_target']" position="attributes">
+                <attribute name="string">Revenue Target</attribute>
+            </xpath>
+            <xpath expr="//page[@name='more_info']/group[3]" position="attributes">
+                <attribute name="string">Revenue/Progression Ratio</attribute>
+            </xpath>
+            <xpath expr="//field[@name='invoiced']" position="attributes">
+                <attribute name="string">Revenue This Month</attribute>
+            </xpath>
+        </field>
+    </record>
+
     </data>
 </odoo>

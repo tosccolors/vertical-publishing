@@ -189,11 +189,11 @@
                                     Won in Opportunities
                                 </a>
                             </td>
-                            <td t-if="values['invoiced']" t-attf-class="#{values and values['invoiced']['target'] and values['invoiced']['this_month'] >= values['invoiced']['target'] ? 'o_main' : 'o_secondary'}" title="To Invoice Report">
-                                <a href="#" class="o_dashboard_action" name="account.action_account_invoice_report_all">
+                            <td t-if="values['sale_confirmed']" t-attf-class="#{values and values['invoiced']['target'] and values['sale_confirmed']['this_month'] >= values['invoiced']['target'] ? 'o_main' : 'o_secondary'}" title="To Sales Report">
+                                <a href="#" class="o_dashboard_action" name="sale_advertising_order.action_sale_order_report_all">
                                     <span class="o_highlight">
                                         <t t-if="!show_demo">
-                                            <t t-esc="widget.render_monetary_field(values['invoiced']['this_month'], values['currency_id'])"/>
+                                            <t t-esc="widget.render_monetary_field(values['sale_confirmed']['this_month'], values['currency_id'])"/>
                                         </t>
                                         <t t-if="show_demo">
                                             35,029.39€
@@ -257,9 +257,9 @@
                                     <t t-esc="widget.render_monetary_field(values['won']['last_month'], values['currency_id'])"/>
                                 </a>
                             </td>
-                            <td t-if="values['invoiced']" class="o_secondary" title="To Invoice Report">
-                                <a href="#" class="o_dashboard_action" name="account.action_account_invoice_report_all">
-                                    <t t-esc="widget.render_monetary_field(values['invoiced']['last_month'], values['currency_id'])"/>
+                            <td t-if="values['sale_confirmed']" class="o_secondary" title="To Sales Report">
+                                <a href="#" class="o_dashboard_action" name="sale_advertising_order.action_sale_order_report_all">
+                                    <t t-esc="widget.render_monetary_field(values['sale_confirmed']['last_month'], values['currency_id'])"/>
                                 </a>
                             </td>
                         </tr>
