@@ -357,11 +357,11 @@ class Lead(models.Model):
             ('state', 'in', ['sale', 'done']),
             ('user_id', '=', self.env.uid),
         ]
+        sale_data = self.env['sale.order'].search_read(sale_order_domain, ['confirmation_date', 'amount_untaxed'])
 
-        sale_data = self.env['sale.order'].search_read(sale_order_domain, ['date_order', 'amount_untaxed'])
         for sale in sale_data:
-            if sale['date_order']:
-                sale_date = fields.Datetime.from_string(sale['date_order'])
+            if sale['confirmation_date']:
+                sale_date = fields.Datetime.from_string(sale['confirmation_date'])
                 if sale_date <= current_datetime and sale_date >= current_datetime.replace(day=1):
                     result['sale_confirmed']['this_month'] += sale['amount_untaxed']
                 elif sale_date < current_datetime.replace(day=1) and sale_date >= current_datetime.replace(day=1) - relativedelta(months=+1):
@@ -424,8 +424,8 @@ class Team(models.Model):
             confirmed_sales = self.env['sale.order'].search([
                 ('state', 'in', ['sale', 'done']),
                 ('team_id', '=', team.id),
-                ('date_order', '<=', datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-                ('date_order', '>=', datetime.now().replace(day=1).strftime('%Y-%m-%d %H:%M:%S')),
+                ('confirmation_date', '<=', datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
+                ('confirmation_date', '>=', datetime.now().replace(day=1).strftime('%Y-%m-%d %H:%M:%S')),
             ])
             team.invoiced = sum(confirmed_sales.mapped('amount_untaxed'))
 
