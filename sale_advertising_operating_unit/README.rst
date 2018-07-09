@@ -2,14 +2,13 @@
    :target: https://www.gnu.org/licenses/lgpl.html
    :alt: License: LGPL-3
 
-===============================
+===================================
 Operating Unit in Advertising Sales
-===============================
+===================================
 
 This module was written to extend the Sales capabilities of Odoo.
-This module introduces the operating unit to the Advertising Sales Order.
-Security rules are defined to ensure that users can only display the
-Sales Orders in which they are allowed access to.
+This module adapts the views with the operating unit to the Advertising Sales Order.
+
 
 .. image:: https://odoo-community.org/website/image/ir.attachment/5784_f2813bd/datas
    :alt: Try me on Runbot
