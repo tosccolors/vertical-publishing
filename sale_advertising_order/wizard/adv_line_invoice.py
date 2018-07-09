@@ -177,15 +177,13 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     def make_invoices_job_queue(self, inv_date, post_date, chunk):
         invoices = {}
         def make_invoice(partner, published_customer, payment_mode, operating_unit, lines, inv_date, post_date):
-
             vals = self._prepare_invoice(partner, published_customer, payment_mode, operating_unit,
                                          lines, inv_date, post_date)
             invoice = self.env['account.invoice'].create(vals)
             return invoice.id
-
         for line in chunk:
-            key = (line.order_id.partner_invoice_id, line.order_id.published_customer, line.order_id.operating_unit_id,
-                   line.order_id.payment_mode_id, line.magazine)
+            key = (line.order_id.partner_invoice_id, line.order_id.published_customer, line.order_id.payment_mode_id,
+                   line.order_id.operating_unit_id, line.magazine)
 
             if (not line.invoice_lines) and (line.state in ('sale', 'done')) :
                 if not key in invoices:
