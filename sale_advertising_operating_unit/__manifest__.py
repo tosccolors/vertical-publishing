@@ -16,8 +16,7 @@
     "website": "http://www.magnus.com",
     "category": "Sales Management",
     "depends": ["sale_advertising_order", "sale_operating_unit"],
-    "data": [
-        "views/sale_view.xml",
+    "data": ["views/sale_view.xml",
     ],
     'installable': True
 }

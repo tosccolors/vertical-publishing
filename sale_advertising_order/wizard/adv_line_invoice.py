@@ -68,7 +68,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     execution_datetime = fields.Datetime('Job Execution not before', default=fields.Datetime.now())
 
     @api.model
-    def _prepare_invoice(self, partner, published_customer, payment_mode, lines, invoice_date, posting_date):
+    def _prepare_invoice(self, partner, published_customer, payment_mode, operating_unit, lines, invoice_date, posting_date):
         self.ensure_one()
         line_ids = [x.id for x in lines['lines']]
         journal_id = self.env['account.invoice'].default_get(['journal_id'])['journal_id']
@@ -88,6 +88,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'fiscal_position_id': partner.property_account_position_id.id or False,
             'user_id': self.env.user.id,
             'company_id': self.env.user.company_id.id,
+            'operating_unit_id': operating_unit.id,
             'payment_mode_id': payment_mode.id or False,
             'partner_bank_id': payment_mode.fixed_journal_id.bank_account_id.id
                                if payment_mode.bank_account_link == 'fixed'
@@ -114,6 +115,12 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             raise UserError(_('No Ad Order lines are selected for invoicing:\n'))
         else:
             lids = context.get('active_ids', [])
+            OrderLines = self.env['sale.order.line'].browse(lids)
+            magazines = OrderLines.filtered('magazine')
+            non_magazines = OrderLines - magazines
+            if not (len(magazines) == 0 or len(non_magazines) == 0):
+                raise UserError(_('You can only invoice either Magazine order lines '
+                                  'or Non-Magazine order lines, but not both'))
             invoice_date_ctx = context.get('invoice_date', False)
             posting_date_ctx = context.get('posting_date', False)
             jq_ctx = context.get('job_queue', False)
@@ -130,22 +137,18 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             if eta_ctx and not eta:
                 eta = fields.Datetime.from_string(eta_ctx)
         if jq:
-            self.with_delay(eta=eta).make_invoices_split_lines_jq(inv_date, post_date, lids, eta, size)
+            self.with_delay(eta=eta).make_invoices_split_lines_jq(inv_date, post_date, OrderLines, eta, size)
         else:
-            OrderLines = self.env['sale.order.line'].browse(lids)
             self.make_invoices_job_queue(inv_date, post_date, OrderLines)
 
     @job
     @api.multi
-    def make_invoices_split_lines_jq(self, inv_date, post_date, lids, eta, size):
-        OrderLines = self.env['sale.order.line'].browse(lids)
-        magazines = OrderLines.filtered('magazine')
-        non_magazines = OrderLines - magazines
-        for recordset in [magazines,non_magazines]:
-            partners = recordset.mapped('order_id.partner_invoice_id')
+    def make_invoices_split_lines_jq(self, inv_date, post_date, olines, eta, size):
+
+            partners = olines.mapped('order_id.partner_invoice_id')
             chunk = False
             for partner in partners:
-                lines = recordset.filtered(lambda r: r.order_id.partner_invoice_id.id == partner.id)
+                lines = olines.filtered(lambda r: r.order_id.partner_invoice_id.id == partner.id)
                 if len(lines) > size:
                     published_customer = lines.filtered('order_id.published_customer').mapped('order_id.published_customer')
                     for pb in published_customer:
@@ -173,14 +176,14 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     @api.multi
     def make_invoices_job_queue(self, inv_date, post_date, chunk):
         invoices = {}
-        def make_invoice(partner, published_customer, payment_mode, lines, inv_date, post_date):
-
-            vals = self._prepare_invoice(partner, published_customer, payment_mode, lines, inv_date, post_date)
+        def make_invoice(partner, published_customer, payment_mode, operating_unit, lines, inv_date, post_date):
+            vals = self._prepare_invoice(partner, published_customer, payment_mode, operating_unit,
+                                         lines, inv_date, post_date)
             invoice = self.env['account.invoice'].create(vals)
             return invoice.id
-
         for line in chunk:
-            key = (line.order_id.partner_invoice_id, line.order_id.published_customer, line.order_id.payment_mode_id )
+            key = (line.order_id.partner_invoice_id, line.order_id.published_customer, line.order_id.payment_mode_id,
+                   line.order_id.operating_unit_id, line.magazine)
 
             if (not line.invoice_lines) and (line.state in ('sale', 'done')) :
                 if not key in invoices:
@@ -205,8 +208,9 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             partner = key[0]
             published_customer = key[1]
             payment_mode = key[2]
+            operating_unit = key[3]
             try:
-                make_invoice(partner, published_customer, payment_mode, il, inv_date, post_date)
+                make_invoice(partner, published_customer, payment_mode, operating_unit, il, inv_date, post_date)
             except Exception, e:
                 if self.job_queue:
                     raise FailedJobError(_("The details of the error:'%s' regarding '%s' and '%s'") % (unicode(e), il['name'], il['lines'][0].sale_line_ids))
