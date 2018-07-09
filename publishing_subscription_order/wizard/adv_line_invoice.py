@@ -20,8 +20,9 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         return res
 
     @api.model
-    def _prepare_invoice(self, partner, published_customer, payment_mode, lines, invoice_date, posting_date):
-        res = super(AdOrderLineMakeInvoice, self)._prepare_invoice(partner, published_customer, payment_mode, lines, invoice_date, posting_date)
+    def _prepare_invoice(self, partner, published_customer, payment_mode, operating_unit, lines, invoice_date, posting_date):
+        res = super(AdOrderLineMakeInvoice, self)._prepare_invoice(partner, published_customer, payment_mode,
+                                                                   operating_unit, lines, invoice_date, posting_date)
         for invline in lines['lines']:
             if invline.sale_line_ids.filtered('subscription'):
                 res['ad'] = False

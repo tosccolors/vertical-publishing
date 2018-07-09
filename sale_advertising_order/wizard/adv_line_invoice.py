@@ -144,7 +144,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     @job
     @api.multi
     def make_invoices_split_lines_jq(self, inv_date, post_date, olines, eta, size):
-
             partners = olines.mapped('order_id.partner_invoice_id')
             chunk = False
             for partner in partners:
@@ -235,7 +234,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 
 
     @api.multi
-    def _prepare_invoice_line(self,line):
+    def _prepare_invoice_line(self, line):
         """
         Prepare the dict of values to create the new invoice line for a sales order line.
 
