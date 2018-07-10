@@ -5,6 +5,7 @@
         <template id="assets_backend" name="sales_advertising_dashboard assets" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
                 <script type="text/javascript" src="/sale_advertising_order/static/src/js/sales_team_dashboard.js"></script>
+                <script type="text/javascript" src="/sale_advertising_order/static/src/js/sale.js"></script>
             </xpath>
         </template>
     </data>
