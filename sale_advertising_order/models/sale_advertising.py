@@ -139,8 +139,9 @@ class SaleOrder(models.Model):
     date_to = fields.Date(compute=lambda *a, **k: {}, string="Date to")
     ver_tr_exc = fields.Boolean(string='Verification Treshold', store=True, readonly=True, compute='_amount_all', track_visibility='always')
     advertising = fields.Boolean('Advertising', default=False)
+    magazine = fields.Boolean(string='Vakmedia Achtergrond Offerte', default=False)
     max_discount = fields.Integer(compute='_amount_all', track_visibility='always', store=True, string="Maximum Discount")
-    display_discount_to_customer = fields.Boolean("Display discount to customer", default=False)
+    display_discount_to_customer = fields.Boolean("Display Discount", default=False)
 
     @api.model
     def default_get(self, fields):

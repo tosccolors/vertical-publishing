@@ -122,6 +122,7 @@
                             <field name="payment_term_id" options="{'no_create': True}"/>
                             <field name="payment_mode_id" domain="[('payment_type', '=', 'inbound')]" widget="selection"/>
                             <field name="display_discount_to_customer"/>
+                            <field name="magazine"/>
                         </group>
                     </group>
                     <notebook>
