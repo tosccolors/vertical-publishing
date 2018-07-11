@@ -599,7 +599,7 @@
                     <attribute name="attrs" >{'required':[('is_activity', '=', True)]}</attribute>
                 </xpath>
                 <xpath expr="//sheet/group/group[2]/div/div/field[@name='date_action']" position="attributes" >
-                    <attribute name="attrs" >{'invisible':[('next_activity_id', '=', False)],'required':[('is_activity', '=', True)]}</attribute>
+                    <attribute name="attrs" >{'invisible':[('next_activity_id', '=', False)],'required':[('next_activity_id', '!=', False)]}</attribute>
                 </xpath>
                 <xpath expr="//sheet/notebook/page[@name='lead']/group/group[1]/div" position="after" >
                     <field name="sector_id" placeholder="Sector"
@@ -630,6 +630,16 @@
             </field>
         </record>
 
+        <!-- open activities related to given opportunity -->
+        <record id="crm_activity_report_action_tree2" model="ir.actions.act_window">
+            <field name="name">Activities</field>
+            <field name="res_model">crm.activity.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="context">{}</field>
+            <field name="domain">[('lead_id', '=', active_id)]</field>
+        </record>
+
         <record id="crm_case_form_view_oppor_button" model="ir.ui.view">
             <field name="name">crm.lead.oppor.inherited.crm.button</field>
             <field name="model">crm.lead</field>
@@ -641,6 +651,13 @@
                                                 'default_partner_id': partner_id,
                                                 'default_team_id': team_id,
                                                }</attribute>
+                </xpath>
+                <xpath expr="//button[@name='%(sale_crm.sale_action_quotations)d']" position="before">
+                    <button class="oe_stat_button" type="action"
+                        name="%(crm_activity_report_action_tree2)d"
+                        icon="fa-clock-o">
+                        <field string="Activities Log" name="activities_count" widget="statinfo"/>
+                    </button>
                 </xpath>
             </field>
         </record>

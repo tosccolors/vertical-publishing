@@ -50,6 +50,7 @@ class Lead(models.Model):
                                       string='Account Manager', store=True)
     advertising = fields.Boolean('Advertising', default=False)
     is_activity = fields.Boolean(string='Activity', default=False)
+    activities_count = fields.Integer("Activities", compute='_compute_activities_count')
     quotations_count = fields.Integer("# of Quotations", compute='_compute_quotations_count')
     adv_quotations_count = fields.Integer("# of Advertising Quotations", compute='_compute_adv_quotations_count')
 
@@ -62,6 +63,11 @@ class Lead(models.Model):
     def _compute_adv_quotations_count(self):
         for lead in self:
             lead.adv_quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done')), ('advertising', '=', True)])
+
+    @api.multi
+    def _compute_activities_count(self):
+        for lead in self:
+            lead.activities_count = self.env['crm.activity.report'].search_count([('lead_id', '=', lead.id)])
 
     @api.model
     def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
