@@ -140,6 +140,7 @@ class SaleOrder(models.Model):
     ver_tr_exc = fields.Boolean(string='Verification Treshold', store=True, readonly=True, compute='_amount_all', track_visibility='always')
     advertising = fields.Boolean('Advertising', default=False)
     max_discount = fields.Integer(compute='_amount_all', track_visibility='always', store=True, string="Maximum Discount")
+    display_discount_to_customer = fields.Boolean("Display discount to customer", default=False)
 
     @api.model
     def default_get(self, fields):
