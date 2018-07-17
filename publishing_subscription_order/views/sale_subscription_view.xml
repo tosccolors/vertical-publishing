@@ -57,9 +57,9 @@
                     </div>
                     <group>
                         <group>
-                            <field name="partner_id" domain="[('customer','=',True)]" context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}' string="Subscriber"/>
+                            <field name="partner_id" domain="[('customer','=',True),('parent_id','=',False),('is_subscription_customer','=',True)]" context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}' string="Subscriber"/>
                             <!--<field name="partner_invoice_id" groups="sale.group_delivery_invoice_address" context="{'default_type':'invoice'}" />-->
-                            <field name="partner_shipping_id" groups="sale.group_delivery_invoice_address" context="{'default_type':'delivery', 'show_address': 1}" options='{"always_reload": True}'/>
+                            <field name="partner_shipping_id" domain="[('id','child_of',partner_id)]" groups="sale.group_delivery_invoice_address" context="{'default_type':'delivery', 'show_address': 1}" options='{"always_reload": True}'/>
                         </group>
                         <group>
                             <field name="date_order" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
