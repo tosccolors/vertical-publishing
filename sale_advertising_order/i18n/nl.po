@@ -66,6 +66,35 @@ msgstr ""
 "                                    <span class=\"o_stat_text\" attrs=\"{'invisible': [('meeting_count', '&gt;', 1)]}\"> Afspraak</span>"
 
 #. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.crm_team_salesteams_view_kanban
+msgid "Revenue"
+msgstr "Omzet"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.crm_team_salesteams_view_kanban
+msgid "Revenue This Month"
+msgstr "Inkomsten deze maand"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.crm_team_salesteams_view_kanban
+msgid "Revenue Target"
+msgstr "Inkomstendoel"
+
+#. module: sale_advertising_order
+#. openerp-web
+#: code:addons/sale_advertising_order/static/src/js/sale.js:19
+#, python-format
+msgid "Set a revenue target: "
+msgstr "Stel een omzetdoel in: "
+
+#. module: sale_advertising_order
+#. openerp-web
+#: code:addons/sale_advertising_order/static/src/xml/sales_team_dashboard.xml:103
+#, python-format
+msgid "Revenue"
+msgstr "Omzet"
+
+#. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.crm_case_form_view_oppor_advertising
 msgid "<span class=\"o_stat_text\"> Orders</span>"
 msgstr "<span class=\"o_stat_text\"> Orders</span>"
