@@ -595,6 +595,9 @@
                     <field name="partner_name"/>
                     <field name="is_activity" invisible="1"/>
                 </xpath>
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="domain">[('customer', '=', True), ('parent_id', '=', False)]</attribute>
+                </xpath>
                 <xpath expr="//sheet/group/group[2]/div/div/field[@name='next_activity_id']" position="attributes" >
                     <attribute name="attrs" >{'required':[('is_activity', '=', True)]}</attribute>
                 </xpath>
