@@ -71,6 +71,7 @@ class SubscriptionDelivery(models.Model):
             ('subscription', '=', True),
             ('state', '=', 'sale'),
             ('title', '!=', False),
+            ('product_template_id.digital_subscription', '=', False),
         ]
         self_sols = self.delivery_list.mapped('sub_order_line')
         sub_list_objs = self.search([('start_date', '<=', self.end_date), ('end_date', '>=', self.start_date),('id','!=',self.id),('company_id','=',self.company_id.id),('state','!=','cancel')])

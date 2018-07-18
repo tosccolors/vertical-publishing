@@ -11,6 +11,7 @@ class ProductTemplate(models.Model):
     subscription_revenue_account_id = fields.Many2one('account.account', string='Subscription Revenue Account', domain=[('deprecated', '=', False)])
     number_of_issues = fields.Integer('No. Of Issues')
     subscr_number_of_days = fields.Integer('No. Of Days')
+    digital_subscription = fields.Boolean(string='Is digital subscription?')
 
     @api.multi
     def _get_product_accounts(self):
