@@ -630,6 +630,16 @@
                            options='{"no_open": True}'/>
                     <field name="secondary_sector_ids" widget="many2many_tags"/>
                 </field>
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="domain">[('customer', '=', True), ('parent_id', '=', False)]</attribute>
+                </xpath>
+                <xpath expr="//label[@for='contact_name']" position="attributes">
+                    <attribute name="string">Contact Person</attribute>
+                </xpath>
+                <xpath expr="//label[@for='contact_name']" position="before" >
+                    <field name="partner_contact_id" string="Contact Name" context="{'default_parent_id': partner_id}"
+                           domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"/>
+                </xpath>
             </field>
         </record>
 
