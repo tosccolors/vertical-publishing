@@ -23,12 +23,13 @@ class TimeDependentThread(models.AbstractModel):
             return {}
         msg = ''
         vals, warning = {}, {}
-        if self._origin.validity_date :
-            vals['validity_date'] = self._origin.validity_date
+        if self._origin.validity_date:
             if not self.validity_date:
                 msg= "'Valid On' can't be Null!"
+                vals['validity_date'] = self._origin.validity_date
             elif self._origin.validity_date > self.validity_date:
                 msg = "'Valid On' can't be later than previous 'Valid On'!"
+                vals['validity_date'] = self._origin.validity_date
         elif not self._origin.validity_date and self.validity_date < str(datetime.now().date()):
             vals['validity_date'] = datetime.now().date()
             msg = "'Valid On' can't be past date!"
@@ -88,7 +89,7 @@ class TimeDependentThread(models.AbstractModel):
     def post_values(self, values):
         canTrack, config, mapFields, values = self._can_track(values)
         timeDependent = self.env['time.dependent']
-        
+
         def _set_ValidTo(self, validity_date):
             current_date = datetime.now().date()
             old_date = datetime.strptime(validity_date, "%Y-%m-%d").date()
@@ -100,7 +101,6 @@ class TimeDependentThread(models.AbstractModel):
             validity_date = values.get('validity_date') or datetime.now().date() if 'validity_date' in values else self.validity_date or datetime.now().date()
             dependentObj = timeDependent.search([('model','=',self._name),('res_id','=',self.id),('validity_from','=',validity_date)], limit=1)
             Reclines = self._prepare_record_lines(dependentObj, values, mapFields)
-
             if Reclines:
                 data = {}
                 data['record_ids'] = Reclines
@@ -182,17 +182,44 @@ class TimeDependentConfig(models.Model):
             ('validity_to', '>=', datetime.now().date()),
         ]
         dependent_obj = self.env['time.dependent'].search(domain, order='id desc', limit=1)
-        if not dependent_obj:
+
+        def _update_values(rec, values):
+            config, filter_field, filter_value = self.check_dependent_config(rec._name)
+            for fld in config.field_ids:
+                if fld.name in values:
+                    values.pop(str(fld.name))
             return values
+        if 'timeFaceCronUpdate' not in self.env.context:
+
+            parse_date = datetime.strptime(values.get('validity_date'), '%Y-%m-%d').date() if values.get('validity_date', False) else False
+
+            if not dependent_obj and not parse_date and not rec.validity_date:
+                return values
+            if dependent_obj and parse_date and parse_date == datetime.now().date():
+                return values
+            if parse_date and not dependent_obj:
+                if parse_date > datetime.now().date():
+                    values = _update_values(rec, values)
+            elif rec.validity_date:
+                domain = [
+                    ('model', '=', rec._name),
+                    ('res_id', '=', rec.id),
+                    ('validity_from', '<=', rec.validity_date),
+                    ('validity_to', '>=', rec.validity_date),
+                ]
+                if self.env['time.dependent'].search(domain, order='id desc', limit=1):
+                    values = _update_values(rec, values)
+
         for field in mapFields:
             record_obj = dependent_obj.record_ids.filtered(lambda r: r.field_id.id == field.id)
             if not record_obj:
+                if field.name in values:
+                    values.pop(field.name)
                 continue
             val = record_obj.name
             #convert False string to boolean False
             val = False if field.ttype == 'boolean'and val == 'False' else record_obj.name
             values[field.name] = val
-
         return values
 
     def update_dependent_values(self):
@@ -201,10 +228,11 @@ class TimeDependentConfig(models.Model):
             config, filter_field, filter_value = self.check_dependent_config(config_obj.model_id.model)
             mapFields = filter(lambda f: f.name, [field for field in config.field_ids])
             domain = [(str(filter_field.name),'=',filter_value)] if filter_field else []
+            domain += [('validity_date','!=',False)]
             refModelObjs = self.env[refModel].search(domain)
             for recordobj in refModelObjs:
                 values = {}
-                values = self.filter_values(recordobj, values, mapFields)
+                values = self.with_context({'timeFaceCronUpdate':True}).filter_values(recordobj, values, mapFields)
                 if not values:
                     continue
                 recordobj.with_context({'timeFaceCronUpdate':True}).write(values)
