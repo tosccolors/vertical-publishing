@@ -565,7 +565,7 @@ class SaleOrderLine(models.Model):
                                          string='Company')
     discount_dummy = fields.Float(related='discount', string='Agency Commission (%)', readonly=True )
     price_unit_dummy = fields.Float(related='price_unit', string='Unit Price', readonly=True)
-    actual_unit_price = fields.Float(compute='_compute_amount', string='Actual Unit Price', digits=dp.get_precision('Account'),
+    actual_unit_price = fields.Float(compute='_compute_amount', string='Actual Unit Price', digits=dp.get_precision('Product Price'),
                                         default=0.0, readonly=True)
     comb_list_price = fields.Monetary(compute='_multi_price', string='Combined_List Price', default=0.0, store=True,
                                 digits=dp.get_precision('Account'))
@@ -576,7 +576,7 @@ class SaleOrderLine(models.Model):
     multi_line = fields.Boolean(string='Multi Line')
     color_surcharge = fields.Boolean(string='Color Surcharge')
     price_edit = fields.Boolean(compute='_compute_price_edit', string='Price Editable')
-    color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Account'))
+    color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Product Price'))
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
     nett_nett = fields.Boolean(string='Netto Netto Line')
     proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False)
