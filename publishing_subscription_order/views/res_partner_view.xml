@@ -68,14 +68,14 @@
         <field type="xml" name="arch">
             <xpath expr="//button[@name='%(sale_advertising_order.act_res_partner_2_quotation_adv)d']" position="after">
                 <button class="oe_stat_button" type="action" name="%(act_res_partner_2_quotation_subscription)d"
-                    attrs="{'invisible': [('customer', '=', False)]}"
+                    attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}"
                      icon="fa-pencil-square-o">
                     <field string="Subs. Quote(s)" name="subs_quotation_count" widget="statinfo"/>
                 </button>
             </xpath>
             <xpath expr="//button[@name='%(sale_advertising_order.action_orders_advertising_smart_button)d']" position="after">
                 <button class="oe_stat_button" type="action" name="%(act_res_partner_2_sales_subscription)d"
-                    attrs="{'invisible': [('customer', '=', False)]}"
+                    attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}"
                     icon="fa-usd">
                     <field string="Subs. Sales" name="subs_sale_order_count" widget="statinfo"/>
                 </button>
