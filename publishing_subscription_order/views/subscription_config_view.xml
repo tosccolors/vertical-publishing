@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+        <record id="delivery_list_type_form" model="ir.ui.view">
+            <field name="name">Delivery List Type Form</field>
+            <field name="model">delivery.list.type</field>
+            <field name="arch" type="xml">
+                <form string="Delivery List Type">
+                    <sheet>
+                        <group name="Lists">
+                            <field name="name" required="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="delivery_list_type_tree" model="ir.ui.view">
+            <field name="name">Delivery List Type Tree</field>
+            <field name="model">delivery.list.type</field>
+            <field name="arch" type="xml">
+                <tree string="Delivery List Type">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="delivery_list_type_action" model="ir.actions.act_window">
+            <field name="name">Delivery List Type</field>
+            <field name="res_model">delivery.list.type</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                Click to start preparing a new delivery list type.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_subscription_config" parent="sales_team.menu_sale_config" name="Subscriptions"  groups="sale_advertising_order.group_advertising_sales_user"/>
+        <menuitem id="menu_delivery_list_type" parent="menu_subscription_config" action="delivery_list_type_action" groups="sale_advertising_order.group_advertising_sales_user"/>
+    </data>
+</odoo>

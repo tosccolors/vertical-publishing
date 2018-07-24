@@ -32,6 +32,7 @@ class SaleOrder(models.Model):
 
     subscription = fields.Boolean('Subscription', default=False)
     subscription_payment_mode_id = fields.Many2one(related='partner_id.subscription_customer_payment_mode_id', relation='account.payment.mode', string='Subscription Payment Mode', company_dependent=True,domain=[('payment_type', '=', 'inbound')],help="Select the default subscription payment mode for this customer.",readonly=True, copy=False, store=True)
+    delivery_type = fields.Many2one('delivery.list.type', 'Delivery Type')
 
     @api.depends('order_line.price_total', 'order_line.computed_discount', 'partner_id')
     def _amount_all(self):
@@ -151,6 +152,7 @@ class SaleOrderLine(models.Model):
     renew_product_id = fields.Many2one('product.product','Renewal Product')
     subscription_cancel = fields.Boolean('Subscription cancelled',copy=False)
     line_renewed = fields.Boolean('Subscription Renewed', copy=False)
+    delivery_type = fields.Many2one(related='order_id.delivery_type', readonly=True, copy=False, store=True)
 
     @api.onchange('medium')
     def onchange_medium(self):
