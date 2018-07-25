@@ -28,7 +28,8 @@ class DeliveryListType(models.Model):
 
     name = fields.Char('Delivery Type')
 
+class Weekdays(models.Model):
+    _name = "week.days"
+    _description = "Week Days"
 
-
-
-
+    name = fields.Char('Day Name')
