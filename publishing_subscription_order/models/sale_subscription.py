@@ -63,7 +63,7 @@ class SaleOrder(models.Model):
         self.ensure_one()
         partner = self.partner_id
         partner.is_subscription_customer = True
-        if partner.credit_limit <= 0 or not partner.subscription_customer_payment_mode_id or not partner.property_subscription_payment_term_id:
+        if not partner.subscription_customer_payment_mode_id or not partner.property_subscription_payment_term_id:
             raise UserError(_("Can not confirm Sale Order Partner subscription's details are not completed"))
 
         if not partner.is_subscription_customer:
@@ -74,28 +74,7 @@ class SaleOrder(models.Model):
             self.payment_term_id = partner.property_subscription_payment_term_id and partner.property_subscription_payment_term_id.id or False
         if not self.payment_mode_id:
             self.payment_mode_id = partner.subscription_customer_payment_mode_id
-
-        moveline_obj = self.env['account.move.line']
-        movelines = moveline_obj.search([('partner_id', '=', partner.id),
-                    ('account_id.user_type_id.type', 'in',
-                    ['receivable', 'payable']),
-                    ('full_reconcile_id', '=', False)])
-
-        debit, credit = 0.0, 0.0
-        today_dt = datetime.strftime(datetime.now().date(), DF)
-        for line in movelines:
-            if line.date_maturity < today_dt:
-                credit += line.debit
-                debit += line.credit
-
-        if (credit - debit + self.amount_total) > partner.credit_limit:
-            # Consider partners who are under a company.
-            msg = 'Can not confirm Sale Order,Total mature due Amount ' \
-                  '%s as on %s !\nCheck Partner Accounts or Credit ' \
-                  'Limits !' % (credit - debit, today_dt)
-            raise UserError(_('Credit Over Limits !\n' + msg))
-        else:
-            return True
+        return True
 
     @api.multi
     def action_confirm(self):
