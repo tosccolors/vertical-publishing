@@ -35,7 +35,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
                 'sale_crm', 'sale_operating_unit',
                 'product_variant_template_categ_id','project',
                 'web_domain_field','account_payment_sale',
-                'web_tree_many2one_clickable', 'bdu_addons'
+                'web_tree_many2one_clickable', 'wobe_imports'
                 ],
     'data': [
              "data/sale_advertising_data.xml",
