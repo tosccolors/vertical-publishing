@@ -662,6 +662,8 @@
                     <attribute name="name">%(sale_advertising_order.action_sale_order_type_wizard)d</attribute>
                     <attribute name="context">{'search_default_partner_id': partner_id,
                                                 'default_partner_id': partner_id,
+                                                'default_published_customer': partner_id,
+                                                'default_customer_contact': partner_contact_id,
                                                 'default_team_id': team_id,
                                                }</attribute>
                 </xpath>
