@@ -65,7 +65,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
         "static/src/xml/sales_team_dashboard.xml",
     ],
     'demo': [
-        #'demo/sale_advertising_demo.xml'               #requires a_expense definitions
+        'demo/sale_advertising_demo.xml'               #requires a_expense definitions
     ],
     'installable': True
 }
