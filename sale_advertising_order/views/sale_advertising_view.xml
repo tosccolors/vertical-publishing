@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 	<data>
-
-		<!--
+    <!--
             Menu: Advertising Sales
         -->
 
@@ -11,10 +10,6 @@
         <menuitem id="menu_crm_advertising" name="CRM" parent="sales_team.menu_base_partner"
             groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"
             sequence="2"/>
-
-        <!--CRM: Customers-->
-        <menuitem id="menu_partner_form1" parent="menu_crm_advertising"
-                  action="action_partner_form_crm" sequence="2"/>
 
         <menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_advsales"
                   action="crm.crm_lead_action_activities" sequence="5" />
@@ -26,6 +21,7 @@
         <menuitem id="menu_product_template_action2" parent="menu_advsales"
                   action="product.product_template_action" sequence="13" />
 
+		
 
         <record id="view_order_form_advertising" model="ir.ui.view">
             <field name="name">sale.order.form.advertising</field>
@@ -1222,13 +1218,7 @@
             <field name="model">sale.order.line</field>
             <field name="arch" type="xml">
                 <search string="Search Advertising Sales Order Lines">
-                    <filter string="To Invoice" domain="[('qty_to_invoice','&lt;&gt;', 0)]"  help="Sales Order Lines ready to be invoiced"/>
-                    <separator/>
-                    <filter string="My Sales Order Lines" domain="[('salesman_id','=',uid)]" help="Sales Order Lines related to a Sales Order of mine"/>
-                    <filter name="accmgr_sale_orders_filter" string="My Sales Order Lines (Account Manager)"
-                            domain="[('partner_acc_mgr','=',uid)]" help="My Sales Order Lines as Account manager" />
-                    <filter name="issue_date_sale_orders_filter" string="Order Lines with Issue Date before today"
-                            domain="[('issue_date','&lt;=', datetime.datetime.now())]" help="Order Lines with Issue Date before today" />
+        
                     <field name="order_id"/>
                     <field name="order_partner_id" operator="child_of"/>
                     <field name="order_advertiser_id" operator="child_of"/>
@@ -1237,15 +1227,61 @@
                     <field name="salesman_id"/>
                     <field name="partner_acc_mgr"/>
                     <field name="issue_date"/>
+
+                    <filter string="To Invoice" domain="[('qty_to_invoice','&lt;&gt;', 0)]" 
+                            help="Sales Order Lines ready to be invoiced"/>
+                    <separator/>        
+
+                    <filter string="Issue date before today" 
+                            domain="[('issue_date','&lt;=', datetime.datetime.now())]" 
+                            name="issue_date_sale_orders_filter" help="Order Lines with Issue Date before today"/>
+                    <filter string="Issue date last/next 2 weeks"       
+                            domain="[('issue_date', '&gt;=',(datetime.date.today()-datetime.timedelta(weeks=2)).strftime('%Y-%m-%d 00:00:00')),('issue_date', '&lt;=',(datetime.date.today()+datetime.timedelta(weeks=2)).strftime('%Y-%m-%d 23:23:59'))]"/>
+                    <filter string="Issue date this month"              
+                            domain="[('issue_date', '&gt;=', datetime.date.today().strftime('%Y-%m-01 00:00:00')),('issue_date', '&lt;=',datetime.date.today().strftime('%Y-%m-31 23:23:59'))]"/>
+                    <filter string="Issue date this year"               
+                            domain="[('issue_date', '&gt;=', datetime.date.today().strftime('%Y-%01-01 00:00:00')),('issue_date', '&lt;=',datetime.date.today().strftime('%Y-12-31 23:23:59'))]"/>
+                    
+                    <separator/>
+                    <filter string="Titles Alkmaar"          
+                            domain="[('title','in',('HEW','WIC','GPB','AWB','ADS','ADK','KNC','KNK','NBY','SWE','CKA','CKN','WFO','WFW','ZZS','ZZD','ZKR'))]"/>
+                    <filter string="Titles Barneveld"        
+                            domain="[('title','in',('BNO','CCO','SGO','KHG','KSL','HNO','NGO','DST','DSB','WNO','BKD','BKO','DBO','DKD','DPO','DKO','ESO','HCO','HLO','HLW','LKO','SAN','SAO','SCO','SKO','SNO','VEE','VEL','VNE','VNH','VVV','BNUE','KEAE','KEHE','KELE','KEVE','KEBE','BCO','BWB'))]"/>
+                    <filter string="Titles Hoofddorp"        
+                            domain="[('title','in',('AVN','HEC','HHB','HHS','WAR','WBO','WNK','WOA','WWA','WWN','WWR','WWU','SPO'))]"/>
+                    <filter string="Titles Web"              
+                            domain="[('title','in',('Online'))]"/>
+                    <!--note keep the above group together so they may be joined by user-->
+                    
+                    <separator/>
+                    <filter string="Direct sales Alkmaar"    domain="[('order_id.team_id','in',( 'Alkmaar'))]"/>
+                    <filter string="Direct sales Barneveld"  domain="[('order_id.team_id','in',( 'Barneveld'))]"/>
+                    <filter string="Direct sales Gorinchem"  domain="[('order_id.team_id','in',( 'Gorinchem'))]"/>
+                    <filter string="Direct sales Hoofddorp"  domain="[('order_id.team_id','in',( 'Hoofddorp'))]"/>
+                    <filter string="Direct sales Online"     domain="[('order_id.team_id','in',( 'Online'))]"/>
+                    <filter string="Indirect sales"          domain="[('order_id.team_id','in',( 'Traffic'))]"/>
+                    <filter string="Web sales"               domain="[('order_id.team_id','in',( 'Web verkoop'))]"/>
+                    <filter string="No channel / team. Maybe mine!" domain="[('order_id.team_id','not in',('Alkmaar','Barneveld','Gorinchem','Hoofddorp','Online','Traffic','Vakmedia','Web verkoop'))]"/>
+                    <!--note keep the above group together so they may be joined by user-->
+                    
+                    <separator/>
+                    <filter string="Sales Vakmedia"          domain="[('order_id.team_id','in',( 'Vakmedia'))]"/>
+        
+                    <separator/>
+                    <filter string="My Sales Order Lines" domain="[('salesman_id','=',uid)]" help="Sales Order Lines related to a Sales Order of mine"/>
+                    <filter name="accmgr_sale_orders_filter" string="My Sales Order Lines (Account Manager)" domain="[('partner_acc_mgr','=',uid)]" help="My Sales Order Lines as Account manager"/>
+                    
                     <group expand="0" string="Group By">
-                        <filter string="Customer" domain="[]" context="{'group_by':'order_partner_id'}"/>
-                        <filter string="Advertiser" domain="[]" context="{'group_by':'order_advertiser_id'}"/>
-                        <filter string="Agency" domain="[]" context="{'group_by':'order_agency_id'}"/>
-                        <filter string="Product" domain="[]" context="{'group_by':'product_id'}"/>
-                        <filter string="Order" domain="[]" context="{'group_by':'order_id'}"/>
-                        <filter string="Salesperson" domain="[]" context="{'group_by':'salesman_id'}"/>
-                        <filter string="Account Manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
-                        <filter string="Issue Date" icon="terp-personal" domain="[]" context="{'group_by':'issue_date'}"/>
+                        <filter string="Customer"           domain="[]" context="{'group_by':'order_partner_id'}"/>
+                        <filter string="Advertiser"         domain="[]" context="{'group_by':'order_advertiser_id'}"/>
+                        <filter string="Agency"             domain="[]" context="{'group_by':'order_agency_id'}"/>
+                        <filter string="Product"            domain="[]" context="{'group_by':'product_id'}"/>
+                        <filter string="Ad class"           domain="[]" context="{'group_by':'ad_class'}"/>
+                        <filter string="Order"              domain="[]" context="{'group_by':'order_id'}"/>
+                        <filter string="Issue Date"         domain="[]" context="{'group_by':'issue_date'}"/>
+                        <filter string="Salesteam"          domain="[]" context="{'group_by':'order_team_id''}"/>
+                        <filter string="Salesperson"        domain="[]" context="{'group_by':'salesman_id'}"/>
+                        <filter string="Account Manager"    domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
                     </group>
                 </search>
             </field>
