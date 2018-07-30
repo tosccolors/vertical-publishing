@@ -7,3 +7,7 @@ access_delivery_list_type_user,delivery.list.type.user,model_delivery_list_type,
 access_delivery_list_type_user,delivery.list.type.list.user,model_delivery_list_type,base.group_user,1,1,1,0
 access_delivery_list_type_manager,delivery.list.type.manager,model_delivery_list_type,base.group_erp_manager,1,1,1,1
 access_delivery_list_type_manager,delivery.list.type.list.manager,model_delivery_list_type,base.group_erp_manager,1,1,1,1
+access_week_days_user,week.days.user,model_week_days,base.group_user,1,1,1,0
+access_week_days_user,week.days.user,model_week_days,base.group_user,1,1,1,0
+access_week_days_manager,week.days.manager,model_week_days,base.group_erp_manager,1,1,1,1
+access_week_days_manager,week.days.manager,model_week_days,base.group_erp_manager,1,1,1,1

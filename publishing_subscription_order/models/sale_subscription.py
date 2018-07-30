@@ -158,7 +158,10 @@ class SaleOrderLine(models.Model):
     def onchange_medium(self):
         vals, data, result = {}, {}, {}
         if not self.subscription:
-            return {'value': vals}
+            result = super(SaleOrderLine, self).onchange_medium()
+            if 'domain' in result and 'ad_class' in result['domain'] and result['domain']['ad_class']:
+                result['domain']['ad_class'] = result['domain']['ad_class']+[('subscription_categ','=', False)]
+            return result
         if self.medium:
             child_id = [x.id for x in self.medium.child_id.filtered('subscription_categ')]
             if len(child_id) == 1:

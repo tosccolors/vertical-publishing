@@ -10,6 +10,7 @@
             <xpath expr="//group[@name='properties'][last()]" position="after">
                 <group name="enable_subscription" col="4">
                     <field name="subscription_product"/>
+                    <field name="weekday_ids" widget="many2many_tags" options="{'no_create_edit': True}" attrs="{'invisible':[('subscription_product','=',False)]}"/>
                     <field name="digital_subscription" attrs="{'invisible':[('subscription_product','=',False)]}"/>
                     <field name="number_of_issues" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}"/>
                     <field name="subscr_number_of_days" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}"/>
@@ -30,6 +31,19 @@
 			</field>
 		</field>
 	 </record>
+
+    <record id="product_product_form_view_subscription" model="ir.ui.view">
+		<field name="name">product.product.form.subscription</field>
+		<field name="model">product.product</field>
+		<field name="inherit_id" ref="product.product_normal_form_view"/>
+		<field name="arch" type="xml">
+			<group name="enable_subscription" position="attributes">
+                <attribute name="attrs">{'invisible': [('product_tmpl_id','!=', False)]}</attribute>
+			</group>
+		</field>
+	</record>
+
+
 
 
 </odoo>
