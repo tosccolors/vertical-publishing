@@ -189,7 +189,8 @@ class SaleOrder(models.Model):
             contact_id = self.partner_id
         # Not sure about this!
         self.user_id = self._uid
-        self.customer_contact = contact_id
+        if not self.customer_contact:
+            self.customer_contact = contact_id
         if self.order_line:
             warning = {'title':_('Warning'),
                                  'message':_('Changing the Customer can have a change in Agency Discount as a result.'
