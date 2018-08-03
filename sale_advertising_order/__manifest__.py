@@ -35,7 +35,10 @@ This module allows you to use both CRM and Sales Management to run your advertis
                 'sale_crm', 'sale_operating_unit',
                 'product_variant_template_categ_id','project',
                 'web_domain_field','account_payment_sale',
-                'web_tree_many2one_clickable'
+                'web_tree_many2one_clickable',
+                'wobe_imports',                         #supplies booklet_surface_area
+                'crm_sector',                           #sneeded by crm_lead_view.xml
+                'bducoa_template'                       #fullfills need for account.a_expense from demo data
                 ],
     'data': [
              "data/sale_advertising_data.xml",
@@ -56,6 +59,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
              "views/account_invoice_view.xml",
              "views/crm_menu_view.xml",
              "views/sale_dashboard_view.xml",
+             "views/depending_menu_items.xml"           #breaks catch 22 situation
              ],
     'qweb': [
         "static/src/xml/sales_team_dashboard.xml",
