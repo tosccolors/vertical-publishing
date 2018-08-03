@@ -613,7 +613,12 @@
                     <field name="partner_contact_id" string="Contact Person" context="{'default_parent_id': partner_id}"
                            domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"/>
                 </xpath>
-
+                <xpath expr="//sheet/notebook/page[1]" position="replace"></xpath>
+                <xpath expr="//sheet/notebook/page[@name='lead']" position="after">
+                    <page string="Internal Notes">
+                        <field name="description"/>
+                    </page>
+                </xpath>
             </field>
         </record>
 
