@@ -8,17 +8,14 @@
         <field name="inherit_id" ref="account.product_template_form_view" />
         <field name="arch" type="xml">
             <xpath expr="//group[@name='properties'][last()]" position="after">
-                <separator string="Subscription" colspan="4"/>
                 <group name="enable_subscription" col="4">
                     <field name="subscription_product"/>
+                    <field name="weekday_ids" widget="many2many_tags" options="{'no_create_edit': True}" attrs="{'invisible':[('subscription_product','=',False)]}"/>
                     <field name="digital_subscription" attrs="{'invisible':[('subscription_product','=',False)]}"/>
                     <field name="number_of_issues" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}"/>
                     <field name="subscr_number_of_days" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}"/>
-                    <field name="delivery_obligation_account_id" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}" groups="account.group_account_user"/>
-                    <field name="subscription_revenue_account_id" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}" groups="account.group_account_user"/>
-                    <field name="can_renew" attrs="{'invisible':[('subscription_product','=',False)]}"/>
-                    <field name="renew_product_id" attrs="{'invisible':['|',('subscription_product','=',False),('can_renew','=',False)]}" options="{'no_create_edit': True}" domain="[('subscription_product','=',True)]"/>
-                    <field name="weekday_ids" widget="many2many_tags" options="{'no_create_edit': True}" attrs="{'invisible':[('subscription_product','=',False)]}"/>
+                    <field name="delivery_obligation_account_id" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}"/>
+                    <field name="subscription_revenue_account_id" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}"/>
                 </group>
             </xpath>
         </field>
