@@ -1722,8 +1722,98 @@ msgstr "Orderregels"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
-msgid "Order Lines with Issue Date before today"
-msgstr "Orderregels met de editiedatum vóór vandaag"
+msgid "Issue date before today"
+msgstr "Editiedatum vóór vandaag"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Issue date in last/next 2 weeks"
+msgstr "Editiedatum in laatste/volgende 2 weken"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Issue date this month"
+msgstr "Editiedatum deze maand"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Issue date this year"
+msgstr "Editiedatum dit jaar"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Titles Alkmaar"
+msgstr "Titels Alkmaar"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Titles Barneveld"
+msgstr "Titels Barneveld"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Titles Hoofddorp"
+msgstr "Titels Hoofddorp"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Titles Web"
+msgstr "Titels Web"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Direct sales Alkmaar"
+msgstr "Directe verkoop Alkmaar"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Direct sales Barneveld"
+msgstr "Directe verkoop Barneveld"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Direct sales Gorinchem"
+msgstr "Directe verkoop Gorinchem"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Direct sales Hoofddorp"
+msgstr "Directe verkoop Hoofddorp"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Direct sales Online"
+msgstr "Directe verkoop Online"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Indirect sales"
+msgstr "Indirecte verkoop"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Web sales"
+msgstr "Web verkoop"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "No channel / team. Maybe mine!"
+msgstr "Geen kanaal / team. Misschien van mij!"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Sales Vakmedia"
+msgstr "Verkopen Vakmedia"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Ad class"
+msgstr "Soort advertentie"
+
+#. module: sale_advertising_order
+#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
+msgid "Salesteam"
+msgstr "Verkoopteam"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_order_advertising_tree

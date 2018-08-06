@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+        <!--CRM: Customers-->
+        <menuitem id="menu_partner_form1" parent="menu_crm_advertising"
+                  action="action_partner_form_crm" sequence="2"/>
+
+  </data>
+</odoo>
