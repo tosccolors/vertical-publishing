@@ -151,7 +151,10 @@ class Lead(models.Model):
             'country_id': invoice.country_id.id,
             'partner_invoice_id': addr['invoice'],
             'partner_shipping_id': addr['delivery'],
+            'partner_name': part.name,
             'partner_contact_id': contact_id,
+            'sector_id': invoice.sector_id,
+            'secondary_sector_ids': [(6, 0, invoice.secondary_sector_ids.ids)],
         }
         return {'value' : values}
 

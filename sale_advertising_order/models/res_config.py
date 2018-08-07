@@ -20,6 +20,7 @@
 
 from odoo import api, fields, models, _
 import odoo.addons.decimal_precision as dp
+from bs4 import BeautifulSoup
 
 
 class Partner(models.Model):
@@ -219,11 +220,30 @@ class ActivityLog(models.TransientModel):
 
     @api.multi
     def action_log(self):
-        result = super(ActivityLog, self).action_log()
         stage_logged = self.env.ref("sale_advertising_order.stage_logged")
         for log in self:
+            body_html = "<div><b>%(title)s</b>: %(next_activity)s</div>%(description)s%(note)s" % {
+                'title': _('Activity Done'),
+                'next_activity': log.next_activity_id.name,
+                'description': log.title_action and '<p><em>%s</em></p>' % log.title_action or '',
+                'note': log.note or '',
+            }
+            summary = ""
+            if log.title_action: summary = log.title_action
+            if log.note != '<p><br></p>':
+                note = BeautifulSoup(log.note, 'lxml')
+                summary = summary+" ("+note.get_text()+")"
+
+            log.lead_id.message_post(body_html, subject=summary, subtype_id=log.next_activity_id.subtype_id.id)
+            log.lead_id.write({
+                'date_deadline': log.date_deadline,
+                'planned_revenue': log.planned_revenue,
+                'title_action': False,
+                'date_action': False,
+                'next_activity_id': False,
+            })
             if log.lead_id.is_activity: log.lead_id.write({'stage_id': stage_logged.id})
-        return result
+        return True
 
 
 
