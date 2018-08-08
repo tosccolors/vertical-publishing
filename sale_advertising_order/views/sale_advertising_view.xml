@@ -1242,7 +1242,9 @@
                         <filter string="Advertiser" domain="[]" context="{'group_by':'order_advertiser_id'}"/>
                         <filter string="Agency" domain="[]" context="{'group_by':'order_agency_id'}"/>
                         <filter string="Product" domain="[]" context="{'group_by':'product_id'}"/>
+                        <filter string="Ad class" domain="[]" context="{'group_by':'ad_class'}"/>
                         <filter string="Order" domain="[]" context="{'group_by':'order_id'}"/>
+                        <filter string="Salesteam" domain="[]" context="{'group_by':'order_team_id'}"/>
                         <filter string="Salesperson" domain="[]" context="{'group_by':'salesman_id'}"/>
                         <filter string="Account Manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
                         <filter string="Issue Date" icon="terp-personal" domain="[]" context="{'group_by':'issue_date'}"/>
