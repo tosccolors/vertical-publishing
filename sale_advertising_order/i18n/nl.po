@@ -1735,7 +1735,7 @@ msgstr "Verkoopteam"
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_order_advertising_tree
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
 msgid "Add class"
-msgstr "Verkoopteam"
+msgstr "Soort advertentie"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_order_advertising_tree
@@ -2136,12 +2136,6 @@ msgstr "Verkoop projecten"
 #: model:ir.model,name:sale_advertising_order.model_crm_team
 msgid "Sales Team"
 msgstr "Verkoopteam"
-
-#. module: sale_advertising_order
-#: model:ir.ui.view,arch_db:sale_advertising_order.view_order_advertising_tree
-#: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
-msgid "Ad class"
-msgstr "Soort advertentie"
 
 #. module: sale_advertising_order
 #: model:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
