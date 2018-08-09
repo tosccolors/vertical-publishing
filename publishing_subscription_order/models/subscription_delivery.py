@@ -5,19 +5,41 @@ import odoo.addons.decimal_precision as dp
 from datetime import datetime, timedelta
 from dateutil import relativedelta
 
-class SubscriptionDelivery(models.Model):
-    _name='subscription.delivery'
+
+class SubscriptionTitleDelivery(models.Model):
+    _name='subscription.title.delivery'
+    _description = 'Subscription Title Delivery'
+
+    name = fields.Char(string='Title Delivery Reference', required=True, copy=False, readonly=True, states={'draft': [('readonly', False)]}, index=True, default=lambda self: _('New'))
+    title_id = fields.Many2one('sale.advertising.issue', 'Title', states={'draft': [('readonly', False)]})
+    delivery_list_ids = fields.One2many('subscription.delivery.list', 'delivery_id', string='Delivery Lists', copy=False)
+
+
+
+
+class SubscriptionDeliveryList(models.Model):
+    _name='subscription.delivery.list'
     _inherit = ['mail.thread']
     _description = 'Subscription Delivery'
-    
+
+    @api.multi
+    @api.depends('delivery_date')
+    def _compute_weekday(self):
+        self.weekday = 3
+
+        
+
+    delivery_id = fields.Many2one('subscription.title.delivery', 'Title', readonly=True, states={'draft': [('readonly', False)]})
     name = fields.Char(string='Delivery Reference', required=True, copy=False, readonly=True, states={'draft': [('readonly', False)]}, index=True, default=lambda self: _('New'))
-    start_date = fields.Date('Start Date', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
-    end_date = fields.Date('End Date', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
+#    start_date = fields.Date('Start Date', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
+    delivery_date = fields.Date('Delivery Date', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
+    weekday_id = fields.Many2one('week.day', compute=_compute_weekday, string='Weekday', readonly=True, copy=False)
     type = fields.Many2one('delivery.list.type', string='Type', readonly=True, states={'draft': [('readonly', False)]}, copy=False)
-    delivery_list = fields.One2many('subscription.delivery.list', 'delivery_id', string='Delivery List', copy=False)
-    title_ids = fields.Many2many('sale.advertising.issue', 'delivery_list_adv_issue_title_rel', 'delivery_list_id','adv_issue_id', 'Titles', readonly=True, states={'draft': [('readonly', False)]})
-    issue_ids = fields.Many2many('sale.advertising.issue','delivery_list_adv_issue_rel', 'delivery_list_id', 'adv_issue_id',  'Issues', readonly=True, states={'draft': [('readonly', False)]})
-    weekday_ids = fields.Many2many('week.days', 'weekday_delivery_list_rel', 'delivery_list_id', 'weekday_id', 'Weekdays', readonly=True, states={'draft': [('readonly', False)]})
+    delivery_line_ids = fields.One2many('subscription.delivery.line', 'delivery_list_id', string='Delivery Lines', copy=False)
+    title_id = fields.Many2one(related='sale.advertising.issue', string='Title', readonly=True, states={'draft': [('readonly', False)]})
+    issue_id = fields.Many2one('sale.advertising.issue', 'Issue', readonly=True, states={'draft': [('readonly', False)]})
+    issue_date = fields.Date(related=issue_id.date, string='Issue Date', readonly=True )
+#    weekday_ids = fields.Many2many('week.days', 'weekday_delivery_list_rel', 'delivery_list_id', 'weekday_id', 'Weekdays', readonly=True, states={'draft': [('readonly', False)]})
     state = fields.Selection([
         ('draft', 'New'),
         ('progress', 'In Progress'),
@@ -31,13 +53,13 @@ class SubscriptionDelivery(models.Model):
         if vals.get('name', _('New')) == _('New'):
             if 'company_id' in vals:
                 vals['name'] = self.env['ir.sequence'].with_context(force_company=vals['company_id']).next_by_code(
-                    'subscription.delivery') or _('New')
+                    'subscription.delivery.list') or _('New')
             else:
-                vals['name'] = self.env['ir.sequence'].next_by_code('subscription.delivery') or _('New')
-        result = super(SubscriptionDelivery, self).create(vals)
+                vals['name'] = self.env['ir.sequence'].next_by_code('subscription.delivery.list') or _('New')
+        result = super(SubscriptionDeliveryList, self).create(vals)
         return result
 
-    @api.onchange('title_ids','issue_ids','weekday_ids')
+    '''@api.onchange('title_ids','issue_ids','weekday_ids')
     def onchange_title_issue(self):
         domain = {}
         domain['weekday_ids'] = []
@@ -59,7 +81,7 @@ class SubscriptionDelivery(models.Model):
                 domain['weekday_ids'] = [('id', 'in', weekdays.ids)]
         else:
             self.weekday_ids = [(6, 0, [])]
-        return {'domain': domain}
+        return {'domain': domain}'''
 
     @api.model
     def prepare_delivery_list(self, sols):
@@ -121,19 +143,19 @@ class SubscriptionDelivery(models.Model):
 
 
     @api.multi
-    def get_delivery_lists(self):
+    def get_delivery_lines(self):
         orderline = self.env['sale.order.line']
         common_domain = [
-            ('start_date', '<=', self.end_date),
-            ('end_date', '>=', self.start_date),
+            ('start_date', '<=', self.delivery_date),
+            ('end_date', '>=', self.delivery_date),
             ('company_id', '=', self.company_id.id),
-            ('weekday_ids', 'in', self.weekday_ids.ids)
+            ('weekday_ids', 'in', self.weekday_id.id)
         ]
         order_domain = common_domain + [
             ('delivery_type', '=', self.type.id),
             ('subscription', '=', True),
             ('state', '=', 'sale'),
-            ('title', 'in', self.title_ids.ids),
+            ('title', '=', self.title_id.id),
             ('product_template_id.digital_subscription', '=', False)
         ]
         delivery_domain = common_domain+[
@@ -175,34 +197,29 @@ class SubscriptionDelivery(models.Model):
     def print_xls_report(self):
         return self.env['report'].get_action(self, 'report_subscription_delivery.xlsx')
 
-class SubscriptionDeliveryList(models.Model):
-    _name = 'subscription.delivery.list'
-    _description = 'Subscription Delivery List'
+class SubscriptionDeliveryLine(models.Model):
+    _name = 'subscription.delivery.line'
+    _description = 'Subscription Delivery Line'
     _rec_name = 'subscription_number'
 
-    delivery_id = fields.Many2one('subscription.delivery', string='Delivery Reference', required=True, ondelete='cascade', index=True, copy=False)
-    start_date = fields.Date(related='delivery_id.start_date',string='Start Date',store=True, readonly=True)
-    end_date = fields.Date(related='delivery_id.end_date',string='End Date',store=True, readonly=True)
-    company_id = fields.Many2one(related='delivery_id.company_id', string='Company', store=True, readonly=True)
+    delivery_list_id = fields.Many2one('subscription.delivery.list', string='Delivery Reference', required=True, ondelete='cascade', index=True, copy=False)
+#    start_date = fields.Date(related='delivery_id.start_date',string='Start Date',store=True, readonly=True)
+#    end_date = fields.Date(related='delivery_id.end_date',string='End Date',store=True, readonly=True)
+#    company_id = fields.Many2one(related='delivery_id.company_id', string='Company', store=True, readonly=True)
     partner_id = fields.Many2one('res.partner', string='Delivery Address')
-    title = fields.Many2one('sale.advertising.issue', string='Title')
-    issue_ids = fields.Many2many('sale.advertising.issue', 'delivery_list_issue_adv_issue_rel', 'delivery_list_id', 'adv_issue_id', string='Issues')
+#    title = fields.Many2one('sale.advertising.issue', string='Title')
+#    issue_id = fields.Many2one('sale.advertising.issue', string='Issue')
     sub_order_line = fields.Many2one('sale.order.line', string='Subscription order line')
-    subscription_number = fields.Many2one(related='sub_order_line.order_id',string='Subscription Number', store=True, readonly=True)
+    subscription_number = fields.Many2one(related='sub_order_line.id',string='Subscription Number', store=True, readonly=True)
     product_uom_qty = fields.Float(string='Quantity', digits=dp.get_precision('Product Unit of Measure'), required=True)
-    weekday_ids = fields.Many2many('week.days', 'weekday_delivery_list_line_rel', 'delivery_list_id', 'weekday_id', 'Weekdays')
+#    weekday_ids = fields.Many2many('week.days', 'weekday_delivery_list_line_rel', 'delivery_list_id', 'weekday_id', 'Weekdays')
 
 
-
-class SaleOrder(models.Model):
-    _inherit = 'sale.order'
-
-    delivery_list_ids = fields.One2many('subscription.delivery.list','subscription_number',string='Delivery List', copy=False)
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
-    delivery_list_ids = fields.One2many('subscription.delivery.list','sub_order_line',string='Delivery List', copy=False)
+    adv_issue_ids = fields.Many2many('subscription.delivery.list','sub_order_line',string='Delivery List', copy=False)
 
 
 
