@@ -43,7 +43,7 @@
                     <group cols="4">
                         <group name="subscription">
                             <field name="is_subscription_customer"/>
-                            <field name="credit_limit" attrs="{'invisible': [('is_subscription_customer', '=', False)],'required': [('is_subscription_customer', '=', True)]}"/>
+                            <!--<field name="credit_limit" attrs="{'invisible': [('is_subscription_customer', '=', False)],'required': [('is_subscription_customer', '=', True)]}"/>-->
                             <field name="subscription_customer_payment_mode_id" attrs="{'invisible': [('is_subscription_customer', '=', False)],'required': [('is_subscription_customer', '=', True)]}"/>
                             <field name="property_subscription_payment_term_id" attrs="{'invisible': [('is_subscription_customer', '=', False)],'required': [('is_subscription_customer', '=', True)]}"/>
                         </group>
@@ -122,7 +122,7 @@
         <field name="res_model">res.partner</field>
         <field name="view_type">form</field>
         <field name="view_mode">kanban,tree,form</field>
-        <field name="context">{"search_default_customer":1, "search_default_type_company":1, "search_default_my_partners":1, "search_default_subscription_customer":1,}</field>
+        <field name="context">{"search_default_customer":1, "search_default_my_partners":1, "search_default_subscription_customer":1,}</field>
         <field name="search_view_id" ref="view_res_partner_filter_crm_publishing"/>
         <field name="help" type="html">
           <p class="oe_view_nocontent_create">
