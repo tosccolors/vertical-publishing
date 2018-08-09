@@ -27,7 +27,7 @@ class SubscriptionDeliveryList(models.Model):
     def _compute_weekday(self):
         self.weekday = 3
 
-        
+
 
     delivery_id = fields.Many2one('subscription.title.delivery', 'Title', readonly=True, states={'draft': [('readonly', False)]})
     name = fields.Char(string='Delivery Reference', required=True, copy=False, readonly=True, states={'draft': [('readonly', False)]}, index=True, default=lambda self: _('New'))
@@ -36,7 +36,7 @@ class SubscriptionDeliveryList(models.Model):
     weekday_id = fields.Many2one('week.day', compute=_compute_weekday, string='Weekday', readonly=True, copy=False)
     type = fields.Many2one('delivery.list.type', string='Type', readonly=True, states={'draft': [('readonly', False)]}, copy=False)
     delivery_line_ids = fields.One2many('subscription.delivery.line', 'delivery_list_id', string='Delivery Lines', copy=False)
-    title_id = fields.Many2one(related='sale.advertising.issue', string='Title', readonly=True, states={'draft': [('readonly', False)]})
+    title_id = fields.Many2one(related=delivery_id.title_id,  string='Title', readonly=True, states={'draft': [('readonly', False)]})
     issue_id = fields.Many2one('sale.advertising.issue', 'Issue', readonly=True, states={'draft': [('readonly', False)]})
     issue_date = fields.Date(related=issue_id.date, string='Issue Date', readonly=True )
 #    weekday_ids = fields.Many2many('week.days', 'weekday_delivery_list_rel', 'delivery_list_id', 'weekday_id', 'Weekdays', readonly=True, states={'draft': [('readonly', False)]})
@@ -117,11 +117,11 @@ class SubscriptionDeliveryList(models.Model):
             issueObj, daysIds = _getIssue(self, line_obj)
             if issueObj:
                 item['partner_id'] = line_obj.order_id.partner_shipping_id.id
-                item['title'] = line_obj.title.id
+#                item['title'] = line_obj.title.id
                 item['issue_ids'] = [(6,0,issueObj.ids)]
                 item['sub_order_line'] = line_obj.id
                 item['product_uom_qty'] = line_obj.product_uom_qty
-                item['weekday_ids'] = [(6,0,daysIds.ids)]
+#                item['weekday_ids'] = [(6,0,daysIds.ids)]
                 deliveryLists.append((0, 0, item))
 
                 tot_issue = line_obj.delivered_issues + len(issueObj.ids)
@@ -165,9 +165,35 @@ class SubscriptionDeliveryList(models.Model):
             ('issue_ids', 'in', self.issue_ids.ids),
             ('type', '=', self.type.id),
         ]
-
-        self_sols = self.delivery_list.mapped('sub_order_line')
-        sub_list_objs = self.search(delivery_domain)
+        sale_order_line_query = self.env['sale.order.line']._where_calc(delivery_domain)
+        tables, where_clause, where_clause_params = sale_order_line_query.get_sql()
+        list_query = ('''INSERT INTO subscription_delivery_line
+                                        (delivery_list_id, partner_id, sub_order_line, subscription_number, product_uom_qty, create_uid, create_date, write_uid, write_date)
+                                        SELECT {0} as delivery_list_id,
+                                               partner_id as partner_id,
+                                               user_id as user_id,
+                                               sector_id as sector_id,
+                                               name as name,
+                                               {0} as list_id,
+                                               {1} as opt_out,
+                                               {2} as create_uid,
+                                               {3} as create_date,
+                                               {2} as write_uid,
+                                               {3} as write_date
+                                        FROM {4}
+                                        WHERE {5}
+                                        AND id not in 
+                                        (SELECT partner_id
+                                        FROM mail_mass_mailing_contact
+                                        WHERE list_id = {0});      
+                                        '''.format(
+            one.id,
+            False,
+            self._uid,
+            "'%s'" % str(fields.Datetime.to_string(fields.datetime.now())),
+            tables,
+            where_clause))
+        self.env.cr.execute(list_query, where_clause_params)
 
         other_sols = []
         for found_obj in sub_list_objs:
@@ -207,6 +233,9 @@ class SubscriptionDeliveryLine(models.Model):
 #    end_date = fields.Date(related='delivery_id.end_date',string='End Date',store=True, readonly=True)
 #    company_id = fields.Many2one(related='delivery_id.company_id', string='Company', store=True, readonly=True)
     partner_id = fields.Many2one('res.partner', string='Delivery Address')
+    street = fields.Char(related='partner_id.street',string='Street', readonly=True )
+    zip = fields.Char(related='partner_id.zip',string='Postcode', readonly=True )
+    city = fields.Char(related='partner_id.city',string='City', readonly=True )
 #    title = fields.Many2one('sale.advertising.issue', string='Title')
 #    issue_id = fields.Many2one('sale.advertising.issue', string='Issue')
     sub_order_line = fields.Many2one('sale.order.line', string='Subscription order line')
