@@ -32,7 +32,7 @@ class SaleOrder(models.Model):
 
     subscription = fields.Boolean('Subscription', default=False)
     subscription_payment_mode_id = fields.Many2one(related='partner_id.subscription_customer_payment_mode_id', relation='account.payment.mode', string='Subscription Payment Mode', company_dependent=True,domain=[('payment_type', '=', 'inbound')],help="Select the default subscription payment mode for this customer.",readonly=True, copy=False, store=True)
-    delivery_type = fields.Many2one('delivery.list.type', 'Delivery Type')
+    delivery_type = fields.Many2one('delivery.list.type', 'Delivery Type', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
 
     @api.depends('order_line.price_total', 'order_line.computed_discount', 'partner_id')
     def _amount_all(self):
@@ -64,6 +64,8 @@ class SaleOrder(models.Model):
         self.ensure_one()
         partner = self.partner_id
         partner.is_subscription_customer = True
+        if not partner.is_subscription_customer:
+            partner.is_subscription_customer = True
         if not partner.subscription_customer_payment_mode_id or not partner.property_subscription_payment_term_id:
             raise UserError(_("Can not confirm Sale Order Partner subscription's details are not completed"))
 
@@ -132,6 +134,7 @@ class SaleOrderLine(models.Model):
     subscription_cancel = fields.Boolean('Subscription cancelled',copy=False)
     line_renewed = fields.Boolean('Subscription Renewed', copy=False)
     delivery_type = fields.Many2one(related='order_id.delivery_type', readonly=True, copy=False, store=True)
+    weekday_ids = fields.Many2many('week.days', 'weekday_sale_line_rel', 'order_line_id', 'weekday_id', 'Weekdays')
 
     @api.onchange('medium')
     def onchange_medium(self):
@@ -141,10 +144,6 @@ class SaleOrderLine(models.Model):
             if 'domain' in result:
                 if 'ad_class' in result['domain'] and result['domain']['ad_class']:
                     result['domain']['ad_class'] = result['domain']['ad_class']+[('subscription_categ','=', False)]
-                if 'title_ids' in result['domain']:
-                    result['domain']['title_ids'] = result['domain']['title_ids'] + [('subscription_title', '=', False)]
-                if 'title' in result['domain']:
-                    result['domain']['title'] = result['domain']['title'] + [('subscription_title', '=', False)]
             return result
         elif not self.subscription:
             return {'value':vals}
@@ -158,23 +157,27 @@ class SaleOrderLine(models.Model):
             titles = self.env['sale.advertising.issue'].search(
                 [('parent_id', '=', False), ('medium', '=', self.medium.id), ('subscription_title','=',True)]).ids
             if titles and len(titles) == 1:
-                # vals['title'] = titles[0]
-                vals['title_ids'] = [(6, 0, titles)]
+                vals['title'] = titles[0]
             else:
-                # vals['title'] = False
-                vals['title_ids'] = [(6, 0, [])]
+                # data['title'] = [('id','in',titles.id)]
+                vals['title'] = False
         else:
             vals['ad_class'] = False
-            # vals['title'] = False
-            vals['title_ids'] = [(6, 0, [])]
+            vals['title'] = False
             data = {'ad_class': []}
         return {'value': vals, 'domain': data}
 
     @api.onchange('ad_class')
-    def onchange_ad_class_subs(self):
+    def onchange_ad_class(self):
         vals, data, result = {}, {}, {}
 
-        if not self.subscription:
+        if self.advertising:
+            result = super(SaleOrderLine, self).onchange_ad_class()
+            if 'domain' in result:
+                if 'product_template_id' in result['domain'] and result['domain']['product_template_id']:
+                    result['domain']['product_template_id'] = result['domain']['product_template_id']+[('subscription_product','=', False)]
+            return result
+        elif not self.subscription:
             return {'value': vals}
 
         data['product_template_id'] = [('subscription_product', '=', True)]
@@ -249,6 +252,7 @@ class SaleOrderLine(models.Model):
             dic['number_of_issues'] = line.product_template_id.number_of_issues
             dic['can_renew'] = line.product_template_id.can_renew
             dic['renew_product_id'] = line.product_template_id.renew_product_id
+            dic['weekday_ids'] = [(6, 0, line.product_template_id.weekday_ids.ids)]
             start_date = line.start_date
             if not start_date:
                 start_date = datetime.today().date()
@@ -263,55 +267,19 @@ class SaleOrderLine(models.Model):
                     'name': '',
                     'number_of_issues':0,
                     'can_renew': False,
-                    'renew_product_id':False
+                    'renew_product_id':False,
+                    'weekday_ids':[(6, 0 , [])]
             }
         product_template_id = self.product_template_id
         if 'cronRenewal' in self.env.context:
             product_template_id = self.product_template_id.renew_product_id
-        if product_template_id and self.title_ids and len(self.title_ids) > 1:
-            self.product_uom = product_template_id.uom_id
-            pav = []
-            for subs_title in self.title_ids:
-                value = {}
-                if subs_title.product_attribute_value_id:
-                    pav.append(subs_title.product_attribute_value_id.id)
-            product_id = self.env['product.product'].search(
-                [('product_tmpl_id', '=', product_template_id.id), ('attribute_value_ids', 'in', pav)], limit=1)
-            if product_id:
-                product = product_id.with_context(
-                    lang=self.order_id.partner_id.lang,
-                    partner=self.order_id.partner_id.id,
-                    quantity=self.product_uom_qty or 0,
-                    date=self.order_id.date_order,
-                    pricelist=self.order_id.pricelist_id.id,
-                    uom=self.product_uom.id
-                )
-                if self.order_id.pricelist_id and self.order_id.partner_id:
-                    value['price_unit'] = self.env['account.tax']._fix_tax_included_price_company(
-                        self._get_display_price(product), product.taxes_id, self.tax_id,
-                        self.company_id)
-                vals.update(value)
-            if product_id:
-                name = product_id.name_get()[0][1]
-                if product_id.description_sale:
-                    name += '\n' + product_id.description_sale
-                vals.update({
-                    'product_id': product_id.id,
-                    'name': name,
-                })
-                vals.update(_line_update(self))
+        if product_template_id and self.title:
+            if self.title.product_attribute_value_id:
+                pav = self.title.product_attribute_value_id.id
             else:
-                vals.update(_reset_line())
-
-        elif product_template_id and (self.title_ids or len(self.title_ids) == 1):
-            product_id = False
-            for title in self.title_ids:
-                if title.product_attribute_value_id:
-                    pav = title.product_attribute_value_id.id
-                else:
-                    pav = False
-                product_id = self.env['product.product'].search(
-                    [('product_tmpl_id', '=', product_template_id.id), ('attribute_value_ids', '=', pav)])
+                pav = False
+            product_id = self.env['product.product'].search(
+                [('product_tmpl_id', '=', product_template_id.id), ('attribute_value_ids', '=', pav)])
             if product_id:
                 name = product_id.name_get()[0][1]
                 if product_id.description_sale:
@@ -410,7 +378,7 @@ class SaleOrderLine(models.Model):
                 'end_date': datetime.today().date() + timedelta(days=line.renew_product_id.subscr_number_of_days),
                 'order_id': line.order_id.id,
                 'product_template_id': line.renew_product_id and line.renew_product_id.id,
-                'number_of_issues': line.renew_product_id.number_of_issues or 0,
+                'number_of_issues': line.renew_product_id.number_of_issues,
                 'can_renew': line.renew_product_id.can_renew,
                 'renew_product_id': line.renew_product_id.renew_product_id and line.renew_product_id.renew_product_id.id,
                 'discount':0,
