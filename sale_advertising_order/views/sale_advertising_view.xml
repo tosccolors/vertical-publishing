@@ -221,7 +221,7 @@
                                             <field name="tax_id" widget="many2many_tags"
                                                 domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
                                                 groups="sale_advertising_order.group_traffic_user"
-                                                attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
+                                                readonly="1"/>
                                             <field name="price_edit" invisible="1"/>
                                             <field name="price_unit" readonly="0" attrs="{'invisible': ['|',('multi_line','=', True),('price_edit','!=', True)]}"/>
                                             <field name="price_unit_dummy" readonly="1" attrs="{'invisible': ['|',('multi_line','=', True),('price_edit','=', True)]}"/>
