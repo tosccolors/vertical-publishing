@@ -85,7 +85,7 @@ class Partner(models.Model):
     def _compute_adv_quotation_count(self):
         for partner in self:
             operator = 'child_of' if partner.is_company else '='  # the adv quotation count should counts the adv quotations of this company and all its contacts
-            partner.adv_quotation_count = self.env['sale.order'].search_count(['|', ('published_customer', operator, partner.id), ('partner_id', operator, partner.id), ('state','not in',('sale','done')), ('advertising','=',True)])
+            partner.adv_quotation_count = self.env['sale.order'].search_count(['|', ('published_customer', operator, partner.id), ('partner_id', operator, partner.id), ('state','not in',('sale','done','cancel')), ('advertising','=',True)])
 
     def _compute_sale_order_count(self):
         sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','not in',('draft','sent','cancel')), ('advertising','=',False)],
