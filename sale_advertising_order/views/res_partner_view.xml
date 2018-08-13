@@ -26,7 +26,7 @@
         <record id="act_res_partner_2_quotation_adv" model="ir.actions.act_window">
             <field name="name">Advertising Quotations</field>
             <field name="res_model">sale.order</field>
-            <field name="domain">[('advertising','=',True), ('state','not in',('sale','done')),'|',('published_customer','=',active_id),
+            <field name="domain">[('advertising','=',True), ('state','not in',('sale','done','cancel')),'|',('published_customer','=',active_id),
                                     ('advertising_agency','=',active_id)]</field>
             <field name="context">{'default_advertising':True, 'default_published_customer':active_id}</field>
             <field name="view_ids"
