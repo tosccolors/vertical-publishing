@@ -104,7 +104,7 @@ class SaleOrder(models.Model):
     def _prepare_invoice(self,):
         res = super(SaleOrder, self)._prepare_invoice()
         if self.filtered('subscription'):
-            res['payment_term_id'] = self.partner_id.property_subscription_payment_term_id.id or False
+            res['payment_term_id'] = self.property_subscription_payment_term_id.id or False
         return res
 
     @api.multi
@@ -121,6 +121,42 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
+    @api.multi
+    @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'nett_nett',
+                 'subtotal_before_agency_disc',
+                 'price_unit', 'tax_id', 'discount')
+    def _compute_amount(self):
+        """
+        Compute the amounts of the SO line.
+        """
+        super(SaleOrderLine, self.filtered(lambda record: record.subscription != True))._compute_amount()
+        for line in self.filtered('subscription'):
+            unit_price = line.price_unit or 0.0
+            unit_price = round(unit_price * (1 - (line.discount or 0.0) / 100.0), 5)
+            taxes = line.tax_id.compute_all(unit_price, line.order_id.currency_id, line.product_uom_qty,
+                                            product=line.product_id,
+                                            partner=line.order_id.partner_id)
+            line.update({
+                'actual_unit_price': round(unit_price, 3),
+                'price_tax': taxes['total_included'] - taxes['total_excluded'],
+                'price_total': taxes['total_included'],
+                'price_subtotal': taxes['total_excluded'],
+            })
+
+        return True
+
+    @api.multi
+    @api.depends('product_template_id')
+    def _compute_price_edit(self):
+        """
+        Compute if price_unit should be editable.
+        """
+        super(SaleOrderLine, self.filtered(lambda record: record.subscription != True))._compute_price_edit()
+        for line in self.filtered('subscription'):
+            line.number_of_issues = line.product_template_id.number_of_issues
+            if line.product_template_id.price_edit:
+                line.price_edit = True
+
     subscription = fields.Boolean(related='order_id.subscription', string='Subscription', readonly=True, store=True)
     start_date = fields.Date('Start Date')
     end_date = fields.Date('End Date')
@@ -135,6 +171,27 @@ class SaleOrderLine(models.Model):
     line_renewed = fields.Boolean('Subscription Renewed', copy=False)
     delivery_type = fields.Many2one(related='order_id.delivery_type', readonly=True, copy=False, store=True)
     weekday_ids = fields.Many2many('week.days', 'weekday_sale_line_rel', 'order_line_id', 'weekday_id', 'Weekdays')
+
+    @api.multi
+    @api.constrains('start_date', 'end_date')
+    def _check_start_end_dates(self):
+        for orderline in self:
+            if orderline.start_date and not orderline.end_date:
+                raise ValidationError(
+                    _("Missing End Date for order line with "
+                      "Description '%s'.")
+                    % (orderline.name))
+            if orderline.end_date and not orderline.start_date:
+                raise ValidationError(
+                    _("Missing Start Date for order line with "
+                      "Description '%s'.")
+                    % (orderline.name))
+            if orderline.end_date and orderline.start_date and \
+                    orderline.start_date > orderline.end_date:
+                raise ValidationError(
+                    _("Start Date should be before or be the same as "
+                      "End Date for order line with Description '%s'.")
+                    % (orderline.name))
 
     @api.onchange('medium')
     def onchange_medium(self):
@@ -296,26 +353,7 @@ class SaleOrderLine(models.Model):
         return {'value':vals}
 
 
-    @api.multi
-    @api.constrains('start_date', 'end_date')
-    def _check_start_end_dates(self):
-        for orderline in self:
-            if orderline.start_date and not orderline.end_date:
-                raise ValidationError(
-                    _("Missing End Date for order line with "
-                      "Description '%s'.")
-                    % (orderline.name))
-            if orderline.end_date and not orderline.start_date:
-                raise ValidationError(
-                    _("Missing Start Date for order line with "
-                      "Description '%s'.")
-                    % (orderline.name))
-            if orderline.end_date and orderline.start_date and \
-                    orderline.start_date > orderline.end_date:
-                raise ValidationError(
-                    _("Start Date should be before or be the same as "
-                      "End Date for order line with Description '%s'.")
-                    % (orderline.name))
+
 
     @api.multi
     def _prepare_invoice_line(self, qty):
@@ -323,47 +361,13 @@ class SaleOrderLine(models.Model):
         if self.product_id.subscription_product:
             res['start_date'] = self.start_date
             res['end_date'] = self.end_date
-            account = self.product_id.delivery_obligation_account_id
-            fpos = self.order_id.fiscal_position_id or self.order_id.partner_id.property_account_position_id
-            if fpos:
-                account = fpos.map_account(account)
-            res['account_id'] = account.id
+#            account = self.product_id.delivery_obligation_account_id
+#            fpos = self.order_id.fiscal_position_id or self.order_id.partner_id.property_account_position_id
+#            if fpos:
+#                account = fpos.map_account(account)
+#            res['account_id'] = account.id
         return res
 
-    @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'nett_nett', 'subtotal_before_agency_disc',
-                 'price_unit', 'tax_id', 'discount')
-    @api.multi
-    def _compute_amount(self):
-        """
-        Compute the amounts of the SO line.
-        """
-        super(SaleOrderLine, self.filtered(lambda record: record.subscription != True))._compute_amount()
-        for line in self.filtered('subscription'):
-            unit_price = line.price_unit or 0.0
-            unit_price = round(unit_price * (1 - (line.discount or 0.0) / 100.0), 5)
-            taxes = line.tax_id.compute_all(unit_price, line.order_id.currency_id, line.product_uom_qty,
-                                            product=line.product_id,
-                                            partner=line.order_id.partner_id)
-            line.update({
-                'actual_unit_price': round(unit_price, 3),
-                'price_tax': taxes['total_included'] - taxes['total_excluded'],
-                'price_total': taxes['total_included'],
-                'price_subtotal': taxes['total_excluded'],
-            })
-
-        return True
-
-    @api.multi
-    @api.depends('product_template_id')
-    def _compute_price_edit(self):
-        """
-        Compute if price_unit should be editable.
-        """
-        super(SaleOrderLine, self.filtered(lambda record: record.subscription != True))._compute_price_edit()
-        for line in self.filtered('subscription'):
-            line.number_of_issues = line.product_template_id.number_of_issues
-            if line.product_template_id.price_edit :
-                line.price_edit = True
 
     @api.multi
     def create_renewal_line(self, order_lines=[]):
