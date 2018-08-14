@@ -70,7 +70,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     @api.model
     def _prepare_invoice(self, partner, published_customer, payment_mode, operating_unit, lines, invoice_date, posting_date):
         self.ensure_one()
-#        line_ids = [x.id for x in lines['lines']]
         journal_id = self.env['account.invoice'].default_get(['journal_id'])['journal_id']
         if not journal_id:
             raise UserError(_('Please define an accounting sale journal for this company.'))
