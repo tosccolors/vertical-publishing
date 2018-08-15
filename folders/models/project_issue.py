@@ -6,6 +6,7 @@ import re
 class ProjectIssue(models.Model):
     _inherit = 'project.issue'
 
+
     @api.onchange('title_id', 'zip', 'user_id')
     def user_from_logistics_address(self):
         logistic_add = self.env['logistics.address.table']
