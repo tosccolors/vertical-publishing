@@ -9,6 +9,7 @@
                     <header>
                         <button class="oe_highlight" name="get_delivery_lists" string="Generate Lines" type="object" states="draft"/>
                         <button class="oe_highlight" name="get_delivery_lists" string="Re-Generate Lines" type="object" states="progress"/>
+                        <button class="oe_highlight" name="back2draft" string="Reset To Draft" type="object" states="progress"/>
                         <button class="oe_highlight" name="print_xls_report" string="Print" type="object" states="progress,done"/>
                         <button class="oe_highlight" name="action_done" string="Issues Delivered" type="object" states="progress"/>
                         <button class="oe_highlight" name="action_cancel" string="Cancel" type="object" states="progress"/>
@@ -23,6 +24,10 @@
                         <group col="4">
                             <field name="start_date" required="1"/>
                             <field name="end_date" required="1"/>
+                            <field name="type" required="1"/>
+                            <field name="title_ids" required="1" widget="many2many_tags" options="{'no_open': True,'no_create': True, 'no_create_edit': True}" domain="[('parent_id','=', False),('subscription_title','=',True)]"/>
+                            <field name="issue_ids" required="1" widget="many2many_tags" options="{'no_open': True,'no_create': True, 'no_create_edit': True}" domain="[('parent_id','!=', False),('parent_id','in', title_ids and title_ids[0][2]),('issue_date','!=', False),('issue_date','&gt;=', start_date),('issue_date','&lt;=', end_date)]"/>
+                            <field name="weekday_ids" required="1" widget="many2many_tags" options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                         </group>
                         <group name="Lists">
                             <field name="delivery_list" nolabel="1" readonly="1"/>
@@ -88,20 +93,14 @@
                             <field name="partner_id" context="{'show_address': 1}" options="{'always_reload': True}"/>
                             <field name="delivery_id" invisible="1"/>
                             <field name="title" string="Title"
-                               options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                               context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
-                                 'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }"/>
+                               options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                             <field name="product_uom_qty"/>
                         </group>
                         <group>
                             <field name="issue_ids" string="Issues"
-                               options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                               context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
-                                 'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
-                                    <tree create="true" edit="false" delete="true" copy="false">
-                                        <field name="name" string="Name" readonly="1"/>
-                                    </tree>
-                            </field>
+                               options="{'no_open': True,'no_create': True, 'no_create_edit': True}" widget="many2many_tags"/>
+                            <field name="weekday_ids" string="Weekdays"
+                               options="{'no_open': True,'no_create': True, 'no_create_edit': True}" widget="many2many_tags"/>
                             <field name="subscription_number" context="{'form_view_ref': 'publishing_subscription_order.view_order_form_subscriptions'}"/>
                             <field name="sub_order_line" context="{'form_view_ref': 'publishing_subscription_order.view_subscription_order_line_form'}"/>
 

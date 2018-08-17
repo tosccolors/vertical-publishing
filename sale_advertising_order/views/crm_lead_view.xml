@@ -593,8 +593,17 @@
                 </xpath>
                 <xpath expr="//sheet/group/group/field[@name='partner_id']" position="after" >
                     <field name="partner_name"/>
+                    <field name="partner_contact_id" string="Contact Person" context="{'default_parent_id': partner_id}"
+                           domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"/>
+                    <label for="contact_name"/>
+                    <div class="o_row">
+                        <field name="contact_name"/>
+                        <field name="title" placeholder="Title" domain="[]" options='{"no_open": True}'/>
+                    </div>
                     <field name="is_activity" invisible="1"/>
                 </xpath>
+                <xpath expr="//page[@name='lead']/group[1]/group[2]/label[@for='contact_name']" position="replace" />
+                <xpath expr="//page[@name='lead']/group[1]/group[2]/div[1]" position="replace" />
                 <xpath expr="//field[@name='partner_id']" position="attributes">
                     <attribute name="domain">[('customer', '=', True), ('parent_id', '=', False)]</attribute>
                 </xpath>
@@ -609,11 +618,23 @@
                            options='{"no_open": True}'/>
                     <field name="secondary_sector_ids" widget="many2many_tags"/>
                 </xpath>
-                <xpath expr="//sheet/notebook/page[@name='lead']/group/group[2]/div" position="before" >
-                    <field name="partner_contact_id" string="Contact Person" context="{'default_parent_id': partner_id}"
-                           domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"/>
+                <xpath expr="//sheet/notebook/page[1]" position="replace"></xpath>
+                <xpath expr="//sheet/notebook/page[@name='lead']" position="after">
+                    <page string="Internal Notes">
+                        <field name="description"/>
+                    </page>
                 </xpath>
+            </field>
+        </record>
 
+        <record id="crm_case_form_view_oppor_sale_crm" model="ir.ui.view">
+            <field name="name">crm.lead.oppor.inherited.sale_crm</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='sale_number']" position="replace">
+                    <field name="quotations_count" class="o_stat_value"/>
+                </xpath>
             </field>
         </record>
 
