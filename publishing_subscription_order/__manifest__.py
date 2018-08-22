@@ -53,6 +53,7 @@ This module allows you to use Sales Management to run your subscription sales
         "views/subscription_delivery_view.xml",
         "views/crm_lead_view.xml",
         "views/subscription_config_view.xml",
+        "views/subscription_wizard_view.xml"
     ],
     'qweb': [
         "static/src/xml/sales_team_dashboard.xml",

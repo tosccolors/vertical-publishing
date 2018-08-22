@@ -37,7 +37,8 @@
             </field>
         </record>
 
-        <menuitem id="menu_subscription_config" parent="sales_team.menu_sale_config" name="Subscriptions"  groups="sale_advertising_order.group_advertising_sales_user"/>
-        <menuitem id="menu_delivery_list_type" parent="menu_subscription_config" action="delivery_list_type_action" groups="sale_advertising_order.group_advertising_sales_user"/>
+        <menuitem id="menu_subscription_config_main" parent="sales_team.menu_sale_config" name="Subscriptions"  groups="sale_advertising_order.group_advertising_sales_user"/>
+        <menuitem id="menu_delivery_list_type" parent="menu_subscription_config_main" action="delivery_list_type_action" groups="sale_advertising_order.group_advertising_sales_user"/>
+
     </data>
 </odoo>
