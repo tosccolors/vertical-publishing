@@ -7,19 +7,19 @@ class DeliveryListReport(ReportXlsx):
 
     def generate_xlsx_report(self, workbook, data, deliveryLists):
 
-        def _form_data(deliveryobj):
+        def _form_data(deliverylistobj):
             row_datas = []
             seq=1
-            for deliverylistobj in deliveryobj.delivery_list:
+            for deliverylineobj in deliverylistobj.delivery_line_ids:
                 records =[]
                 records.append(seq)
-                records.append(deliverylistobj.subscription_number.name)
-                records.append(deliverylistobj.product_uom_qty)
-                records.append(deliverylistobj.partner_id.name)
-                records.append(deliverylistobj.partner_id.street+' '+deliverylistobj.partner_id.street2)
-                records.append(deliverylistobj.partner_id.street_number or '-')
-                records.append(deliverylistobj.partner_id.city)
-                records.append(deliverylistobj.partner_id.zip)
+                records.append(deliverylineobj.subscription_number.name)
+                records.append(deliverylineobj.product_uom_qty)
+                records.append(deliverylineobj.partner_id.name)
+                records.append(deliverylineobj.partner_id.street+' '+deliverylineobj.partner_id.street2)
+                records.append(deliverylineobj.partner_id.street_number or '-')
+                records.append(deliverylineobj.partner_id.city)
+                records.append(deliverylineobj.partner_id.zip)
                 seq+=1
                 row_datas.append(records)
             return row_datas
@@ -49,4 +49,4 @@ class DeliveryListReport(ReportXlsx):
         workbook.close()
 
 
-DeliveryListReport('report.report_subscription_delivery.xlsx', 'subscription.delivery')
+DeliveryListReport('report.report_subscription_delivery.xlsx', 'subscription.delivery.list')
