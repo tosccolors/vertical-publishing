@@ -1786,7 +1786,7 @@
        </record>
 
         <!--CRM: Activities Log-->
-        <menuitem id="menu_activities_log" name="Activities Log" parent="menu_crm_advertising"
+        <menuitem id="menu_activities_log" name="Activities Log" parent="menu_crm_advertising" groups="sales_team.group_sale_salesman"
                   action="crm_activity_report_action_tree" sequence="6"/>
 	</data>
 </odoo>
