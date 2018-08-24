@@ -36,6 +36,13 @@ class Partner(models.Model):
     quotation_count = fields.Integer(compute='_compute_quotation_count', string='# of Quotations')
     adv_quotation_count = fields.Integer(compute='_compute_adv_quotation_count', string='# of Advertising Quotations')
 
+    @api.multi
+    def _compute_activities_count(self):
+        activity_data = self.env['crm.activity.report'].read_group([('partner_id', 'in', self.ids),('subtype_id','not in', ('Lead Created','Stage Changed','Opportunity Won','Discussions','Note')), ('subtype_id','!=',False)], ['partner_id'], ['partner_id'])
+        mapped_data = {act['partner_id'][0]: act['partner_id_count'] for act in activity_data}
+        for partner in self:
+            partner.activities_count = mapped_data.get(partner.id, 0)
+
     def _compute_adv_sale_order_count(self):
         for partner in self:
             operator = 'child_of' if partner.is_company else '='  # the adv sales order count should counts the adv sales order of this company and all its contacts
@@ -70,7 +77,7 @@ class Partner(models.Model):
             partner.opportunity_count = partner.adv_opportunity_count + partner.next_activities_count + partner.activities_report_count
 
     def _compute_quotation_count(self):
-        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','not in',('sale','done')), ('advertising','=',False)],
+        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','not in',('sale','done','cancel')), ('advertising','=',False)],
                                                       fields=['partner_id'], groupby=['partner_id'])
         # read to keep the child/parent relation while aggregating the read_group result in the loop
         partner_child_ids = self.read(['child_ids'])
@@ -88,7 +95,7 @@ class Partner(models.Model):
             partner.adv_quotation_count = self.env['sale.order'].search_count(['|', ('published_customer', operator, partner.id), ('partner_id', operator, partner.id), ('state','not in',('sale','done','cancel')), ('advertising','=',True)])
 
     def _compute_sale_order_count(self):
-        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','not in',('draft','sent','cancel')), ('advertising','=',False)],
+        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','in',('sale','done')), ('advertising','=',False)],
                                                       fields=['partner_id'], groupby=['partner_id'])
         # read to keep the child/parent relation while aggregating the read_group result in the loop
         partner_child_ids = self.read(['child_ids'])
