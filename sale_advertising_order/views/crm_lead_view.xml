@@ -785,11 +785,23 @@
             </field>
         </record>
 
-        <!--Inherited search view for crm.lead-->
+        <!--Inherited search view for crm.lead(Pipeline/Next Activities)-->
         <record id="view_crm_case_opportunities_filter_inherited" model="ir.ui.view">
             <field name="name">crm.lead.search.opportunity.inherited</field>
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]/filter[1]" position="after">
+                   <filter string="Name Salesperson" context="{'group_by':'name_salesperson'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!--Inherited search view for crm.lead(Leads)-->
+        <record id="view_crm_case_leads_filter_inherited" model="ir.ui.view">
+            <field name="name">crm.lead.search.lead.inherited</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.view_crm_case_leads_filter"/>
             <field name="arch" type="xml">
                 <xpath expr="//group[1]/filter[1]" position="after">
                    <filter string="Name Salesperson" context="{'group_by':'name_salesperson'}"/>
