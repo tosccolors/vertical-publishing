@@ -13,6 +13,17 @@
                               (0, 0, {'view_mode': 'form', 'view_id': ref('view_order_form_subscriptions')})]"/>
         </record>
 
+        <!--Action for Subscription Sales Orders smart button in crm.lead-->
+        <record id="act_crm_lead_2_sale_order_subscription" model="ir.actions.act_window">
+            <field name="name">Subscription Sale Orders</field>
+            <field name="res_model">sale.order</field>
+            <field name="domain">[('subscription','=',True), ('state','in',('sale','done')), ('opportunity_id','=',active_id)]</field>
+            <field name="context">{'default_subscription':True, 'default_opportunity_id':active_id}</field>
+            <field name="view_ids"
+                       eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('view_order_subscription_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_order_form_subscriptions')})]"/>
+        </record>
+
         <record id="crm_case_form_view_oppor_subscription" model="ir.ui.view">
             <field name="name">crm.lead.form.opportunity</field>
             <field name="model">crm.lead</field>
@@ -27,10 +38,40 @@
             </field>
         </record>
 
+        <record id="crm_case_form_view_oppor_button_subscription" model="ir.ui.view">
+            <field name="name">crm.lead.oppor.inherited.crm.button</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="sale_advertising_order.crm_case_form_view_oppor_button"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(sale_advertising_order.act_crm_lead_2_quotation_adv)d']" position="after">
+                    <button class="oe_stat_button" type="action" name="%(publishing_subscription_order.act_crm_lead_2_quotation_subscription)d"
+                         icon="fa-pencil-square-o" context="{'default_partner_id':partner_id, 'search_default_quotations': 1}">
+                        <field string="Subs. Quote(s)" name="subs_quotations_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+                <xpath expr="//button[@name='%(sale_advertising_order.act_crm_lead_2_sale_orders_adv)d']" position="after">
+                    <button class="oe_stat_button" type="action" attrs="{'invisible': [('subs_sale_amount_total', '=', 0)]}"
+                            name="%(act_crm_lead_2_sale_order_subscription)d" icon="fa-usd"
+                            context="{'default_partner_id': partner_id}">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value"><field name="subs_sale_amount_total" widget="monetary" options="{'currency_field': 'company_currency'}"/></span>
+                            <span class="o_stat_text"> Subs. Orders</span>
+                        </div>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+
         <!--Inherited Action for Quotations smart button in crm.lead-->
         <!--Adding ('subscription', '=', False) in domain to filter subscription records in regular quotations smart button-->
         <record id="sale_advertising_order.act_crm_lead_2_quotation" model="ir.actions.act_window">
             <field name="domain">[('advertising','=',False), ('state','not in',('sale','done')), ('opportunity_id','=',active_id), ('subscription','=',False)]</field>
+        </record>
+
+        <!--Inherited Action for Sales Orders smart button in crm.lead-->
+        <!--Adding ('subscription', '=', False) in domain to filter subscription records in regular sales orders smart button-->
+        <record id="sale_advertising_order.act_crm_lead_2_sale_orders" model="ir.actions.act_window">
+            <field name="domain">[('opportunity_id', '=', active_id),('state','in',('sale','done')),('advertising', '=', False), ('subscription','=',False)]</field>
         </record>
 
     </data>

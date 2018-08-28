@@ -38,7 +38,7 @@ class Partner(models.Model):
 
     @api.multi
     def _compute_activities_count(self):
-        activity_data = self.env['crm.activity.report'].read_group([('partner_id', 'in', self.ids),('subtype_id','not in', ('Lead Created','Stage Changed','Opportunity Won','Discussions','Note')), ('subtype_id','!=',False)], ['partner_id'], ['partner_id'])
+        activity_data = self.env['crm.activity.report'].read_group([('partner_id', 'in', self.ids),('subtype_id','not in', ('Lead Created','Stage Changed','Opportunity Won','Discussions','Note','Lead aangemaakt','Fase gewijzigd','Prospect gewonnen','Discussies','Notitie')), ('subtype_id','!=',False)], ['partner_id'], ['partner_id'])
         mapped_data = {act['partner_id'][0]: act['partner_id_count'] for act in activity_data}
         for partner in self:
             partner.activities_count = mapped_data.get(partner.id, 0)

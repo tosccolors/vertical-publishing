@@ -54,30 +54,33 @@ class Lead(models.Model):
     quotations_count = fields.Integer("# of Quotations", compute='_compute_quotations_count')
     adv_quotations_count = fields.Integer("# of Advertising Quotations", compute='_compute_adv_quotations_count')
     name_salesperson = fields.Char('Name Salesperson')
+    adv_sale_amount_total= fields.Monetary(compute='_compute_sale_amount_total', string="Sum of Adv. Orders", currency_field='company_currency')
 
     @api.multi
     def _compute_quotations_count(self):
         for lead in self:
-            lead.quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',['sale','done','cancel'])])
+            lead.quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',['sale','done','cancel']), ('advertising', '=', False)])
 
     @api.depends('order_ids')
     def _compute_sale_amount_total(self):
         for lead in self:
-            total = 0.0
+            total = adv_total = 0.0
             nbr = 0
             company_currency = lead.company_currency or self.env.user.company_id.currency_id
             for order in lead.order_ids:
                 if order.state not in ('sale', 'done', 'cancel'):
                     nbr += 1
                 if order.state in ('sale', 'done'):
-                    total += order.currency_id.compute(order.amount_total, company_currency)
-            lead.sale_amount_total = total
-            lead.sale_number = nbr
+                    if not order.advertising and not order.subscription:
+                        total += order.currency_id.compute(order.amount_total, company_currency)
+                    if order.advertising:
+                        adv_total += order.currency_id.compute(order.amount_untaxed, company_currency)
+            lead.sale_amount_total, lead.adv_sale_amount_total, lead.sale_number = total, adv_total, nbr
 
     @api.multi
     def _compute_adv_quotations_count(self):
         for lead in self:
-            lead.adv_quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done')), ('advertising', '=', True)])
+            lead.adv_quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done','cancel')), ('advertising', '=', True)])
 
     @api.multi
     def _compute_activities_count(self):
