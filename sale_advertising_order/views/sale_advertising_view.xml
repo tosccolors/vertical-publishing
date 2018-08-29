@@ -1754,7 +1754,7 @@
                 </xpath>
                 <xpath expr="//filter[@name='opportunity']" position="after">
                     <separator/>
-                    <filter name="activities" string="Activities Log" domain="[('subtype_id','not in', ('Lead Created','Stage Changed','Opportunity Won','Discussions','Note')), ('subtype_id','!=',False)]" help="Show only activities logged with Activities available in configuration"/>
+                    <filter name="activities" string="Activities Log" domain="[('subtype_id','not in', ('Lead Created','Stage Changed','Opportunity Won','Discussions','Note','Lead aangemaakt','Fase gewijzigd','Prospect gewonnen','Discussies','Notitie')), ('subtype_id','!=',False)]" help="Show only activities logged with Activities available in configuration"/>
                 </xpath>
                 <xpath expr="//filter[@name='group_by_opportunity']" position="after">
                     <filter name="user_id" string="Salesperson" context="{'group_by':'user_id'}"/>
