@@ -126,7 +126,7 @@ class SaleOrderLine(models.Model):
     end_date = fields.Date('End Date')
     must_have_dates = fields.Boolean(related='product_id.product_tmpl_id.subscription_product', readonly=True, copy=False, store=True)
     number_of_issues = fields.Integer(string='No. Of Issues', digits=dp.get_precision('Product Unit of Measure'))
-    delivered_issues = fields.Integer(string='No. Of Issues delivered', digits=dp.get_precision('Product Unit of Measure'), copy=False)
+    delivered_issues = fields.Integer(string='Issues delivered', digits=dp.get_precision('Product Unit of Measure'), copy=False)
     can_cancel = fields.Boolean('Can cancelled?')
     can_renew = fields.Boolean('Can Renewed?', default=False)
     date_cancel = fields.Date('Cancelled date', help="Cron will cancel this line on selected date.")
@@ -181,7 +181,7 @@ class SaleOrderLine(models.Model):
             return {'value': vals}
 
         data['product_template_id'] = [('subscription_product', '=', True)]
-        if self.ad_class:
+        if self.ad_class and self.title:
             product_ids = self.env['product.template'].search(
                 [('categ_id', '=', self.ad_class.id), ('subscription_product', '=', True)])
             if product_ids:

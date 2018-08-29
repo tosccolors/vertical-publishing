@@ -746,9 +746,6 @@
         <record id="sale_crm.sale_action_quotations_new" model="ir.actions.act_window">
             <field name="domain">[('opportunity_id', '=', active_id), ('advertising','=',False),('subscription','=',False)]</field>
         </record>
-        <record id="sale_crm.sale_action_quotations" model="ir.actions.act_window">
-            <field name="domain">[('opportunity_id', '=', active_id), ('advertising','=',False),('subscription','=',False)]</field>
-        </record>
 
     <!-- View for sale.advertising.issue object -->
 		<record model="ir.ui.view" id="sale_advertising_issue_form">

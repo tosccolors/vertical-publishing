@@ -33,7 +33,7 @@ class Partner(models.Model):
     subs_sale_order_count = fields.Integer(compute='_compute_subs_sale_order_count', string='# of Sales Orders')
 
     def _compute_subs_quotation_count(self):
-        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('subscription','=',True),('state','not in',('sale','done'))],
+        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('subscription','=',True),('state','not in',('sale','done','cancel'))],
                                                       fields=['partner_id'], groupby=['partner_id'])
         # read to keep the child/parent relation while aggregating the read_group result in the loop
         partner_child_ids = self.read(['child_ids'])
@@ -68,7 +68,7 @@ class Partner(models.Model):
     def _compute_quotation_count(self):
         for partner in self:
             operator = 'child_of' if partner.is_company else '='
-            partner.quotation_count = self.env['sale.order'].search_count([('partner_id', operator, partner.id), ('state','not in',('sale','done')), ('advertising', '=', False), ('subscription', '=', False)])
+            partner.quotation_count = self.env['sale.order'].search_count([('partner_id', operator, partner.id), ('state','not in',('sale','done','cancel')), ('advertising', '=', False), ('subscription', '=', False)])
 
     # Adding ('subscription', '=', False) in filter criteria to filter out subscription records from regular sales orders smart button
     @api.multi

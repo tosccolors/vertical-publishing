@@ -538,12 +538,12 @@
         </record>
 
         <!--CRM: Next Activities-->
-        <menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_crm_advertising"
+        <menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_crm_advertising" groups="sale_advertising_order.group_next_activities_menu"
                   action="crm.crm_lead_action_activities" sequence="5" />
 
         <!--Regular Sales Next Activities-->
         <record model="ir.ui.menu" id="crm.crm_lead_menu_activities">
-            <field name="groups_id" eval="[(6,0,[ref('group_regular_sales_crm_menus')])]"/>
+            <field name="groups_id" eval="[(6,0,[ref('sale_advertising_order.group_next_activities_menu')])]"/>
         </record>
 
         <!-- Advertising 'My Pipeline' menu : Server action, act_window_views and act_windows -->
@@ -624,16 +624,23 @@
                         <field name="description"/>
                     </page>
                 </xpath>
+                <xpath expr="//field[@name='mobile']" position="replace"/>
+                <xpath expr="//field[@name='phone']" position="after">
+                    <field name="mobile"/>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="name_salesperson"/>
+                </xpath>
             </field>
         </record>
 
-        <record id="crm_case_form_view_oppor_sale_crm" model="ir.ui.view">
-            <field name="name">crm.lead.oppor.inherited.sale_crm</field>
+        <record id="crm_case_form_view_leads_inherited" model="ir.ui.view">
+            <field name="name">crm.lead.form.lead</field>
             <field name="model">crm.lead</field>
-            <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+            <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='sale_number']" position="replace">
-                    <field name="quotations_count" class="o_stat_value"/>
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="name_salesperson"/>
                 </xpath>
             </field>
         </record>
@@ -674,6 +681,14 @@
             <field name="domain">[('lead_id', '=', active_id)]</field>
         </record>
 
+        <!--Action for Sale Orders smart button in crm.lead-->
+        <record id="act_crm_lead_2_sale_orders" model="ir.actions.act_window">
+            <field name="name">Sale Orders</field>
+            <field name="res_model">sale.order</field>
+            <field name="domain">[('opportunity_id', '=', active_id),('state','in',('sale','done'))]</field>
+            <field name="context">{'search_default_opportunity_id': [active_id], 'default_opportunity_id': active_id}</field>
+        </record>
+
         <record id="crm_case_form_view_oppor_button" model="ir.ui.view">
             <field name="name">crm.lead.oppor.inherited.crm.button</field>
             <field name="model">crm.lead</field>
@@ -694,6 +709,23 @@
                         icon="fa-clock-o">
                         <field string="Activities Log" name="activities_count" widget="statinfo"/>
                     </button>
+                </xpath>
+
+                <!--<xpath expr="//field[@name='sale_number']" position="replace">
+                    <field name="quotations_count" class="o_stat_value"/>
+                </xpath>-->
+                <xpath expr="//div[@name='button_box']/button[5]" position="replace">
+                    <button class="oe_stat_button" type="action" attrs="{'invisible': [('sale_amount_total', '=', 0)]}"
+                            name="%(act_crm_lead_2_sale_orders)d" icon="fa-usd"
+                            context="{'default_partner_id': partner_id}">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value"><field name="sale_amount_total" widget="monetary" options="{'currency_field': 'company_currency'}"/></span>
+                            <span class="o_stat_text"> Orders</span>
+                        </div>
+                    </button>
+                </xpath>
+                <xpath expr="//button[@name='%(sale_crm.sale_action_quotations)d']" position="attributes">
+                    <attribute name="context">{'default_partner_id': partner_id, 'search_default_quotations':1}</attribute>
                 </xpath>
             </field>
         </record>
@@ -749,6 +781,18 @@
             <field name="arch" type="xml">
                 <xpath expr="//kanban" position="attributes">
                     <attribute name="on_create"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!--Inherited search view for crm.lead-->
+        <record id="view_crm_case_opportunities_filter_inherited" model="ir.ui.view">
+            <field name="name">crm.lead.search.opportunity.inherited</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[1]/filter[1]" position="after">
+                   <filter string="Name Salesperson" context="{'group_by':'name_salesperson'}"/>
                 </xpath>
             </field>
         </record>

@@ -38,7 +38,7 @@ class Lead(models.Model):
     @api.multi
     def _compute_quotations_count(self):
         for lead in self:
-            lead.quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done')), ('advertising', '=', False), ('subscription', '=', False)])
+            lead.quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',['sale','done','cancel'])])
 
     @api.model
     def retrieve_sales_dashboard(self):
