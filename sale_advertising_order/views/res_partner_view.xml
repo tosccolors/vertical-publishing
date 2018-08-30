@@ -72,7 +72,7 @@
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('crm.crm_case_form_view_oppor')}),
                           (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
-            <field name="domain">[('type','=','opportunity'), ('partner_id','child_of',active_id), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False), '|', '|', '|', ('stage_id.name','=','Qualified'), ('stage_id.name','=','Proposition'), ('stage_id.name','=','Gekwalificeerd'), ('stage_id.name','=','Voorstel')]</field>
+            <field name="domain">[('type','=','opportunity'), ('partner_id','child_of',active_id), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False)]</field>
             <field name="context">{
                     'default_type': 'opportunity',
                     'default_user_id': uid,
@@ -182,7 +182,7 @@
                     <button class="oe_stat_button o_res_partner_tip_opp" type="action"
                         attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}"
                         name="%(sale_advertising_order.act_res_partner_2_next_activities_advertising)d"
-                        icon="fa-star">
+                        icon="fa-star" groups="sale_advertising_order.group_next_activities_menu">
                         <field string="Next Activities" name="next_activities_count" widget="statinfo"/>
                     </button>
                  </xpath>
