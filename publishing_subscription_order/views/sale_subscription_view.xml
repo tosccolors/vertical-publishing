@@ -201,6 +201,8 @@
                                         attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
                                         context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                        />
+                                    <field name="start_date" />
+                                    <field name="end_date" />
                                     <!--field name="layout_category_id" groups="sale.group_sale_layout,base.group_no_one" /-->
                                     <field name="layout_category_id" groups="base.group_no_one" />
                                     <field name="name" groups="base.group_no_one"/>
