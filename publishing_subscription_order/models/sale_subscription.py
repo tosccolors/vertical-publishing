@@ -167,7 +167,7 @@ class SaleOrderLine(models.Model):
             data = {'ad_class': []}
         return {'value': vals, 'domain': data}
 
-    @api.onchange('ad_class')
+    @api.onchange('ad_class','title')
     def onchange_ad_class(self):
         vals, data, result = {}, {}, {}
 
@@ -181,17 +181,26 @@ class SaleOrderLine(models.Model):
             return {'value': vals}
 
         data['product_template_id'] = [('subscription_product', '=', True)]
+        if self.ad_class: data['product_template_id'] += [('categ_id', '=', self.ad_class.id)]
         if self.ad_class and self.title:
-            product_ids = self.env['product.template'].search(
-                [('categ_id', '=', self.ad_class.id), ('subscription_product', '=', True)])
+            product_ids = self.env['product.template'].search([('categ_id', '=', self.ad_class.id), ('subscription_product', '=', True)])
             if product_ids:
-                data['product_template_id'] += [('categ_id', '=', self.ad_class.id)]
-                if len(product_ids) == 1:
-                    vals['product_template_id'] = product_ids[0]
-                    vals['product_uom'] = product_ids.uom_id
-                    vals['number_of_issues'] = product_ids.number_of_issues
-                    vals['can_renew'] = product_ids.can_renew
-                    vals['renew_product_id'] = product_ids.renew_product_id
+                ids = []
+                for product in product_ids:
+                    if self.title.product_attribute_value_id:
+                        if self.title.product_attribute_value_id.id in product.mapped('attribute_line_ids').mapped('value_ids').ids:
+                            ids.append(product.id)
+                    else:
+                        if not product.attribute_line_ids: ids.append(product.id)
+
+                data['product_template_id'] += [('id', 'in', ids)]
+                product_template_ids = self.env['product.template'].search([('subscription_product', '=', True), ('categ_id', '=', self.ad_class.id), ('id', 'in', ids)])
+                if len(product_template_ids) == 1:
+                    vals['product_template_id'] = product_template_ids[0]
+                    vals['product_uom'] = product_template_ids.uom_id
+                    vals['number_of_issues'] = product_template_ids.number_of_issues
+                    vals['can_renew'] = product_template_ids.can_renew
+                    vals['renew_product_id'] = product_template_ids.renew_product_id
                 else:
                     vals['product_template_id'] = False
             else:
@@ -279,7 +288,7 @@ class SaleOrderLine(models.Model):
             else:
                 pav = False
             product_id = self.env['product.product'].search(
-                [('product_tmpl_id', '=', product_template_id.id), ('attribute_value_ids', '=', pav)])
+                [('product_tmpl_id', '=', product_template_id.id), ('attribute_value_ids', '=', pav)], limit=1)
             if product_id:
                 name = product_id.name_get()[0][1]
                 if product_id.description_sale:
