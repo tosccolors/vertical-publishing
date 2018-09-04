@@ -225,7 +225,7 @@
                                             <field name="price_edit" invisible="1"/>
                                             <field name="price_unit" readonly="0" attrs="{'invisible': ['|',('multi_line','=', True),('price_edit','!=', True)]}"/>
                                             <field name="price_unit_dummy" readonly="1" attrs="{'invisible': ['|',('multi_line','=', True),('price_edit','=', True)]}"/>
-                                            <field name="comb_list_price" attrs="{'readonly': [('price_edit', '=', False)],'invisible': [('multi_line','=', False)]}"/>
+                                            <field name="comb_list_price" readonly="True" attrs="{'invisible': [('multi_line','=', False)]}"/>
                                             <field name="color_surcharge" />
                                             <field name="color_surcharge_amount" attrs="{'invisible': [('color_surcharge','=', False)]}"/>
                                             <field name="actual_unit_price" attrs="{'invisible': [('multi_line','=', True)]}"/>
@@ -566,7 +566,7 @@
             <field name="name">Sales Orders</field>
             <field name="res_model">sale.order</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form,calendar,graph</field>
+            <field name="view_mode">tree,form,calendar,pivot,graph</field>
             <field name="search_view_id" ref="advertising_order_view_search_inherit_sale"/>
             <field name="domain">[('advertising','=',True),('state','in',('sale','done'))]</field>
             <field name="context">{'default_advertising':True}</field>
@@ -988,7 +988,7 @@
                                 <field name="price_edit" invisible="1"/>
                                 <field name="price_unit" readonly="0" attrs="{'invisible': [('price_edit','!=', True)]}"/>
                                 <field name="price_unit_dummy" readonly="1" attrs="{'invisible': [('multi_line','!=', False),('price_edit','=', True)]}"/>
-                                <field name="comb_list_price" attrs="{'readonly': [('price_edit', '=', False)], 'invisible': [('multi_line','=', False)]}"/>
+                                <field name="comb_list_price" readonly="True" attrs="{'invisible': [('multi_line','=', False)]}"/>
                                 <field name="color_surcharge" />
                                 <field name="color_surcharge_amount" attrs="{'invisible': [('color_surcharge','=', False)]}"/>
                                 <field name="actual_unit_price" attrs="{'invisible': [('multi_line','=', True)]}"/>
@@ -1243,7 +1243,9 @@
                         <filter string="Advertiser" domain="[]" context="{'group_by':'order_advertiser_id'}"/>
                         <filter string="Agency" domain="[]" context="{'group_by':'order_agency_id'}"/>
                         <filter string="Product" domain="[]" context="{'group_by':'product_id'}"/>
+                        <filter string="Ad class" domain="[]" context="{'group_by':'ad_class'}"/>
                         <filter string="Order" domain="[]" context="{'group_by':'order_id'}"/>
+                        <filter string="Salesteam" domain="[]" context="{'group_by':'order_team_id'}"/>
                         <filter string="Salesperson" domain="[]" context="{'group_by':'salesman_id'}"/>
                         <filter string="Account Manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
                         <filter string="Issue Date" icon="terp-personal" domain="[]" context="{'group_by':'issue_date'}"/>

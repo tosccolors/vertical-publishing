@@ -42,6 +42,7 @@ This module allows you to use Sales Management to run your subscription sales
     'data': [
         "data/ir_sequence_data.xml",
         "security/ir.model.access.csv",
+        "demo/subscription_demo.xml",
         "report/subscription_delivery_report.xml",
         "data/cron_data.xml",
         "data/payment_data.xml",
@@ -51,6 +52,8 @@ This module allows you to use Sales Management to run your subscription sales
         "views/res_config_view.xml",
         "views/subscription_delivery_view.xml",
         "views/crm_lead_view.xml",
+        "views/subscription_config_view.xml",
+        "views/subscription_wizard_view.xml"
     ],
     'qweb': [
         "static/src/xml/sales_team_dashboard.xml",

@@ -3,7 +3,7 @@
     <data>
         <report
                 id="report_delivery_list_report_xlsx"
-                model="subscription.delivery"
+                model="subscription.delivery.list"
                 string="Delivery List XLSX"
                 report_type="xlsx"
                 name="report_subscription_delivery.xlsx"
