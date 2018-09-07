@@ -209,6 +209,15 @@ class SaleOrderLine(models.Model):
             vals['product_template_id'] = False
             vals['product_id'] = False
 
+        if self.title:
+            adv_issue = self.env['sale.advertising.issue'].search([('parent_id', '=', self.title.id),('issue_date', '!=', False),('issue_date', '>', datetime.today().date())], order='issue_date', limit=1)
+            if adv_issue:
+                self.start_date = adv_issue.issue_date
+            else:
+                self.start_date = self.end_date = datetime.today().date() + timedelta(days=1)
+        else:
+            self.start_date = self.end_date = False
+
         return {'value': vals, 'domain': data, 'warning': result}
 
 
@@ -244,10 +253,9 @@ class SaleOrderLine(models.Model):
                 vals['end_date'] = datetime.strptime(str(self.start_date), "%Y-%m-%d").date() + timedelta(
                 days=self.product_template_id.subscr_number_of_days)
         else:
-            vals = {
-                'start_date': False,
-                'end_date': False
-            }
+            vals = {'end_date': False}
+            if not self.title:
+                vals = {'start_date': False}
         return {'value': vals}
 
     @api.onchange('product_template_id')
