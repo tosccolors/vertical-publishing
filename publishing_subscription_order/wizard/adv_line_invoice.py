@@ -19,7 +19,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             res['name'] = line.name
         return res
 
-    '''@api.model
+    @api.model
     def _prepare_invoice(self, partner, published_customer, payment_mode, operating_unit, lines, invoice_date, posting_date):
         res = super(AdOrderLineMakeInvoice, self)._prepare_invoice(partner, published_customer, payment_mode,
                                                                    operating_unit, lines, invoice_date, posting_date)
@@ -33,4 +33,4 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                     if pay_mode and pay_mode.bank_account_link == 'fixed':
                         res['partner_bank_id'] = pay_mode.fixed_journal_id.bank_account_id
                 break
-        return res'''
+        return res
