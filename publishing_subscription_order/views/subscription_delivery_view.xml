@@ -135,8 +135,13 @@
             <field name="model">subscription.delivery.list</field>
             <field name="arch" type="xml">
                 <search string="Search List Delivery">
+                    <field name="title_id" string="Title" domain="[('title_id', 'ilike', 'self')]" />
+                    <field name="issue_date" string="Issue Date"/>
+                    <separator/>
+                    <field name="type" string="Delivery Type" />
                     <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]" />
                     <filter name="done" string="Done" domain="[('state', '=', 'done')]" />
+
                     <group string="Group By" name="groupby">
                         <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
                     </group>
@@ -208,9 +213,6 @@
             </field>
         </record>
 
-        <menuitem id="subscription_delivery_line_menu" parent="menu_subscription_sales_main" action="subscription_delivery_line_action" groups="sales_team.group_sale_salesman,sales_team.group_sale_manager" sequence="23"/>
-
-
         <record id="view_subscription_order_line_form_delivery_list" model="ir.ui.view">
             <field name="name">sale.order.line.delivery.list</field>
             <field name="model">sale.order.line</field>
@@ -224,6 +226,9 @@
                 </field>
             </field>
         </record>
+
+        <!--<menuitem id="subscription_delivery_line_menu" parent="menu_subscription_sales_main" action="subscription_delivery_line_action" groups="sales_team.group_sale_salesman,sales_team.group_sale_manager" sequence="23"/>-->
+
 
 
     </data>

@@ -233,6 +233,7 @@ class SubscriptionDeliveryList(models.Model):
     _name = 'subscription.delivery.list'
     _description = 'Subscription Delivery List'
     _rec_name = 'delivery_date'
+    _order = 'issue_date, delivery_date'
 
     @api.multi
     @api.depends('issue_date')
@@ -243,7 +244,7 @@ class SubscriptionDeliveryList(models.Model):
             sobj.weekday_id = weekdays.search([('name', '=', dt.strftime('%A'))]).ids[0]
 
     name = fields.Char(string='Delivery Reference', required=True, copy=False, readonly=True, states={'draft': [('readonly', False)]}, index=True, default=lambda self: _('New'))
-    delivery_id = fields.Many2one('subscription.title.delivery', 'Title', readonly=True, states={'draft': [('readonly', False)]}, ondelete='cascade')
+    delivery_id = fields.Many2one('subscription.title.delivery', 'Delivery Title', readonly=True, states={'draft': [('readonly', False)]}, ondelete='cascade')
     delivery_date = fields.Date('Delivery Date', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
     weekday_id = fields.Many2one('week.days', compute=_compute_weekday, string='Weekday', readonly=True, copy=False)
     type = fields.Many2one('delivery.list.type', string='Type', readonly=True, states={'draft': [('readonly', False)]}, copy=False)
@@ -262,14 +263,18 @@ class SubscriptionDeliveryList(models.Model):
 
     @api.multi
     def generate_delivery_lines(self):
+        '''
 
-        ######update delivered issues to Sale order lines can be done to make boolean field true once it's completed need to check with Willem######
+         Crates delivery line for all delivery order
+
+        '''
+
 
         SOL = self.env['sale.order.line']
         advIssue = self.env['sale.advertising.issue']
 
         for list in self:
-            sol_domain = [('title', '=', list.title_id.id), ('state', '=', 'sale'), ('subscription', '=', True), ('delivery_type', '=', list.type.id), ('start_date', '<=', list.issue_date), ('end_date', '>=', list.issue_date), ('company_id', '=', list.company_id.id)]
+            sol_domain = [('title', '=', list.title_id.id), ('state', '=', 'sale'), ('subscription', '=', True), ('digital_subscription','=',False), ('delivery_type', '=', list.type.id), ('start_date', '<=', list.issue_date), ('end_date', '>=', list.issue_date), ('company_id', '=', list.company_id.id)]
             self.env.cr.execute("SELECT array_agg(sub_order_line) FROM subscription_delivery_line WHERE delivery_list_id = %s"%(list.id))
             currSOL = self.env.cr.fetchall()[0][0]
             sol_domain = sol_domain + [('id', 'not in', currSOL)] if currSOL else sol_domain
@@ -310,7 +315,7 @@ class SubscriptionDeliveryList(models.Model):
     def generate_all_delivery_lines(self):
         SOL = self.env['sale.order.line']
 
-        sol_domain = [('state', '=', 'sale'), ('subscription', '=', True)]
+        sol_domain = [('state', '=', 'sale'), ('subscription', '=', True),('digital_subscription','=',False)]
         sol_query_line = SOL._where_calc(sol_domain)
         sol_tables, sol_where_clause, sol_where_clause_params = sol_query_line.get_sql()
 
