@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!--Delivery List Type-->
+        <record id="delivery_list_type_regular" model="delivery.list.type">
+            <field name="name">Regulier</field>
+        </record>
+
+    </data>
+</odoo>

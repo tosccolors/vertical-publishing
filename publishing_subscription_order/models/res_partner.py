@@ -87,3 +87,5 @@ class Partner(models.Model):
     def subscription_customer_payment(self):
         if self.is_subscription_customer and not self.subscription_customer_payment_mode_id:
             self.subscription_customer_payment_mode_id = self.env.ref('publishing_subscription_order.payment_mode_inbound_subscriptiondd1', False)
+        if self.is_subscription_customer and not self.property_subscription_payment_term_id:
+            self.property_subscription_payment_term_id = self.env.ref('bdumedia.account_payment_term_14', False)
