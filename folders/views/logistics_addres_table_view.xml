@@ -33,10 +33,8 @@
             <field name="priority">20</field>
             <field name="arch" type="xml">
                 <pivot string="Logistics Table">
-                    <field name="country_id" type="row"/>
-                    <field name="province_id" type="row"/>
-                    <field name="city" type="row"/>
-                    <field name="distribution_area" type="row"/>
+                    <field name="zip" type="row"/>
+                    <field name="folder_addresses" type="col"/>
                 </pivot>
             </field>
         </record>
@@ -48,8 +46,8 @@
             <field name="priority">20</field>
             <field name="arch" type="xml">
                 <graph string="Logistics Table">
-                    <field name="country_id" type="row"/>
-                    <field name="province_id" type="col"/>
+                    <field name="zip" type="row"/>
+                    <field name="folder_addresses" type="col"/>
                 </graph>
             </field>
         </record>
@@ -89,6 +87,28 @@
                         </group>
                     </sheet>
                 </form>
+            </field>
+        </record>
+
+        <!--Logistics Address Table Search view-->
+        <record id="view_logistics_address_table_search" model="ir.ui.view">
+            <field name="name">Logistics Address Table Search</field>
+            <field name="model">logistics.address.table</field>
+            <field name="arch" type="xml">
+                <search string="Search Logistics Address Table">
+                    <field name="zip" />
+                    <field name="city" />
+                    <field name="municipality" />
+                    <field name="title_id" />
+                    <field name="user_id" />
+                   <group expand="0" string="Group By...">
+                       <filter string="Zip" context="{'group_by' : 'zip'}" />
+                       <filter string="City" context="{'group_by' : 'city'}" />
+                       <filter string="Municipality" context="{'group_by' : 'municipality'}" />
+                       <filter string="Title" context="{'group_by' : 'title_id'}" />
+                       <filter string="Logistics Service Provider" context="{'group_by': 'user_id'}"/>
+                   </group>
+               </search>
             </field>
         </record>
 

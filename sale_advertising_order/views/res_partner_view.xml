@@ -42,7 +42,7 @@
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('crm.crm_case_form_view_oppor')}),
                           (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
-            <field name="domain">[('type','=','opportunity'), ('partner_id','child_of',active_id), ('is_activity', '=', False), '|', ('stage_id.name','=','Qualified'), ('stage_id.name','=','Proposition')]</field>
+            <field name="domain">[('type','=','opportunity'), ('partner_id','child_of',active_id), ('is_activity', '=', False), '|', '|', '|', ('stage_id.name','=','Qualified'), ('stage_id.name','=','Proposition'), ('stage_id.name','=','Gekwalificeerd'), ('stage_id.name','=','Voorstel')]</field>
             <field name="context">{
                     'default_type': 'opportunity',
                     'default_user_id': uid,
@@ -72,7 +72,7 @@
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('crm.crm_case_form_view_oppor')}),
                           (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
-            <field name="domain">[('type','=','opportunity'), ('partner_id','child_of',active_id), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False), '|', ('stage_id.name','=','Qualified'), ('stage_id.name','=','Proposition')]</field>
+            <field name="domain">[('type','=','opportunity'), ('partner_id','child_of',active_id), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False), '|', '|', '|', ('stage_id.name','=','Qualified'), ('stage_id.name','=','Proposition'), ('stage_id.name','=','Gekwalificeerd'), ('stage_id.name','=','Voorstel')]</field>
             <field name="context">{
                     'default_type': 'opportunity',
                     'default_user_id': uid,
