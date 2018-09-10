@@ -51,6 +51,7 @@
             <field name="model">subscription.title.delivery</field>
             <field name="arch" type="xml">
                 <search string="Search Title Delivery">
+                    <field name="title_id"/>
                     <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]" />
                     <filter name="done" string="Done" domain="[('state', '=', 'done')]" />
                     <group string="Group By" name="groupby">

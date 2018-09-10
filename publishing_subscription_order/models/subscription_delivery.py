@@ -274,7 +274,7 @@ class SubscriptionDeliveryList(models.Model):
         advIssue = self.env['sale.advertising.issue']
 
         for list in self:
-            sol_domain = [('title', '=', list.title_id.id), ('state', '=', 'sale'), ('subscription', '=', True), ('digital_subscription','=',False), ('delivery_type', '=', list.type.id), ('start_date', '<=', list.issue_date), ('end_date', '>=', list.issue_date), ('company_id', '=', list.company_id.id)]
+            sol_domain = [('title', '=', list.title_id.id), ('state', '=', 'sale'), ('subscription', '=', True), ('product_id.digital_subscription','=',False), ('delivery_type', '=', list.type.id), ('start_date', '<=', list.issue_date), ('end_date', '>=', list.issue_date), ('company_id', '=', list.company_id.id)]
             self.env.cr.execute("SELECT array_agg(sub_order_line) FROM subscription_delivery_line WHERE delivery_list_id = %s"%(list.id))
             currSOL = self.env.cr.fetchall()[0][0]
             sol_domain = sol_domain + [('id', 'not in', currSOL)] if currSOL else sol_domain
@@ -315,7 +315,7 @@ class SubscriptionDeliveryList(models.Model):
     def generate_all_delivery_lines(self):
         SOL = self.env['sale.order.line']
 
-        sol_domain = [('state', '=', 'sale'), ('subscription', '=', True),('digital_subscription','=',False)]
+        sol_domain = [('state', '=', 'sale'), ('subscription', '=', True),('product_id.digital_subscription','=',False)]
         sol_query_line = SOL._where_calc(sol_domain)
         sol_tables, sol_where_clause, sol_where_clause_params = sol_query_line.get_sql()
 
