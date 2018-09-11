@@ -12,11 +12,12 @@ class DeliveryListReport(ReportXlsx):
             seq=1
             for deliverylineobj in deliverylistobj.delivery_line_ids:
                 records =[]
+                add = (deliverylineobj.partner_id.street+' '+deliverylineobj.partner_id.street2) if deliverylineobj.partner_id.street2 else deliverylineobj.partner_id.street
                 records.append(seq)
                 records.append(deliverylineobj.subscription_number.name)
                 records.append(deliverylineobj.product_uom_qty)
                 records.append(deliverylineobj.partner_id.name)
-                records.append(deliverylineobj.partner_id.street+' '+deliverylineobj.partner_id.street2)
+                records.append(add)
                 records.append(deliverylineobj.partner_id.street_number or '-')
                 records.append(deliverylineobj.partner_id.city)
                 records.append(deliverylineobj.partner_id.zip)
@@ -37,7 +38,7 @@ class DeliveryListReport(ReportXlsx):
         for deliveryobj in deliveryLists:
             row_datas = _form_data(deliveryobj)
             if row_datas:
-                report_name = deliveryobj.name
+                report_name = deliveryobj.issue_id.name + '('+deliveryobj.type.name+')'
                 sheet = workbook.add_worksheet(report_name[:31])
                 sheet.merge_range(0, 0, 0, 10,report_name, merge_format) #(first row, first col, last row, last col)
                 for i, title in enumerate(header):
