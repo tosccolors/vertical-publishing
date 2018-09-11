@@ -44,7 +44,7 @@
                         <group name="subscription">
                             <field name="is_subscription_customer"/>
                             <!--<field name="credit_limit" attrs="{'invisible': [('is_subscription_customer', '=', False)],'required': [('is_subscription_customer', '=', True)]}"/>-->
-                            <field name="subscription_customer_payment_mode_id" attrs="{'invisible': [('is_subscription_customer', '=', False)]}"/>
+                            <field name="subscription_customer_payment_mode_id" widget="selection" attrs="{'invisible': [('is_subscription_customer', '=', False)]}"/>
                             <field name="property_subscription_payment_term_id" attrs="{'invisible': [('is_subscription_customer', '=', False)]}"/>
                         </group>
                     </group>
