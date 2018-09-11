@@ -512,11 +512,6 @@ class SaleOrderLine(models.Model):
             if line.medium and line.medium in [self.env.ref('sale_advertising_order.magazine_advertising_category'),self.env.ref('sale_advertising_order.magazine_online_advertising_category')]:
                 line.magazine = True
 
-    @api.depends('tax_id')
-    @api.multi
-    def _compute_tax_id(self):
-        for line in self:
-            if line.product_id: line.tax_id = [(6,0,line.product_id.taxes_id.ids)]
 
     mig_remark = fields.Text('Migration Remark')
     layout_remark = fields.Text('Material Remark')
@@ -590,7 +585,6 @@ class SaleOrderLine(models.Model):
     proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False)
     proof_number_payer = fields.Boolean('Proof Number Payer', default=False)
     booklet_surface_area = fields.Float(related='product_template_id.booklet_surface_area', readonly=True, string='Booklet Surface Area',digits=dp.get_precision('Product Unit of Measure'))
-    tax_id = fields.Many2many('account.tax', compute='_compute_tax_id', string='Taxes', domain=['|', ('active', '=', False), ('active', '=', True)])
 
     @api.onchange('medium')
     def onchange_medium(self):
