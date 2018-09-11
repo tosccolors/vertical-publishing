@@ -7,19 +7,9 @@
             <field name="arch" type="xml">
                 <form string="Subscription Title delivery" create="false" edit="false" delete="false" copy="false">
                     <header>
-                        <button class="oe_highlight" name="generate_delivery_list" string="Generate Delivery List" type="object" states="draft"/>
-                        <button class="oe_highlight" name="generate_delivery_list" string="Re-Generate Delivery List" type="object" states="progress"/>
-                        <button class="oe_highlight" name="action_progress" string="In Progress" type="object" states="draft"/>
-                        <button class="oe_highlight" name="action_done" string="Validate" type="object" states="progress"/>
-                        <button class="oe_highlight" name="action_cancel" string="Cancel" type="object" states="progress"/>
-                        <field name="state" widget="statusbar" />
+                        <button class="oe_highlight" name="generate_delivery_list" string="Generate Delivery List" type="object"/>
                     </header>
                     <sheet>
-                        <div class="oe_title">
-                            <h1>
-                                <field name="name" readonly="1"/>
-                            </h1>
-                        </div>
                         <group>
                             <field name="title_id" domain="[('subscription_title','=',True)]"/>
                             <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
@@ -37,10 +27,8 @@
             <field name="name">subscription.title.delivery.tree</field>
             <field name="model">subscription.title.delivery</field>
             <field name="arch" type="xml">
-                <tree string="Subscription Title Delivery" colors="blue:state=='draft'" create="false" edit="false" delete="false" copy="false">
-                    <field name="name" />
+                <tree string="Subscription Title Delivery" create="false" edit="false" delete="false" copy="false">
                     <field name="title_id"/>
-                    <field name="state"/>
                 </tree>
             </field>
         </record>
@@ -52,10 +40,8 @@
             <field name="arch" type="xml">
                 <search string="Search Title Delivery">
                     <field name="title_id"/>
-                    <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]" />
-                    <filter name="done" string="Done" domain="[('state', '=', 'done')]" />
                     <group string="Group By" name="groupby">
-                        <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
+                        <filter name="title_groupby" string="Title" context="{'group_by': 'title_id'}"/>
                     </group>
                 </search>
             </field>
@@ -91,11 +77,6 @@
                         <field name="state" widget="statusbar" />
                     </header>
                     <sheet>
-                        <div class="oe_title">
-                            <h1>
-                                <field name="name" readonly="1"/>
-                            </h1>
-                        </div>
                         <group cols="4">
                             <field name="delivery_date"/>
                             <field name="title_id"/>
