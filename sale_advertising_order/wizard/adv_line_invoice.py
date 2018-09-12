@@ -69,7 +69,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 
     @api.model
     def _prepare_invoice(self, partner, published_customer, payment_mode, operating_unit, lines, invoice_date, posting_date):
-        self.ensure_one()
+#        self.ensure_one()
 #        line_ids = [x.id for x in lines['lines']]
         journal_id = self.env['account.invoice'].default_get(['journal_id'])['journal_id']
         if not journal_id:
@@ -179,6 +179,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             vals = self._prepare_invoice(partner, published_customer, payment_mode, operating_unit,
                                          lines, inv_date, post_date)
             invoice = self.env['account.invoice'].create(vals)
+            invoice.compute_taxes()
             return invoice.id
         count = 0
         for line in chunk:
@@ -189,7 +190,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                 if not key in invoices:
                     invoices[key] = {'lines':[], 'name': ''}
 
-                inv_line_vals = self.invoice_line_create(line)
+                inv_line_vals = self._prepare_invoice_line(line)
                 invoices[key]['lines'].append((0, 0, inv_line_vals))
                 if count < 3:
                     invoices[key]['name'] += unidecode(line.name)+' / '
@@ -274,13 +275,5 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         }
         return res
 
-    @api.multi
-    def invoice_line_create(self, line):
-        """
-        Create an invoice line.
-        """
-        self.ensure_one()
-        vals = self._prepare_invoice_line(line)
-        return vals
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
