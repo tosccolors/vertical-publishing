@@ -71,7 +71,7 @@ class Lead(models.Model):
                 if order.state not in ('sale', 'done', 'cancel'):
                     nbr += 1
                 if order.state in ('sale', 'done'):
-                    if not order.advertising and not order.subscription:
+                    if not order.advertising:
                         total += order.currency_id.compute(order.amount_total, company_currency)
                     if order.advertising:
                         adv_total += order.currency_id.compute(order.amount_untaxed, company_currency)
