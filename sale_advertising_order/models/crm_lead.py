@@ -152,7 +152,6 @@ class Lead(models.Model):
 
         part = self.partner_id
         addr = self.partner_id.address_get(['delivery', 'invoice', 'contact'])
-        values = {}
 
         if part.type == 'contact':
             contact = self.env['res.partner'].search([('is_company','=', False),('type','=', 'contact'),('parent_id','=', part.id)])
@@ -163,27 +162,22 @@ class Lead(models.Model):
         elif addr['contact'] == addr['default']:
             contact_id = False
         else: contact_id = addr['contact']
-        invoice = self.env['res.partner'].browse(addr['invoice'])
 
-        values = {
-            'street': invoice.street,
-            'street2': invoice.street2,
-            'city': invoice.city,
-            'state_id': invoice.state_id.id,
-            'country_id': invoice.country_id.id,
-            'partner_invoice_id': addr['invoice'],
-            'partner_shipping_id': addr['delivery'],
+        values = self._onchange_partner_id_values(part.id)
+        values.update({
+            'sector_id': part.sector_id,
+            'secondary_sector_ids': [(6, 0, part.secondary_sector_ids.ids)],
+            'opt_out': part.opt_out,
             'partner_name': part.name,
             'partner_contact_id': contact_id,
-            'sector_id': invoice.sector_id,
-            'secondary_sector_ids': [(6, 0, invoice.secondary_sector_ids.ids)],
-        }
+            'partner_invoice_id': addr['invoice'],
+            'partner_shipping_id': addr['delivery'],
+        })
         return {'value' : values}
 
 
     @api.onchange('partner_contact_id')
     def onchange_contact(self):
-        values = {}
         if self.partner_contact_id:
             partner = self.partner_contact_id
             values = {
@@ -192,11 +186,17 @@ class Lead(models.Model):
                 'email_from' : partner.email,
                 'phone' : partner.phone,
                 'mobile' : partner.mobile,
-                'fax' : partner.fax,
                 'function': partner.function,
             }
         else:
-            values['contact_name'] = False
+            values = {
+                'contact_name': False,
+                'title': False,
+                'email_from': False,
+                'phone': False,
+                'mobile': False,
+                'function': False,
+            }
         return {'value' : values}
 
 
