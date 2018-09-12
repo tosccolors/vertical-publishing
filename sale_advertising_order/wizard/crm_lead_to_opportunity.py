@@ -152,6 +152,9 @@ class Lead2OpportunityPartner(models.TransientModel):
 
         return False
 
+class Lead2OpportunityMassConvert(models.TransientModel):
+    _inherit = 'crm.lead2opportunity.partner.mass'
 
+    force_assignation = fields.Boolean('Force assignation', default=True, help='If unchecked, this will leave the salesman of duplicated opportunities')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
