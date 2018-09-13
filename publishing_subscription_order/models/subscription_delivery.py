@@ -18,6 +18,10 @@ class SubscriptionTitleDelivery(models.Model):
 
     @api.multi
     def generate_delivery_title(self):
+        """
+         Creates delivery title for all subscription title
+        """
+
         advIssue = self.env['sale.advertising.issue']
 
         title_domain = [('parent_id', '=', False), ('subscription_title', '=', True)]
@@ -54,6 +58,10 @@ class SubscriptionTitleDelivery(models.Model):
 
     @api.multi
     def generate_delivery_list(self):
+        """
+            Creates delivery List for current delivery title
+        """
+
         SOL = self.env['sale.order.line']
         advIssue = self.env['sale.advertising.issue']
 
@@ -126,6 +134,10 @@ class SubscriptionTitleDelivery(models.Model):
             self.env.cr.execute(list_query, all_where_clause_params)
 
     def generate_all_delivery_list(self):
+        """
+            Creates delivery List for all delivery title
+        """
+
         SOL = self.env['sale.order.line']
         advIssue = self.env['sale.advertising.issue']
 
@@ -223,15 +235,11 @@ class SubscriptionDeliveryList(models.Model):
 
     @api.multi
     def generate_delivery_lines(self):
-        '''
-
+        """
          Crates delivery line for all delivery order
-
-        '''
-
+        """
 
         SOL = self.env['sale.order.line']
-        advIssue = self.env['sale.advertising.issue']
 
         for list in self:
             weekday_id = list.weekday_id.id
@@ -258,8 +266,9 @@ class SubscriptionDeliveryList(models.Model):
                                 {3} AS write_date,
                                 (SELECT partner_shipping_id AS partner_id FROM sale_order WHERE id = {4}.order_id)
                               FROM
-                                {4}
-                              WHERE {5}
+                                {4}, subscription_delivery_list as dl
+                              WHERE {5} AND dl.id = {0} AND (({4}.temporary_stop ='t' AND dl.issue_date NOT BETWEEN {4}.tmp_start_date and {4}.tmp_end_date) 
+                                        OR ({4}.temporary_stop IS Null))
                          """.format(
                             list.id,
                             list.company_id.id,
@@ -273,6 +282,10 @@ class SubscriptionDeliveryList(models.Model):
 
 
     def generate_all_delivery_lines(self):
+        """
+            Creates delivery Lines for all delivery list
+        """
+
         SOL = self.env['sale.order.line']
 
         sol_domain = [('state', '=', 'sale'), ('subscription', '=', True),('product_id.digital_subscription','=',False)]
@@ -297,7 +310,8 @@ class SubscriptionDeliveryList(models.Model):
                           FROM
                             {2}, subscription_delivery_list as dl, weekday_sale_line_rel as wk
                           WHERE {3} AND dl.title_id = {2}.title AND dl.type = {2}.delivery_type AND dl.company_id = {2}.company_id AND
-                            {2}.start_date <= dl.issue_date AND {2}.end_date >= dl.issue_date AND wk.order_line_id = {2}.id AND wk.weekday_id = dl.weekday_id
+                            {2}.start_date <= dl.issue_date AND {2}.end_date >= dl.issue_date AND wk.order_line_id = {2}.id AND wk.weekday_id = dl.weekday_id AND 
+                            ((({2}.temporary_stop IS Null) OR {2}.temporary_stop ='t' AND dl.issue_date NOT BETWEEN {2}.tmp_start_date and {2}.tmp_end_date) )
                         EXCEPT 
                         SELECT 
                             sl.delivery_list_id AS delivery_list_id,
@@ -369,6 +383,10 @@ class SubscriptionDeliveryLine(models.Model):
 
 
     def update_delivered_issues(self):
+        """
+            Update Sale order line delivered Issues from all delivery lines
+        """
+
         list_query = (""" 
                    UPDATE sale_order_line SET (delivered_issues) =
                    (SELECT count(sub_order_line) FROM subscription_delivery_line

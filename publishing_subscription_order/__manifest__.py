@@ -45,7 +45,7 @@ This module allows you to use Sales Management to run your subscription sales
         "demo/subscription_demo.xml",
         "report/subscription_delivery_report.xml",
         "data/cron_data.xml",
-        "data/payment_data.xml",
+        # "data/payment_data.xml",
         "data/delivery_type_data.xml",
         "views/sale_subscription_view.xml",
         "views/res_partner_view.xml",
