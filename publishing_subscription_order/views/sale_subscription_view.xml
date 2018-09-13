@@ -182,6 +182,13 @@
                                             <field name="date_cancel" attrs="{'invisible': [('can_cancel','=', False)],'required': [('can_cancel','=', True)],'readonly': [('subscription_cancel', '=', True)]}"/>
                                         </group>
                                         <group>
+                                            <field name="temporary_stop"/>
+                                        </group>
+                                        <group attrs="{'invisible': [('temporary_stop', '=', False)]}">
+                                            <field name="tmp_start_date" attrs="{'required': [('temporary_stop', '=', True)]}"/>
+                                            <field name="tmp_end_date" attrs="{'required': [('temporary_stop', '=', True)]}"/>
+                                        </group>
+                                        <group>
                                             <separator string="Remarks" colspan="2"/>
                                             <field name="name" colspan="2" nolabel="1"  attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
                                         </group>
@@ -622,6 +629,11 @@
                         <group attrs="{'invisible': [('can_renew','=', True)]}">
                             <field name="can_cancel" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
                             <field name="date_cancel" attrs="{'invisible': [('can_cancel','=', False)],'required': [('can_cancel','=', True)],'readonly': [('subscription_cancel', '=', True)]}"/>
+                        </group>
+                        <group>
+                            <field name="temporary_stop"/>
+                            <field name="tmp_start_date" attrs="{'invisible': [('temporary_stop', '=', False)],'required': [('temporary_stop', '=', True)]}"/>
+                            <field name="tmp_end_date" attrs="{'invisible': [('temporary_stop', '=', False)],'required': [('temporary_stop', '=', True)]}"/>
                         </group>
                     </group>
                     <div groups="base.group_no_one">

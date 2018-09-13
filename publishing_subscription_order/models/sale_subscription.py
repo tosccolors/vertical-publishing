@@ -66,8 +66,8 @@ class SaleOrder(models.Model):
         partner.is_subscription_customer = True
         if not partner.is_subscription_customer:
             partner.is_subscription_customer = True
-        if not partner.subscription_customer_payment_mode_id or not partner.property_subscription_payment_term_id:
-            raise UserError(_("Can not confirm Sale Order Partner subscription's details are not completed"))
+        # if not partner.subscription_customer_payment_mode_id or not partner.property_subscription_payment_term_id:
+        #     raise UserError(_("Can not confirm Sale Order Partner subscription's details are not completed"))
 
         if not partner.is_subscription_customer:
             raise UserError(_("Can not confirm Sale Order Partner is not subscription partner"
@@ -171,9 +171,12 @@ class SaleOrderLine(models.Model):
     line_renewed = fields.Boolean('Subscription Renewed', copy=False)
     delivery_type = fields.Many2one(related='order_id.delivery_type', readonly=True, copy=False, store=True)
     weekday_ids = fields.Many2many('week.days', 'weekday_sale_line_rel', 'order_line_id', 'weekday_id', 'Weekdays')
+    temporary_stop = fields.Boolean('Temporary Delivery Stop', copy=False)
+    tmp_start_date = fields.Date('Start Of Delivery Stop')
+    tmp_end_date = fields.Date('End Of Delivery Stop')
 
     @api.multi
-    @api.constrains('start_date', 'end_date')
+    @api.constrains('start_date', 'end_date', 'temporary_stop', 'tmp_start_date', 'tmp_end_date')
     def _check_start_end_dates(self):
         for orderline in self:
             if orderline.start_date and not orderline.end_date:
@@ -192,6 +195,33 @@ class SaleOrderLine(models.Model):
                     _("Start Date should be before or be the same as "
                       "End Date for order line with Description '%s'.")
                     % (orderline.name))
+            if self.temporary_stop:
+                if orderline.tmp_start_date and not orderline.tmp_end_date:
+                    raise ValidationError(
+                        _("Missing End Of Delivery Stop Date for order line with "
+                          "Description '%s'.")
+                        % (orderline.name))
+                if orderline.tmp_end_date and not orderline.tmp_start_date:
+                    raise ValidationError(
+                        _("Missing Start Of Delivery Stop date for order line with "
+                          "Description '%s'.")
+                        % (orderline.name))
+                if orderline.tmp_end_date and orderline.tmp_start_date and \
+                        orderline.tmp_start_date > orderline.tmp_end_date:
+                    raise ValidationError(
+                        _("Start Of Delivery Stop Date should be before "
+                          "End Of Delivery Stop Date for order line with Description '%s'.")
+                        % (orderline.name))
+
+    @api.onchange('temporary_stop', 'tmp_start_date')
+    def onchange_temporary_delivery_stop(self):
+        vals = {}
+        if self.temporary_stop:
+            if not self.start_date:
+                vals['tmp_start_date'] = datetime.today().date()
+        else:
+            vals = {'tmp_start_date': False, 'tmp_end_date': False}
+        return {'value': vals}
 
     @api.onchange('medium')
     def onchange_medium(self):

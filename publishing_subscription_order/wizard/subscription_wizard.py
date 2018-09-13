@@ -67,3 +67,23 @@ class SubscriptionConfig(models.TransientModel):
         totrec = abs(len(DeliveryLine.search([])) - totrec) if totrec else len(DeliveryLine.search([]))
         msg = "%s new delivery lines has been created" % str(totrec)
         return self.genrated_message(msg)
+
+class SubscriptionMultiWizard(models.TransientModel):
+
+    _name = "subscription.multi.wizard"
+    _description = "Create delivery list/delivery lines"
+
+    @api.multi
+    def confirm(self):
+        context = dict(self._context or {})
+        active_ids = context.get('active_ids', []) or []
+        active_model = context.get('active_model', False) or False
+        if active_model:
+            if active_model == 'subscription.title.delivery':
+                title = self.env['subscription.title.delivery'].browse(active_ids)
+                title.generate_delivery_list()
+            if active_model == 'subscription.delivery.list':
+                lists = self.env['subscription.delivery.list'].browse(active_ids)
+                lists.generate_delivery_lines()
+
+        return {'type': 'ir.actions.act_window_close'}
