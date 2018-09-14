@@ -129,7 +129,9 @@ class TimeDependentThread(models.AbstractModel):
             return super(TimeDependentThread, self).write(values)
         for rec in self:
             values = rec.post_values(values)
-        return super(TimeDependentThread, self).with_context({'timeFaceCronUpdate': True}).write(values)
+        ctx = self.env.context.copy()
+        ctx.update({'timeFaceCronUpdate': True})
+        return super(TimeDependentThread, self).with_context(ctx).write(values)
 
     @api.multi
     def unlink(self):
