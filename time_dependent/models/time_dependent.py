@@ -124,7 +124,8 @@ class TimeDependentThread(models.AbstractModel):
 
     @api.multi
     def write(self, values):
-        if 'timeFaceCronUpdate' in self.env.context:
+        config = self.env['time.dependent.config'].search([('model_id.model', '=', self._name)])
+        if 'timeFaceCronUpdate' in self.env.context or not config:
             return super(TimeDependentThread, self).write(values)
         for rec in self:
             values = rec.post_values(values)
