@@ -119,7 +119,7 @@ class TimeDependentThread(models.AbstractModel):
     @api.model
     def create(self, values):
         res_id = super(TimeDependentThread, self).create(values)
-        res_id.post_values(values)
+        res_id.with_context({'timeFaceCronUpdate': True}).post_values(values)
         return res_id
 
     @api.multi
@@ -128,7 +128,7 @@ class TimeDependentThread(models.AbstractModel):
             return super(TimeDependentThread, self).write(values)
         for rec in self:
             values = rec.post_values(values)
-        return super(TimeDependentThread, self).write(values)
+        return super(TimeDependentThread, self).with_context({'timeFaceCronUpdate': True}).write(values)
 
     @api.multi
     def unlink(self):
