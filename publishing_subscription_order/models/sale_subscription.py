@@ -26,6 +26,7 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.exceptions import ValidationError, UserError
 import odoo.addons.decimal_precision as dp
 
+VALUES = [(1,'Anbos lid'), (2, 'Andere nieuwsbronnen/internet'), (3, 'Actie/proefabonnement'), (4,'Bedrijf is opgeheven/failliet/fusie'), (5, 'Betalingsachterstand'), (6, 'Klachten over de slechte bezorging'), (7, 'Blad retour/factuur retour'), (8, 'Is onder curatele gezet/schuldsanering'), (9, 'Dubbel abonnement'), (10, 'Einde proef/kado abonnement'), (11, 'Bezuinigen/ financieel'), (12, 'Gaat samenlezen, ivm financien'), (13, 'Geen BDU-medewerker meer'), (14, 'Geen interesse'), (15, 'Geen opgave'), (16, 'Gezondheidsredenen (ouderd./ziek/dement)'), (17, 'Geen student meer'), (18, 'In overleg met ACM'), (19, 'Leest via werkgever / leest samen'), (20, 'Met pensioen'), (21, 'Verhuizen/emigreren'), (22, 'Nabellen opzeggers'), (23, 'Naar incassobureau'), (24, 'Nogmaals toegestuurd'), (25, 'Niet meer werkzaam'), (26, 'Omgezet naar digitaal/ander soort abo'), (27, 'Overstap naar concurrent / Andere keuze'), (28, 'Oneens met verlenging'), (29, 'Ontevreden over digitale versie'), (30, 'Overleden'), (31, 'Op verzoek betalende instantie'), (32, 'Persoonlijke omstandigheden'), (33, 'Redactioneel / inhoud'), (34, 'Retour'), (35, 'Te duur'), (36, 'Telefonische opzegging'), (37, 'Tijdelijke stopzetting'), (38, 'Telemarketing actie Tijdschriften'), (39, 'Verlengingsaanbieding'), (40, 'Via de mail benaderd')]
 
 class SaleOrder(models.Model):
     _inherit = ["sale.order"]
@@ -161,6 +162,7 @@ class SaleOrderLine(models.Model):
     can_cancel = fields.Boolean('Can cancelled?')
     can_renew = fields.Boolean('Can Renewed?', default=False)
     date_cancel = fields.Date('Cancelled date', help="Cron will cancel this line on selected date.")
+    reason_cancel = fields.Selection(VALUES, string='Reason Cancellation')
     renew_product_id = fields.Many2one('product.template','Renewal Product')
     subscription_cancel = fields.Boolean('Subscription cancelled',copy=False)
     line_renewed = fields.Boolean('Subscription Renewed', copy=False)
@@ -254,23 +256,17 @@ class SaleOrderLine(models.Model):
 
     @api.onchange('can_renew','can_cancel', 'date_cancel')
     def onchange_renewal_cancel(self):
-        vals, result = {}, {}
+        vals = {}
         if self.can_renew:
             vals['can_cancel'] = False
             vals['date_cancel'] = False
+            vals['reason_cancel'] = False
             if not self.renew_product_id:
                 vals['renew_product_id'] = self.product_template_id
         if self.can_cancel:
             vals['can_renew'] = False
             vals['renew_product_id'] = False
-            if self.date_cancel:
-                result = {'title': _('Warning'),
-                          'message': _('This Order line would be canceled on %s')%self.date_cancel}
-            if self.date_cancel and self.date_cancel < str(datetime.now().date()):
-                vals['date_cancel'] = False
-                result = {'title': _('Warning'),
-                          'message': _("'Cancel date' can't be past date!")}
-        return {'value': vals, 'warning':result}
+        return {'value': vals}
 
     @api.onchange('start_date', 'end_date')
     def onchange_start_end_date_subs(self):

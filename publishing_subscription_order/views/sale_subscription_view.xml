@@ -180,6 +180,7 @@
                                         <group attrs="{'invisible': [('can_renew','=', True)]}">
                                             <field name="can_cancel" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
                                             <field name="date_cancel" attrs="{'invisible': [('can_cancel','=', False)],'required': [('can_cancel','=', True)],'readonly': [('subscription_cancel', '=', True)]}"/>
+                                            <field name="reason_cancel" attrs="{'invisible': [('can_cancel','=', False)],'required': [('can_cancel','=', True)],'readonly': [('subscription_cancel', '=', True)]}" />
                                         </group>
                                         <group>
                                             <separator string="Remarks" colspan="2"/>
@@ -622,6 +623,7 @@
                         <group attrs="{'invisible': [('can_renew','=', True)]}">
                             <field name="can_cancel" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
                             <field name="date_cancel" attrs="{'invisible': [('can_cancel','=', False)],'required': [('can_cancel','=', True)],'readonly': [('subscription_cancel', '=', True)]}"/>
+                            <field name="reason_cancel" attrs="{'invisible': [('can_cancel','=', False)],'required': [('can_cancel','=', True)],'readonly': [('subscription_cancel', '=', True)]}" />
                         </group>
                     </group>
                     <div groups="base.group_no_one">
