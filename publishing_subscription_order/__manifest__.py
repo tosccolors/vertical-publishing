@@ -58,6 +58,7 @@ This module allows you to use Sales Management to run your subscription sales
     ],
     'qweb': [
         "static/src/xml/sales_team_dashboard.xml",
+        "static/src/xml/qweb.xml",
     ],
     'installable': True
 }

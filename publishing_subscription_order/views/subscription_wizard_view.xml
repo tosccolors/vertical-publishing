@@ -2,69 +2,13 @@
 <odoo>
 	<data>
 
-        <record id="subscription_config_form" model="ir.ui.view">
-            <field name="name">Subscription Config Wizard</field>
-            <field name="model">subscription.config.wizard</field>
-            <field name="arch" type="xml">
-                <form string="Subscription Config">
-                    <sheet>
-                         <group attrs="{'invisible':[('name','!=',False)]}" cols="6">
-                            <div>
-                                <strong>  Click to create delivery title from new subscription titles.</strong>
-                                <br/>
-                                <button class="oe_highlight" name="generate_delivery_title" string="Generate Delivery Titles" type="object"/>
-                                <br/>
-                                <br/>
-                                <br/>
-                            </div>
-                            <newline/>
-                            <div>
-                                <strong>  Click to create delivery list from new subscription issues.</strong><br/>
-                                <button class="oe_highlight" name="generate_all_delivery_list" string="Generate Delivery Lists" type="object"/>
-                                <br/>
-                                <br/>
-                                <br/>
-                            </div>
-                            <newline/>
-                            <div>
-                                <strong>  Click to create delivery lines from delivery list.</strong><br/>
-                                <button class="oe_highlight" name="generate_all_delivery_lines" string="Generate Delivery Lines" type="object"/>
-                                <br/>
-                                <br/>
-                                <br/>
-                            </div>
-                        </group>
-                        <group attrs="{'invisible':[('name','=',False)]}">
-                            <h1><field name="name" colspan="4" nolabel="1" readonly="1"/></h1>
-                            <newline/>
-                            <separator colspan="4" />
-                        </group>
-                        <footer>
-                            <button special="cancel" class="oe_highlight" string="Close" />
-                        </footer>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-        <record id="subscription_config_action" model="ir.actions.act_window">
-            <field name="name">Subscription Config</field>
-            <field name="res_model">subscription.config.wizard</field>
-            <field name="view_mode">form</field>
-            <field name="view_mode">form</field>
-            <field name="target">new</field>
-        </record>
-
-
-        <menuitem id="menu_subscription_config_action" parent="menu_subscription_config_main" action="subscription_config_action" groups="sale_advertising_order.group_advertising_sales_user"/>
-
         <record id="subscription_multi_wizard_form_view" model="ir.ui.view">
             <field name="name">subscription.multi.wizard.form</field>
             <field name="model">subscription.multi.wizard</field>
             <field name="arch" type="xml">
                 <form string="Create Delivery Lists/Lines">
                     <p class="oe_grey">
-                        Do yo want to create delivery list/lines?
+                        Do you want to create delivery list/lines?
                     </p>
                     <footer>
                         <button string="Create List/Lines" name="confirm" type="object" default_focus="1" class="btn-primary"/>
