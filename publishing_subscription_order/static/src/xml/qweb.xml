@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+  <t t-extend="ListView.buttons">
+        <!--<t t-jquery="button.o_list_button_add" t-operation="before">-->
+        <t t-jquery="div.o_list_buttons" t-operation="append">
+          <t t-if="widget.model=='subscription.title.delivery'">
+            <button class="btn btn-sm btn-primary generate_delivery_title" type="button">Generate Titles</button>
+          </t>
+          <t t-if="widget.model=='subscription.delivery.list'">
+            <button class="btn btn-sm btn-primary generate_delivery_list" type="button">Generate Lists</button>
+          </t>
+        </t>
+    </t>
+
+</templates>

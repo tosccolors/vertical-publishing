@@ -22,52 +22,6 @@
 
 from odoo import api, fields, exceptions, models, _
 
-class SubscriptionConfig(models.TransientModel):
-    _name = "subscription.config.wizard"
-    _description = "Subscription Config"
-
-    name = fields.Char('Message')
-
-    @api.multi
-    def genrated_message(self, message, name='Message/Summary'):
-        new_rec = self.create({'name': message})
-        return {
-            'name': name,
-            'view_mode': 'form',
-            'view_id': False,
-            'view_type': 'form',
-            'res_model': 'subscription.config.wizard',
-            'res_id': new_rec.id,
-            'type': 'ir.actions.act_window',
-            'nodestroy': True,
-            'target': 'new',
-            'domain': '[]',
-        }
-
-    def generate_delivery_title(self):
-        DeliveryTitle = self.env['subscription.title.delivery']
-        totrec = len(DeliveryTitle.search([]))
-        DeliveryTitle.generate_delivery_title()
-        totrec = abs(len(DeliveryTitle.search([])) - totrec) if totrec else len(DeliveryTitle.search([]))
-        msg = "%s new delivery titles has been created" % str(totrec)
-        return self.genrated_message(msg)
-
-    def generate_all_delivery_list(self):
-        DeliveryList = self.env['subscription.delivery.list']
-        totrec = len(DeliveryList.search([]))
-        self.env['subscription.title.delivery'].generate_all_delivery_list()
-        totrec = abs(len(DeliveryList.search([])) - totrec) if totrec else len(DeliveryList.search([]))
-        msg = "%s new delivery lists has been created" % str(totrec)
-        return self.genrated_message(msg)
-
-    def generate_all_delivery_lines(self):
-        DeliveryLine = self.env['subscription.delivery.line']
-        totrec = len(DeliveryLine.search([]))
-        self.env['subscription.delivery.list'].generate_all_delivery_lines()
-        totrec = abs(len(DeliveryLine.search([])) - totrec) if totrec else len(DeliveryLine.search([]))
-        msg = "%s new delivery lines has been created" % str(totrec)
-        return self.genrated_message(msg)
-
 class SubscriptionMultiWizard(models.TransientModel):
 
     _name = "subscription.multi.wizard"

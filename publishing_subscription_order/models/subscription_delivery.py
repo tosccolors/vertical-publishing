@@ -133,74 +133,6 @@ class SubscriptionTitleDelivery(models.Model):
 
             self.env.cr.execute(list_query, all_where_clause_params)
 
-    def generate_all_delivery_list(self):
-        """
-            Creates delivery List for all delivery title
-        """
-
-        SOL = self.env['sale.order.line']
-        advIssue = self.env['sale.advertising.issue']
-
-        sol_domain = [('subscription', '=', True), ('state', '=', 'sale')]
-        sol_query_line = SOL._where_calc(sol_domain)
-        sol_tables, sol_where_clause, sol_where_clause_params = sol_query_line.get_sql()
-
-        issue_domain = [('subscription_title', '=', True), ('issue_date', '!=', False)]
-        issues_query_line = advIssue._where_calc(issue_domain)
-        issue_tables, issue_where_clause, issue_where_clause_params = issues_query_line.get_sql()
-
-        all_where_clause = issue_where_clause + ' AND ' + sol_where_clause
-        all_where_clause_params = issue_where_clause_params + sol_where_clause_params
-
-        list_query = ("""
-              INSERT INTO
-                   subscription_delivery_list
-                   (delivery_id, delivery_date, title_id, state, create_uid, create_date, write_uid, write_date, company_id, issue_id, issue_date, type, weekday_id)
-                SELECT 
-                   dt.id AS delivery_id,
-                   {0}::DATE AS delivery_date,
-                   dt.title_id AS title_id,
-                   {1} AS state,
-                   {2} AS create_uid,
-                   {3}::TIMESTAMP AS create_date,
-                   {2} AS write_uid,
-                   {3}::TIMESTAMP AS write_date,
-                   dt.company_id AS company_id,
-                   {4}.id AS issue_id,
-                   {4}.issue_date::DATE AS issue_date,
-                   {5}.delivery_type AS type,
-                   (select extract(dow from ({4}.issue_date)::DATE)) AS weekday_id
-                FROM
-                   {4}, {5}, subscription_title_delivery AS dt
-                WHERE {6} AND dt.title_id = {5}.title AND dt.company_id = {5}.company_id AND dt.title_id = {4}.parent_id
-                EXCEPT
-                SELECT
-                   dt.id AS delivery_id,
-                   {0} AS delivery_date,
-                   dt.title_id AS title_id,
-                   {1} AS state,
-                   {2} AS create_uid,
-                   {3} AS create_date,
-                   {2} AS write_uid,
-                   {3} AS write_date,
-                   dt.company_id AS company_id,
-                   dl.issue_id AS issue_id,
-                   dl.issue_date AS issue_date,
-                   dl.type AS type,
-                   dl.weekday_id AS weekday_id
-                FROM
-                    subscription_delivery_list AS dl, subscription_title_delivery AS dt
-                    """.format(
-                "'%s'" % str(fields.Date.to_string(datetime.now())),
-                "'draft'",
-                self._uid,
-                "'%s'" % str(fields.Datetime.to_string(fields.datetime.now())),
-                issue_tables,
-                sol_tables,
-                all_where_clause,
-            ))
-        self.env.cr.execute(list_query, all_where_clause_params)
-
 
 class SubscriptionDeliveryList(models.Model):
     _name = 'subscription.delivery.list'
@@ -231,6 +163,75 @@ class SubscriptionDeliveryList(models.Model):
         ('done', 'Done'),
         ('cancel', 'Cancelled'),
     ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
+
+    @api.multi
+    def generate_all_delivery_list(self):
+        """
+            Creates delivery List for all delivery title
+        """
+
+        SOL = self.env['sale.order.line']
+        advIssue = self.env['sale.advertising.issue']
+
+        sol_domain = [('subscription', '=', True), ('state', '=', 'sale')]
+        sol_query_line = SOL._where_calc(sol_domain)
+        sol_tables, sol_where_clause, sol_where_clause_params = sol_query_line.get_sql()
+
+        issue_domain = [('subscription_title', '=', True), ('issue_date', '!=', False)]
+        issues_query_line = advIssue._where_calc(issue_domain)
+        issue_tables, issue_where_clause, issue_where_clause_params = issues_query_line.get_sql()
+
+        all_where_clause = issue_where_clause + ' AND ' + sol_where_clause
+        all_where_clause_params = issue_where_clause_params + sol_where_clause_params
+
+        list_query = ("""
+                  INSERT INTO
+                       subscription_delivery_list
+                       (delivery_id, delivery_date, title_id, state, create_uid, create_date, write_uid, write_date, company_id, issue_id, issue_date, type, weekday_id)
+                    SELECT 
+                       dt.id AS delivery_id,
+                       {0}::DATE AS delivery_date,
+                       dt.title_id AS title_id,
+                       {1} AS state,
+                       {2} AS create_uid,
+                       {3}::TIMESTAMP AS create_date,
+                       {2} AS write_uid,
+                       {3}::TIMESTAMP AS write_date,
+                       dt.company_id AS company_id,
+                       {4}.id AS issue_id,
+                       {4}.issue_date::DATE AS issue_date,
+                       {5}.delivery_type AS type,
+                       (select extract(dow from ({4}.issue_date)::DATE)) AS weekday_id
+                    FROM
+                       {4}, {5}, subscription_title_delivery AS dt
+                    WHERE {6} AND dt.title_id = {5}.title AND dt.company_id = {5}.company_id AND dt.title_id = {4}.parent_id
+                    EXCEPT
+                    SELECT
+                       dt.id AS delivery_id,
+                       {0} AS delivery_date,
+                       dt.title_id AS title_id,
+                       {1} AS state,
+                       {2} AS create_uid,
+                       {3} AS create_date,
+                       {2} AS write_uid,
+                       {3} AS write_date,
+                       dt.company_id AS company_id,
+                       dl.issue_id AS issue_id,
+                       dl.issue_date AS issue_date,
+                       dl.type AS type,
+                       dl.weekday_id AS weekday_id
+                    FROM
+                        subscription_delivery_list AS dl, subscription_title_delivery AS dt
+                        """.format(
+            "'%s'" % str(fields.Date.to_string(datetime.now())),
+            "'draft'",
+            self._uid,
+            "'%s'" % str(fields.Datetime.to_string(fields.datetime.now())),
+            issue_tables,
+            sol_tables,
+            all_where_clause,
+        ))
+        self.env.cr.execute(list_query, all_where_clause_params)
 
 
     @api.multi

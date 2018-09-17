@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data>
+        <!--add js to call delivery list buttons -->
+        <template id="assets_backend" name="publishing_subscription_order assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/publishing_subscription_order/static/src/js/list_view.js"></script>
+            </xpath>
+        </template>
+    </data>
+
 	<data>
         <record id="subscription_title_delivery_form" model="ir.ui.view">
             <field name="name">subscription.title.delivery.form</field>
