@@ -99,6 +99,11 @@ class SaleOrder(models.Model):
             # Subscription:
             self.payment_term_id = self.partner_id.property_subscription_payment_term_id and self.partner_id.property_subscription_payment_term_id.id or False
             self.payment_mode_id = self.partner_id.subscription_customer_payment_mode_id
+            if self.company_id and self.company_id.name == 'BDUmedia BV':
+                self.user_id = self._uid
+                self.partner_acc_mgr = self.partner_id.user_id.id if self.partner_id.user_id else False
+            else:
+                self.partner_acc_mgr = False
 
     @api.model
     def _prepare_invoice(self,):
@@ -117,6 +122,32 @@ class SaleOrder(models.Model):
                 line.subscription_cancel = False
                 line.date_cancel = False
         return res
+
+    @api.model
+    def create(self, vals):
+        result = super(SaleOrder, self).create(vals)
+        if vals.get('partner_id', False):
+            partner = self.env['res.partner'].browse(vals.get('partner_id'))
+            if vals.get('subscription', False) and vals.get('company_id', False):
+                company = self.env['res.company'].browse(vals.get('company_id'))
+                if company.name == 'BDUmedia BV':
+                    result['partner_acc_mgr'] = partner.user_id.id if partner.user_id else False
+                else:
+                    result['partner_acc_mgr'] = False
+        return result
+
+    @api.multi
+    def write(self, vals):
+        result = super(SaleOrder, self).write(vals)
+        if vals.get('partner_id', False):
+            company = self.env['res.company'].browse(vals.get('company_id')) if 'company_id' in vals else self.company_id
+            subscription = vals.get('subscription') if 'subscription' in vals else self.subscription
+            if subscription and company.name == 'BDUmedia BV':
+                partner = self.env['res.partner'].browse(vals.get('partner_id'))
+                self.partner_acc_mgr = partner.user_id.id if partner.user_id else False
+            else:
+                self.partner_acc_mgr = False
+        return result
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
