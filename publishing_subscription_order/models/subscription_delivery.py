@@ -9,6 +9,7 @@ from dateutil import relativedelta
 class SubscriptionTitleDelivery(models.Model):
     _name = 'subscription.title.delivery'
     _description = 'Subscription Title Delivery'
+    _rec_name = "title_id"
 
     title_id = fields.Many2one('sale.advertising.issue', required=True, readonly=True, string='Title')
     delivery_list_ids = fields.One2many('subscription.delivery.list', 'delivery_id', string='Delivery List', copy=False)
@@ -242,12 +243,26 @@ class SubscriptionDeliveryList(models.Model):
 
         SOL = self.env['sale.order.line']
 
-        for list in self:
-            weekday_id = list.weekday_id.id
-            sol_domain = [('title', '=', list.title_id.id), ('weekday_ids','=', weekday_id), ('state', '=', 'sale'), ('subscription', '=', True), ('product_id.digital_subscription','=',False), ('delivery_type', '=', list.type.id), ('start_date', '<=', list.issue_date), ('end_date', '>=', list.issue_date), ('company_id', '=', list.company_id.id)]
-            self.env.cr.execute("SELECT array_agg(sub_order_line) FROM subscription_delivery_line WHERE delivery_list_id = %s"%(list.id))
+        for dlist in self:
+            weekday_id = dlist.weekday_id.id
+            common_domain = [('title', '=', dlist.title_id.id), ('weekday_ids','=', weekday_id), ('state', '=', 'sale'), ('subscription', '=', True), ('delivery_type', '=', dlist.type.id), ('company_id', '=', dlist.company_id.id)]
+            sol_domain = common_domain + [('product_id.digital_subscription', '=', False), ('start_date', '<=', dlist.issue_date), ('end_date', '>=', dlist.issue_date)]
+
+            temp_stop_domain = common_domain + [('temporary_stop','=',True), ('tmp_start_date', '<=', dlist.issue_date), ('tmp_end_date', '>=', dlist.issue_date)]
+            temp_sol = SOL.search(temp_stop_domain)
+            stopSolIds = []
+            if temp_sol:
+                stopSolIds += temp_sol.ids                
+
+            self.env.cr.execute("SELECT array_agg(sub_order_line) FROM subscription_delivery_line WHERE delivery_list_id = %s"%(dlist.id))
             currSOL = self.env.cr.fetchall()[0][0]
-            sol_domain = sol_domain + [('id', 'not in', currSOL)] if currSOL else sol_domain
+            if currSOL:
+                stopSolIds += list(currSOL)
+                
+            if stopSolIds:
+                stopSolIds = list(set(stopSolIds))
+                sol_domain += [('id', 'not in', stopSolIds)]
+
             sol_query_line = SOL._where_calc(sol_domain)
             sol_tables, sol_where_clause, sol_where_clause_params = sol_query_line.get_sql()
 
@@ -267,12 +282,11 @@ class SubscriptionDeliveryList(models.Model):
                                 {3} AS write_date,
                                 (SELECT partner_shipping_id AS partner_id FROM sale_order WHERE id = {4}.order_id)
                               FROM
-                                {4}, subscription_delivery_list as dl
-                              WHERE {5} AND dl.id = {0} AND (({4}.temporary_stop ='t' AND dl.issue_date NOT BETWEEN {4}.tmp_start_date and {4}.tmp_end_date) 
-                                        OR ({4}.temporary_stop IS Null))
+                                {4}
+                              WHERE {5}
                          """.format(
-                            list.id,
-                            list.company_id.id,
+                            dlist.id,
+                            dlist.company_id.id,
                             self._uid,
                             "'%s'" % str(fields.Datetime.to_string(fields.datetime.now())),
                             sol_tables,
