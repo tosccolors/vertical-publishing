@@ -65,6 +65,8 @@ class productTemplate(models.Model):
     page_id = fields.Many2one('sale.advertising.page', string='Issue Page')
     space = fields.Integer('Space', help="Space taken by ad")
     price_edit = fields.Boolean('Price Editable')
+    booklet_surface_area = fields.Float('Booklet Surface Area', help="Page surface booklet (newspaper) format in cm2",
+                                        digits=dp.get_precision('Product Unit of Measure'))
     volume_discount = fields.Boolean('Volume Discount', help='Setting this flag makes that price finding in a multi-line '
                                                              'advertising sale order line, uses the multi_line_number '
                                                              'instead of product_uom_qty to implement volume discount' )
