@@ -10,8 +10,8 @@
 
         <!--CRM-->
         <menuitem id="menu_crm_advertising" name="CRM" parent="sales_team.menu_base_partner"
-            groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"
-            sequence="2"/>
+                  groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"
+                  sequence="2"/>
 
         <!--CRM: Customers-->
         <menuitem id="menu_partner_form1" parent="menu_crm_advertising"
@@ -22,7 +22,12 @@
 
             <!--CRM: My Pipeline-->
         <menuitem id="menu_crm_opportunities2" parent="menu_crm_advertising"
-            action="action_your_pipeline_advertising" sequence="4"/>
+                  action="action_your_pipeline_advertising" sequence="4"/>
+
+            <!--CRM: Leads-->
+        <menuitem id="menu_crm_leads_adv" name="Leads" parent="menu_crm_advertising"
+                  action="crm.crm_lead_all_leads" sequence="1" groups="crm.group_use_lead"/>
+
 
         <!--Regular Sales Customers-->
         <menuitem id="sales_team.menu_partner_form" parent="sales_team.menu_sales"

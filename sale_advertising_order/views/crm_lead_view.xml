@@ -482,14 +482,7 @@
             <field name="act_window_id" ref="crm_lead_all_leads_advertising"/>
         </record>
 
-        <!--CRM: Leads-->
-        <menuitem
-            id="menu_crm_leads_adv"
-            name="Leads"
-            parent="menu_crm_advertising"
-            sequence="1"
-            action="crm.crm_lead_all_leads"
-            groups="crm.group_use_lead"/>
+
 
         <!--Regular Sales Leads-->
         <record model="ir.ui.menu" id="crm.menu_crm_leads">
