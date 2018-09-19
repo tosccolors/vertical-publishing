@@ -28,6 +28,10 @@
         <menuitem id="menu_crm_leads_adv" name="Leads" parent="menu_crm_advertising"
                   action="crm.crm_lead_all_leads" sequence="1" groups="crm.group_use_lead"/>
 
+            <!--CRM: Next Activities-->
+        <menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_crm_advertising"
+                  groups="sale_advertising_order.group_next_activities_menu"
+                  action="crm.crm_lead_action_activities" sequence="5" />
 
         <!--Regular Sales Customers-->
         <menuitem id="sales_team.menu_partner_form" parent="sales_team.menu_sales"
