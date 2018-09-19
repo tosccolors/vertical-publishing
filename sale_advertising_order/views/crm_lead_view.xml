@@ -405,12 +405,7 @@
             <field eval="True" name="condition"/>
         </record>
 
-        <!--CRM: My Pipeline-->
-        <menuitem
-            id="menu_crm_opportunities2"
-            action="action_your_pipeline_advertising"
-            parent="menu_crm_advertising"
-            sequence="4"/>
+
 
         <!--Regular Sales My Pipeline-->
         <record model="ir.ui.menu" id="crm.menu_crm_opportunities">

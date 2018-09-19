@@ -20,6 +20,10 @@
         <menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_advsales"
                   action="crm.crm_lead_action_activities" sequence="5" />
 
+            <!--CRM: My Pipeline-->
+        <menuitem id="menu_crm_opportunities2" parent="menu_crm_advertising"
+            action="action_your_pipeline_advertising" sequence="4"/>
+
         <!--Regular Sales Customers-->
         <menuitem id="sales_team.menu_partner_form" parent="sales_team.menu_sales"
                   action="base.action_partner_form" sequence="3" groups="group_regular_sales_crm_menus"/>
