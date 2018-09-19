@@ -453,6 +453,18 @@
             </field>
         </record>
 
+        <!--Inherited sale order form regular-->
+        <record id="view_order_form_inherited" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='team_id']" position="after">
+                    <field name="partner_acc_mgr" />
+                </xpath>
+            </field>
+        </record>
+
         <record id="view_order_form_advertising_no_deadline_check" model="ir.ui.view">
             <field name="name">sale.order.form.advertising.ndl</field>
             <field name="model">sale.order</field>
