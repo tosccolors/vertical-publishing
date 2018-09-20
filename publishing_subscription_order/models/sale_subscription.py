@@ -299,7 +299,7 @@ class SaleOrderLine(models.Model):
             vals['product_id'] = False
 
         if self.title:
-            adv_issue = self.env['sale.advertising.issue'].search([('parent_id', '=', self.title.id),('issue_date', '!=', False),('issue_date', '>', datetime.today().date())], order='issue_date', limit=1)
+            adv_issue = self.env['sale.advertising.issue'].search([('subscription_title', '=', True),('parent_id', '=', self.title.id),('issue_date', '!=', False),('issue_date', '>', datetime.today().date())], order='issue_date', limit=1)
             if adv_issue:
                 self.start_date = adv_issue.issue_date
             else:
