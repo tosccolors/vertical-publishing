@@ -593,8 +593,6 @@ class SaleOrderLine(models.Model):
                                           string='Advertising Customer', store=True)
     order_agency_id = fields.Many2one(related='order_id.advertising_agency', relation='res.partner',
                                           string='Advertising Agency', store=True)
-    order_team_id   = fields.Many2one(related='order_id.team_id', relation='crm.team',
-                                          string='Salesteam', store=True)
     order_pricelist_id = fields.Many2one(related='order_id.pricelist_id', relation='product.pricelist', string='Pricelist')
     order_company_id = fields.Many2one(related='order_id.company_id', relation='res.company',
                                          string='Company')
