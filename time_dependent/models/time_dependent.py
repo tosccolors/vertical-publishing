@@ -119,16 +119,19 @@ class TimeDependentThread(models.AbstractModel):
     @api.model
     def create(self, values):
         res_id = super(TimeDependentThread, self).create(values)
-        res_id.post_values(values)
+        res_id.with_context({'timeFaceCronUpdate': True}).post_values(values)
         return res_id
 
     @api.multi
     def write(self, values):
-        if 'timeFaceCronUpdate' in self.env.context:
+        config = self.env['time.dependent.config'].search([('model_id.model', '=', self._name)])
+        if 'timeFaceCronUpdate' in self.env.context or not config:
             return super(TimeDependentThread, self).write(values)
         for rec in self:
             values = rec.post_values(values)
-        return super(TimeDependentThread, self).write(values)
+        ctx = self.env.context.copy()
+        ctx.update({'timeFaceCronUpdate': True})
+        return super(TimeDependentThread, self).with_context(ctx).write(values)
 
     @api.multi
     def unlink(self):

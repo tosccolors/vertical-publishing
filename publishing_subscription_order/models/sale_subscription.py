@@ -26,13 +26,14 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.exceptions import ValidationError, UserError
 import odoo.addons.decimal_precision as dp
 
+VALUES = [(1,'Anbos lid'), (2, 'Andere nieuwsbronnen/internet'), (3, 'Actie/proefabonnement'), (4,'Bedrijf is opgeheven/failliet/fusie'), (5, 'Betalingsachterstand'), (6, 'Klachten over de slechte bezorging'), (7, 'Blad retour/factuur retour'), (8, 'Is onder curatele gezet/schuldsanering'), (9, 'Dubbel abonnement'), (10, 'Einde proef/kado abonnement'), (11, 'Bezuinigen/ financieel'), (12, 'Gaat samenlezen, ivm financien'), (13, 'Geen BDU-medewerker meer'), (14, 'Geen interesse'), (15, 'Geen opgave'), (16, 'Gezondheidsredenen (ouderd./ziek/dement)'), (17, 'Geen student meer'), (18, 'In overleg met ACM'), (19, 'Leest via werkgever / leest samen'), (20, 'Met pensioen'), (21, 'Verhuizen/emigreren'), (22, 'Nabellen opzeggers'), (23, 'Naar incassobureau'), (24, 'Nogmaals toegestuurd'), (25, 'Niet meer werkzaam'), (26, 'Omgezet naar digitaal/ander soort abo'), (27, 'Overstap naar concurrent / Andere keuze'), (28, 'Oneens met verlenging'), (29, 'Ontevreden over digitale versie'), (30, 'Overleden'), (31, 'Op verzoek betalende instantie'), (32, 'Persoonlijke omstandigheden'), (33, 'Redactioneel / inhoud'), (34, 'Retour'), (35, 'Te duur'), (36, 'Telefonische opzegging'), (37, 'Tijdelijke stopzetting'), (38, 'Telemarketing actie Tijdschriften'), (39, 'Verlengingsaanbieding'), (40, 'Via de mail benaderd')]
 
 class SaleOrder(models.Model):
     _inherit = ["sale.order"]
 
     subscription = fields.Boolean('Subscription', default=False)
     subscription_payment_mode_id = fields.Many2one(related='partner_id.subscription_customer_payment_mode_id', relation='account.payment.mode', string='Subscription Payment Mode', company_dependent=True,domain=[('payment_type', '=', 'inbound')],help="Select the default subscription payment mode for this customer.",readonly=True, copy=False, store=True)
-    delivery_type = fields.Many2one('delivery.list.type', 'Delivery Type', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
+    delivery_type = fields.Many2one('delivery.list.type', 'Delivery Type', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]}, default=lambda self: self.env.ref('publishing_subscription_order.delivery_list_type_regular', False) if 'params' in self._context and 'action' in self._context['params'] and self._context['params']['action'] ==  self.env.ref('publishing_subscription_order.action_orders_subscription').id else False)
 
     @api.depends('order_line.price_total', 'order_line.computed_discount', 'partner_id')
     def _amount_all(self):
@@ -66,8 +67,8 @@ class SaleOrder(models.Model):
         partner.is_subscription_customer = True
         if not partner.is_subscription_customer:
             partner.is_subscription_customer = True
-        if not partner.subscription_customer_payment_mode_id or not partner.property_subscription_payment_term_id:
-            raise UserError(_("Can not confirm Sale Order Partner subscription's details are not completed"))
+        # if not partner.subscription_customer_payment_mode_id or not partner.property_subscription_payment_term_id:
+        #     raise UserError(_("Can not confirm Sale Order Partner subscription's details are not completed"))
 
         if not partner.is_subscription_customer:
             raise UserError(_("Can not confirm Sale Order Partner is not subscription partner"
@@ -166,14 +167,18 @@ class SaleOrderLine(models.Model):
     can_cancel = fields.Boolean('Can cancelled?')
     can_renew = fields.Boolean('Can Renewed?', default=False)
     date_cancel = fields.Date('Cancelled date', help="Cron will cancel this line on selected date.")
+    reason_cancel = fields.Selection(VALUES, string='Reason Cancellation')
     renew_product_id = fields.Many2one('product.template','Renewal Product')
     subscription_cancel = fields.Boolean('Subscription cancelled',copy=False)
     line_renewed = fields.Boolean('Subscription Renewed', copy=False)
     delivery_type = fields.Many2one(related='order_id.delivery_type', readonly=True, copy=False, store=True)
     weekday_ids = fields.Many2many('week.days', 'weekday_sale_line_rel', 'order_line_id', 'weekday_id', 'Weekdays')
+    temporary_stop = fields.Boolean('Temporary Delivery Stop', copy=False)
+    tmp_start_date = fields.Date('Start Of Delivery Stop')
+    tmp_end_date = fields.Date('End Of Delivery Stop')
 
     @api.multi
-    @api.constrains('start_date', 'end_date')
+    @api.constrains('start_date', 'end_date', 'temporary_stop', 'tmp_start_date', 'tmp_end_date')
     def _check_start_end_dates(self):
         for orderline in self:
             if orderline.start_date and not orderline.end_date:
@@ -192,6 +197,33 @@ class SaleOrderLine(models.Model):
                     _("Start Date should be before or be the same as "
                       "End Date for order line with Description '%s'.")
                     % (orderline.name))
+            if self.temporary_stop:
+                if orderline.tmp_start_date and not orderline.tmp_end_date:
+                    raise ValidationError(
+                        _("Missing End Of Delivery Stop Date for order line with "
+                          "Description '%s'.")
+                        % (orderline.name))
+                if orderline.tmp_end_date and not orderline.tmp_start_date:
+                    raise ValidationError(
+                        _("Missing Start Of Delivery Stop date for order line with "
+                          "Description '%s'.")
+                        % (orderline.name))
+                if orderline.tmp_end_date and orderline.tmp_start_date and \
+                        orderline.tmp_start_date > orderline.tmp_end_date:
+                    raise ValidationError(
+                        _("Start Of Delivery Stop Date should be before "
+                          "End Of Delivery Stop Date for order line with Description '%s'.")
+                        % (orderline.name))
+
+    @api.onchange('temporary_stop', 'tmp_start_date')
+    def onchange_temporary_delivery_stop(self):
+        vals = {}
+        if self.temporary_stop:
+            if not self.start_date:
+                vals['tmp_start_date'] = datetime.today().date()
+        else:
+            vals = {'tmp_start_date': False, 'tmp_end_date': False}
+        return {'value': vals}
 
     @api.onchange('medium')
     def onchange_medium(self):
@@ -266,28 +298,31 @@ class SaleOrderLine(models.Model):
             vals['product_template_id'] = False
             vals['product_id'] = False
 
+        if self.title:
+            adv_issue = self.env['sale.advertising.issue'].search([('subscription_title', '=', True),('parent_id', '=', self.title.id),('issue_date', '!=', False),('issue_date', '>', datetime.today().date())], order='issue_date', limit=1)
+            if adv_issue:
+                self.start_date = adv_issue.issue_date
+            else:
+                self.start_date = self.end_date = datetime.today().date() + timedelta(days=1)
+        else:
+            self.start_date = self.end_date = False
+
         return {'value': vals, 'domain': data, 'warning': result}
 
 
     @api.onchange('can_renew','can_cancel', 'date_cancel')
     def onchange_renewal_cancel(self):
-        vals, result = {}, {}
+        vals = {}
         if self.can_renew:
             vals['can_cancel'] = False
             vals['date_cancel'] = False
+            vals['reason_cancel'] = False
             if not self.renew_product_id:
                 vals['renew_product_id'] = self.product_template_id
         if self.can_cancel:
             vals['can_renew'] = False
             vals['renew_product_id'] = False
-            if self.date_cancel:
-                result = {'title': _('Warning'),
-                          'message': _('This Order line would be canceled on %s')%self.date_cancel}
-            if self.date_cancel and self.date_cancel < str(datetime.now().date()):
-                vals['date_cancel'] = False
-                result = {'title': _('Warning'),
-                          'message': _("'Cancel date' can't be past date!")}
-        return {'value': vals, 'warning':result}
+        return {'value': vals}
 
     @api.onchange('start_date', 'end_date')
     def onchange_start_end_date_subs(self):
@@ -301,10 +336,9 @@ class SaleOrderLine(models.Model):
                 vals['end_date'] = datetime.strptime(str(self.start_date), "%Y-%m-%d").date() + timedelta(
                 days=self.product_template_id.subscr_number_of_days)
         else:
-            vals = {
-                'start_date': False,
-                'end_date': False
-            }
+            vals = {'end_date': False}
+            if not self.title:
+                vals = {'start_date': False}
         return {'value': vals}
 
     @api.onchange('product_template_id')

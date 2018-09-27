@@ -86,4 +86,7 @@ class Partner(models.Model):
     @api.onchange('is_subscription_customer')
     def subscription_customer_payment(self):
         if self.is_subscription_customer and not self.subscription_customer_payment_mode_id:
-            self.subscription_customer_payment_mode_id = self.env.ref('publishing_subscription_order.payment_mode_inbound_subscriptiondd1', False)
+            payment_mode = self.env['account.payment.mode'].with_context({'lang':'en_US'}).search([('name','=','SEPA DD')], limit=1)
+            self.subscription_customer_payment_mode_id = payment_mode.id if payment_mode else False
+        if self.is_subscription_customer and not self.property_subscription_payment_term_id:
+            self.property_subscription_payment_term_id = self.env.ref('bdumedia.account_payment_term_14', False)

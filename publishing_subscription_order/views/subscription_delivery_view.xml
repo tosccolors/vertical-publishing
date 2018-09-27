@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <data>
+        <!--add js to call delivery list buttons -->
+        <template id="assets_backend" name="publishing_subscription_order assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/publishing_subscription_order/static/src/js/list_view.js"></script>
+            </xpath>
+        </template>
+    </data>
+
 	<data>
         <record id="subscription_title_delivery_form" model="ir.ui.view">
             <field name="name">subscription.title.delivery.form</field>
@@ -7,19 +16,9 @@
             <field name="arch" type="xml">
                 <form string="Subscription Title delivery" create="false" edit="false" delete="false" copy="false">
                     <header>
-                        <button class="oe_highlight" name="generate_delivery_list" string="Generate Delivery List" type="object" states="draft"/>
-                        <button class="oe_highlight" name="generate_delivery_list" string="Re-Generate Delivery List" type="object" states="progress"/>
-                        <button class="oe_highlight" name="action_progress" string="In Progress" type="object" states="draft"/>
-                        <button class="oe_highlight" name="action_done" string="Validate" type="object" states="progress"/>
-                        <button class="oe_highlight" name="action_cancel" string="Cancel" type="object" states="progress"/>
-                        <field name="state" widget="statusbar" />
+                        <button class="oe_highlight" name="generate_delivery_list" string="Generate Delivery List" type="object"/>
                     </header>
                     <sheet>
-                        <div class="oe_title">
-                            <h1>
-                                <field name="name" readonly="1"/>
-                            </h1>
-                        </div>
                         <group>
                             <field name="title_id" domain="[('subscription_title','=',True)]"/>
                             <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
@@ -37,10 +36,8 @@
             <field name="name">subscription.title.delivery.tree</field>
             <field name="model">subscription.title.delivery</field>
             <field name="arch" type="xml">
-                <tree string="Subscription Title Delivery" colors="blue:state=='draft'" create="false" edit="false" delete="false" copy="false">
-                    <field name="name" />
+                <tree string="Subscription Title Delivery" create="false" edit="false" delete="false" copy="false">
                     <field name="title_id"/>
-                    <field name="state"/>
                 </tree>
             </field>
         </record>
@@ -51,10 +48,9 @@
             <field name="model">subscription.title.delivery</field>
             <field name="arch" type="xml">
                 <search string="Search Title Delivery">
-                    <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]" />
-                    <filter name="done" string="Done" domain="[('state', '=', 'done')]" />
+                    <field name="title_id"/>
                     <group string="Group By" name="groupby">
-                        <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
+                        <filter name="title_groupby" string="Title" context="{'group_by': 'title_id'}"/>
                     </group>
                 </search>
             </field>
@@ -90,11 +86,6 @@
                         <field name="state" widget="statusbar" />
                     </header>
                     <sheet>
-                        <div class="oe_title">
-                            <h1>
-                                <field name="name" readonly="1"/>
-                            </h1>
-                        </div>
                         <group cols="4">
                             <field name="delivery_date"/>
                             <field name="title_id"/>
@@ -135,8 +126,13 @@
             <field name="model">subscription.delivery.list</field>
             <field name="arch" type="xml">
                 <search string="Search List Delivery">
+                    <field name="title_id" string="Title" domain="[('title_id', 'ilike', 'self')]" />
+                    <field name="issue_date" string="Issue Date"/>
+                    <separator/>
+                    <field name="type" string="Delivery Type" />
                     <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]" />
                     <filter name="done" string="Done" domain="[('state', '=', 'done')]" />
+
                     <group string="Group By" name="groupby">
                         <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
                     </group>
@@ -208,9 +204,6 @@
             </field>
         </record>
 
-        <menuitem id="subscription_delivery_line_menu" parent="menu_subscription_sales_main" action="subscription_delivery_line_action" groups="sales_team.group_sale_salesman,sales_team.group_sale_manager" sequence="23"/>
-
-
         <record id="view_subscription_order_line_form_delivery_list" model="ir.ui.view">
             <field name="name">sale.order.line.delivery.list</field>
             <field name="model">sale.order.line</field>
@@ -224,6 +217,9 @@
                 </field>
             </field>
         </record>
+
+        <!--<menuitem id="subscription_delivery_line_menu" parent="menu_subscription_sales_main" action="subscription_delivery_line_action" groups="sales_team.group_sale_salesman,sales_team.group_sale_manager" sequence="23"/>-->
+
 
 
     </data>

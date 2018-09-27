@@ -112,7 +112,7 @@
                                                    attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
                                                    domain="['|','&amp;',('categ_id','=', ad_class),('attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
-                                            <!--<field name="weekday_ids" widget="many2many_tags" options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>-->
+                                            <field name="weekday_ids" invisible="1" widget="many2many_tags" options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                                             <field name="must_have_dates" invisible="1"/>
                                             <field name="start_date" attrs="{'required':[('must_have_dates','=',True)],'readonly': [('subscription_cancel', '=', True)]}"/>
                                             <field name="end_date" attrs="{'required':[('must_have_dates','=',True)],'readonly': [('subscription_cancel', '=', True)]}"/>
@@ -180,6 +180,14 @@
                                         <group attrs="{'invisible': [('can_renew','=', True)]}">
                                             <field name="can_cancel" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
                                             <field name="date_cancel" attrs="{'invisible': [('can_cancel','=', False)],'required': [('can_cancel','=', True)],'readonly': [('subscription_cancel', '=', True)]}"/>
+                                            <field name="reason_cancel" attrs="{'invisible': [('can_cancel','=', False)],'required': [('can_cancel','=', True)],'readonly': [('subscription_cancel', '=', True)]}" />
+                                        </group>
+                                        <group>
+                                            <field name="temporary_stop"/>
+                                        </group>
+                                        <group attrs="{'invisible': [('temporary_stop', '=', False)]}">
+                                            <field name="tmp_start_date" attrs="{'required': [('temporary_stop', '=', True)]}"/>
+                                            <field name="tmp_end_date" attrs="{'required': [('temporary_stop', '=', True)]}"/>
                                         </group>
                                         <group>
                                             <separator string="Remarks" colspan="2"/>
@@ -558,7 +566,7 @@
                                    domain="['|','&amp;',('categ_id','=', ad_class),('attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id)]"
                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                             <field name="must_have_dates" invisible="1"/>
-                            <!--<field name="weekday_ids" widget="many2many_tags" options="{'no_open': True,'no_create': True, 'no_create_edit': True}" attrs="{'readonly': ['|',('subscription_cancel', '=', True),('state','in',('sale','done','cancel'))]}"/>-->
+                            <field name="weekday_ids" invisible="1" widget="many2many_tags" options="{'no_open': True,'no_create': True, 'no_create_edit': True}" attrs="{'readonly': ['|',('subscription_cancel', '=', True),('state','in',('sale','done','cancel'))]}"/>
                             <field name="start_date" attrs="{'required':[('must_have_dates','=',True)],'readonly': ['|',('subscription_cancel', '=', True),('state','in',('sale','done','cancel'))]}"/>
                             <field name="end_date" attrs="{'required':[('must_have_dates','=',True)],'readonly': ['|',('subscription_cancel', '=', True),('state','in',('sale','done','cancel'))]}"/>
                             <field name="number_of_issues" attrs="{'required':[('must_have_dates','=',True)],'readonly': ['|',('subscription_cancel', '=', True),('state','in',('sale','done','cancel'))]}"/>
@@ -622,6 +630,12 @@
                         <group attrs="{'invisible': [('can_renew','=', True)]}">
                             <field name="can_cancel" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
                             <field name="date_cancel" attrs="{'invisible': [('can_cancel','=', False)],'required': [('can_cancel','=', True)],'readonly': [('subscription_cancel', '=', True)]}"/>
+                            <field name="reason_cancel" attrs="{'invisible': [('can_cancel','=', False)],'required': [('can_cancel','=', True)],'readonly': [('subscription_cancel', '=', True)]}" />
+                        </group>
+                        <group>
+                            <field name="temporary_stop"/>
+                            <field name="tmp_start_date" attrs="{'invisible': [('temporary_stop', '=', False)],'required': [('temporary_stop', '=', True)]}"/>
+                            <field name="tmp_end_date" attrs="{'invisible': [('temporary_stop', '=', False)],'required': [('temporary_stop', '=', True)]}"/>
                         </group>
                     </group>
                     <div groups="base.group_no_one">

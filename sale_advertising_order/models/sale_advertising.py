@@ -151,6 +151,19 @@ class SaleOrder(models.Model):
             result.update({'campaign_id': lead.campaign_id.id, 'source_id': lead.source_id.id, 'medium_id': lead.medium_id.id, 'tag_ids': [[6, False, lead.tag_ids.ids]]})
         return result
 
+    def update_acc_mgr_sp(self):
+        if not self.advertising:
+            self.user_id = self.partner_id.user_id.id if self.partner_id.user_id else False
+            self.partner_acc_mgr = False
+            if self.partner_id:
+                if self.company_id and self.company_id.name == 'BDUmedia BV':
+                    self.user_id = self._uid
+                    self.partner_acc_mgr = self.partner_id.user_id.id if self.partner_id.user_id else False
+
+    @api.onchange('company_id')
+    def onchange_company_id(self):
+        self.update_acc_mgr_sp()
+
     # overridden:
     @api.multi
     @api.onchange('partner_id', 'published_customer', 'advertising_agency', 'agency_is_publish')
@@ -163,7 +176,9 @@ class SaleOrder(models.Model):
         - Delivery address
         """
         if not self.advertising:
-            return super(SaleOrder, self).onchange_partner_id()
+            result = super(SaleOrder, self).onchange_partner_id()
+            self.update_acc_mgr_sp()
+            return result
         # Advertiser:
         if self.published_customer:
             self.partner_id = self.published_customer.id
@@ -328,6 +343,14 @@ class SaleOrder(models.Model):
                 raise UserError(_(partner.sale_warn_msg))
 
         result = super(SaleOrder, self).create(vals)
+        if not vals.get('advertising', False):
+            if vals.get('partner_id', False) and vals.get('company_id', False):
+                company = self.env['res.company'].browse(vals.get('company_id'))
+                if company.name == 'BDUmedia BV':
+                    partner = self.env['res.partner'].browse(vals.get('partner_id'))
+                    result['partner_acc_mgr'] = partner.user_id.id if partner.user_id else False
+                else:
+                    result['partner_acc_mgr'] = False
         return result
 
     @api.multi
@@ -351,6 +374,15 @@ class SaleOrder(models.Model):
                 for newline in newlines:
                     if newline.deadline_check():
                         newline.page_qty_check_update()
+        advertising = vals.get('advertising') if 'advertising' in vals else self.advertising
+        if not advertising:
+            if 'partner_id' in vals or 'company_id' in vals:
+                company = self.env['res.company'].browse(vals.get('company_id')) if 'company_id' in vals else self.company_id
+                if company.name == 'BDUmedia BV':
+                    partner = self.env['res.partner'].browse(vals.get('partner_id')) if 'partner_id' in vals else self.partner_id
+                    self.partner_acc_mgr = partner.user_id.id if partner.user_id else False
+                else:
+                    self.partner_acc_mgr = False
         return result
 
     @api.multi

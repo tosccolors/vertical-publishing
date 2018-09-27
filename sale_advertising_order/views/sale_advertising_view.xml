@@ -2,29 +2,7 @@
 <odoo>
 	<data>
 
-		<!--
-            Menu: Advertising Sales
-        -->
 
-
-        <!--CRM-->
-        <menuitem id="menu_crm_advertising" name="CRM" parent="sales_team.menu_base_partner"
-            groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"
-            sequence="2"/>
-
-        <!--CRM: Customers-->
-        <menuitem id="menu_partner_form1" parent="menu_crm_advertising"
-                  action="action_partner_form_crm" sequence="2"/>
-
-        <menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_advsales"
-                  action="crm.crm_lead_action_activities" sequence="5" />
-
-        <!--Regular Sales Customers-->
-        <menuitem id="sales_team.menu_partner_form" parent="sales_team.menu_sales"
-                  action="base.action_partner_form" sequence="3" groups="group_regular_sales_crm_menus"/>
-
-        <menuitem id="menu_product_template_action2" parent="menu_advsales"
-                  action="product.product_template_action" sequence="13" />
 
 
         <record id="view_order_form_advertising" model="ir.ui.view">
@@ -453,6 +431,18 @@
             </field>
         </record>
 
+        <!--Inherited sale order form regular-->
+        <record id="view_order_form_inherited" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='team_id']" position="after">
+                    <field name="partner_acc_mgr" />
+                </xpath>
+            </field>
+        </record>
+
         <record id="view_order_form_advertising_no_deadline_check" model="ir.ui.view">
             <field name="name">sale.order.form.advertising.ndl</field>
             <field name="model">sale.order</field>
@@ -600,9 +590,6 @@
             <field name="act_window_id" ref="action_orders_advertising"/>
         </record>
 
-        <menuitem id="menu_sale_order2" name="Advertising Sales Orders" parent="menu_advsales"
-                  action="action_orders_advertising"
-                  groups="sale_advertising_order.group_advertising_sales_user" sequence="12" />
 
         <!--Action for Advertising Sales smart button in Customers-->
         <record id="action_orders_advertising_smart_button" model="ir.actions.act_window">
@@ -755,10 +742,6 @@
             <field name="view_id" ref="view_quotation_advertising_tree"/>
             <field name="act_window_id" ref="action_quotations_advertising"/>
         </record>
-
-
-        <menuitem id="menu_sale_quotations2" parent="menu_advsales"
-                  action="action_quotations_advertising" sequence="11"/>
 
 
 
@@ -1283,8 +1266,6 @@
             <field name="act_window_id" ref="all_advertising_order_lines_action"/>
         </record>
 
-		<menuitem name="All Advertising Sale Order Lines" id="menu_sale_advertising_order_lines" parent="sale.menu_sale_invoicing"
-                  groups="sale_advertising_order.group_advertising_sales_user" action="all_advertising_order_lines_action"/>
 
 <!-- View for sale.advertising.issue object -->
 		<record model="ir.ui.view" id="sale_advertising_issue_form">
@@ -1428,9 +1409,6 @@
 			<field name="view_id" ref="sale_advertising_issue_tree"/>
 		</record>
 
-		<menuitem name="Advertising Issue" id="menu_sale_advertising_issue" parent="sales_team.menu_sale_config"
-                  action="action_sale_advertising_issue" groups="sale_advertising_order.group_advertising_sales_user"/>
-
         <!-- View for sale.advertising.page object -->
 
 		<record model="ir.ui.view" id="sale_advertising_page_form">
@@ -1466,9 +1444,6 @@
 			<field name="view_type">form</field>
 			<field name="view_id" ref="sale_advertising_page_tree"/>
 		</record>
-
-        <menuitem name="Advertising Pages" id="menu_sale_advertising_pages" parent="sales_team.menu_sale_config"
-                  action="action_sale_advertising_page" groups="sale_advertising_order.group_advertising_sales_user"/>
 
         <!-- View for sale.advertising.available object -->
 
@@ -1551,9 +1526,6 @@
             </field>
         </record>
 
-        <menuitem name="Advertising Page Availability" id="menu_sale_advertising_available" parent="sale_advertising_order.menu_advsales"
-                  action="action_sale_advertising_available" groups="sale_advertising_order.group_advertising_sales_user"/>
-
         <!-- View for discount.reason object -->
 
 		<record model="ir.ui.view" id="discount_reason_form">
@@ -1589,9 +1561,6 @@
 			<field name="view_type">form</field>
 			<field name="view_id" ref="discount_reason_tree"/>
 		</record>
-
-        <menuitem name="Discount Reasons" id="menu_discount_reason" parent="sales_team.menu_sale_config"
-                  action="action_discount_reason" groups="sale_advertising_order.group_advertising_sales_user"/>
 
 <!-- View for sale.advertising.proof object -->
 		<record model="ir.ui.view" id="sale_advertising_proof_form">
@@ -1633,22 +1602,6 @@
 			<field name="view_id" ref="sale_advertising_proof_tree"/>
 		</record>
 
-		<menuitem name="Advertising Proof" id="menu_sale_advertising_proof"
-				  parent="menu_advsales" action="action_sale_advertising_proof" groups="base.group_no_one"/>
-
-        <!--
-            Menus: Inherited:
-        -->
-
-        <menuitem id="sales_team.menu_sales" name="Sales" parent="sales_team.menu_base_partner" groups="sale_advertising_order.group_regular_sales_user"
-                  sequence="5"/>
-        <menuitem id="sale.menu_sale_order_invoice" action="sale.action_orders_to_invoice" parent="sale.menu_sale_invoicing"
-                  groups="sale_advertising_order.group_regular_sales_user" sequence="2"/>
-        <menuitem id="sale.menu_sale_order_upselling" action="sale.action_orders_upselling" parent="sale.menu_sale_invoicing"
-                  groups="sale_advertising_order.group_regular_sales_user" sequence="5"/>
-        <menuitem id="menu_products_adv" action="product.product_normal_action_sell" parent="menu_advsales" groups="product.group_product_variant" sequence="99"/>
-
-
         <record id="sale.action_quotations" model="ir.actions.act_window">
             <field name="domain">[('state','in',('draft','sent','cancel')),('advertising','=',False)]</field>
         </record>
@@ -1656,6 +1609,7 @@
         <record id="sale.action_orders" model="ir.actions.act_window">
             <field name="domain">[('state','not in',('draft','sent','cancel')), ('advertising','=',False)]</field>
         </record>
+
         <record id="sale.action_orders_salesteams" model="ir.actions.act_window">
             <field name="domain">[('state','not in',('draft','sent','cancel')), ('advertising','=',False)]</field>
         </record>
@@ -1667,6 +1621,7 @@
         <record id="sale_crm.sale_action_quotations_new" model="ir.actions.act_window">
             <field name="domain">[('opportunity_id', '=', active_id), ('advertising','=',False)]</field>
         </record>
+
         <record id="sale_crm.sale_action_quotations" model="ir.actions.act_window">
             <field name="domain">[('opportunity_id', '=', active_id), ('state','not in',['sale','done'])]</field>
         </record>
@@ -1785,8 +1740,5 @@
            <field name="domain">[]</field>
        </record>
 
-        <!--CRM: Activities Log-->
-        <menuitem id="menu_activities_log" name="Activities Log" parent="menu_crm_advertising" groups="sales_team.group_sale_salesman"
-                  action="crm_activity_report_action_tree" sequence="6"/>
 	</data>
 </odoo>

@@ -9,46 +9,20 @@ from dateutil import relativedelta
 class SubscriptionTitleDelivery(models.Model):
     _name = 'subscription.title.delivery'
     _description = 'Subscription Title Delivery'
+    _rec_name = "title_id"
 
-    name = fields.Char(string='Title Delivery Reference', required=True, copy=False, readonly=True, states={'draft': [('readonly', False)]}, index=True, default=lambda self: _('New'))
-    title_id = fields.Many2one('sale.advertising.issue', required=True, readonly=True, string='Title', states={'draft': [('readonly', False)]})
+    title_id = fields.Many2one('sale.advertising.issue', required=True, readonly=True, string='Title')
     delivery_list_ids = fields.One2many('subscription.delivery.list', 'delivery_id', string='Delivery List', copy=False)
-    state = fields.Selection([
-        ('draft', 'New'),
-        ('progress', 'In Progress'),
-        ('done', 'Done'),
-        ('cancel', 'Cancelled'),
-    ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
     company_id = fields.Many2one('res.company', 'Company', default=lambda self: self.env['res.company']._company_default_get('sale.order'))
 
     _sql_constraints = [('uniq_title', 'unique(title_id)', 'The Title must be unique')]
 
     @api.multi
-    def generate_sequence(self):
-        for slf in self:
-            if slf.name == _('New'):
-                if self.company_id :
-                    slf.name = self.env['ir.sequence'].with_context(force_company=self.company_id.id).next_by_code(
-                        'subscription.title.delivery') or _('New')
-                else:
-                    slf.name = self.env['ir.sequence'].next_by_code('subscription.title.delivery') or _('New')
-        return True
-
-    @api.multi
-    def action_done(self):
-        return self.write({'state': 'done'})
-
-    @api.multi
-    def action_progress(self):
-        self.generate_sequence()
-        return self.write({'state': 'progress'})
-
-    @api.multi
-    def action_cancel(self):
-        return self.write({'state': 'cancel'})
-
-    @api.multi
     def generate_delivery_title(self):
+        """
+         Creates delivery title for all subscription title
+        """
+
         advIssue = self.env['sale.advertising.issue']
 
         title_domain = [('parent_id', '=', False), ('subscription_title', '=', True)]
@@ -62,23 +36,19 @@ class SubscriptionTitleDelivery(models.Model):
         list_query = ("""
                         INSERT INTO
                             subscription_title_delivery
-                            (name, company_id, state, create_uid, create_date, write_uid, write_date, title_id)
+                            (company_id, create_uid, create_date, write_uid, write_date, title_id)
                         SELECT
-                            {0} AS name,
-                            {1} AS company_id,
-                            {2} AS state,
-                            {3} AS create_uid,
-                            {4} AS create_date,
-                            {3} AS write_uid,
-                            {4} AS write_date,
-                            {5}.id AS title_id
+                            {0} AS company_id,
+                            {1} AS create_uid,
+                            {2} AS create_date,
+                            {1} AS write_uid,
+                            {2} AS write_date,
+                            {3}.id AS title_id
                           FROM
-                            {5}
-                          WHERE {6}                          
+                            {3}
+                          WHERE {4}                          
                      """.format(
-                            "'New'",
                             "'%s'" % str(company_id.id),
-                            "'draft'",
                             self._uid,
                             "'%s'" % str(fields.Datetime.to_string(fields.datetime.now())),
                             title_tables,
@@ -89,6 +59,10 @@ class SubscriptionTitleDelivery(models.Model):
 
     @api.multi
     def generate_delivery_list(self):
+        """
+            Creates delivery List for current delivery title
+        """
+
         SOL = self.env['sale.order.line']
         advIssue = self.env['sale.advertising.issue']
 
@@ -110,59 +84,93 @@ class SubscriptionTitleDelivery(models.Model):
             list_query = ("""
                           INSERT INTO
                                subscription_delivery_list
-                               (name, delivery_id, delivery_date, title_id, state, create_uid, create_date, write_uid, write_date, company_id, issue_id, issue_date, type)
+                               (delivery_id, delivery_date, title_id, state, create_uid, create_date, write_uid, write_date, company_id, issue_id, issue_date, type, weekday_id)
                             SELECT
-                               {0} AS name,
-                               {1} AS delivery_id,
-                               {2}::DATE AS delivery_date,
-                               {3} AS title_id,
-                               {4} AS state,
-                               {5} AS create_uid,
-                               {6}::TIMESTAMP AS create_date,
-                               {5} AS write_uid,
-                               {6}::TIMESTAMP AS write_date,
-                               {7} AS company_id,
-                               {8}.id AS issue_id,
-                               {8}.issue_date::DATE AS issue_date,
-                               {9}.delivery_type AS type
+                               {0} AS delivery_id,
+                               {1}::DATE AS delivery_date,
+                               {2} AS title_id,
+                               {3} AS state,
+                               {4} AS create_uid,
+                               {5}::TIMESTAMP AS create_date,
+                               {4} AS write_uid,
+                               {5}::TIMESTAMP AS write_date,
+                               {6} AS company_id,
+                               {7}.id AS issue_id,
+                               {7}.issue_date::DATE AS issue_date,
+                               {8}.delivery_type AS type,
+                               (select extract(dow from ({7}.issue_date)::DATE)) AS weekday_id
                             FROM
-                               {8}, {9}
-                            WHERE {10}
+                               {7}, {8}
+                            WHERE {9}
                             EXCEPT
                             SELECT
-                               {0} AS name,
-                               {1} AS delivery_id,
-                               {2} AS delivery_date,
-                               {3} AS title_id,
-                               {4} AS state,
-                               {5} AS create_uid,
-                               {6} AS create_date,
-                               {5} AS write_uid,
-                               {6} AS write_date,
-                               {7} AS company_id,
+                               {0} AS delivery_id,
+                               {1} AS delivery_date,
+                               {2} AS title_id,
+                               {3} AS state,
+                               {4} AS create_uid,
+                               {5} AS create_date,
+                               {4} AS write_uid,
+                               {5} AS write_date,
+                               {6} AS company_id,
                                dl.issue_id AS issue_id,
                                dl.issue_date AS issue_date,
-                               dl.type AS type
+                               dl.type AS type,
+                               dl.weekday_id AS weekday_id
                             FROM
                                 subscription_delivery_list AS dl
                                 """.format(
-                "'New'",
-                delvTitle.id,
-                "'%s'" % str(fields.Date.to_string(datetime.now())),
-                title.id,
-                "'draft'",
-                self._uid,
-                "'%s'" % str(fields.Datetime.to_string(fields.datetime.now())),
-                delvTitle.company_id.id,
-                issue_tables,
-                sol_tables,
-                all_where_clause,
-            ))
+                        delvTitle.id,
+                        "'%s'" % str(fields.Date.to_string(datetime.now())),
+                        title.id,
+                        "'draft'",
+                        self._uid,
+                        "'%s'" % str(fields.Datetime.to_string(fields.datetime.now())),
+                        delvTitle.company_id.id,
+                        issue_tables,
+                        sol_tables,
+                        all_where_clause,
+                    ))
 
             self.env.cr.execute(list_query, all_where_clause_params)
-            delvTitle.generate_sequence()
 
+
+class SubscriptionDeliveryList(models.Model):
+    _name = 'subscription.delivery.list'
+    _description = 'Subscription Delivery List'
+    _rec_name = 'delivery_date'
+    _order = 'issue_date, delivery_date'
+
+    @api.multi
+    @api.depends('issue_date')
+    def _compute_weekday(self):
+        weekdays = self.env['week.days']
+        for sobj in self:
+            dt = datetime.strptime(sobj.issue_date, "%Y-%m-%d")
+            sobj.weekday_id = weekdays.search([('name', '=', dt.strftime('%A'))]).ids[0]
+
+    delivery_id = fields.Many2one('subscription.title.delivery', 'Delivery Title', readonly=True, states={'draft': [('readonly', False)]}, ondelete='cascade')
+    delivery_date = fields.Date('Delivery Date', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
+    weekday_id = fields.Many2one('week.days', compute=_compute_weekday, store=True, string='Weekday', readonly=True, copy=False)
+    type = fields.Many2one('delivery.list.type', string='Type', readonly=True, states={'draft': [('readonly', False)]}, copy=False)
+    title_id = fields.Many2one(related='delivery_id.title_id', string='Title', store=True, readonly=True)
+    issue_id = fields.Many2one('sale.advertising.issue', 'Issue', readonly=True, states={'draft': [('readonly', False)]})
+    issue_date = fields.Date(related='issue_id.issue_date', string='Issue Date', store=True, readonly=True)
+    company_id = fields.Many2one('res.company', 'Company', default=lambda self: self.env['res.company']._company_default_get('sale.order'))
+    delivery_line_ids = fields.One2many('subscription.delivery.line', 'delivery_list_id', string='Delivery Lines', copy=False)
+    state = fields.Selection([
+        ('draft', 'New'),
+        ('progress', 'In Progress'),
+        ('done', 'Done'),
+        ('cancel', 'Cancelled'),
+    ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
+
+    @api.multi
     def generate_all_delivery_list(self):
+        """
+            Creates delivery List for all delivery title
+        """
+
         SOL = self.env['sale.order.line']
         advIssue = self.env['sale.advertising.issue']
 
@@ -178,101 +186,83 @@ class SubscriptionTitleDelivery(models.Model):
         all_where_clause_params = issue_where_clause_params + sol_where_clause_params
 
         list_query = ("""
-              INSERT INTO
-                   subscription_delivery_list
-                   (name, delivery_id, delivery_date, title_id, state, create_uid, create_date, write_uid, write_date, company_id, issue_id, issue_date, type)
-                SELECT 
-                   {0} AS name,
-                   dt.id AS delivery_id,
-                   {1}::DATE AS delivery_date,
-                   dt.title_id AS title_id,
-                   {2} AS state,
-                   {3} AS create_uid,
-                   {4}::TIMESTAMP AS create_date,
-                   {3} AS write_uid,
-                   {4}::TIMESTAMP AS write_date,
-                   dt.company_id AS company_id,
-                   {5}.id AS issue_id,
-                   {5}.issue_date::DATE AS issue_date,
-                   {6}.delivery_type AS type
-                FROM
-                   {5}, {6}, subscription_title_delivery AS dt
-                WHERE {7} AND dt.title_id = {6}.title AND dt.company_id = {6}.company_id AND dt.title_id = {5}.parent_id
-                EXCEPT
-                SELECT
-                   {0} AS name,
-                   dt.id AS delivery_id,
-                   {1} AS delivery_date,
-                   dt.title_id AS title_id,
-                   {2} AS state,
-                   {3} AS create_uid,
-                   {4} AS create_date,
-                   {3} AS write_uid,
-                   {4} AS write_date,
-                   dt.company_id AS company_id,
-                   dl.issue_id AS issue_id,
-                   dl.issue_date AS issue_date,
-                   dl.type AS type
-                FROM
-                    subscription_delivery_list AS dl, subscription_title_delivery AS dt
-                    """.format(
-                "'New'",
-                "'%s'" % str(fields.Date.to_string(datetime.now())),
-                "'draft'",
-                self._uid,
-                "'%s'" % str(fields.Datetime.to_string(fields.datetime.now())),
-                issue_tables,
-                sol_tables,
-                all_where_clause,
-            ))
-
+                  INSERT INTO
+                       subscription_delivery_list
+                       (delivery_id, delivery_date, title_id, state, create_uid, create_date, write_uid, write_date, company_id, issue_id, issue_date, type, weekday_id)
+                    SELECT 
+                       dt.id AS delivery_id,
+                       {0}::DATE AS delivery_date,
+                       dt.title_id AS title_id,
+                       {1} AS state,
+                       {2} AS create_uid,
+                       {3}::TIMESTAMP AS create_date,
+                       {2} AS write_uid,
+                       {3}::TIMESTAMP AS write_date,
+                       dt.company_id AS company_id,
+                       {4}.id AS issue_id,
+                       {4}.issue_date::DATE AS issue_date,
+                       {5}.delivery_type AS type,
+                       (select extract(dow from ({4}.issue_date)::DATE)) AS weekday_id
+                    FROM
+                       {4}, {5}, subscription_title_delivery AS dt
+                    WHERE {6} AND dt.title_id = {5}.title AND dt.company_id = {5}.company_id AND dt.title_id = {4}.parent_id
+                    EXCEPT
+                    SELECT
+                       dt.id AS delivery_id,
+                       {0} AS delivery_date,
+                       dt.title_id AS title_id,
+                       {1} AS state,
+                       {2} AS create_uid,
+                       {3} AS create_date,
+                       {2} AS write_uid,
+                       {3} AS write_date,
+                       dt.company_id AS company_id,
+                       dl.issue_id AS issue_id,
+                       dl.issue_date AS issue_date,
+                       dl.type AS type,
+                       dl.weekday_id AS weekday_id
+                    FROM
+                        subscription_delivery_list AS dl, subscription_title_delivery AS dt
+                        """.format(
+            "'%s'" % str(fields.Date.to_string(datetime.now())),
+            "'draft'",
+            self._uid,
+            "'%s'" % str(fields.Datetime.to_string(fields.datetime.now())),
+            issue_tables,
+            sol_tables,
+            all_where_clause,
+        ))
         self.env.cr.execute(list_query, all_where_clause_params)
-
-
-class SubscriptionDeliveryList(models.Model):
-    _name = 'subscription.delivery.list'
-    _description = 'Subscription Delivery List'
-    _rec_name = 'delivery_date'
-
-    @api.multi
-    @api.depends('issue_date')
-    def _compute_weekday(self):
-        weekdays = self.env['week.days']
-        for sobj in self:
-            dt = datetime.strptime(sobj.issue_date, "%Y-%m-%d")
-            sobj.weekday_id = weekdays.search([('name', '=', dt.strftime('%A'))]).ids[0]
-
-    name = fields.Char(string='Delivery Reference', required=True, copy=False, readonly=True, states={'draft': [('readonly', False)]}, index=True, default=lambda self: _('New'))
-    delivery_id = fields.Many2one('subscription.title.delivery', 'Title', readonly=True, states={'draft': [('readonly', False)]}, ondelete='cascade')
-    delivery_date = fields.Date('Delivery Date', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
-    weekday_id = fields.Many2one('week.days', compute=_compute_weekday, string='Weekday', readonly=True, copy=False)
-    type = fields.Many2one('delivery.list.type', string='Type', readonly=True, states={'draft': [('readonly', False)]}, copy=False)
-    title_id = fields.Many2one(related='delivery_id.title_id', string='Title', store=True, readonly=True)
-    issue_id = fields.Many2one('sale.advertising.issue', 'Issue', readonly=True, states={'draft': [('readonly', False)]})
-    issue_date = fields.Date(related='issue_id.issue_date', string='Issue Date', store=True, readonly=True)
-    company_id = fields.Many2one('res.company', 'Company', default=lambda self: self.env['res.company']._company_default_get('sale.order'))
-    delivery_line_ids = fields.One2many('subscription.delivery.line', 'delivery_list_id', string='Delivery Lines', copy=False)
-    state = fields.Selection([
-        ('draft', 'New'),
-        ('progress', 'In Progress'),
-        ('done', 'Done'),
-        ('cancel', 'Cancelled'),
-    ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
 
 
     @api.multi
     def generate_delivery_lines(self):
-
-        ######update delivered issues to Sale order lines can be done to make boolean field true once it's completed need to check with Willem######
+        """
+         Crates delivery line for all delivery order
+        """
 
         SOL = self.env['sale.order.line']
-        advIssue = self.env['sale.advertising.issue']
 
-        for list in self:
-            sol_domain = [('title', '=', list.title_id.id), ('state', '=', 'sale'), ('subscription', '=', True), ('delivery_type', '=', list.type.id), ('start_date', '<=', list.issue_date), ('end_date', '>=', list.issue_date), ('company_id', '=', list.company_id.id)]
-            self.env.cr.execute("SELECT array_agg(sub_order_line) FROM subscription_delivery_line WHERE delivery_list_id = %s"%(list.id))
+        for dlist in self:
+            weekday_id = dlist.weekday_id.id
+            common_domain = [('title', '=', dlist.title_id.id), ('weekday_ids','=', weekday_id), ('state', '=', 'sale'), ('subscription', '=', True), ('delivery_type', '=', dlist.type.id), ('company_id', '=', dlist.company_id.id)]
+            sol_domain = common_domain + [('product_id.digital_subscription', '=', False), ('start_date', '<=', dlist.issue_date), ('end_date', '>=', dlist.issue_date)]
+
+            temp_stop_domain = common_domain + [('temporary_stop','=',True), ('tmp_start_date', '<=', dlist.issue_date), ('tmp_end_date', '>=', dlist.issue_date)]
+            temp_sol = SOL.search(temp_stop_domain)
+            stopSolIds = []
+            if temp_sol:
+                stopSolIds += temp_sol.ids                
+
+            self.env.cr.execute("SELECT array_agg(sub_order_line) FROM subscription_delivery_line WHERE delivery_list_id = %s"%(dlist.id))
             currSOL = self.env.cr.fetchall()[0][0]
-            sol_domain = sol_domain + [('id', 'not in', currSOL)] if currSOL else sol_domain
+            if currSOL:
+                stopSolIds += list(currSOL)
+                
+            if stopSolIds:
+                stopSolIds = list(set(stopSolIds))
+                sol_domain += [('id', 'not in', stopSolIds)]
+
             sol_query_line = SOL._where_calc(sol_domain)
             sol_tables, sol_where_clause, sol_where_clause_params = sol_query_line.get_sql()
 
@@ -295,8 +285,8 @@ class SubscriptionDeliveryList(models.Model):
                                 {4}
                               WHERE {5}
                          """.format(
-                            list.id,
-                            list.company_id.id,
+                            dlist.id,
+                            dlist.company_id.id,
                             self._uid,
                             "'%s'" % str(fields.Datetime.to_string(fields.datetime.now())),
                             sol_tables,
@@ -304,13 +294,16 @@ class SubscriptionDeliveryList(models.Model):
                         ))
 
             self.env.cr.execute(list_query, sol_where_clause_params)
-            list.generate_sequence()
 
 
     def generate_all_delivery_lines(self):
+        """
+            Creates delivery Lines for all delivery list
+        """
+
         SOL = self.env['sale.order.line']
 
-        sol_domain = [('state', '=', 'sale'), ('subscription', '=', True)]
+        sol_domain = [('state', '=', 'sale'), ('subscription', '=', True),('product_id.digital_subscription','=',False)]
         sol_query_line = SOL._where_calc(sol_domain)
         sol_tables, sol_where_clause, sol_where_clause_params = sol_query_line.get_sql()
 
@@ -330,9 +323,10 @@ class SubscriptionDeliveryList(models.Model):
                             {1}::TIMESTAMP AS write_date,
                             (SELECT partner_shipping_id AS partner_id FROM sale_order WHERE id = {2}.order_id)
                           FROM
-                            {2}, subscription_delivery_list as dl
+                            {2}, subscription_delivery_list as dl, weekday_sale_line_rel as wk
                           WHERE {3} AND dl.title_id = {2}.title AND dl.type = {2}.delivery_type AND dl.company_id = {2}.company_id AND
-                            {2}.start_date <= dl.issue_date AND {2}.end_date >= dl.issue_date
+                            {2}.start_date <= dl.issue_date AND {2}.end_date >= dl.issue_date AND wk.order_line_id = {2}.id AND wk.weekday_id = dl.weekday_id AND 
+                            ((({2}.temporary_stop IS Null) OR {2}.temporary_stop ='t' AND dl.issue_date NOT BETWEEN {2}.tmp_start_date and {2}.tmp_end_date) )
                         EXCEPT 
                         SELECT 
                             sl.delivery_list_id AS delivery_list_id,
@@ -359,23 +353,11 @@ class SubscriptionDeliveryList(models.Model):
         self.env['subscription.delivery.line'].update_delivered_issues()
 
     @api.multi
-    def generate_sequence(self):
-        for slf in self:
-            if slf.name == _('New'):
-                if self.company_id:
-                    slf.name = self.env['ir.sequence'].with_context(force_company=self.company_id.id).next_by_code(
-                        'subscription.delivery.list') or _('New')
-                else:
-                    slf.name = self.env['ir.sequence'].next_by_code('subscription.delivery.list') or _('New')
-        return True
-
-    @api.multi
     def action_done(self):
         return self.write({'state': 'done'})
 
     @api.multi
     def action_progress(self):
-        self.generate_sequence()
         return self.write({'state': 'progress'})
 
     @api.multi
@@ -398,9 +380,9 @@ class SubscriptionDeliveryLine(models.Model):
     partner_id = fields.Many2one(related='subscription_number.partner_shipping_id', string='Delivery Address',copy=False, readonly=True, store=True)
     product_uom_qty = fields.Float(string='Quantity', digits=dp.get_precision('Product Unit of Measure'), required=True)
     company_id = fields.Many2one(related='delivery_list_id.company_id', string='Company', store=True, readonly=True)
-    title_id = fields.Many2one(related='delivery_list_id.title_id', string='Title', store=True, readonly=True)
-    issue_id = fields.Many2one(related='delivery_list_id.issue_id', string='Issue', store=True, readonly=True)
-    state = fields.Selection(related='delivery_list_id.state', string='State', store=True, readonly=True)
+    title_id = fields.Many2one(related='delivery_list_id.title_id', string='Title', readonly=True)
+    issue_id = fields.Many2one(related='delivery_list_id.issue_id', string='Issue', readonly=True)
+    state = fields.Selection(related='delivery_list_id.state', string='State', readonly=True)
 
     @api.model
     def create(self, values):
@@ -416,6 +398,10 @@ class SubscriptionDeliveryLine(models.Model):
 
 
     def update_delivered_issues(self):
+        """
+            Update Sale order line delivered Issues from all delivery lines
+        """
+
         list_query = (""" 
                    UPDATE sale_order_line SET (delivered_issues) =
                    (SELECT count(sub_order_line) FROM subscription_delivery_line

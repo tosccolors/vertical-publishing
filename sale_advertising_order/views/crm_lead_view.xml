@@ -405,12 +405,7 @@
             <field eval="True" name="condition"/>
         </record>
 
-        <!--CRM: My Pipeline-->
-        <menuitem
-            id="menu_crm_opportunities2"
-            action="action_your_pipeline_advertising"
-            parent="menu_crm_advertising"
-            sequence="4"/>
+
 
         <!--Regular Sales My Pipeline-->
         <record model="ir.ui.menu" id="crm.menu_crm_opportunities">
@@ -487,14 +482,7 @@
             <field name="act_window_id" ref="crm_lead_all_leads_advertising"/>
         </record>
 
-        <!--CRM: Leads-->
-        <menuitem
-            id="menu_crm_leads_adv"
-            name="Leads"
-            parent="menu_crm_advertising"
-            sequence="1"
-            action="crm.crm_lead_all_leads"
-            groups="crm.group_use_lead"/>
+
 
         <!--Regular Sales Leads-->
         <record model="ir.ui.menu" id="crm.menu_crm_leads">
@@ -554,10 +542,6 @@
                 </p>
             </field>
         </record>
-
-        <!--CRM: Next Activities-->
-        <menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_crm_advertising" groups="sale_advertising_order.group_next_activities_menu"
-                  action="crm.crm_lead_action_activities" sequence="5" />
 
         <!--Regular Sales Next Activities-->
         <record model="ir.ui.menu" id="crm.crm_lead_menu_activities">
@@ -713,8 +697,13 @@
                                                 'default_team_id': team_id,
                                                }</attribute>
                 </xpath>
-                <xpath expr="//div[@name='button_box']/button[3]" position="replace"/>
-                <xpath expr="//div[@name='button_box']/button[3]" position="replace"/>
+                <xpath expr="//div[@name='button_box']/button[3]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='sale_amount_total']" position="replace"/>
+                <xpath expr="//div[@name='button_box']/button[4]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                 <xpath expr="//button[@name='action_schedule_meeting']" position="after">
                     <button class="oe_stat_button" type="action"
                         name="%(crm_activity_report_action_tree2)d"
