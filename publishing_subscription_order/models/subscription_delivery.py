@@ -149,6 +149,8 @@ class SubscriptionDeliveryList(models.Model):
             dt = datetime.strptime(sobj.issue_date, "%Y-%m-%d")
             sobj.weekday_id = weekdays.search([('name', '=', dt.strftime('%A'))]).ids[0]
 
+    name = fields.Char(string='Delivery List#', required=True, copy=False, readonly=True,
+                       states={'draft': [('readonly', False)]}, index=True, default=lambda self: _('New'))
     delivery_id = fields.Many2one('subscription.title.delivery', 'Delivery Title', readonly=True, states={'draft': [('readonly', False)]}, ondelete='cascade')
     delivery_date = fields.Date('Delivery Date', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
     weekday_id = fields.Many2one('week.days', compute=_compute_weekday, store=True, string='Weekday', readonly=True, copy=False)
@@ -164,6 +166,17 @@ class SubscriptionDeliveryList(models.Model):
         ('done', 'Done'),
         ('cancel', 'Cancelled'),
     ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
+
+    @api.model
+    def create(self, vals):
+        if vals.get('name', _('New')) == _('New'):
+            if 'company_id' in vals:
+                vals['name'] = self.env['ir.sequence'].with_context(force_company=vals['company_id']).next_by_code(
+                    'subscription.delivery.list') or _('New')
+            else:
+                vals['name'] = self.env['ir.sequence'].next_by_code('subscription.delivery.list') or _('New')
+        result = super(SubscriptionDeliveryList, self).create(vals)
+        return result
 
     @api.multi
     def generate_all_delivery_list(self):
@@ -236,6 +249,18 @@ class SubscriptionDeliveryList(models.Model):
 
 
     @api.multi
+    def update_sequence_number(self):
+        self.ensure_one()
+        if self.name == 'New':
+            if self.company_id:
+                name = self.env['ir.sequence'].with_context(force_company=self.company_id).next_by_code(
+                    'subscription.delivery.list') or _('New')
+            else:
+                name = self.env['ir.sequence'].next_by_code('subscription.delivery.list') or _('New')
+            self.name = name
+        return self.name
+
+    @api.multi
     def generate_delivery_lines(self):
         """
          Crates delivery line for all delivery order
@@ -244,6 +269,7 @@ class SubscriptionDeliveryList(models.Model):
         SOL = self.env['sale.order.line']
 
         for dlist in self:
+            dlist.update_sequence_number()
             weekday_id = dlist.weekday_id.id
             common_domain = [('title', '=', dlist.title_id.id), ('weekday_ids','=', weekday_id), ('state', '=', 'sale'), ('subscription', '=', True), ('delivery_type', '=', dlist.type.id), ('company_id', '=', dlist.company_id.id)]
             sol_domain = common_domain + [('product_id.digital_subscription', '=', False), ('start_date', '<=', dlist.issue_date), ('end_date', '>=', dlist.issue_date)]
@@ -358,6 +384,7 @@ class SubscriptionDeliveryList(models.Model):
 
     @api.multi
     def action_progress(self):
+        self.update_sequence_number()
         return self.write({'state': 'progress'})
 
     @api.multi
