@@ -32,8 +32,9 @@ class SaleOrder(models.Model):
     _inherit = ["sale.order"]
 
     subscription = fields.Boolean('Subscription', default=False)
-    subscription_payment_mode_id = fields.Many2one(related='partner_id.subscription_customer_payment_mode_id', relation='account.payment.mode', string='Subscription Payment Mode', company_dependent=True,domain=[('payment_type', '=', 'inbound')],help="Select the default subscription payment mode for this customer.",readonly=True, copy=False, store=True)
+    subscription_payment_mode_id = fields.Many2one(related='partner_id.subscription_customer_payment_mode_id', relation='account.payment.mode', string='Payment method', company_dependent=True,domain=[('payment_type', '=', 'inbound')],help="Select the default subscription payment mode for this customer.",readonly=True, copy=False, store=True)
     delivery_type = fields.Many2one('delivery.list.type', 'Delivery Type', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]}, default=lambda self: self.env.ref('publishing_subscription_order.delivery_list_type_regular', False) if 'params' in self._context and 'action' in self._context['params'] and self._context['params']['action'] ==  self.env.ref('publishing_subscription_order.action_orders_subscription').id else False)
+    customer_id = fields.Many2one('res.partner', 'Customer', required=True)
 
     @api.depends('order_line.price_total', 'order_line.computed_discount', 'partner_id')
     def _amount_all(self):
