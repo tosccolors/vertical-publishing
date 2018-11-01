@@ -105,7 +105,7 @@ class SaleOrder(models.Model):
     def _prepare_invoice(self,):
         res = super(SaleOrder, self)._prepare_invoice()
         if self.filtered('subscription'):
-            res['payment_term_id'] = self.property_subscription_payment_term_id.id or False
+            res['payment_term_id'] = self.partner_id.property_subscription_payment_term_id.id or False
         return res
 
     @api.multi

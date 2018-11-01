@@ -11,5 +11,11 @@
                 attachment_use="False"
             />
 
+    <report id="delivery_list_xml"
+            name="publishing_subscription_order.delivery_list_xml_report"
+            string="Delivery List XML"
+            report_type="qweb-xml"
+            model="subscription.delivery.list"/>
+
     </data>
 </odoo>
