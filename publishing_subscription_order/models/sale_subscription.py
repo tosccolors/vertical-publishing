@@ -32,7 +32,7 @@ class SaleOrder(models.Model):
     _inherit = ["sale.order"]
 
     subscription = fields.Boolean('Subscription', default=False)
-    subscription_payment_mode_id = fields.Many2one(related='partner_id.subscription_customer_payment_mode_id', relation='account.payment.mode', string='Subscription Payment Mode', company_dependent=True,domain=[('payment_type', '=', 'inbound')],help="Select the default subscription payment mode for this customer.",readonly=True, copy=False, store=True)
+    subscription_payment_mode_id = fields.Many2one(related='partner_id.subscription_customer_payment_mode_id', relation='account.payment.mode', string='Payment method', company_dependent=True,domain=[('payment_type', '=', 'inbound')],help="Select the default subscription payment mode for this customer.",readonly=True, copy=False, store=True)
     delivery_type = fields.Many2one('delivery.list.type', 'Delivery Type', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]}, default=lambda self: self.env.ref('publishing_subscription_order.delivery_list_type_regular', False) if 'params' in self._context and 'action' in self._context['params'] and self._context['params']['action'] ==  self.env.ref('publishing_subscription_order.action_orders_subscription').id else False)
 
     @api.depends('order_line.price_total', 'order_line.computed_discount', 'partner_id')
@@ -88,6 +88,15 @@ class SaleOrder(models.Model):
                 order.check_limit()
         return super(SaleOrder, self).action_confirm()
 
+    def update_acc_mgr_sp(self):
+        if not self.advertising and not self.subscription:
+            self.user_id = self.partner_id.user_id.id if self.partner_id.user_id else False
+            self.partner_acc_mgr = False
+            if self.partner_id:
+                if self.company_id and self.company_id.name == 'BDUmedia BV':
+                    self.user_id = self._uid
+                    self.partner_acc_mgr = self.partner_id.user_id.id if self.partner_id.user_id else False
+
     @api.multi
     @api.onchange('partner_id', 'published_customer', 'advertising_agency', 'agency_is_publish')
     def onchange_partner_id(self):
@@ -96,10 +105,11 @@ class SaleOrder(models.Model):
         - Subscription Payment term
         """
         super(SaleOrder, self).onchange_partner_id()
-        if self.subscription and self.partner_id:
-            # Subscription:
-            self.payment_term_id = self.partner_id.property_subscription_payment_term_id and self.partner_id.property_subscription_payment_term_id.id or False
-            self.payment_mode_id = self.partner_id.subscription_customer_payment_mode_id
+        if self.subscription:
+            if self.partner_id:
+                # Subscription:
+                self.payment_term_id = self.partner_id.property_subscription_payment_term_id and self.partner_id.property_subscription_payment_term_id.id or False
+                self.payment_mode_id = self.partner_id.subscription_customer_payment_mode_id
 
     @api.model
     def _prepare_invoice(self,):
