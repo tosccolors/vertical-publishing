@@ -225,14 +225,15 @@ class SaleOrderLine(models.Model):
                           "End Of Delivery Stop Date for order line with Description '%s'.")
                         % (orderline.name))
 
-    @api.onchange('temporary_stop', 'tmp_start_date')
+    @api.onchange('tmp_start_date')
     def onchange_temporary_delivery_stop(self):
         vals = {}
-        if self.temporary_stop:
-            if not self.start_date:
-                vals['tmp_start_date'] = datetime.today().date()
-        else:
-            vals = {'tmp_start_date': False, 'tmp_end_date': False}
+        vals['temporary_stop'] = True if self.tmp_start_date else False
+        # if self.temporary_stop:
+        #     if not self.start_date:
+        #         vals['tmp_start_date'] = datetime.today().date()
+        # else:
+        #     vals = {'tmp_start_date': False, 'tmp_end_date': False}
         return {'value': vals}
 
     @api.onchange('medium')
@@ -247,28 +248,52 @@ class SaleOrderLine(models.Model):
         elif not self.subscription:
             return {'value':vals}
         if self.medium:
-            child_id = [x.id for x in self.medium.child_id.filtered('subscription_categ')]
-            if len(child_id) == 1:
-                vals['ad_class'] = child_id[0]
-            else:
-                vals['ad_class'] = False
-                data['ad_class'] = [('id', 'child_of', self.medium.id), ('type', '!=', 'view'), ('subscription_categ','=',True)]
-            titles = self.env['sale.advertising.issue'].search(
-                [('parent_id', '=', False), ('medium', '=', self.medium.id), ('subscription_title','=',True)]).ids
-            if titles and len(titles) == 1:
-                vals['title'] = titles[0]
-            else:
-                # data['title'] = [('id','in',titles.id)]
-                vals['title'] = False
+            if not self.ad_class:
+                child_id = [x.id for x in self.medium.child_id.filtered('subscription_categ')]
+                if len(child_id) == 1:
+                    vals['ad_class'] = child_id[0]
+                else:
+                    vals['ad_class'] = False
+                    data['ad_class'] = [('id', 'child_of', self.medium.id), ('type', '!=', 'view'), ('subscription_categ','=',True)]
+            if not self.title:
+                titles = self.env['sale.advertising.issue'].search(
+                    [('parent_id', '=', False), ('medium', '=', self.medium.id), ('subscription_title','=',True)]).ids
+                if titles and len(titles) == 1:
+                    vals['title'] = titles[0]
+                else:
+                    # data['title'] = [('id','in',titles.id)]
+                    vals['title'] = False
         else:
-            vals['ad_class'] = False
-            vals['title'] = False
-            data = {'ad_class': []}
+            if not self.ad_class:
+                vals['ad_class'] = False
+                data = {'ad_class': []}
+            if not self.title:
+                vals['title'] = False
+
         return {'value': vals, 'domain': data}
 
     @api.onchange('ad_class','title')
     def onchange_ad_class(self):
         vals, data, result = {}, {}, {}
+
+        def _get_product_template(self):
+            ids = []
+            product_ids = self.env['product.template'].search(
+                [('categ_id', '=', self.ad_class.id), ('subscription_product', '=', True)])
+            if product_ids:
+                for product in product_ids:
+                    if self.title.product_attribute_value_id:
+                        if self.title.product_attribute_value_id.id in product.mapped('attribute_line_ids').mapped(
+                                'value_ids').ids:
+                            ids.append(product.id)
+                    else:
+                        if not product.attribute_line_ids: ids.append(product.id)
+            return ids
+
+        def _no_template(self, vals):
+            vals['product_template_id'] = False
+            vals['product_id'] = False
+            return vals
 
         if self.advertising:
             result = super(SaleOrderLine, self).onchange_ad_class()
@@ -281,32 +306,35 @@ class SaleOrderLine(models.Model):
 
         data['product_template_id'] = [('subscription_product', '=', True)]
         if self.ad_class: data['product_template_id'] += [('categ_id', '=', self.ad_class.id)]
-        if self.ad_class and self.title:
-            product_ids = self.env['product.template'].search([('categ_id', '=', self.ad_class.id), ('subscription_product', '=', True)])
-            if product_ids:
-                ids = []
-                for product in product_ids:
-                    if self.title.product_attribute_value_id:
-                        if self.title.product_attribute_value_id.id in product.mapped('attribute_line_ids').mapped('value_ids').ids:
-                            ids.append(product.id)
+        if self.ad_class and self.title :
+            if not self.product_template_id:
+                template_ids = _get_product_template(self)
+                if template_ids:
+                    data['product_template_id'] += [('id', 'in', template_ids)]
+                    product_template_ids = self.env['product.template'].search([('subscription_product', '=', True), ('categ_id', '=', self.ad_class.id), ('id', 'in', template_ids)])
+                    if len(product_template_ids) == 1:
+                        vals['product_template_id'] = product_template_ids[0]
+                        vals['product_uom'] = product_template_ids.uom_id
+                        vals['number_of_issues'] = product_template_ids.number_of_issues
+                        vals['can_renew'] = product_template_ids.can_renew
+                        vals['renew_product_id'] = product_template_ids.renew_product_id
                     else:
-                        if not product.attribute_line_ids: ids.append(product.id)
-
-                data['product_template_id'] += [('id', 'in', ids)]
-                product_template_ids = self.env['product.template'].search([('subscription_product', '=', True), ('categ_id', '=', self.ad_class.id), ('id', 'in', ids)])
-                if len(product_template_ids) == 1:
-                    vals['product_template_id'] = product_template_ids[0]
-                    vals['product_uom'] = product_template_ids.uom_id
-                    vals['number_of_issues'] = product_template_ids.number_of_issues
-                    vals['can_renew'] = product_template_ids.can_renew
-                    vals['renew_product_id'] = product_template_ids.renew_product_id
+                        vals['product_template_id'] = False
                 else:
-                    vals['product_template_id'] = False
+                    vals.update(_no_template(self, vals))
             else:
-                vals['product_template_id'] = False
+                if self.product_template_id:
+
+                    template_ids = _get_product_template(self)
+                    if not self.product_template_id.id in template_ids or not template_ids:
+                        vals.update(_no_template(self, vals))
+                    elif not self.product_id:
+                        vals.update(self.get_variant())
+                else:
+                    vals.update(_no_template(self, vals))
         else:
-            vals['product_template_id'] = False
-            vals['product_id'] = False
+            if not self.product_template_id:
+                vals.update(_no_template(self, vals))
 
         if self.title:
             adv_issue = self.env['sale.advertising.issue'].search([('subscription_title', '=', True),('parent_id', '=', self.title.id),('issue_date', '!=', False),('issue_date', '>', datetime.today().date())], order='issue_date', limit=1)
@@ -314,24 +342,38 @@ class SaleOrderLine(models.Model):
                 self.start_date = adv_issue.issue_date
             else:
                 self.start_date = self.end_date = datetime.today().date() + timedelta(days=1)
+
+            if not self.medium:
+                ads = self.env.ref('sale_advertising_order.advertising_category').id
+                if self.title.parent_id:
+                    medium = self.title.medium.parent_id.id if ads != self.title.medium.parent_id.id else self.title.medium.id
+                else:
+                    medium = self.title.medium.id
+                data['medium'] = [('parent_id', '=', ads)]
+                vals['medium'] = medium
         else:
             self.start_date = self.end_date = False
 
         return {'value': vals, 'domain': data, 'warning': result}
 
-
-    @api.onchange('can_renew','can_cancel', 'date_cancel')
-    def onchange_renewal_cancel(self):
+    @api.onchange('renew_product_id')
+    def onchange_renewal(self):
         vals = {}
-        if self.can_renew:
-            vals['can_cancel'] = False
+        if self.renew_product_id:
+            vals['can_renew'] = True
             vals['date_cancel'] = False
-            vals['reason_cancel'] = False
-            if not self.renew_product_id:
-                vals['renew_product_id'] = self.product_template_id
-        if self.can_cancel:
+        else:
             vals['can_renew'] = False
+        return {'value': vals}
+
+    @api.onchange('date_cancel')
+    def onchange_date_cancel(self):
+        vals = {}
+        if self.date_cancel:
+            vals['can_cancel'] = True
             vals['renew_product_id'] = False
+        else:
+            vals['can_cancel'] = False
         return {'value': vals}
 
     @api.onchange('start_date', 'end_date')
@@ -351,12 +393,9 @@ class SaleOrderLine(models.Model):
                 vals = {'start_date': False}
         return {'value': vals}
 
-    @api.onchange('product_template_id')
-    def onchange_product_template_subs(self):
-        vals = {}
-        if not self.subscription:
-            return {'value': vals}
 
+    def get_variant(self):
+        vals = {}
         def _line_update(line):
             dic = {}
             dic['number_of_issues'] = line.product_template_id.number_of_issues
@@ -375,15 +414,19 @@ class SaleOrderLine(models.Model):
         def _reset_line():
             return {'product_id': False,
                     'name': '',
-                    'number_of_issues':0,
+                    'number_of_issues': 0,
                     'can_renew': False,
-                    'renew_product_id':False,
-                    'weekday_ids':[(6, 0 , [])]
-            }
+                    'renew_product_id': False,
+                    'weekday_ids': [(6, 0, [])]
+                    }
+
         product_template_id = self.product_template_id
         if 'cronRenewal' in self.env.context:
             product_template_id = self.product_template_id.renew_product_id
         if product_template_id and self.title:
+            if not self.ad_class:
+                vals['ad_class'] = product_template_id.categ_id.id
+
             if self.title.product_attribute_value_id:
                 pav = self.title.product_attribute_value_id.id
             else:
@@ -403,10 +446,15 @@ class SaleOrderLine(models.Model):
                 vals.update(_reset_line())
         else:
             vals.update(_reset_line())
-        return {'value':vals}
+        return vals
 
-
-
+    @api.onchange('product_template_id')
+    def onchange_product_template_subs(self):
+        vals = {}
+        if not self.subscription:
+            return {'value': vals}
+        vals = self.get_variant()
+        return {'value': vals}
 
     @api.multi
     def _prepare_invoice_line(self, qty):
