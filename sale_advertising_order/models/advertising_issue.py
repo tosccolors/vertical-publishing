@@ -93,7 +93,9 @@ class AdvertisingIssue(models.Model):
     week_number_even = fields.Boolean(string='Even Week Number', store=True, readonly=True, compute='_week_number' )
     deadline = fields.Datetime('Deadline', help='Closing Time for Sales')
     medium_domain = fields.Char(compute='_compute_medium_domain', readonly=True, store=False,)
-    medium = fields.Many2one('product.category','Medium', required=True)
+    medium = fields.Many2one('product.category','Medium')
+    medium_ids = fields.Many2many('product.category', 'advertising_issue_product_category_default_rel',
+        'advertising_issue_id', 'medium_id', string='Medium')
     state = fields.Selection([('open','Open'),('close','Close')], 'State', default='open')
     default_note = fields.Text('Default Note')
     amount_total = fields.Integer(computed=_availability, string='Available Space', store=True, readonly=True,)
@@ -105,6 +107,7 @@ class AdvertisingIssue(models.Model):
     def onchange_parent_id(self):
         domain = {}
         self.medium = False
+        self.medium_ids = False
         if self.parent_id:
             if self.parent_id.medium.id == self.env.ref('sale_advertising_order.newspaper_advertising_category').id:
                 ads = self.env.ref('sale_advertising_order.title_pricelist_category').id
