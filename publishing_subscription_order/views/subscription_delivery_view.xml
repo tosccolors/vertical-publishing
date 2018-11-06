@@ -139,8 +139,8 @@
                     <filter name="done" string="Done" domain="[('state', '=', 'done')]" />
                     <separator/>
                     <filter string="This Week" name="this_week"
-                        domain="['&amp;', ('delivery_date', '&gt;=', context_today().strftime('%Y-%m-%d')),
-                                 ('delivery_date', '&lt;=', (context_today()+datetime.timedelta(days=7)).strftime('%Y-%m-%d'))
+                        domain="['&amp;', ('issue_date', '&gt;=', context_today().strftime('%Y-%m-%d')),
+                                 ('issue_date', '&lt;=', (context_today()+datetime.timedelta(days=7)).strftime('%Y-%m-%d'))
                         ]"/>
 
                     <group string="Group By" name="groupby">
