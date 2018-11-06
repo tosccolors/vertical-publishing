@@ -133,6 +133,7 @@ class SubscriptionTitleDelivery(models.Model):
                     ))
 
             self.env.cr.execute(list_query, all_where_clause_params)
+            self.env['subscription.delivery.list'].update_name()
 
 
 class SubscriptionDeliveryList(models.Model):
@@ -149,7 +150,7 @@ class SubscriptionDeliveryList(models.Model):
             dt = datetime.strptime(sobj.issue_date, "%Y-%m-%d")
             sobj.weekday_id = weekdays.search([('name', '=', dt.strftime('%A'))]).ids[0]
 
-    name = fields.Char(string='Delivery List#', required=True, copy=False, readonly=True,
+    name = fields.Char(string='Delivery List#', copy=False, readonly=True,
                        states={'draft': [('readonly', False)]}, index=True, default=lambda self: _('New'))
     delivery_id = fields.Many2one('subscription.title.delivery', 'Delivery Title', readonly=True, states={'draft': [('readonly', False)]}, ondelete='cascade')
     delivery_date = fields.Date('Delivery Date', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
@@ -246,6 +247,11 @@ class SubscriptionDeliveryList(models.Model):
             all_where_clause,
         ))
         self.env.cr.execute(list_query, all_where_clause_params)
+        self.update_name()
+
+    def update_name(self):
+        list_ids = self.search([('name','=',False)])
+        list_ids.write({'name':'New'})
 
 
     @api.multi
