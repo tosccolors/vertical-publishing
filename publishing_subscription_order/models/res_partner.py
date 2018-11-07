@@ -31,6 +31,7 @@ class Partner(models.Model):
     subscription_customer_payment_mode_id = fields.Many2one('account.payment.mode', string='Subscription Customer Payment Mode',company_dependent=True,domain=[('payment_type', '=', 'inbound')],help="Select the default subscription payment mode for this customer.")
     subs_quotation_count = fields.Integer(compute='_compute_subs_quotation_count', string='# of Quotations')
     subs_sale_order_count = fields.Integer(compute='_compute_subs_sale_order_count', string='# of Sales Orders')
+    department_id = fields.Many2one('hr.department', string='Department')
 
     def _compute_subs_quotation_count(self):
         sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('subscription','=',True),('state','not in',('sale','done','cancel'))],
