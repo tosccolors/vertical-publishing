@@ -56,6 +56,7 @@ class productCategory(models.Model):
         ], 'Date Type Advertising products')
     deadline_offset = fields.Integer('Hours offset from Issue Deadline', default=0)
     tag_ids = fields.Many2many('account.analytic.tag', 'product_category_tag_rel', 'categ_id', 'tag_id', string='Analytic Tags', copy=True)
+    advertising_issue_id = fields.Many2one('sale.advertising.issue', string='Medium')
 
 
 class productTemplate(models.Model):
