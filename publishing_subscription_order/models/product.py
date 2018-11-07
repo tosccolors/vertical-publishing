@@ -14,7 +14,7 @@ class ProductTemplate(models.Model):
     digital_subscription = fields.Boolean(string='Is digital subscription?')
     weekday_ids = fields.Many2many('week.days', 'weekday_template_rel', 'template_id', 'weekday_id', 'Weekdays')
     can_renew = fields.Boolean('Can Renewed?', default=False)
-    renew_product_id = fields.Many2one('product.template','Renewal Product')
+    renew_product_id = fields.Many2one('product.product','Renewal Product')
 
     @api.multi
     def _get_product_accounts(self):
@@ -35,14 +35,26 @@ class ProductTemplate(models.Model):
     def create(self, values):
         res = super(ProductTemplate, self).create(values)
         if res.subscription_product and values['can_renew'] and not values['renew_product_id']:
-            res.write({'renew_product_id':res.id})
+            product = self.env['product.product'].search([('product_tmpl_id', '=', res.id)], limit=1)
+            res.write({'renew_product_id':product.ids[0]})
+        return res
+
+    @api.multi
+    def write(self, values):
+        res = super(ProductTemplate, self).write(values)
+        for tmpl in self:
+            if tmpl.subscription_product and tmpl.can_renew and not tmpl.renew_product_id:
+                product = self.env['product.product'].search([('product_tmpl_id', '=', tmpl.id)], limit=1)
+                if product:
+                    tmpl.write({'renew_product_id': product.ids[0]})
         return res
 
     @api.onchange('can_renew','renew_product_id')
     def onchange_renewal(self):
         if self.subscription_product and self._origin.id:
             if self.can_renew and not self.renew_product_id:
-                self.renew_product_id = self._origin.id or False
+                product = self.env['product.product'].search([('product_tmpl_id', '=', self._origin.id)], limit=1)
+                self.renew_product_id = product and product[0] or False
             elif not self.can_renew:
                 self.renew_product_id = False
 
