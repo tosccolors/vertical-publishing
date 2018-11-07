@@ -310,10 +310,10 @@ class SaleOrderLine(models.Model):
             if prod_ids:
                 data['product_id'] += [('id', 'in', prod_ids)]
                 product_ids = self.env['product.product'].search([('subscription_product', '=', True), ('categ_id', '=', self.ad_class.id), ('id', 'in', prod_ids)])
-                pro_tmpl = product_ids.product_tmpl_id
-                vals['product_template_id'] = pro_tmpl.id
 
                 if len(product_ids) == 1:
+                    pro_tmpl = product_ids.product_tmpl_id
+                    vals['product_template_id'] = pro_tmpl.id
                     vals['product_id'] = product_ids[0]
                     vals['product_uom'] = pro_tmpl.uom_id
                     vals['number_of_issues'] = pro_tmpl.number_of_issues
