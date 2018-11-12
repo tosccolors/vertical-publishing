@@ -88,7 +88,7 @@
                     <sheet>
                         <div class="oe_title">
                             <h1>
-                                <field name="name" readonly="1"/>
+                                <field name="name" readonly="1" required="1"/>
                             </h1>
                         </div>
                         <group cols="4">
@@ -137,6 +137,11 @@
                     <field name="type" string="Delivery Type" />
                     <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]" />
                     <filter name="done" string="Done" domain="[('state', '=', 'done')]" />
+                    <separator/>
+                    <filter string="This Week" name="this_week"
+                        domain="['&amp;', ('issue_date', '&gt;=', context_today().strftime('%Y-%m-%d')),
+                                 ('issue_date', '&lt;=', (context_today()+datetime.timedelta(days=7)).strftime('%Y-%m-%d'))
+                        ]"/>
 
                     <group string="Group By" name="groupby">
                         <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
@@ -149,6 +154,7 @@
             <field name="name">Subscription Delivery List</field>
             <field name="res_model">subscription.delivery.list</field>
             <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_this_week': True}</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                 Click to start preparing a new delivery list.
