@@ -1287,7 +1287,7 @@
 							<field name="parent_id" string="Title" domain="[('parent_id','=', False)]"/>
                             <field name="price_edit" string="Price Editable"
                                    attrs="{'invisible':[('parent_id','=',True)]}"/>
-                            <field name="medium" string="Medium" domain="medium_domain" attrs="{'invisible': [('parent_id', '=', False)], 'required': [('parent_id', '!=', False)]}"
+                            <field name="medium" string="Medium" domain="medium_domain"
                                    options="{'no_create': True, 'no_create_edit': True}"/>
                             <field name="product_attribute_value_id" string="Variant Title"
                                    attrs="{'required':[('parent_id','=',False),
@@ -1300,17 +1300,14 @@
 							<field name="default_note" string="Default Note" />
 							<field name="state" string="State" />
                         </group>
-                        <label for="medium_ids" attrs="{'invisible': [('parent_id', '!=', False)]}" />
-                        <field name="medium_ids" string="Medium" domain="medium_domain" attrs="{'invisible': [('parent_id', '!=', False)], 'required': [('parent_id', '=', False)]}" options="{'no_create': True}"/>
-                        <label for="available_ids" />
-                        <field name="available_ids" string="Availability" >
-                             <tree string="Availability">
-                                <field name="name" string="Name"/>
-                                <field name="page_id" string="Ad Page"/>
-                                <field name="order_line_id" string="Ad Placement"/>
-                                <field name="available_qty" string="Quantity"/>
-                             </tree>
-                        </field>
+                            <field name="available_ids" string="Availability" >
+                                 <tree string="Availability">
+                                    <field name="name" string="Name"/>
+                                    <field name="page_id" string="Ad Page"/>
+                                    <field name="order_line_id" string="Ad Placement"/>
+                                    <field name="available_qty" string="Quantity"/>
+                                 </tree>
+                            </field>
                         <group class="oe_subtotal_footer oe_right">
                             <field name="amount_total" class="oe_subtotal_footer_separator"/>
                         </group>
