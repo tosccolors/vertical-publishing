@@ -6,8 +6,8 @@
             <GBBABO>
                 <t t-foreach="docs" t-as="doc">
                 <IDENTIFICATIE >
-                    <BRON t-esc="BDU"/>
-                    <CREADAT t-esc="time.strftime('%m%d%Y %H:%M:%S', time.strptime(doc.create_date,'%Y-%m-%d %H:%M:%S'))"/>
+                    <BRON t-esc="'BDU'"/>
+                    <CREADAT t-esc="time.strftime('%d%m%Y %H:%M:%S', time.strptime(doc.create_date,'%Y-%m-%d %H:%M:%S'))"/>
                     <VOLGNR t-esc="doc.update_sequence_number()"/>
                     <TYPE t-esc="COMPLEET"/>
                 </IDENTIFICATIE>
@@ -15,7 +15,7 @@
                 <DISTRIBUTIE>
                     <KLANT>
                         <MUTSRT t-esc="START"/>
-                        <MUTDATUM t-esc="time.strftime('%m%d%Y', time.strptime(doc.delivery_date,'%Y-%m-%d'))"/>
+                        <MUTDATUM t-esc="time.strftime('%d%m%Y', time.strptime(doc.delivery_date,'%Y-%m-%d'))"/>
                         <UITGEVER t-esc="BDU"/>
                         <t t-foreach="doc.delivery_line_ids" t-as="line">
                         <KLANTNR t-esc="line.partner_id.ref"/>
