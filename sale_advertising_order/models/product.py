@@ -56,7 +56,6 @@ class productCategory(models.Model):
         ], 'Date Type Advertising products')
     deadline_offset = fields.Integer('Hours offset from Issue Deadline', default=0)
     tag_ids = fields.Many2many('account.analytic.tag', 'product_category_tag_rel', 'categ_id', 'tag_id', string='Analytic Tags', copy=True)
-    advertising_issue_id = fields.Many2one('sale.advertising.issue', string='Medium')
 
 
 class productTemplate(models.Model):
@@ -72,6 +71,20 @@ class productTemplate(models.Model):
     volume_discount = fields.Boolean('Volume Discount', help='Setting this flag makes that price finding in a multi-line '
                                                              'advertising sale order line, uses the multi_line_number '
                                                              'instead of product_uom_qty to implement volume discount' )
+
+    @api.onchange('height', 'width')
+    def onchange_height_width(self):
+        product_variant_ids = self.env['product.product'].search([('product_tmpl_id', '=', self._origin.id)])
+        for variant in product_variant_ids:
+            variant.write({'height': self.height})
+            variant.write({'width': self.width})
+
+
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+
+    height = fields.Integer('Height', help="Height advertising format in mm", store=True)
+    width = fields.Integer('Width', help="Width advertising format in mm", store=True   )
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

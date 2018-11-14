@@ -39,7 +39,8 @@ This module allows you to use Sales Management to run your subscription sales
         'account_invoice_start_end_dates',
         'report_xlsx',
         'report_xml',
-        'l10n_nl_partner_name'
+        'l10n_nl_partner_name',
+        'hr'
     ],
     'data': [
         "data/ir_sequence_data.xml",
