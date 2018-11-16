@@ -139,7 +139,6 @@ class SaleOrder(models.Model):
     date_to = fields.Date(compute=lambda *a, **k: {}, string="Date to")
     ver_tr_exc = fields.Boolean(string='Verification Treshold', store=True, readonly=True, compute='_amount_all', track_visibility='always')
     advertising = fields.Boolean('Advertising', default=False)
-    magazine = fields.Boolean(string='Vakmedia Achtergrond Offerte', default=False)
     max_discount = fields.Integer(compute='_amount_all', track_visibility='always', store=True, string="Maximum Discount")
     display_discount_to_customer = fields.Boolean("Display Discount", default=False)
 
@@ -534,17 +533,6 @@ class SaleOrderLine(models.Model):
             if line.product_template_id.price_edit or line.title.price_edit:
                 line.price_edit = True
 
-    @api.depends('medium')
-    @api.multi
-    def _compute_magazine(self):
-        """
-        Compute if order_line.magazine is True.
-        """
-        for line in self.filtered('advertising'):
-            if line.medium and line.medium in [self.env.ref('sale_advertising_order.magazine_advertising_category'),self.env.ref('sale_advertising_order.magazine_online_advertising_category')]:
-                line.magazine = True
-
-
     mig_remark = fields.Text('Migration Remark')
     layout_remark = fields.Text('Material Remark')
     title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)])
@@ -605,7 +593,6 @@ class SaleOrderLine(models.Model):
     computed_discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Account'), default=0.0)
     subtotal_before_agency_disc = fields.Monetary(string='Subtotal before Commission', digits=dp.get_precision('Account'))
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
-    magazine = fields.Boolean(compute='_compute_magazine', string='Magazine', store=True)
     multi_line = fields.Boolean(string='Multi Line')
     color_surcharge = fields.Boolean(string='Color Surcharge')
     price_edit = fields.Boolean(compute='_compute_price_edit', string='Price Editable')
