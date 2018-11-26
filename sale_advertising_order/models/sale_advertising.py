@@ -374,15 +374,15 @@ class SaleOrder(models.Model):
                 for newline in newlines:
                     if newline.deadline_check():
                         newline.page_qty_check_update()
-        advertising = vals.get('advertising') if 'advertising' in vals else self.advertising
-        if not advertising:
-            if 'partner_id' in vals or 'company_id' in vals:
-                company = self.env['res.company'].browse(vals.get('company_id')) if 'company_id' in vals else self.company_id
-                if company.name == 'BDUmedia BV':
-                    partner = self.env['res.partner'].browse(vals.get('partner_id')) if 'partner_id' in vals else self.partner_id
-                    self.partner_acc_mgr = partner.user_id.id if partner.user_id else False
-                else:
-                    self.partner_acc_mgr = False
+            advertising = vals.get('advertising') if 'advertising' in vals else self.advertising
+            if not advertising:
+                if 'partner_id' in vals or 'company_id' in vals:
+                    company = self.env['res.company'].browse(vals.get('company_id')) if 'company_id' in vals else self.company_id
+                    if company.name == 'BDUmedia BV':
+                        partner = self.env['res.partner'].browse(vals.get('partner_id')) if 'partner_id' in vals else self.partner_id
+                        self.partner_acc_mgr = partner.user_id.id if partner.user_id else False
+                    else:
+                        self.partner_acc_mgr = False
         return result
 
     @api.multi
