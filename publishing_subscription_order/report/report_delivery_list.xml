@@ -6,18 +6,18 @@
             <GBBABO>
                 <t t-foreach="docs" t-as="doc">
                 <IDENTIFICATIE >
-                    <BRON t-esc="BDU"/>
-                    <CREADAT t-esc="time.strftime('%m%d%Y %H:%M:%S', time.strptime(doc.create_date,'%Y-%m-%d %H:%M:%S'))"/>
+                    <BRON t-esc="'BDU'"/>
+                    <CREADAT t-esc="time.strftime('%d%m%Y %H:%M:%S', time.strptime(doc.create_date,'%Y-%m-%d %H:%M:%S'))"/>
                     <VOLGNR t-esc="doc.update_sequence_number()"/>
                     <TYPE t-esc="COMPLEET"/>
                 </IDENTIFICATIE>
 
                 <DISTRIBUTIE>
-                    <KLANT>
-                        <MUTSRT t-esc="START"/>
-                        <MUTDATUM t-esc="time.strftime('%m%d%Y', time.strptime(doc.delivery_date,'%Y-%m-%d'))"/>
-                        <UITGEVER t-esc="BDU"/>
                         <t t-foreach="doc.delivery_line_ids" t-as="line">
+                    <KLANT>
+                        <MUTSRT t-esc="'START'"/>
+                        <MUTDATUM t-esc="time.strftime('%d%m%Y', time.strptime(doc.delivery_date,'%Y-%m-%d'))"/>
+                        <UITGEVER t-esc="'BDU'"/>
                         <KLANTNR t-esc="line.partner_id.ref"/>
                         <NAAM t-esc="line.partner_id.lastname"/>
                         <VOORNAAM t-esc="line.partner_id.firstname"/>
@@ -30,7 +30,7 @@
                         <HUISNRTOEVTM><t t-esc="false"/></HUISNRTOEVTM>
                         <POSTCODE t-esc="line.partner_id.zip"/>
                         <PLAATS t-esc="line.partner_id.city"/>
-                        <Land t-esc="line.partner_id.country_id.code"/>
+                        <LAND t-esc="line.partner_id.country_id.code"/>
                         <NETNR><t t-esc="false"/></NETNR>
                         <TELNR t-esc="line.partner_id.mobile"/>
                         <BEZINFO><t t-esc="false"/></BEZINFO>
@@ -41,8 +41,8 @@
                         <BEZWIJZE t-esc="false">NORM</BEZWIJZE>
                         <VERSCHWIJZE><t t-esc="false"/></VERSCHWIJZE>
                         <MUTREDEN><t t-esc="false"/></MUTREDEN>
-                        </t>
                     </KLANT>
+                    </t>
                 </DISTRIBUTIE>
                 </t>
             </GBBABO>
