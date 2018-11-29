@@ -116,11 +116,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         else:
             lids = context.get('active_ids', [])
             OrderLines = self.env['sale.order.line'].browse(lids)
-            magazines = OrderLines.filtered('magazine')
-            non_magazines = OrderLines - magazines
-            if not (len(magazines) == 0 or len(non_magazines) == 0):
-                raise UserError(_('You can only invoice either Magazine order lines '
-                                  'or Non-Magazine order lines, but not both'))
             invoice_date_ctx = context.get('invoice_date', False)
             posting_date_ctx = context.get('posting_date', False)
             jq_ctx = context.get('job_queue', False)
@@ -184,7 +179,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         count = 0
         for line in chunk:
             key = (line.order_id.partner_invoice_id, line.order_id.published_customer, line.order_id.payment_mode_id,
-                   line.order_id.operating_unit_id, line.magazine)
+                   line.order_id.operating_unit_id)
 
             if (not line.invoice_lines) and (line.state in ('sale', 'done')) :
                 if not key in invoices:
@@ -254,7 +249,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             account = fpos.map_account(account)
 
         res = {
-            'name': line.title.name,
+            'name': line.title.name or "/",
             'sequence': line.sequence,
             'origin': line.order_id.name,
             'account_id': account.id,
