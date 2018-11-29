@@ -72,19 +72,5 @@ class productTemplate(models.Model):
                                                              'advertising sale order line, uses the multi_line_number '
                                                              'instead of product_uom_qty to implement volume discount' )
 
-    @api.onchange('height', 'width')
-    def onchange_height_width(self):
-        product_variant_ids = self.env['product.product'].search([('product_tmpl_id', '=', self._origin.id)])
-        for variant in product_variant_ids:
-            variant.write({'height': self.height})
-            variant.write({'width': self.width})
-
-
-class ProductProduct(models.Model):
-    _inherit = 'product.product'
-
-    height = fields.Integer('Height', help="Height advertising format in mm", store=True)
-    width = fields.Integer('Width', help="Width advertising format in mm", store=True   )
-
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
