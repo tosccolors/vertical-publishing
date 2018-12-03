@@ -57,6 +57,11 @@ class sale_order_line_create_multi_lines(models.TransientModel):
 
     @api.multi
     def create_multi_from_order_lines(self, orderlines=[]):
+        return self.suspend_security().cmfol(orderlines=orderlines)
+
+    @api.multi
+    def cmfol(self, orderlines=[]):
+
         sol_obj = self.env['sale.order.line']
         olines = sol_obj.browse(orderlines)
         lines = []
@@ -102,7 +107,7 @@ class sale_order_line_create_multi_lines(models.TransientModel):
         return lines
 
     @api.multi
-    def create_multi_from_order_lines(self, orderlines=[]):
+    def create_multi_from_order_lines_sql(self, orderlines=[]):
         sol_obj = self.env['sale.order.line']
         olines = sol_obj.browse(orderlines)
         lines = []
