@@ -332,7 +332,7 @@ class SaleOrder(models.Model):
                         line.page_qty_check_create()
             if not olines == []:
                 list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
-                self._cr.commit()
+#                self._cr.commit()
                 newlines = self.env['sale.order.line'].browse(list)
                 for newline in newlines:
                     if newline.deadline_check():
