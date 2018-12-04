@@ -142,6 +142,10 @@ class SaleOrder(models.Model):
     magazine = fields.Boolean(string='Vakmedia Achtergrond Offerte', default=False)
     max_discount = fields.Integer(compute='_amount_all', track_visibility='always', store=True, string="Maximum Discount")
     display_discount_to_customer = fields.Boolean("Display Discount", default=False)
+    company_id = fields.Many2one('res.company', 'Company',
+                                 default=lambda self: self.env[
+                                     'res.company']._company_default_get(
+                                     'sale.order'), index=True)
 
     @api.model
     def default_get(self, fields):
@@ -594,8 +598,8 @@ class SaleOrderLine(models.Model):
     order_agency_id = fields.Many2one(related='order_id.advertising_agency', relation='res.partner',
                                           string='Advertising Agency', store=True)
     order_pricelist_id = fields.Many2one(related='order_id.pricelist_id', relation='product.pricelist', string='Pricelist')
-    order_company_id = fields.Many2one(related='order_id.company_id', relation='res.company',
-                                         string='Company')
+    company_id = fields.Many2one(related='order_id.company_id',
+                                 string='Company', store=True, readonly=True, index=True)
     discount_dummy = fields.Float(related='discount', string='Agency Commission (%)', readonly=True )
     price_unit_dummy = fields.Float(related='price_unit', string='Unit Price', readonly=True)
     actual_unit_price = fields.Float(compute='_compute_amount', string='Actual Unit Price', digits=dp.get_precision('Product Price'),
@@ -1092,12 +1096,16 @@ class SaleOrderLine(models.Model):
     @api.multi
     def page_qty_check_update(self):
         self.ensure_one()
+        if not self.product_template_id.page_id:
+            return
         self.page_qty_check_unlink()
         self.page_qty_check_create()
 
     @api.multi
     def page_qty_check_unlink(self):
         self.ensure_one()
+        if not self.product_template_id.page_id:
+            return
         res = self.env['sale.advertising.available'].search([('order_line_id', '=', self.id)])
         if res and len(res) > 0:
             res.unlink()

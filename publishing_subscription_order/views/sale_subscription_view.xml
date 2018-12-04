@@ -554,14 +554,14 @@
                             </field>-->
                             <field name="order_id" invisible="1"/>
                             <field name="order_pricelist_id" invisible="1"/>
-                            <field name="order_company_id" invisible="1"/>
+                            <field name="company_id" invisible="1"/>
                             <field name="product_template_id"
-                                   context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': order_company_id}"
+                                   context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': company_id}"
                                    attrs="{'readonly': ['|','|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', []),('subscription_cancel', '=', True)]}"
                                    domain="[('categ_id','=', ad_class),('subscription_product','=',True)]"
                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}" required="1"/>
                             <field name="product_id" invisible="1" groups="base.group_no_one"
-                                   context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': order_company_id}"
+                                   context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': company_id}"
                                    attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
                                    domain="['|','&amp;',('categ_id','=', ad_class),('attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id)]"
                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
@@ -580,7 +580,7 @@
                             <div>
                                 <field name="product_uom_qty" class="oe_inline"
                                        context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id,
-                                                    'uom':product_uom, 'uom_qty_change':True, 'company_id': order_company_id}" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
+                                                    'uom':product_uom, 'uom_qty_change':True, 'company_id': company_id}" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
                                 <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"
                                        readonly="True"/>
                             </div>

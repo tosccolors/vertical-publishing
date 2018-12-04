@@ -404,17 +404,50 @@ class SaleOrderLine(models.Model):
         if self.product_id.subscription_product:
             res['start_date'] = self.start_date
             res['end_date'] = self.end_date
-#            account = self.product_id.delivery_obligation_account_id
-#            fpos = self.order_id.fiscal_position_id or self.order_id.partner_id.property_account_position_id
-#            if fpos:
-#                account = fpos.map_account(account)
-#            res['account_id'] = account.id
         return res
 
 
     @api.multi
     def create_renewal_line(self, order_lines=[]):
         sol_obj = self.env['sale.order.line']
+        
+        #new period start on end date of expired subscription, has end_date with more robust delta period, regardless of rundate
+        for line in order_lines:
+
+            #some better handling of leap day, months and quarters
+            if line.renew_product_id.subscr_number_of_days==730 :
+                delta = relativedelta(months=24)
+            elif line.renew_product_id.subscr_number_of_days==365 :
+                delta = relativedelta(months=12)
+            elif line.renew_product_id.subscr_number_of_days==183 :
+                delta = relativedelta(months=6)
+            elif line.renew_product_id.subscr_number_of_days==92 :
+                delta = relativedelta(months=3)
+            elif line.renew_product_id.subscr_number_of_days==61 :
+                delta = relativedelta(months=2)
+            elif line.renew_product_id.subscr_number_of_days==31 :
+                delta = relativedelta(months=1)
+            else :
+                #as it was
+                delta = timedelta(days=line.renew_product_id.subscr_number_of_days)
+            new_end_date = datetime.strptime(line.end_date,DF).date() + delta
+
+            res = {
+                'start_date'      : line.end_date,
+                'end_date'        : new_end_date,
+                'order_id'        : line.order_id.id,
+                'price_unit'      : line.renew_product_id.lst_price or False,
+                'number_of_issues': line.renew_product_id.product_tmpl_id.number_of_issues or 0,
+                'can_renew'       : True,
+                'renew_product_id': line.renew_product_id.id,
+                'discount'        : 0
+            }
+            if line.product_id != line.renew_product_id:
+                res.update({
+                    'product_template_id' : line.renew_product_id.product_tmpl_id.id or False,
+                    'product_id'          : line.renew_product_id.id or False,
+                    'number_of_issues'    : line.renew_product_id.product_tmpl_id.number_of_issues or 0,
+                })
         ctx = self.env.context.copy()
         ctx.update({'cronRenewal':True})
         for line in order_lines:
