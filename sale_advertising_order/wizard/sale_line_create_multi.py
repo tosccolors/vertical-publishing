@@ -84,6 +84,7 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                            'color_surcharge_amount':  csa,
                            'subtotal_before_agency_disc': sbad,
                            'actual_unit_price': aup,
+                           'order_id': ol.order_id.id or False,
                            'comb_list_price': 0.0,
                            'multi_line_number': 1,
                            'multi_line': False,
