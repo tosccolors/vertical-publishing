@@ -69,8 +69,8 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 
     @api.model
     def _prepare_invoice(self, partner, published_customer, payment_mode, operating_unit, lines, invoice_date, posting_date):
-        self.ensure_one()
-        line_ids = [x.id for x in lines['lines']]
+#        self.ensure_one()
+#        line_ids = [x.id for x in lines['lines']]
         journal_id = self.env['account.invoice'].default_get(['journal_id'])['journal_id']
         if not journal_id:
             raise UserError(_('Please define an accounting sale journal for this company.'))
@@ -81,7 +81,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'account_id': partner.property_account_receivable_id.id,
             'partner_id': partner.id,
             'published_customer': published_customer.id,
-            'invoice_line_ids': [(6, 0, line_ids)],
+            'invoice_line_ids': lines['lines'],
             'comment': lines['name'],
             'payment_term_id': partner.property_payment_term_id.id or False,
             'journal_id': journal_id,
@@ -116,11 +116,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         else:
             lids = context.get('active_ids', [])
             OrderLines = self.env['sale.order.line'].browse(lids)
-            magazines = OrderLines.filtered('magazine')
-            non_magazines = OrderLines - magazines
-            if not (len(magazines) == 0 or len(non_magazines) == 0):
-                raise UserError(_('You can only invoice either Magazine order lines '
-                                  'or Non-Magazine order lines, but not both'))
             invoice_date_ctx = context.get('invoice_date', False)
             posting_date_ctx = context.get('posting_date', False)
             jq_ctx = context.get('job_queue', False)
@@ -179,21 +174,22 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             vals = self._prepare_invoice(partner, published_customer, payment_mode, operating_unit,
                                          lines, inv_date, post_date)
             invoice = self.env['account.invoice'].create(vals)
+            invoice.compute_taxes()
             return invoice.id
+        count = 0
         for line in chunk:
             key = (line.order_id.partner_invoice_id, line.order_id.published_customer, line.order_id.payment_mode_id,
-                   line.order_id.operating_unit_id, line.magazine)
+                   line.order_id.operating_unit_id)
 
             if (not line.invoice_lines) and (line.state in ('sale', 'done')) :
                 if not key in invoices:
-                    invoices[key] = {'lines':[],'subtotal':0, 'name': ''}
+                    invoices[key] = {'lines':[], 'name': ''}
 
-                inv_line_id = self.invoice_line_create(line)
-
-                for lid in inv_line_id:
-                    invoices[key]['lines'].append(lid)
-                    invoices[key]['subtotal'] += line.price_subtotal
+                inv_line_vals = self._prepare_invoice_line(line)
+                invoices[key]['lines'].append((0, 0, inv_line_vals))
+                if count < 3:
                     invoices[key]['name'] += unidecode(line.name)+' / '
+                count += 1
 
         if not invoices and not self.job_queue:
             raise UserError(_('Invoice cannot be created for this Advertising Order Line due to one of the following reasons:\n'
@@ -212,9 +208,9 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                 make_invoice(partner, published_customer, payment_mode, operating_unit, il, inv_date, post_date)
             except Exception, e:
                 if self.job_queue:
-                    raise FailedJobError(_("The details of the error:'%s' regarding '%s' and '%s'") % (unicode(e), il['name'], il['lines'][0].sale_line_ids))
+                    raise FailedJobError(_("The details of the error:'%s' regarding '%s'") % (unicode(e), il['name'] ))
                 else:
-                    raise UserError(_("The details of the error:'%s' regarding '%s' and '%s'") % (unicode(e), il['name'], il['lines'][0].sale_line_ids))
+                    raise UserError(_("The details of the error:'%s' regarding '%s'") % (unicode(e), il['name'] ))
         return True
 
 
@@ -253,7 +249,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             account = fpos.map_account(account)
 
         res = {
-            'name': line.title.name,
+            'name': line.title.name or "/",
             'sequence': line.sequence,
             'origin': line.order_id.name,
             'account_id': account.id,
@@ -270,18 +266,9 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'computed_discount': line.computed_discount,
             'ad_number': line.ad_number,
             'opportunity_subject': line.order_id.opportunity_subject,
-            'nett_nett': line.nett_nett
+            'sale_line_ids': [(6, 0, [line.id])]
         }
         return res
 
-    @api.multi
-    def invoice_line_create(self, line):
-        """
-        Create an invoice line.
-        """
-        self.ensure_one()
-        vals = self._prepare_invoice_line(line)
-        vals.update({'sale_line_ids': [(6, 0, [line.id])]})
-        return self.env['account.invoice.line'].create(vals)
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

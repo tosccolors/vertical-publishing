@@ -22,14 +22,22 @@
 
 from odoo import api, fields, exceptions, models, _
 
-class DeliveryListType(models.Model):
-    _name = "delivery.list.type"
-    _description = "Delivery List Type"
+class SubscriptionMultiWizard(models.TransientModel):
 
-    name = fields.Char('Delivery Type')
+    _name = "subscription.multi.wizard"
+    _description = "Create delivery list/delivery lines"
 
-class Weekdays(models.Model):
-    _name = "week.days"
-    _description = "Week Days"
+    @api.multi
+    def confirm(self):
+        context = dict(self._context or {})
+        active_ids = context.get('active_ids', []) or []
+        active_model = context.get('active_model', False) or False
+        if active_model:
+            if active_model == 'subscription.title.delivery':
+                title = self.env['subscription.title.delivery'].browse(active_ids)
+                title.generate_delivery_list()
+            if active_model == 'subscription.delivery.list':
+                lists = self.env['subscription.delivery.list'].browse(active_ids)
+                lists.generate_delivery_lines()
 
-    name = fields.Char('Day Name')
+        return {'type': 'ir.actions.act_window_close'}

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <template id="delivery_list_xml_report">
+            <t t-call="report_xml.utf8_header">
+            <GBBABO>
+                <t t-foreach="docs" t-as="doc">
+                <IDENTIFICATIE >
+                    <BRON t-esc="'BDU'"/>
+                    <CREADAT t-esc="time.strftime('%d%m%Y %H:%M:%S', time.strptime(doc.create_date,'%Y-%m-%d %H:%M:%S'))"/>
+                    <VOLGNR t-esc="doc.update_sequence_number()"/>
+                    <TYPE t-esc="COMPLEET"/>
+                </IDENTIFICATIE>
+
+                <DISTRIBUTIE>
+                        <t t-foreach="doc.delivery_line_ids" t-as="line">
+                    <KLANT>
+                        <MUTSRT t-esc="'START'"/>
+                        <MUTDATUM t-esc="time.strftime('%d%m%Y', time.strptime(doc.delivery_date,'%Y-%m-%d'))"/>
+                        <UITGEVER t-esc="'BDU'"/>
+                        <KLANTNR t-esc="line.partner_id.ref"/>
+                        <NAAM t-esc="line.partner_id.lastname"/>
+                        <VOORNAAM t-esc="line.partner_id.firstname"/>
+                        <TUSSENVOEGSEL t-esc="line.partner_id.infix"/>
+                        <TOEVOEGING1 t-esc="false">NVT</TOEVOEGING1>
+                        <TOEVOEGING2 t-esc="false">NVT</TOEVOEGING2>
+                        <STRAAT t-esc="line.partner_id.street_name"/>
+                        <HUISNR t-esc="line.partner_id.street_number"/>
+                        <HUISNRTOEV><t t-esc="false"/></HUISNRTOEV>
+                        <HUISNRTOEVTM><t t-esc="false"/></HUISNRTOEVTM>
+                        <POSTCODE t-esc="line.partner_id.zip"/>
+                        <PLAATS t-esc="line.partner_id.city"/>
+                        <LAND t-esc="line.partner_id.country_id.code"/>
+                        <NETNR><t t-esc="false"/></NETNR>
+                        <TELNR t-esc="line.partner_id.mobile"/>
+                        <BEZINFO><t t-esc="false"/></BEZINFO>
+                        <UITGAVE t-esc="doc.title_id.code"/>
+                        <EDITIE t-esc="doc.title_id.code"/>
+                        <ACTIE><t t-esc="false"/></ACTIE>
+                        <AANTAL t-esc="line.sub_order_line.delivered_issues"/>
+                        <BEZWIJZE t-esc="false">NORM</BEZWIJZE>
+                        <VERSCHWIJZE><t t-esc="false"/></VERSCHWIJZE>
+                        <MUTREDEN><t t-esc="false"/></MUTREDEN>
+                    </KLANT>
+                    </t>
+                </DISTRIBUTIE>
+                </t>
+            </GBBABO>
+            </t>
+        </template>
+    </data>
+</odoo>

@@ -11,8 +11,7 @@
                   sequence="4"/>
 
 
-		<menuitem id="menu_product_template_action2" parent="menu_subscription_sales_main"
-                  action="product.product_template_action" sequence="13" />
+		<!--<menuitem id="menu_product_template_action2" parent="menu_subscription_sales_main" action="product.product_template_action" sequence="13" />-->
 
         <record id="view_order_form_subscriptions" model="ir.ui.view">
             <field name="name">sale.order.form.subscriptions</field>
@@ -57,13 +56,15 @@
                     </div>
                     <group>
                         <group>
-                            <field name="partner_id" domain="[('customer','=',True),('parent_id','=',False),('is_subscription_customer','=',True)]" context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}' string="Subscriber"/>
-                            <!--<field name="partner_invoice_id" groups="sale.group_delivery_invoice_address" context="{'default_type':'invoice'}" />-->
-                            <field name="partner_shipping_id" domain="[('id','child_of',partner_id)]" groups="sale.group_delivery_invoice_address" context="{'default_type':'delivery', 'show_address': 1}" options='{"always_reload": True}'/>
+                            <field name="published_customer" domain="[('customer','=',True),('parent_id','=',False),('is_subscription_customer','=',True)]" context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}' string="Customer"/>
+                            <field name="partner_shipping_id" groups="sale.group_delivery_invoice_address" context="{'default_type':'delivery', 'show_address': 1}" options='{"always_reload": True}'/>
+                            <field name="partner_id" domain="[('customer','=',True),('parent_id','=',False),('is_subscription_customer','=',True)]" context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}' string="Payer"/>
+                            <field name="partner_invoice_id" string="Payer Invoice Address" context="{'default_type':'invoice', 'show_address': 1}" attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}" groups="sale.group_delivery_invoice_address"/>
+                            <field name="customer_contact" required="False" context="{'default_parent_id': partner_id, 'show_email': 1}" domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]" options="{&quot;always_reload&quot;: True}" attrs="{'readonly':[('state','in', ['cancel','done'])]}"/>
                         </group>
                         <group>
                             <field name="date_order" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
-                            <field name="validity_date" attrs="{'invisible': [('state', 'in', ['sale', 'done'])]}"/>
+                            <field name="validity_date" invisible="1"/>
                             <field name="confirmation_date" attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'cancel'])]}"/>
                             <field name="pricelist_id" groups="product.group_sale_pricelist"/>
                             <field name="currency_id" invisible="1"/>
@@ -87,35 +88,37 @@
                                                    domain="[('type','!=', 'view'), ('id','child_of', medium),('subscription_categ','=',True)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
-                                            <!--field name="title_ids" string="Titles"
-                                                   attrs="{'readonly': [('subscription_cancel', '=', True)]}"
-                                                   domain="[('parent_id','=', False),('medium','child_of', medium)]"
-                                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                                   context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
-                                                             'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
-                                                <tree create="true" edit="false" delete="true" copy="false">
-                                                    <field name="name" string="Name" readonly="1"/>
-                                                </tree>
-                                            </field-->
-                                            <field name="title" string="Title"
-                                                   domain="[('child_ids','!=', False),('subscription_title','=', True),('medium','child_of', medium)]"
+                                            <!--<field name="title_ids" string="Titles"-->
+                                                   <!--attrs="{'readonly': [('subscription_cancel', '=', True)]}"-->
+                                                   <!--domain="[('parent_id','=', False),('medium','child_of', medium),('subscription_title','=',True)]"-->
+                                                   <!--options="{'no_open': True,'no_create': True, 'no_create_edit': True}"-->
+                                                   <!--context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',-->
+                                                             <!--'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }"-->
+                                                    <!--required="True">-->
+                                                <!--<tree create="true" edit="false" delete="true" copy="false">-->
+                                                    <!--<field name="name" string="Name" readonly="1"/>-->
+                                                <!--</tree>-->
+                                            <!--</field>-->
+                                            <field name="title" string="Title" required="True"
+                                                   domain="[('child_ids','!=', False),('subscription_title','=', True)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
-                                            <field name="product_template_id" required="1"
+                                            <field name="product_template_id" required="1" invisible="1"
                                                    context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                                    attrs="{'readonly': ['|','|','|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', []),('subscription_cancel', '=', True)]}"
-                                                   domain="[('categ_id','=', ad_class),('subscription_product','=',True)]"
+                                                   domain="[('subscription_product','=',True)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
 
-                                            <field name="product_id" invisible="1"
+                                            <field name="product_id" invisible="0"
                                                    groups="base.group_no_one"
                                                    context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                                    attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
-                                                   domain="['|','&amp;',('categ_id','=', ad_class),('attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id)]"
+                                                   domain="[('subscription_product','=',True)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
+                                            <field name="weekday_ids" invisible="1" widget="many2many_tags" options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                                             <field name="must_have_dates" invisible="1"/>
                                             <field name="start_date" attrs="{'required':[('must_have_dates','=',True)],'readonly': [('subscription_cancel', '=', True)]}"/>
                                             <field name="end_date" attrs="{'required':[('must_have_dates','=',True)],'readonly': [('subscription_cancel', '=', True)]}"/>
-                                            <field name="number_of_issues" attrs="{'required':[('must_have_dates','=',True)],'readonly': [('subscription_cancel', '=', True)]}"/>
+                                            <field name="number_of_issues" attrs="{'readonly': [('state','!=','draft')]}"/>
                                             <field name="layout_category_id" groups="sale.group_sale_layout" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
                                             <field name="invoice_status" invisible="1"/>
                                             <field name="qty_to_invoice" invisible="1"/>
@@ -170,15 +173,25 @@
                                         </group>
                                     </group>
                                     <group>
-                                        <group attrs="{'invisible': [('can_cancel','=', True)]}">
-                                            <field name="can_renew" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
-                                            <field name="renew_product_id" attrs="{'invisible': [('can_renew','=', False)],'required': [('can_renew','=', True)],'readonly': [('subscription_cancel', '=', True)]}"
+                                        <group>
+                                            <field name="can_renew" invisible="1"/>
+                                            <separator string="Susbcription Renewal Product" colspan="2"/>
+                                            <field name="renew_disc" attrs="{'invisible': [('renew_product_id','=', False)]}"/>
+                                            <field name="renew_product_id"
                                                domain="[('categ_id','=', ad_class),('subscription_product','=',True)]"
                                                options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                                         </group>
-                                        <group attrs="{'invisible': [('can_renew','=', True)]}">
-                                            <field name="can_cancel" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
-                                            <field name="date_cancel" attrs="{'invisible': [('can_cancel','=', False)],'required': [('can_cancel','=', True)],'readonly': [('subscription_cancel', '=', True)]}"/>
+                                        <group>
+                                            <field name="can_cancel" invisible="1"/>
+                                            <separator string="Subscription Cancellation" colspan="2"/>
+                                            <field name="date_cancel" />
+                                            <field name="reason_cancel" attrs="{'invisible': [('date_cancel','=', False)],'required': [('can_cancel','=', True)]}" />
+                                        </group>
+                                        <group>
+                                            <field name="temporary_stop" invisible="1"/>
+                                            <separator string="Subscription Temporary Stop" colspan="2"/>
+                                            <field name="tmp_start_date"/>
+                                            <field name="tmp_end_date" attrs="{'required': [('tmp_start_date', '!=', False)]}"/>
                                         </group>
                                         <group>
                                             <separator string="Remarks" colspan="2"/>
@@ -202,6 +215,8 @@
                                         attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
                                         context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                        />
+                                    <field name="start_date" />
+                                    <field name="end_date" />
                                     <!--field name="layout_category_id" groups="sale.group_sale_layout,base.group_no_one" /-->
                                     <field name="layout_category_id" groups="base.group_no_one" />
                                     <field name="name" groups="base.group_no_one"/>
@@ -292,7 +307,11 @@
                                     <field name="subscription" invisible="1"/>
                                 </group>
                                 <group string="Reporting" name="technical" groups="base.group_no_one">
-                                    <field groups="base.group_no_one" name="origin"/>
+                                    <field name="origin"/>
+									<field name="campaign_id" />
+									<field name="medium_id" />
+									<field name="source_id" />
+									<field name="opportunity_id" help="Log in the chatter from which opportunity the order originates" />
                                 </group>
                             </group>
                         </page>
@@ -526,16 +545,17 @@
                             <field name="title" string="Title"
                                    domain="[('child_ids','!=', False),('subscription_title','=', True),('medium','child_of', medium)]"
                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
-                            <!--<field name="title_ids" string="Titles"-->
-                                   <!--attrs="{'readonly': [('subscription_cancel', '=', True)]}"-->
-                                   <!--domain="[('parent_id','=', False),('medium','child_of', medium)]"-->
-                                   <!--options="{'no_open': True,'no_create': True, 'no_create_edit': True}"-->
-                                   <!--context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',-->
-                                                             <!--'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">-->
-                                    <!--<tree create="true" edit="false" delete="true" copy="false">-->
-                                        <!--<field name="name" string="Name" readonly="1"/>-->
-                                    <!--</tree>-->
-                            <!--</field>-->
+                            <!--<field name="title_ids" string="Titles"
+                                   attrs="{'readonly': [('subscription_cancel', '=', True)]}"
+                                   domain="[('parent_id','=', False),('medium','child_of', medium),('subscription_title','=',True)]"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
+                                   context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
+                                                             'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }"
+                                   required="True">
+                                    <tree create="true" edit="false" delete="true" copy="false">
+                                        <field name="name" string="Name" readonly="1"/>
+                                    </tree>
+                            </field>-->
                             <field name="order_id" invisible="1"/>
                             <field name="order_pricelist_id" invisible="1"/>
                             <field name="order_company_id" invisible="1"/>
@@ -549,6 +569,12 @@
                                    attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
                                    domain="['|','&amp;',('categ_id','=', ad_class),('attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id)]"
                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
+                            <field name="must_have_dates" invisible="1"/>
+                            <field name="weekday_ids" invisible="1" widget="many2many_tags" options="{'no_open': True,'no_create': True, 'no_create_edit': True}" attrs="{'readonly': ['|',('subscription_cancel', '=', True),('state','in',('sale','done','cancel'))]}"/>
+                            <field name="start_date" attrs="{'required':[('must_have_dates','=',True)],'readonly': ['|',('subscription_cancel', '=', True),('state','in',('sale','done','cancel'))]}"/>
+                            <field name="end_date" attrs="{'required':[('must_have_dates','=',True)],'readonly': ['|',('subscription_cancel', '=', True),('state','in',('sale','done','cancel'))]}"/>
+                            <field name="number_of_issues" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="delivered_issues" attrs="{'readonly': ['|',('subscription_cancel', '=', True),('state','in',('sale','done','cancel'))]}"/>
                             <field name="layout_category_id" groups="sale.group_sale_layout" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
                             <field name="invoice_status" invisible="1"/>
                             <field name="qty_to_invoice" invisible="1"/>
@@ -599,15 +625,31 @@
                                        domain="page_class_domain" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
                             </div>
                         </group>
-                        <group attrs="{'invisible': [('can_cancel','=', True)]}">
-                            <field name="can_renew" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
-                            <field name="renew_product_id" attrs="{'invisible': [('can_renew','=', False)],'required': [('can_renew','=', True)],'readonly': [('subscription_cancel', '=', True)]}"
-                               domain="[('categ_id','=', ad_class),('subscription_product','=',True)]"
-                               options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
-                        </group>
-                        <group attrs="{'invisible': [('can_renew','=', True)]}">
-                            <field name="can_cancel" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
-                            <field name="date_cancel" attrs="{'invisible': [('can_cancel','=', False)],'required': [('can_cancel','=', True)],'readonly': [('subscription_cancel', '=', True)]}"/>
+                        <group>
+                            <group>
+                                <field name="can_renew" invisible="1"/>
+                                <separator string="Susbcription Renewal Product" colspan="2"/>
+                                <field name="renew_disc" attrs="{'invisible': [('renew_product_id','=', False)]}"/>
+                                <field name="renew_product_id"
+                                   domain="[('categ_id','=', ad_class),('subscription_product','=',True)]"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
+                            </group>
+                            <group>
+                                <field name="can_cancel" invisible="1"/>
+                                <separator string="Subscription Cancellation" colspan="2"/>
+                                <field name="date_cancel" />
+                                <field name="reason_cancel" attrs="{'invisible': [('date_cancel','=', False)],'required': [('can_cancel','=', True)]}" />
+                            </group>
+                            <group>
+                                <field name="temporary_stop" invisible="1"/>
+                                <separator string="Subscription Temporary Stop" colspan="2"/>
+                                <field name="tmp_start_date"/>
+                                <field name="tmp_end_date" attrs="{'required': [('tmp_start_date', '!=', False)]}"/>
+                            </group>
+                            <group>
+                                <separator string="Remarks" colspan="2"/>
+                                <field name="name" colspan="2" nolabel="1"  attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
+                            </group>
                         </group>
                     </group>
                     <div groups="base.group_no_one">
@@ -713,7 +755,7 @@
 
 
 
-        <menuitem id="menu_products_subs" action="product.product_normal_action_sell" parent="menu_subscription_sales_main" groups="product.group_product_variant" sequence="19"/>
+        <!--<menuitem id="menu_products_subs" action="product.product_normal_action_sell" parent="menu_subscription_sales_main" groups="product.group_product_variant" sequence="19"/>-->
 
 
         <record id="sale.action_quotations" model="ir.actions.act_window">
@@ -732,9 +774,6 @@
         </record>
 
         <record id="sale_crm.sale_action_quotations_new" model="ir.actions.act_window">
-            <field name="domain">[('opportunity_id', '=', active_id), ('advertising','=',False),('subscription','=',False)]</field>
-        </record>
-        <record id="sale_crm.sale_action_quotations" model="ir.actions.act_window">
             <field name="domain">[('opportunity_id', '=', active_id), ('advertising','=',False),('subscription','=',False)]</field>
         </record>
 
@@ -773,6 +812,40 @@
                 <xpath expr="filter[1]"  position="after">
                     <filter name="subs" string="Subscription Titles" domain="['|',('subscription_title','=', True),('parent_id.subscription_title','=', True)]"/>
                 </xpath>
+            </field>
+        </record>
+
+        <record id="view_order_form_advertising" model="ir.ui.view">
+            <field name="name">sale.order.form.advertising.subscr</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page/field[@name='order_line']/form/group/group/field[@name='ad_class']" position="attributes">
+                    <attribute name="domain">[('type','!=', 'view'), ('id','child_of', medium), ('subscription_categ','=', False)]</attribute>
+                </xpath>
+                <xpath expr="//page/field[@name='order_line']/form/group/group/field[@name='product_template_id']" position="attributes">
+                    <attribute name="domain">[('categ_id','=', ad_class),('subscription_product','=',False)]</attribute>
+                </xpath>
+                <!--<xpath expr="//page/field[@name='order_line']/form/group/group/field[@name='title']" position="attributes">
+                    <attribute name="domain">[('parent_id','=', False),('medium','child_of', medium), ('subscription_title','=', False)]</attribute>
+                </xpath>-->
+            </field>
+        </record>
+
+        <record id="view_adv_order_line_form" model="ir.ui.view">
+            <field name="name">sale.adv.order.line.form.subscr</field>
+            <field name="model">sale.order.line</field>
+            <field name="inherit_id" ref="sale_advertising_order.view_adv_order_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='ad_class']" position="attributes">
+                    <attribute name="domain">[('type','!=', 'view'), ('id','child_of', medium), ('subscription_categ','=', False)]</attribute>
+                </xpath>
+                <xpath expr="//field[@name='product_template_id']" position="attributes">
+                    <attribute name="domain">[('categ_id','=', ad_class),('subscription_product','=',False)]</attribute>
+                </xpath>
+                <!--<xpath expr="//field[@name='title']" position="attributes">-->
+                    <!--<attribute name="domain">[('parent_id','=', False),('medium','child_of', medium), ('subscription_title','=', False)]</attribute>-->
+                <!--</xpath>-->
             </field>
         </record>
 

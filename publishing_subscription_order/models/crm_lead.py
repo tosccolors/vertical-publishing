@@ -28,17 +28,36 @@ class Lead(models.Model):
     _inherit = ["crm.lead"]
 
     subs_quotations_count = fields.Integer("# of Subscription Quotations", compute='_compute_subs_quotations_count')
+    subs_sale_amount_total= fields.Monetary(compute='_compute_sale_amount_total', string="Sum of Subs. Orders", currency_field='company_currency')
 
     @api.multi
     def _compute_subs_quotations_count(self):
         for lead in self:
-            lead.subs_quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done')), ('subscription', '=', True)])
+            lead.subs_quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done','cancel')), ('subscription', '=', True)])
 
     # Adding ('subscription', '=', False) in filter criteria to filter subscription records in regular quotations smart button
     @api.multi
     def _compute_quotations_count(self):
         for lead in self:
-            lead.quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done')), ('advertising', '=', False), ('subscription', '=', False)])
+            lead.quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',['sale','done','cancel']), ('advertising', '=', False), ('subscription', '=', False)])
+
+    @api.depends('order_ids')
+    def _compute_sale_amount_total(self):
+        for lead in self:
+            total = adv_total = subs_total = 0.0
+            nbr = 0
+            company_currency = lead.company_currency or self.env.user.company_id.currency_id
+            for order in lead.order_ids:
+                if order.state not in ('sale', 'done', 'cancel'):
+                    nbr += 1
+                if order.state in ('sale', 'done'):
+                    if not order.advertising and not order.subscription:
+                        total += order.currency_id.compute(order.amount_total, company_currency)
+                    if order.advertising:
+                        adv_total += order.currency_id.compute(order.amount_untaxed, company_currency)
+                    if order.subscription:
+                        subs_total += order.currency_id.compute(order.amount_untaxed, company_currency)
+            lead.sale_amount_total, lead.adv_sale_amount_total, lead.subs_sale_amount_total, lead.sale_number = total, adv_total, subs_total, nbr
 
     @api.model
     def retrieve_sales_dashboard(self):

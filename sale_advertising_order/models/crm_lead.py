@@ -53,16 +53,34 @@ class Lead(models.Model):
     activities_count = fields.Integer("Activities", compute='_compute_activities_count')
     quotations_count = fields.Integer("# of Quotations", compute='_compute_quotations_count')
     adv_quotations_count = fields.Integer("# of Advertising Quotations", compute='_compute_adv_quotations_count')
+    name_salesperson = fields.Char('Name Salesperson')
+    adv_sale_amount_total= fields.Monetary(compute='_compute_sale_amount_total', string="Sum of Adv. Orders", currency_field='company_currency')
 
     @api.multi
     def _compute_quotations_count(self):
         for lead in self:
-            lead.quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done')), ('advertising', '=', False)])
+            lead.quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',['sale','done','cancel']), ('advertising', '=', False)])
+
+    @api.depends('order_ids')
+    def _compute_sale_amount_total(self):
+        for lead in self:
+            total = adv_total = 0.0
+            nbr = 0
+            company_currency = lead.company_currency or self.env.user.company_id.currency_id
+            for order in lead.order_ids:
+                if order.state not in ('sale', 'done', 'cancel'):
+                    nbr += 1
+                if order.state in ('sale', 'done'):
+                    if not order.advertising:
+                        total += order.currency_id.compute(order.amount_total, company_currency)
+                    if order.advertising:
+                        adv_total += order.currency_id.compute(order.amount_untaxed, company_currency)
+            lead.sale_amount_total, lead.adv_sale_amount_total, lead.sale_number = total, adv_total, nbr
 
     @api.multi
     def _compute_adv_quotations_count(self):
         for lead in self:
-            lead.adv_quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done')), ('advertising', '=', True)])
+            lead.adv_quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done','cancel')), ('advertising', '=', True)])
 
     @api.multi
     def _compute_activities_count(self):
@@ -86,6 +104,10 @@ class Lead(models.Model):
                         result.append(res[0])
                     return result
         return super(Lead, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby)
+
+    @api.onchange('user_id')
+    def _onchange_userid(self):
+        self.name_salesperson = self.user_id.name
 
     @api.onchange('published_customer')
     def onchange_published_customer(self):
@@ -130,7 +152,6 @@ class Lead(models.Model):
 
         part = self.partner_id
         addr = self.partner_id.address_get(['delivery', 'invoice', 'contact'])
-        values = {}
 
         if part.type == 'contact':
             contact = self.env['res.partner'].search([('is_company','=', False),('type','=', 'contact'),('parent_id','=', part.id)])
@@ -141,24 +162,22 @@ class Lead(models.Model):
         elif addr['contact'] == addr['default']:
             contact_id = False
         else: contact_id = addr['contact']
-        invoice = self.env['res.partner'].browse(addr['invoice'])
 
-        values = {
-            'street': invoice.street,
-            'street2': invoice.street2,
-            'city': invoice.city,
-            'state_id': invoice.state_id.id,
-            'country_id': invoice.country_id.id,
+        values = self._onchange_partner_id_values(part.id)
+        values.update({
+            'sector_id': part.sector_id,
+            'secondary_sector_ids': [(6, 0, part.secondary_sector_ids.ids)],
+            'opt_out': part.opt_out,
+            'partner_name': part.name,
+            'partner_contact_id': contact_id,
             'partner_invoice_id': addr['invoice'],
             'partner_shipping_id': addr['delivery'],
-            'partner_contact_id': contact_id,
-        }
+        })
         return {'value' : values}
 
 
     @api.onchange('partner_contact_id')
     def onchange_contact(self):
-        values = {}
         if self.partner_contact_id:
             partner = self.partner_contact_id
             values = {
@@ -167,11 +186,17 @@ class Lead(models.Model):
                 'email_from' : partner.email,
                 'phone' : partner.phone,
                 'mobile' : partner.mobile,
-                'fax' : partner.fax,
                 'function': partner.function,
             }
         else:
-            values['contact_name'] = False
+            values = {
+                'contact_name': False,
+                'title': False,
+                'email_from': False,
+                'phone': False,
+                'mobile': False,
+                'function': False,
+            }
         return {'value' : values}
 
 

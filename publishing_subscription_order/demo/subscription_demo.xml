@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data noupdate="1">
+		<record id="week_day_0" model="week.days">
+			<field name="name">Monday</field>
+		</record>
+		<record id="week_day_1" model="week.days">
+			<field name="name">Tuesday</field>
+		</record>
+		<record id="week_day_2" model="week.days">
+			<field name="name">Wednesday</field>
+		</record>
+		<record id="week_day_3" model="week.days">
+			<field name="name">Thursday</field>
+		</record>
+		<record id="week_day_4" model="week.days">
+			<field name="name">Friday</field>
+		</record>
+		<record id="week_day_5" model="week.days">
+			<field name="name">Saturday</field>
+		</record>
+		<record id="week_day_6" model="week.days">
+			<field name="name">Sunday</field>
+		</record>
+	</data>
+</odoo>

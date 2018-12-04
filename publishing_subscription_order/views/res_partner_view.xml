@@ -30,7 +30,7 @@
     <!--Inherited Action for Sale Orders smart button in res.partner-->
     <!--Adding ('subscription', '=', False) in domain to filter out subscription records from regular sales orders smart button-->
     <record id="sale.act_res_partner_2_sale_order" model="ir.actions.act_window">
-        <field name="domain">[('state','not in',('draft','sent','cancel')), ('advertising','=',False), ('partner_id','child_of',active_id), ('subscription','=',False)]</field>
+        <field name="domain">[('state','in',('sale','done')), ('advertising','=',False), ('partner_id','child_of',active_id), ('subscription','=',False)]</field>
     </record>
 
     <record id="view_partner_form_susbcription_inherit" model="ir.ui.view">
@@ -43,9 +43,9 @@
                     <group cols="4">
                         <group name="subscription">
                             <field name="is_subscription_customer"/>
-                            <field name="credit_limit" attrs="{'invisible': [('is_subscription_customer', '=', False)],'required': [('is_subscription_customer', '=', True)]}"/>
-                            <field name="subscription_customer_payment_mode_id" attrs="{'invisible': [('is_subscription_customer', '=', False)],'required': [('is_subscription_customer', '=', True)]}"/>
-                            <field name="property_subscription_payment_term_id" attrs="{'invisible': [('is_subscription_customer', '=', False)],'required': [('is_subscription_customer', '=', True)]}"/>
+                            <!--<field name="credit_limit" attrs="{'invisible': [('is_subscription_customer', '=', False)],'required': [('is_subscription_customer', '=', True)]}"/>-->
+                            <field name="subscription_customer_payment_mode_id" widget="selection" attrs="{'invisible': [('is_subscription_customer', '=', False)]}"/>
+                            <field name="property_subscription_payment_term_id" attrs="{'invisible': [('is_subscription_customer', '=', False)]}"/>
                         </group>
                     </group>
                 </page>
@@ -58,6 +58,12 @@
             <field name="zip" position="attributes">
                 <attribute name="attrs">{'required':[('is_subscription_customer','=',True)]}</attribute>
             </field>
+            <xpath expr="//field[@name='child_ids']/form/sheet/group/group[2]/field[@name='function']" position="after">
+                <field name="department_id" attrs="{'invisible': [('type','&lt;&gt;', 'contact')]}"/>
+            </xpath>
+            <xpath expr="//field[@name='function']" position="after">
+                <field name="department_id" attrs="{'invisible': ['|','|',('type','&lt;&gt;', 'contact'),('is_company','=', True),('parent_id','=', False)]}"/>
+            </xpath>
         </field>
     </record>
 
@@ -68,7 +74,7 @@
         <field type="xml" name="arch">
             <xpath expr="//button[@name='%(sale_advertising_order.act_res_partner_2_quotation_adv)d']" position="after">
                 <button class="oe_stat_button" type="action" name="%(act_res_partner_2_quotation_subscription)d"
-                    attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}"
+                    attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}" context="{'search_default_quotations':1}"
                      icon="fa-pencil-square-o">
                     <field string="Subs. Quote(s)" name="subs_quotation_count" widget="statinfo"/>
                 </button>
@@ -122,7 +128,7 @@
         <field name="res_model">res.partner</field>
         <field name="view_type">form</field>
         <field name="view_mode">kanban,tree,form</field>
-        <field name="context">{"search_default_customer":1, "search_default_type_company":1, "search_default_my_partners":1, "search_default_subscription_customer":1,}</field>
+        <field name="context">{"search_default_customer":1, "search_default_my_partners":1, "search_default_subscription_customer":1,}</field>
         <field name="search_view_id" ref="view_res_partner_filter_crm_publishing"/>
         <field name="help" type="html">
           <p class="oe_view_nocontent_create">

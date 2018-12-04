@@ -37,14 +37,20 @@ This module allows you to use Sales Management to run your subscription sales
         'account_payment_mode',
         'time_dependent',
         'account_invoice_start_end_dates',
-        'report_xlsx'
+        'report_xlsx',
+        'report_xml',
+        'l10n_nl_partner_name',
+        'hr'
     ],
     'data': [
         "data/ir_sequence_data.xml",
         "security/ir.model.access.csv",
+        "demo/subscription_demo.xml",
         "report/subscription_delivery_report.xml",
+        "report/report_delivery_list.xml",
         "data/cron_data.xml",
-        "data/payment_data.xml",
+        # "data/payment_data.xml",
+        "data/delivery_type_data.xml",
         "views/sale_subscription_view.xml",
         "views/res_partner_view.xml",
         "views/product_view.xml",
@@ -52,10 +58,11 @@ This module allows you to use Sales Management to run your subscription sales
         "views/subscription_delivery_view.xml",
         "views/crm_lead_view.xml",
         "views/subscription_config_view.xml",
+        "views/subscription_wizard_view.xml"
     ],
     'qweb': [
         "static/src/xml/sales_team_dashboard.xml",
+        "static/src/xml/qweb.xml",
     ],
-    'demo': [],
     'installable': True
 }
