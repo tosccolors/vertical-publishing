@@ -458,7 +458,11 @@ class SaleOrderLine(models.Model):
     @api.multi
     def create_renewal_line(self, order_lines=[]):
         sol_obj = self.env['sale.order.line']
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 2250f6f46f6217e6342a0734756bc06ceeb91300
         #new period start on end date of expired subscription, has end_date with more robust delta period, regardless of rundate
         for line in order_lines:
 
