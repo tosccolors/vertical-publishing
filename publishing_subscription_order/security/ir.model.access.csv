@@ -1,9 +1,11 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_subscription_delivery_user,subscription.delivery.user,model_subscription_delivery,base.group_user,1,1,1,0
+access_subscription_title_delivery_user,subscription.title.delivery.user,model_subscription_title_delivery,base.group_user,1,1,1,0
+access_subscription_title_delivery_manager,subscription.delivery.manager,model_subscription_title_delivery,base.group_erp_manager,1,1,1,1
 access_subscription_delivery_list_user,subscription.delivery.list.user,model_subscription_delivery_list,base.group_user,1,1,1,0
-access_subscription_delivery_manager,subscription.delivery.manager,model_subscription_delivery,base.group_erp_manager,1,1,1,1
 access_subscription_delivery_list_manager,subscription.delivery.list.manager,model_subscription_delivery_list,base.group_erp_manager,1,1,1,1
+access_subscription_delivery_line_user,subscription.delivery.line.user,model_subscription_delivery_line,base.group_user,1,1,1,0
+access_subscription_delivery_line_manager,subscription.delivery.line.manager,model_subscription_delivery_line,base.group_erp_manager,1,1,1,1
 access_delivery_list_type_user,delivery.list.type.user,model_delivery_list_type,base.group_user,1,1,1,0
-access_delivery_list_type_user,delivery.list.type.list.user,model_delivery_list_type,base.group_user,1,1,1,0
 access_delivery_list_type_manager,delivery.list.type.manager,model_delivery_list_type,base.group_erp_manager,1,1,1,1
-access_delivery_list_type_manager,delivery.list.type.list.manager,model_delivery_list_type,base.group_erp_manager,1,1,1,1
+access_week_days_user,week.days.user,model_week_days,base.group_user,1,1,1,0
+access_week_days_manager,week.days.manager,model_week_days,base.group_erp_manager,1,1,1,1

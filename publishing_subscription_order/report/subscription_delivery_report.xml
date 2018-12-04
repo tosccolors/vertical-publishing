@@ -3,13 +3,19 @@
     <data>
         <report
                 id="report_delivery_list_report_xlsx"
-                model="subscription.delivery"
+                model="subscription.delivery.list"
                 string="Delivery List XLSX"
                 report_type="xlsx"
                 name="report_subscription_delivery.xlsx"
                 file="report_subscription_delivery.xlsx"
                 attachment_use="False"
             />
+
+    <report id="delivery_list_xml"
+            name="publishing_subscription_order.delivery_list_xml_report"
+            string="Delivery List XML"
+            report_type="qweb-xml"
+            model="subscription.delivery.list"/>
 
     </data>
 </odoo>

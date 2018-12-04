@@ -139,7 +139,6 @@ class SaleOrder(models.Model):
     date_to = fields.Date(compute=lambda *a, **k: {}, string="Date to")
     ver_tr_exc = fields.Boolean(string='Verification Treshold', store=True, readonly=True, compute='_amount_all', track_visibility='always')
     advertising = fields.Boolean('Advertising', default=False)
-    magazine = fields.Boolean(string='Vakmedia Achtergrond Offerte', default=False)
     max_discount = fields.Integer(compute='_amount_all', track_visibility='always', store=True, string="Maximum Discount")
     display_discount_to_customer = fields.Boolean("Display Discount", default=False)
 
@@ -150,6 +149,8 @@ class SaleOrder(models.Model):
             lead = self.env[self._context.get('active_model')].browse(self._context.get('active_ids'))
             result.update({'campaign_id': lead.campaign_id.id, 'source_id': lead.source_id.id, 'medium_id': lead.medium_id.id, 'tag_ids': [[6, False, lead.tag_ids.ids]]})
         return result
+
+
 
     # overridden:
     @api.multi
@@ -163,7 +164,8 @@ class SaleOrder(models.Model):
         - Delivery address
         """
         if not self.advertising:
-            return super(SaleOrder, self).onchange_partner_id()
+            result = super(SaleOrder, self).onchange_partner_id()
+            return result
         # Advertiser:
         if self.published_customer:
             self.partner_id = self.published_customer.id
@@ -189,7 +191,8 @@ class SaleOrder(models.Model):
             contact_id = self.partner_id
         # Not sure about this!
         self.user_id = self._uid
-        self.customer_contact = contact_id
+        if not self.customer_contact:
+            self.customer_contact = contact_id
         if self.order_line:
             warning = {'title':_('Warning'),
                                  'message':_('Changing the Customer can have a change in Agency Discount as a result.'
@@ -369,8 +372,6 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    
-
     @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'nett_nett', 'subtotal_before_agency_disc',
                  'price_unit', 'tax_id')
     @api.multi
@@ -397,26 +398,26 @@ class SaleOrderLine(models.Model):
                     unit_price = csa
                     comp_discount = 0.0
                 elif price_unit > 0.0 and qty > 0.0 :
-                    comp_discount = round((1.0 - float(subtotal_bad) / (float(price_unit) * float(qty) + float(csa) * float(qty))) * 100.0, 5)
-                    unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), 5)
+                    comp_discount = round((1.0 - float(subtotal_bad) / (float(price_unit) * float(qty) + float(csa) * float(qty))) * 100.0, 2)
+                    unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), 4)
                 elif qty == 0.0:
                     unit_price = 0.0
                     comp_discount = 0.0
-                price = round(unit_price * (1 - (discount or 0.0) / 100.0), 5)
+                price = round(unit_price * (1 - (discount or 0.0) / 100.0), 4)
                 taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id,
                                                 partner=line.order_id.partner_id)
                 line.update({
-                    'actual_unit_price': round(unit_price, 3),
+                    'actual_unit_price': unit_price,
                     'price_tax': taxes['total_included'] - taxes['total_excluded'],
                     'price_total': taxes['total_included'],
                     'price_subtotal': taxes['total_excluded'],
-                    'computed_discount': round(comp_discount, 2),
+                    'computed_discount': comp_discount,
                     'discount': discount,
                 })
             else:
                 clp = line.comb_list_price or 0.0
                 if clp > 0.0:
-                    comp_discount = round((1.0 - float(subtotal_bad) / (float(clp) + float(csa))) * 100.0, 5)
+                    comp_discount = round((1.0 - float(subtotal_bad) / (float(clp) + float(csa))) * 100.0, 2)
                     unit_price = 0.0
                     price_unit = 0.0
                 else:
@@ -425,14 +426,14 @@ class SaleOrderLine(models.Model):
                     price_unit = 0.0
 
 #                price = round(float(subtotal_bad) * (1.0 - float(discount or 0) / 100.0), 2)
-                price = round(subtotal_bad * (1 - (discount or 0.0) / 100.0), 5)
+                price = round(subtotal_bad * (1 - (discount or 0.0) / 100.0), 4)
                 taxes = line.tax_id.compute_all(price, line.order_id.currency_id, quantity=1,
                                                 product=line.product_template_id, partner=line.order_id.partner_id)
                 line.update({
                     'price_tax': taxes['total_included'] - taxes['total_excluded'],
                     'price_total': taxes['total_included'],
                     'price_subtotal': taxes['total_excluded'],
-                    'computed_discount': round(comp_discount, 2),
+                    'computed_discount': comp_discount,
                     'actual_unit_price': unit_price,
                     'price_unit': price_unit,
                     'discount': discount,
@@ -501,17 +502,6 @@ class SaleOrderLine(models.Model):
             if line.product_template_id.price_edit or line.title.price_edit:
                 line.price_edit = True
 
-    @api.depends('medium')
-    @api.multi
-    def _compute_magazine(self):
-        """
-        Compute if order_line.magazine is True.
-        """
-        for line in self.filtered('advertising'):
-            if line.medium and line.medium in [self.env.ref('sale_advertising_order.magazine_advertising_category'),self.env.ref('sale_advertising_order.magazine_online_advertising_category')]:
-                line.magazine = True
-
-
     mig_remark = fields.Text('Migration Remark')
     layout_remark = fields.Text('Material Remark')
     title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)])
@@ -572,7 +562,6 @@ class SaleOrderLine(models.Model):
     computed_discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Account'), default=0.0)
     subtotal_before_agency_disc = fields.Monetary(string='Subtotal before Commission', digits=dp.get_precision('Account'))
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
-    magazine = fields.Boolean(compute='_compute_magazine', string='Magazine', store=True)
     multi_line = fields.Boolean(string='Multi Line')
     color_surcharge = fields.Boolean(string='Color Surcharge')
     price_edit = fields.Boolean(compute='_compute_price_edit', string='Price Editable')
@@ -978,10 +967,10 @@ class SaleOrderLine(models.Model):
         if self.advertising:
             res['account_analytic_id'] = self.adv_issue.analytic_account_id.id
             res['so_line_id'] = self.id
+            res['price_unit'] = self.actual_unit_price
             res['ad_number'] = self.ad_number
             res['computed_discount'] = self.computed_discount
             res['opportunity_subject'] = self.order_id.opportunity_subject
-            res['nett_nett'] = self.nett_nett
         return res
 
     @api.model
@@ -1031,8 +1020,6 @@ class SaleOrderLine(models.Model):
             if fields.Datetime.from_string(self.deadline) < datetime.now():
                 raise UserError(_('The deadline %s for this Category/Advertising Issue has passed.') %(self.deadline))
         return True
-
-
 
 
     @api.multi

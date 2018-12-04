@@ -125,10 +125,19 @@ class AdvertisingIssueAvailability(models.Model):
 
     adv_issue_id = fields.Many2one('sale.advertising.issue', string='Advertising Issue Reference', ondelete='cascade', index=True)
     issue_date = fields.Date(related='adv_issue_id.issue_date', string='Issue Date')
-    name = fields.Char('Description', size=64, required=True)
+    name = fields.Selection([('Opboeking','Opboeking'),('Afboeking','Afboeking')], default='Afboeking', string='Description', required=True)
     available_qty = fields.Integer('Available', required=True, default=0)
     page_id = fields.Many2one('sale.advertising.page', required=True, string='Advertising Page')
-    order_line_id = fields.Many2one('sale.order.line', string='Ad Placement', readonly=True)
+    order_line_id = fields.Many2one('sale.order.line', string='Ad Placement', readonly=False)
+
+    @api.multi
+    @api.constrains('order_line_id')
+    def _check_unique_orderline(self):
+        for rec in self:
+            if rec.order_line_id:
+                if len(self.search([('order_line_id', '=', rec.order_line_id.id),
+                        ('id', '!=', rec.id)])) > 0:
+                    raise UserError(_('There can only be one Availability posting per order_line'))
 
 class AdvertisingPage(models.Model):
     _name = "sale.advertising.page"

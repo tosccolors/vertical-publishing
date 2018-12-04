@@ -20,6 +20,7 @@
 
 from odoo import api, fields, models, _
 import odoo.addons.decimal_precision as dp
+from bs4 import BeautifulSoup
 
 
 class Partner(models.Model):
@@ -34,6 +35,13 @@ class Partner(models.Model):
     activities_report_count = fields.Integer(compute='_compute_activities_report_count', string='Activities Report')
     quotation_count = fields.Integer(compute='_compute_quotation_count', string='# of Quotations')
     adv_quotation_count = fields.Integer(compute='_compute_adv_quotation_count', string='# of Advertising Quotations')
+
+    @api.multi
+    def _compute_activities_count(self):
+        activity_data = self.env['crm.activity.report'].read_group([('partner_id', 'in', self.ids),('subtype_id','not in', ('Lead Created','Stage Changed','Opportunity Won','Discussions','Note','Lead aangemaakt','Fase gewijzigd','Prospect gewonnen','Discussies','Notitie')), ('subtype_id','!=',False)], ['partner_id'], ['partner_id'])
+        mapped_data = {act['partner_id'][0]: act['partner_id_count'] for act in activity_data}
+        for partner in self:
+            partner.activities_count = mapped_data.get(partner.id, 0)
 
     def _compute_adv_sale_order_count(self):
         for partner in self:
@@ -55,7 +63,7 @@ class Partner(models.Model):
     def _compute_next_activities_count(self):
         for partner in self:
             operator = 'child_of' if partner.is_company else '='  # the activity count should counts the activities of this company and all its contacts
-            partner.next_activities_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False), '|', ('stage_id.name','=','Qualified'), ('stage_id.name','=','Proposition')])
+            partner.next_activities_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False)])
 
     @api.multi
     def _compute_activities_report_count(self):
@@ -69,7 +77,7 @@ class Partner(models.Model):
             partner.opportunity_count = partner.adv_opportunity_count + partner.next_activities_count + partner.activities_report_count
 
     def _compute_quotation_count(self):
-        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','not in',('sale','done')), ('advertising','=',False)],
+        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','not in',('sale','done','cancel')), ('advertising','=',False)],
                                                       fields=['partner_id'], groupby=['partner_id'])
         # read to keep the child/parent relation while aggregating the read_group result in the loop
         partner_child_ids = self.read(['child_ids'])
@@ -84,10 +92,10 @@ class Partner(models.Model):
     def _compute_adv_quotation_count(self):
         for partner in self:
             operator = 'child_of' if partner.is_company else '='  # the adv quotation count should counts the adv quotations of this company and all its contacts
-            partner.adv_quotation_count = self.env['sale.order'].search_count(['|', ('published_customer', operator, partner.id), ('partner_id', operator, partner.id), ('state','not in',('sale','done')), ('advertising','=',True)])
+            partner.adv_quotation_count = self.env['sale.order'].search_count(['|', ('published_customer', operator, partner.id), ('partner_id', operator, partner.id), ('state','not in',('sale','done','cancel')), ('advertising','=',True)])
 
     def _compute_sale_order_count(self):
-        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','not in',('draft','sent','cancel')), ('advertising','=',False)],
+        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','in',('sale','done')), ('advertising','=',False)],
                                                       fields=['partner_id'], groupby=['partner_id'])
         # read to keep the child/parent relation while aggregating the read_group result in the loop
         partner_child_ids = self.read(['child_ids'])
@@ -219,11 +227,28 @@ class ActivityLog(models.TransientModel):
 
     @api.multi
     def action_log(self):
-        result = super(ActivityLog, self).action_log()
         stage_logged = self.env.ref("sale_advertising_order.stage_logged")
         for log in self:
+            body_html = "<div><b>%(title)s</b>: %(next_activity)s</div>%(description)s%(note)s" % {
+                'title': _('Activity Done'),
+                'next_activity': log.next_activity_id.name,
+                'description': log.title_action and '<p><em>%s</em></p>' % log.title_action or '',
+                'note': log.note or '',
+            }
+            summary = ""
+            if log.title_action: summary = log.title_action
+            if log.note != '<p><br></p>':
+                note = BeautifulSoup(log.note, 'lxml')
+                summary = summary+" ("+note.get_text()+")"
+
+            log.lead_id.message_post(body_html, subject=summary, subtype_id=log.next_activity_id.subtype_id.id)
+            log.lead_id.write({
+                'date_deadline': log.date_deadline,
+                'planned_revenue': log.planned_revenue,
+                'title_action': False,
+            })
             if log.lead_id.is_activity: log.lead_id.write({'stage_id': stage_logged.id})
-        return result
+        return True
 
 
 

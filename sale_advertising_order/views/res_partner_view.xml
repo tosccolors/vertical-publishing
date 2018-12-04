@@ -42,7 +42,7 @@
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('crm.crm_case_form_view_oppor')}),
                           (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
-            <field name="domain">[('type','=','opportunity'), ('partner_id','child_of',active_id), ('is_activity', '=', False), '|', ('stage_id.name','=','Qualified'), ('stage_id.name','=','Proposition')]</field>
+            <field name="domain">[('type','=','opportunity'), ('partner_id','child_of',active_id), ('is_activity', '=', False), '|', '|', '|', ('stage_id.name','=','Qualified'), ('stage_id.name','=','Proposition'), ('stage_id.name','=','Gekwalificeerd'), ('stage_id.name','=','Voorstel')]</field>
             <field name="context">{
                     'default_type': 'opportunity',
                     'default_user_id': uid,
@@ -72,7 +72,7 @@
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('crm.crm_case_form_view_oppor')}),
                           (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
-            <field name="domain">[('type','=','opportunity'), ('partner_id','child_of',active_id), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False), '|', ('stage_id.name','=','Qualified'), ('stage_id.name','=','Proposition')]</field>
+            <field name="domain">[('type','=','opportunity'), ('partner_id','child_of',active_id), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False)]</field>
             <field name="context">{
                     'default_type': 'opportunity',
                     'default_user_id': uid,
@@ -166,13 +166,11 @@
                     <attribute name="groups" >sale_advertising_order.group_regular_sales_user</attribute>
                     <attribute name="attrs">{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}</attribute>
                 </xpath>
-                <xpath expr="//button[@name='%(crm.crm_activity_report_action_tree)d']" position="replace">
-                    <button class="oe_stat_button" type="action"
-                        attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}"
-                        name="%(sale_advertising_order.act_res_partner_2_activities_report)d"
-                        icon="fa-clock-o">
-                        <field string="Activities Report" name="activities_report_count" widget="statinfo"/>
-                    </button>
+                <xpath expr="//button[@name='%(crm.crm_activity_report_action_tree)d']" position="attributes">
+                    <attribute name="context">{'search_default_activities':1}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='activities_count']" position="attributes">
+                    <attribute name="string">Activities Log</attribute>
                 </xpath>
                 <xpath expr="//button[@name='%(crm_lead_opportunities_advertising)d']" position="replace">
                     <button class="oe_stat_button o_res_partner_tip_opp" type="action"
@@ -184,18 +182,18 @@
                     <button class="oe_stat_button o_res_partner_tip_opp" type="action"
                         attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}"
                         name="%(sale_advertising_order.act_res_partner_2_next_activities_advertising)d"
-                        icon="fa-star">
+                        icon="fa-star" groups="sale_advertising_order.group_next_activities_menu">
                         <field string="Next Activities" name="next_activities_count" widget="statinfo"/>
                     </button>
                  </xpath>
                 <xpath expr="//button[@name='%(sale.act_res_partner_2_sale_order)d']" position="before">
                     <button class="oe_stat_button" type="action" name="%(sale_advertising_order.act_res_partner_2_quotation)d"
-                        attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}"
+                        attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}" context="{'search_default_quotations':1}"
                          icon="fa-pencil-square-o">
                         <field string="Quote(s)" name="quotation_count" widget="statinfo"/>
                     </button>
                     <button class="oe_stat_button" type="action" name="%(sale_advertising_order.act_res_partner_2_quotation_adv)d"
-                        attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}"
+                        attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}" context="{'search_default_quotations':1}"
                          icon="fa-pencil-square-o" groups="sale_advertising_order.group_advertising_sales_user">
                         <field string="Adv. Quote(s)" name="adv_quotation_count" widget="statinfo"/>
                     </button>
@@ -284,7 +282,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
-            <field name="view_mode">kanban,tree,form</field>
+            <field name="view_mode">tree,kanban,form</field>
             <field name="context">{"search_default_customer":1, "search_default_type_company":1, "search_default_my_partners":1,}</field>
             <field name="search_view_id" ref="view_res_partner_filter_crm"/>
             <field name="help" type="html">
@@ -317,8 +315,14 @@
               </p>
             </field>
         </record>
+        <record id="action_partner_tree_view1_nsm_crm" model="ir.actions.act_window.view">
+            <field name="sequence" eval="0"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_partner_tree_nsm_crm"/>
+            <field name="act_window_id" ref="action_partner_form_crm"/>
+        </record>
         <record id="action_partner_form_view1" model="ir.actions.act_window.view">
-            <field eval="0" name="sequence"/>
+            <field eval="1" name="sequence"/>
             <field name="view_mode">kanban</field>
             <field name="view_id" ref="base.res_partner_kanban_view"/>
             <field name="act_window_id" ref="action_partner_form_crm"/>
@@ -329,18 +333,12 @@
             <field name="view_id" ref="base.view_partner_form"/>
             <field name="act_window_id" ref="action_partner_form_crm"/>
         </record>
-        <record id="action_partner_tree_view1_nsm_crm" model="ir.actions.act_window.view">
-            <field name="sequence" eval="1"/>
-            <field name="view_mode">tree</field>
-            <field name="view_id" ref="view_partner_tree_nsm_crm"/>
-            <field name="act_window_id" ref="action_partner_form_crm"/>
-        </record>
         <!--Action Inherited for Sales Orders smart button in Customers-->
         <record id="sale.act_res_partner_2_sale_order" model="ir.actions.act_window">
             <field name="name">Sales Orders</field>
             <field name="res_model">sale.order</field>
             <field name="view_type">form</field>
-            <field name="domain">[('state','not in',('draft','sent','cancel')), ('advertising','=',False), ('partner_id','child_of',active_id)]</field>
+            <field name="domain">[('state','in',('sale','done')), ('advertising','=',False), ('partner_id','child_of',active_id)]</field>
             <field name="view_mode">tree,form,graph</field>
             <field name="context">{'default_partner_id': active_id}</field>
             <field name="groups_id" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
