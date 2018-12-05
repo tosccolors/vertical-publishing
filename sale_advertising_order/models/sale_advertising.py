@@ -355,7 +355,8 @@ class SaleOrder(models.Model):
                 newlines = self.env['sale.order.line'].browse(list)
                 for newline in newlines:
                     if newline.deadline_check():
-                        newline.page_qty_check_update()
+                        newline.page_qty_check_create()
+
         return result
 
     @api.multi

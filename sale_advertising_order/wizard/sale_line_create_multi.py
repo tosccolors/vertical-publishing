@@ -258,9 +258,10 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                 solip.id IN ({})
                 
                 
-                ;'''
+                ;
+                '''
 
-                for ad_iss in ol.issue_product_ids:
+                solip_ids = [ad_iss.id for ad_iss in ol.issue_product_ids]
                     ad_issue = self.env['sale.advertising.issue'].search(
                         [('id', '=', ad_iss.adv_issue_id.id)])
                     csa = ol.color_surcharge_amount * (
