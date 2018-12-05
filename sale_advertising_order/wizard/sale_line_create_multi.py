@@ -106,7 +106,7 @@ class sale_order_line_create_multi_lines(models.TransientModel):
 
         return lines
 
-    @api.multi
+    '''@api.multi
     def create_multi_from_order_lines_sql(self, orderlines=[]):
         sol_obj = self.env['sale.order.line']
         olines = sol_obj.browse(orderlines)
@@ -122,7 +122,7 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                     raise UserError(_(
                         'The number of Lines is different from the number of Issues in the multi line.'))
 
-                sql_query = '''
+                sql_query = 
                 INSERT INTO sale_order_line
                 (
                 product_uom,
@@ -259,7 +259,7 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                 
                 
                 ;
-                '''
+                
 
                 solip_ids = [ad_iss.id for ad_iss in ol.issue_product_ids]
                     ad_issue = self.env['sale.advertising.issue'].search(
@@ -295,7 +295,7 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                 sol_obj.search([('id', '=', ol.id)]).with_context(
                     multi=True).unlink()
 
-        return lines
+        return lines'''
 
 
 
