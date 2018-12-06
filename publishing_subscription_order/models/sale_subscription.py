@@ -447,11 +447,6 @@ class SaleOrderLine(models.Model):
         if self.product_id.subscription_product:
             res['start_date'] = self.start_date
             res['end_date'] = self.end_date
-#            account = self.product_id.delivery_obligation_account_id
-#            fpos = self.order_id.fiscal_position_id or self.order_id.partner_id.property_account_position_id
-#            if fpos:
-#                account = fpos.map_account(account)
-#            res['account_id'] = account.id
         return res
 
 
@@ -496,6 +491,7 @@ class SaleOrderLine(models.Model):
                     'product_id'          : line.renew_product_id.id or False,
                     'number_of_issues'    : line.renew_product_id.product_tmpl_id.number_of_issues or 0,
                 })
+
 
         ctx = self.env.context.copy()
         ctx.update({'cronRenewal':True})
