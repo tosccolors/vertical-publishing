@@ -141,6 +141,10 @@ class SaleOrder(models.Model):
     advertising = fields.Boolean('Advertising', default=False)
     max_discount = fields.Integer(compute='_amount_all', track_visibility='always', store=True, string="Maximum Discount")
     display_discount_to_customer = fields.Boolean("Display Discount", default=False)
+    company_id = fields.Many2one('res.company', 'Company',
+                                 default=lambda self: self.env[
+                                     'res.company']._company_default_get(
+                                     'sale.order'), index=True)
 
     @api.model
     def default_get(self, fields):
@@ -150,18 +154,7 @@ class SaleOrder(models.Model):
             result.update({'campaign_id': lead.campaign_id.id, 'source_id': lead.source_id.id, 'medium_id': lead.medium_id.id, 'tag_ids': [[6, False, lead.tag_ids.ids]]})
         return result
 
-    def update_acc_mgr_sp(self):
-        if not self.advertising:
-            self.user_id = self.partner_id.user_id.id if self.partner_id.user_id else False
-            self.partner_acc_mgr = False
-            if self.partner_id:
-                if self.company_id and self.company_id.name == 'BDUmedia BV':
-                    self.user_id = self._uid
-                    self.partner_acc_mgr = self.partner_id.user_id.id if self.partner_id.user_id else False
 
-    @api.onchange('company_id')
-    def onchange_company_id(self):
-        self.update_acc_mgr_sp()
 
     # overridden:
     @api.multi
@@ -176,7 +169,6 @@ class SaleOrder(models.Model):
         """
         if not self.advertising:
             result = super(SaleOrder, self).onchange_partner_id()
-            self.update_acc_mgr_sp()
             return result
         # Advertiser:
         if self.published_customer:
@@ -327,7 +319,6 @@ class SaleOrder(models.Model):
                         line.page_qty_check_create()
             if not olines == []:
                 list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
-                self._cr.commit()
                 newlines = self.env['sale.order.line'].browse(list)
                 for newline in newlines:
                     if newline.deadline_check():
@@ -342,14 +333,6 @@ class SaleOrder(models.Model):
                 raise UserError(_(partner.sale_warn_msg))
 
         result = super(SaleOrder, self).create(vals)
-        if not vals.get('advertising', False):
-            if vals.get('partner_id', False) and vals.get('company_id', False):
-                company = self.env['res.company'].browse(vals.get('company_id'))
-                if company.name == 'BDUmedia BV':
-                    partner = self.env['res.partner'].browse(vals.get('partner_id'))
-                    result['partner_acc_mgr'] = partner.user_id.id if partner.user_id else False
-                else:
-                    result['partner_acc_mgr'] = False
         return result
 
     @api.multi
@@ -372,16 +355,8 @@ class SaleOrder(models.Model):
                 newlines = self.env['sale.order.line'].browse(list)
                 for newline in newlines:
                     if newline.deadline_check():
-                        newline.page_qty_check_update()
-        advertising = vals.get('advertising') if 'advertising' in vals else self.advertising
-        if not advertising:
-            if 'partner_id' in vals or 'company_id' in vals:
-                company = self.env['res.company'].browse(vals.get('company_id')) if 'company_id' in vals else self.company_id
-                if company.name == 'BDUmedia BV':
-                    partner = self.env['res.partner'].browse(vals.get('partner_id')) if 'partner_id' in vals else self.partner_id
-                    self.partner_acc_mgr = partner.user_id.id if partner.user_id else False
-                else:
-                    self.partner_acc_mgr = False
+                        newline.page_qty_check_create()
+
         return result
 
     @api.multi
@@ -400,8 +375,6 @@ class SaleOrder(models.Model):
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
-
-    
 
     @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'nett_nett', 'subtotal_before_agency_disc',
                  'price_unit', 'tax_id')
@@ -582,8 +555,8 @@ class SaleOrderLine(models.Model):
     order_agency_id = fields.Many2one(related='order_id.advertising_agency', relation='res.partner',
                                           string='Advertising Agency', store=True)
     order_pricelist_id = fields.Many2one(related='order_id.pricelist_id', relation='product.pricelist', string='Pricelist')
-    order_company_id = fields.Many2one(related='order_id.company_id', relation='res.company',
-                                         string='Company')
+    company_id = fields.Many2one(related='order_id.company_id',
+                                 string='Company', store=True, readonly=True, index=True)
     discount_dummy = fields.Float(related='discount', string='Agency Commission (%)', readonly=True )
     price_unit_dummy = fields.Float(related='price_unit', string='Unit Price', readonly=True)
     actual_unit_price = fields.Float(compute='_compute_amount', string='Actual Unit Price', digits=dp.get_precision('Product Price'),
@@ -1079,12 +1052,16 @@ class SaleOrderLine(models.Model):
     @api.multi
     def page_qty_check_update(self):
         self.ensure_one()
+        if not self.product_template_id.page_id:
+            return
         self.page_qty_check_unlink()
         self.page_qty_check_create()
 
     @api.multi
     def page_qty_check_unlink(self):
         self.ensure_one()
+        if not self.product_template_id.page_id:
+            return
         res = self.env['sale.advertising.available'].search([('order_line_id', '=', self.id)])
         if res and len(res) > 0:
             res.unlink()
