@@ -120,6 +120,12 @@ class SaleOrder(models.Model):
         res = super(SaleOrder, self)._prepare_invoice()
         if self.filtered('subscription'):
             res['payment_term_id'] = self.partner_id.property_subscription_payment_term_id.id or False
+            res['ad'] = False
+            pay_mode = self.partner_id.subscription_customer_payment_mode_id
+            res['payment_mode_id'] = pay_mode.id or False
+            if res['type'] == 'out_invoice':
+                if pay_mode and pay_mode.bank_account_link == 'fixed':
+                    res['partner_bank_id'] = pay_mode.fixed_journal_id.bank_account_id
         return res
 
     @api.multi
@@ -447,6 +453,9 @@ class SaleOrderLine(models.Model):
         if self.product_id.subscription_product:
             res['start_date'] = self.start_date
             res['end_date'] = self.end_date
+            res['account_analytic_id'] = self.order_id.related_project_id.id
+            res['so_line_id'] = self.id
+            res['price_unit'] = self.actual_unit_price
         return res
 
 

@@ -16,6 +16,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             res['start_date'] = line.start_date
             res['end_date'] = line.end_date
             res['price_unit'] = line.price_unit
+            res['account_analytic_id'] = line.order_id.related_project_id and line.order_id.related_project_id.id
             res['name'] = line.name
         return res
 
@@ -23,14 +24,19 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     def _prepare_invoice(self, partner, published_customer, payment_mode, operating_unit, lines, invoice_date, posting_date):
         res = super(AdOrderLineMakeInvoice, self)._prepare_invoice(partner, published_customer, payment_mode,
                                                                    operating_unit, lines, invoice_date, posting_date)
+        sol = []
         for invline in lines['lines']:
-            if invline.sale_line_ids.filtered('subscription'):
-                res['ad'] = False
-                res['payment_term_id'] = partner.property_subscription_payment_term_id.id or False
-                pay_mode = partner.subscription_customer_payment_mode_id
-                res['payment_mode_id'] = pay_mode.id or False
-                if res['type'] == 'out_invoice':
-                    if pay_mode and pay_mode.bank_account_link == 'fixed':
-                        res['partner_bank_id'] = pay_mode.fixed_journal_id.bank_account_id
-                break
+            for val in invline[2]['sale_line_ids']:
+                sol += val[2]
+        sale_order_lines = self.env['sale.order.line'].search([('id', 'in', sol), ('subscription', '=', True)])
+
+        if sale_order_lines:
+            res['ad'] = False
+            res['payment_term_id'] = partner.property_subscription_payment_term_id.id or False
+            pay_mode = partner.subscription_customer_payment_mode_id
+            res['payment_mode_id'] = pay_mode.id or False
+            if res['type'] == 'out_invoice':
+                if pay_mode and pay_mode.bank_account_link == 'fixed':
+                    res['partner_bank_id'] = pay_mode.fixed_journal_id.bank_account_id
+
         return res
