@@ -8,8 +8,8 @@
         <field name="inherit_id" ref="account.product_template_form_view" />
         <field name="arch" type="xml">
             <xpath expr="//group[@name='properties'][last()]" position="after">
-                <separator string="Subscription" colspan="4"/>
                 <group name="enable_subscription" col="4">
+                    <separator string="Subscription" colspan="4"/>
                     <field name="subscription_product"/>
                     <field name="digital_subscription" attrs="{'invisible':[('subscription_product','=',False)]}"/>
                     <field name="number_of_issues" attrs="{'invisible':[('subscription_product','=',False)],'required':[('subscription_product','=',True)]}"/>
