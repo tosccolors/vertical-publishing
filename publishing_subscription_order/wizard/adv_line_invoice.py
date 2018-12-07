@@ -12,7 +12,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         if line.filtered('subscription'):
             if not line.product_id.delivery_obligation_account_id:
                 raise UserError(_('Please define an delivery Obligation account for product %s')%line.product_id.name)
-            res['account_id'] = line.product_id.delivery_obligation_account_id.id
+            # res['account_id'] = line.product_id.delivery_obligation_account_id.id
             res['start_date'] = line.start_date
             res['end_date'] = line.end_date
             res['price_unit'] = line.price_unit
