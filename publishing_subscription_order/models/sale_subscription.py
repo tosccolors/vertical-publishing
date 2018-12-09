@@ -453,7 +453,7 @@ class SaleOrderLine(models.Model):
         if self.product_id.subscription_product:
             res['start_date'] = self.start_date
             res['end_date'] = self.end_date
-            res['account_analytic_id'] = self.order_id.related_project_id.id
+            res['account_analytic_id'] = self.title.analytic_account_id.id
             # res['account_id'] = self.product_id.delivery_obligation_account_id.id
             res['so_line_id'] = self.id
             res['price_unit'] = self.actual_unit_price
