@@ -237,7 +237,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         :param line: sales order line to invoice
         """
         line.ensure_one()
-        res = {}
         account = line.product_id.property_account_income_id or line.product_id.categ_id.property_account_income_categ_id
         if not account:
             raise UserError(
