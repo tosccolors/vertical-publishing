@@ -7,6 +7,9 @@
     <field name="model">account.invoice</field>
     <field name="inherit_id" ref="account.invoice_form" />
     <field name="arch" type="xml">
+        <field name="payment_term_id" position="after">
+                    <field name="subs" />
+        </field>
         <xpath expr="//page/field[@name='invoice_line_ids']/tree/field[@name='account_analytic_id']" position="after">
             <field name="start_date"/>
             <field name="end_date"/>
