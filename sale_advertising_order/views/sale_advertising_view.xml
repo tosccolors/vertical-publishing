@@ -100,7 +100,6 @@
                             <field name="payment_term_id" options="{'no_create': True}"/>
                             <field name="payment_mode_id" domain="[('payment_type', '=', 'inbound')]" widget="selection"/>
                             <field name="display_discount_to_customer"/>
-                            <field name="magazine"/>
                         </group>
                     </group>
                     <notebook>
@@ -166,7 +165,6 @@
                                             <field name="nett_nett" />
                                             <field name="multi_line" invisible="0" groups="base.group_no_one"/>
                                             <field name="multi_line_number" invisible="0" readonly="True" groups="base.group_no_one"/>
-                                            <field name="magazine" readonly="True" string="Vakmedia" />
                                             <label for="product_uom_qty" string="Ordered Quantity"/>
                                             <div>
                                                 <field name="product_uom_qty" class="oe_inline"
@@ -914,15 +912,15 @@
                                 </field>
                                 <field name="order_id" invisible="1"/>
                                 <field name="order_pricelist_id" invisible="1"/>
-                                <field name="order_company_id" invisible="1"/>
+                                <field name="company_id" invisible="1"/>
                                 <field name="product_template_id"
-                                       context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': order_company_id}"
+                                       context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': company_id}"
                                        attrs="{'readonly': ['|','|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', []),
                                                                      ('deadline_passed','=', True)]}"
                                        domain="[('categ_id','=', ad_class)]"
                                        options="{'no_open': True,'no_create': True, 'no_create_edit': True}" required="1"/>
                                 <field name="product_id" invisible="0" groups="base.group_no_one"
-                                       context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': order_company_id}"
+                                       context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': company_id}"
                                        attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
                                        domain="['|','&amp;',('categ_id','=', ad_class),('attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id)]"
                                        options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
@@ -939,7 +937,7 @@
                                 <div>
                                     <field name="product_uom_qty" class="oe_inline"
                                            context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id,
-                                                        'uom':product_uom, 'uom_qty_change':True, 'company_id': order_company_id}"
+                                                        'uom':product_uom, 'uom_qty_change':True, 'company_id': company_id}"
                                            attrs="{'readonly': [('deadline_passed','=', True)]}"/>
                                     <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"
                                            readonly="True"/>
