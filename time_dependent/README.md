@@ -36,16 +36,16 @@ Usage (for module dev)
 
 Below is example with Model (res.partner):
 
-* Inherit time.dependent:
+* Inherit time.dependent.thread:
 
 .. code:: python
 
         class Partner(models.Model):
             _name = 'res.partner'
-            _inherit = ['res.partner', 'time.dependent']  //For existing Model
+            _inherit = ['res.partner', 'time.dependent.thread']  //For existing Model
 
         #Note: For new Model
-        _inherit = 'time.dependent'
+        _inherit = 'time.dependent.thread'
 
 
 .. Form view::xml
