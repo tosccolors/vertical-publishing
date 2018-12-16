@@ -9,17 +9,17 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     _inherit = "ad.order.line.make.invoice"
 
     @api.model
-    def _prepare_invoice(self, partner, published_customer, payment_mode,
+    def _prepare_invoice_subs(self, partner, published_customer, payment_mode,
                          operating_unit, lines, invoice_date, posting_date,
                          subs):
         res = super(AdOrderLineMakeInvoice, self)._prepare_invoice(
-            partner,
-            published_customer,
-            payment_mode,
-            operating_unit,
-            lines,
-            invoice_date,
-            posting_date
+            partner=partner,
+            published_customer=published_customer,
+            payment_mode=payment_mode,
+            operating_unit=operating_unit,
+            lines=lines,
+            invoice_date=invoice_date,
+            posting_date=posting_date
         )
         if subs:
             res['payment_term_id'] = \
@@ -73,7 +73,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         invoices = {}
         def make_invoice(partner, published_customer, payment_mode,
                          operating_unit, lines, inv_date, post_date):
-            vals = self._prepare_invoice(partner, published_customer,
+            vals = self._prepare_invoice_subs(partner, published_customer,
                                          payment_mode, operating_unit,
                                          lines, inv_date, post_date, subs)
             invoice = self.env['account.invoice'].create(vals)
