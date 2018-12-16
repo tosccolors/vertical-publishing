@@ -29,7 +29,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             if res['type'] == 'out_invoice':
                 if pay_mode and pay_mode.bank_account_link == 'fixed':
                     res['partner_bank_id'] = \
-                        pay_mode.fixed_journal_id.bank_account_id
+                        pay_mode.fixed_journal_id.bank_account_id.id
         return res
 
     @job
