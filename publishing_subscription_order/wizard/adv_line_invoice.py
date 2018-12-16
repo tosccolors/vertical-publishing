@@ -64,7 +64,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             break
         if not subs:
             return super(AdOrderLineMakeInvoice,
-                      self).make_invoices_split_job_queue(
+                      self).make_invoices_job_queue(
             inv_date,
             post_date,
             chunk
