@@ -21,6 +21,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             invoice_date,
             posting_date
         )
+        subs = False
         if subs:
             res['payment_term_id'] = \
                 partner.property_subscription_payment_term_id.id or False
