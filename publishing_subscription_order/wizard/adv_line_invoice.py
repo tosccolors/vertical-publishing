@@ -29,7 +29,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             if res['type'] == 'out_invoice':
                 if pay_mode and pay_mode.bank_account_link == 'fixed':
                     res['partner_bank_id'] = \
-                        pay_mode.fixed_journal_id.bank_account_id
+                        pay_mode.fixed_journal_id.bank_account_id.id
         return res
 
     @job
@@ -64,7 +64,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             break
         if not subs:
             return super(AdOrderLineMakeInvoice,
-                      self).make_invoices_split_job_queue(
+                      self).make_invoices_job_queue(
             inv_date,
             post_date,
             chunk
