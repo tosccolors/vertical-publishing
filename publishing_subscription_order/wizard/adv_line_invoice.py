@@ -57,13 +57,14 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     @job
     @api.multi
     def make_invoices_job_queue(self, inv_date, post_date, chunk):
+        subs = False
         for line in chunk:
             if line.subscription:
                 subs = True
-                break
+            break
         if not subs:
             return super(AdOrderLineMakeInvoice,
-                      self).make_invoices_split_lines_jq(
+                      self).make_invoices_split_job_queue(
             inv_date,
             post_date,
             chunk
