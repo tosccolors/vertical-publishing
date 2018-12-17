@@ -392,7 +392,7 @@ class SaleOrderLine(models.Model):
                 startdate = datetime.today().date()
                 vals['start_date'] = datetime.today().date()
             elif self.start_date:
-                enddate = self.subscription_enddate(startdate, self.renew_product_id.subscr_number_of_days)
+                enddate = self.subscription_enddate(startdate, self.product_id.subscr_number_of_days)
                 vals['end_date'] = enddate
             #change name to reflect new period
             name = self.product_id.name_get()[0][1]
