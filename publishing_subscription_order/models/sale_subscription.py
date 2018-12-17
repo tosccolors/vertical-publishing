@@ -395,7 +395,7 @@ class SaleOrderLine(models.Model):
                 #dutch product name and period naming
                 name += ' van ' + startdate.strftime('%d-%m-%Y') + ' tot ' + enddate.strftime('%d-%m-%Y')
             else :
-                name += '\n' + str(product_id.product_tmpl_id.number_of_issues) + ' edities'
+                name += '\n' + str(self.product_id.product_tmpl_id.number_of_issues) + ' edities'
             if self.product_id.description_sale:
                 name += '\n' + self.product_id.description_sale
             vals.update({'name' : name})
