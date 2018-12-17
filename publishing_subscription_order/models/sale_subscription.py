@@ -98,18 +98,25 @@ class SaleOrder(models.Model):
                 if self.company_id and self.company_id.name == 'BDUmedia BV':
                     self.user_id = self._uid
                     self.partner_acc_mgr = self.partner_id.user_id.id if self.partner_id.user_id else False
-
+    
     @api.multi
-    @api.onchange('partner_id', 'published_customer', 'advertising_agency', 'agency_is_publish')
-    def onchange_partner_id(self):
-        """
-        Update the following fields when the partner is changed:
-        - Subscription Payment term
-        """
-        super(SaleOrder, self).onchange_partner_id()
+    @api.onchange('published_customer')
+    def onchange_published_customer_id(self):
         if self.subscription:
             address = self.published_customer.address_get(['delivery'])
             self.partner_shipping_id = address['delivery']
+            self.partner_id          = self.published_customer #triggers payment term and mode update
+            self.partner_invoice_id  = self.published_customer
+            self.customer_contact    = self.published_customer
+
+    @api.multi
+    @api.onchange('partner_id')
+    def onchange_partner_id(self):
+        keep    = self.partner_shipping_id
+        super(SaleOrder, self).onchange_partner_id()
+        if self.subscription:
+            if keep :
+                self.partner_shipping_id = keep
             if self.partner_id:
                 # Subscription:
                 self.payment_term_id = self.partner_id.property_subscription_payment_term_id and self.partner_id.property_subscription_payment_term_id.id or False
@@ -395,7 +402,7 @@ class SaleOrderLine(models.Model):
                 #dutch product name and period naming
                 name += ' van ' + startdate.strftime('%d-%m-%Y') + ' tot ' + enddate.strftime('%d-%m-%Y')
             else :
-                name += '\n' + str(product_id.product_tmpl_id.number_of_issues) + ' edities'
+                name += '\n' + str(self.product_id.product_tmpl_id.number_of_issues) + ' edities'
             if self.product_id.description_sale:
                 name += '\n' + self.product_id.description_sale
             vals.update({'name' : name})
