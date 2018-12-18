@@ -548,7 +548,7 @@ class SaleOrderLine(models.Model):
         offset = int(self.env['ir.config_parameter'].search([('key','=','subscription_renewal_offset_in_days')]).value) or 10
         expiration_date = (datetime.today().date() + timedelta(days=offset)).strftime('%Y-%m-%d')
         order_lines = self.search(
-            [('subscription','=',True),('state', 'in', ('sale', 'done')), ('can_renew', '=', True),('line_renewed', '=' ,False), ('end_date', '<', expiration_date )])
+            [('subscription','=',True),('state', 'in', ('sale', 'done')), ('renew_product_id', '!=', False),('line_renewed', '=' ,False), ('end_date', '<', expiration_date )])
         self.create_renewal_line(order_lines)
         return True
 
