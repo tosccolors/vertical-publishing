@@ -9,17 +9,17 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     _inherit = "ad.order.line.make.invoice"
 
     @api.model
-    def _prepare_invoice(self, partner, published_customer, payment_mode,
+    def _prepare_invoice_subs(self, partner, published_customer, payment_mode,
                          operating_unit, lines, invoice_date, posting_date,
                          subs):
-        res = super(AdOrderLineMakeInvoice, self)._prepare_invoice(
-            partner,
-            published_customer,
-            payment_mode,
-            operating_unit,
-            lines,
-            invoice_date,
-            posting_date
+        res = self._prepare_invoice(
+            partner=partner,
+            published_customer=published_customer,
+            payment_mode=payment_mode,
+            operating_unit=operating_unit,
+            lines=lines,
+            invoice_date=invoice_date,
+            posting_date=posting_date
         )
         if subs:
             res['payment_term_id'] = \
@@ -29,7 +29,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             if res['type'] == 'out_invoice':
                 if pay_mode and pay_mode.bank_account_link == 'fixed':
                     res['partner_bank_id'] = \
-                        pay_mode.fixed_journal_id.bank_account_id
+                        pay_mode.fixed_journal_id.bank_account_id.id
         return res
 
     @job
@@ -57,13 +57,14 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     @job
     @api.multi
     def make_invoices_job_queue(self, inv_date, post_date, chunk):
+        subs = False
         for line in chunk:
             if line.subscription:
                 subs = True
-                break
+            break
         if not subs:
             return super(AdOrderLineMakeInvoice,
-                      self).make_invoices_split_lines_jq(
+                      self).make_invoices_job_queue(
             inv_date,
             post_date,
             chunk
@@ -72,7 +73,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         invoices = {}
         def make_invoice(partner, published_customer, payment_mode,
                          operating_unit, lines, inv_date, post_date):
-            vals = self._prepare_invoice(partner, published_customer,
+            vals = self._prepare_invoice_subs(partner, published_customer,
                                          payment_mode, operating_unit,
                                          lines, inv_date, post_date, subs)
             invoice = self.env['account.invoice'].create(vals)
