@@ -27,6 +27,8 @@ from odoo import api, fields, exceptions, models, _
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.exceptions import ValidationError, UserError
 import odoo.addons.decimal_precision as dp
+from odoo.addons.queue_job.job import job, related_action
+from odoo.addons.queue_job.exception import FailedJobError
 
 VALUES = [(1,'Anbos lid'), (2, 'Andere nieuwsbronnen/internet'), (3, 'Actie/proefabonnement'), (4,'Bedrijf is opgeheven/failliet/fusie'), (5, 'Betalingsachterstand'), (6, 'Klachten over de slechte bezorging'), (7, 'Blad retour/factuur retour'), (8, 'Is onder curatele gezet/schuldsanering'), (9, 'Dubbel abonnement'), (10, 'Einde proef/kado abonnement'), (11, 'Bezuinigen/ financieel'), (12, 'Gaat samenlezen, ivm financien'), (13, 'Geen BDU-medewerker meer'), (14, 'Geen interesse'), (15, 'Geen opgave'), (16, 'Gezondheidsredenen (ouderd./ziek/dement)'), (17, 'Geen student meer'), (18, 'In overleg met ACM'), (19, 'Leest via werkgever / leest samen'), (20, 'Met pensioen'), (21, 'Verhuizen/emigreren'), (22, 'Nabellen opzeggers'), (23, 'Naar incassobureau'), (24, 'Nogmaals toegestuurd'), (25, 'Niet meer werkzaam'), (26, 'Omgezet naar digitaal/ander soort abo'), (27, 'Overstap naar concurrent / Andere keuze'), (28, 'Oneens met verlenging'), (29, 'Ontevreden over digitale versie'), (30, 'Overleden'), (31, 'Op verzoek betalende instantie'), (32, 'Persoonlijke omstandigheden'), (33, 'Redactioneel / inhoud'), (34, 'Retour'), (35, 'Te duur'), (36, 'Telefonische opzegging'), (37, 'Tijdelijke stopzetting'), (38, 'Telemarketing actie Tijdschriften'), (39, 'Verlengingsaanbieding'), (40, 'Via de mail benaderd')]
 
@@ -98,25 +100,18 @@ class SaleOrder(models.Model):
                 if self.company_id and self.company_id.name == 'BDUmedia BV':
                     self.user_id = self._uid
                     self.partner_acc_mgr = self.partner_id.user_id.id if self.partner_id.user_id else False
-    
+
     @api.multi
-    @api.onchange('published_customer')
-    def onchange_published_customer_id(self):
+    @api.onchange('partner_id', 'published_customer', 'advertising_agency', 'agency_is_publish')
+    def onchange_partner_id(self):
+        """
+        Update the following fields when the partner is changed:
+        - Subscription Payment term
+        """
+        super(SaleOrder, self).onchange_partner_id()
         if self.subscription:
             address = self.published_customer.address_get(['delivery'])
             self.partner_shipping_id = address['delivery']
-            self.partner_id          = self.published_customer #triggers payment term and mode update
-            self.partner_invoice_id  = self.published_customer
-            self.customer_contact    = self.published_customer
-
-    @api.multi
-    @api.onchange('partner_id')
-    def onchange_partner_id(self):
-        keep    = self.partner_shipping_id
-        super(SaleOrder, self).onchange_partner_id()
-        if self.subscription:
-            if keep :
-                self.partner_shipping_id = keep
             if self.partner_id:
                 # Subscription:
                 self.payment_term_id = self.partner_id.property_subscription_payment_term_id and self.partner_id.property_subscription_payment_term_id.id or False
@@ -495,6 +490,7 @@ class SaleOrderLine(models.Model):
         enddate = startdate + delta
         return enddate
 
+    @job
     @api.multi
     def create_renewal_line(self, order_lines=[]):
         sol_obj = self.env['sale.order.line']
@@ -548,9 +544,19 @@ class SaleOrderLine(models.Model):
         offset = int(self.env['ir.config_parameter'].search([('key','=','subscription_renewal_offset_in_days')]).value) or 10
         expiration_date = (datetime.today().date() + timedelta(days=offset)).strftime('%Y-%m-%d')
         order_lines = self.search(
-            [('subscription','=',True),('state', 'in', ('sale', 'done')), ('can_renew', '=', True),('line_renewed', '=' ,False), ('end_date', '<', expiration_date )])
-        self.create_renewal_line(order_lines)
+            [('subscription','=',True),('state', 'in', ('sale', 'done')), ('renew_product_id', '!=', False),('line_renewed', '=' ,False), ('end_date', '<', expiration_date )])
+        self._split_renewal_actions(order_lines)
         return True
+
+    @job
+    def _split_renewal_actions(self, orderlines=[]):
+        size = int(self.env['ir.config_parameter'].search([('key','=','subscription_renewal_chunk_size')]).value) or 10000 
+        for x in xrange(0, len(orderlines), size):
+            chunk  = orderlines[x:x + size]
+            info   = 'Renewal run for lines '+str(x)+' to '+str(x+size)
+            result = self.with_delay(description=info).create_renewal_line(chunk)
+
+
 
 class AdvertisingIssue(models.Model):
     _inherit = "sale.advertising.issue"
