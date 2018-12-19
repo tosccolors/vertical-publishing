@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_logistics_address_table_manager,logistics_address_table_manager,model_logistics_address_table,group_folder_sales_menus,1,1,1,1
