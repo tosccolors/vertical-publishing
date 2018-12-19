@@ -84,7 +84,7 @@
                                             <field name="medium" required="True"
                                                    domain="[('parent_id','=', %(sale_advertising_order.advertising_category)d)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
-                                            <field name="ad_class" required="True"
+                                            <field name="ad_class" string="Category" required="True"
                                                    domain="[('type','!=', 'view'), ('id','child_of', medium),('subscription_categ','=',True)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>

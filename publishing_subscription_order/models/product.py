@@ -6,12 +6,12 @@ from odoo import api, fields, models, _
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    subscription_product = fields.Boolean(string='Is subscription product?')
+    subscription_product = fields.Boolean(string='Is subscription')
     delivery_obligation_account_id = fields.Many2one('account.account', string="Delivery Obligation Account", domain=[('deprecated', '=', False)])
     subscription_revenue_account_id = fields.Many2one('account.account', string='Subscription Revenue Account', domain=[('deprecated', '=', False)])
     number_of_issues = fields.Integer('No. Of Issues')
     subscr_number_of_days = fields.Integer('No. Of Days')
-    digital_subscription = fields.Boolean(string='Is digital subscription?')
+    digital_subscription = fields.Boolean(string='Digital only')
     weekday_ids = fields.Many2many('week.days', 'weekday_template_rel', 'template_id', 'weekday_id', 'Weekdays')
     can_renew = fields.Boolean('Can Renewed?', default=False)
     renew_product_id = fields.Many2one('product.product','Renewal Product')
