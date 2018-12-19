@@ -497,6 +497,8 @@ class SaleOrderLine(models.Model):
         ctx = self.env.context.copy()
         ctx.update({'cronRenewal':True})
         for line in order_lines:
+            if line.line_renewed:
+                continue
             res = line.with_context(ctx).onchange_product_subs()['value']
             tmpl_prod = line.renew_product_id.product_tmpl_id
             startdate =line.end_date
@@ -525,12 +527,7 @@ class SaleOrderLine(models.Model):
                 })
 
             vals = line.copy_data(default=res)[0]
-            
-            #delayed executiong (i.e. via job queue) might render task obsolete. So check again. 
-            #Error due to double click on manual run is hereby mitigated
-            if self.env['sale.order.line'].browse(line.id).line_renewed == False :
-                sol_obj.create(vals)
-                line.line_renewed = True
+            line.line_renewed = True
 
 
     @api.onchange('number_of_issues')
@@ -560,7 +557,7 @@ class SaleOrderLine(models.Model):
         for x in xrange(0, len(orderlines), size):
             chunk  = orderlines[x:x + size]
             info   = 'Renewal run for lines '+str(x)+' to '+str(x+size-1)
-            result = self.with_delay(description=info).create_renewal_line(chunk)
+            self.with_delay(description=info).create_renewal_line(chunk)
 
 
 
