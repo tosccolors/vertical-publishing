@@ -527,6 +527,7 @@ class SaleOrderLine(models.Model):
                 })
 
             vals = line.copy_data(default=res)[0]
+            sol_obj.create(vals)
             line.line_renewed = True
 
 
@@ -557,7 +558,7 @@ class SaleOrderLine(models.Model):
         for x in xrange(0, len(orderlines), size):
             chunk  = orderlines[x:x + size]
             info   = 'Renewal run for lines '+str(x)+' to '+str(x+size-1)
-            self.with_delay(description=info).create_renewal_line(chunk)
+            result = self.with_delay(description=info).create_renewal_line(chunk)
 
 
 
