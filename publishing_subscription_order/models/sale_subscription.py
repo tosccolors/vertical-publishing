@@ -497,6 +497,8 @@ class SaleOrderLine(models.Model):
         ctx = self.env.context.copy()
         ctx.update({'cronRenewal':True})
         for line in order_lines:
+            if line.line_renewed:
+                continue
             res = line.with_context(ctx).onchange_product_subs()['value']
             tmpl_prod = line.renew_product_id.product_tmpl_id
             startdate =line.end_date
@@ -526,8 +528,8 @@ class SaleOrderLine(models.Model):
 
             vals = line.copy_data(default=res)[0]
             sol_obj.create(vals)
-
             line.line_renewed = True
+
 
     @api.onchange('number_of_issues')
     def onchange_edition(self):
@@ -551,9 +553,11 @@ class SaleOrderLine(models.Model):
     @job
     def _split_renewal_actions(self, orderlines=[]):
         size = int(self.env['ir.config_parameter'].search([('key','=','subscription_renewal_chunk_size')]).value) or 10000 
+        if size < 1 :
+            return
         for x in xrange(0, len(orderlines), size):
             chunk  = orderlines[x:x + size]
-            info   = 'Renewal run for lines '+str(x)+' to '+str(x+size)
+            info   = 'Renewal run for lines '+str(x)+' to '+str(x+size-1)
             result = self.with_delay(description=info).create_renewal_line(chunk)
 
 
