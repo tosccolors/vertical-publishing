@@ -524,6 +524,7 @@ class SaleOrderLine(models.Model):
                 res.update({
                     'discount': line.discount,
                     'discount_reason_id': line.discount_reason_id.id,
+                    'renew_disc' : True,
                 })
 
             vals = line.copy_data(default=res)[0]
@@ -557,7 +558,7 @@ class SaleOrderLine(models.Model):
             return
         for x in xrange(0, len(orderlines), size):
             chunk  = orderlines[x:x + size]
-            info   = 'Renewal run for lines '+str(x)+' to '+str(x+size-1)
+            info   = 'Renewal run for lines '+str(x+1)+' to '+str(x+len(chunk))
             result = self.with_delay(description=info).create_renewal_line(chunk)
 
 
