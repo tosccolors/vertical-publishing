@@ -64,6 +64,9 @@ instance/
 # Sphinx documentation
 docs/_build/
 
+# unison stuff
+.unison*
+
 # PyBuilder
 target/
 

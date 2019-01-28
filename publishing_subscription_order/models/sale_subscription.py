@@ -27,6 +27,8 @@ from odoo import api, fields, exceptions, models, _
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.exceptions import ValidationError, UserError
 import odoo.addons.decimal_precision as dp
+from odoo.addons.queue_job.job import job, related_action
+from odoo.addons.queue_job.exception import FailedJobError
 
 VALUES = [(1,'Anbos lid'), (2, 'Andere nieuwsbronnen/internet'), (3, 'Actie/proefabonnement'), (4,'Bedrijf is opgeheven/failliet/fusie'), (5, 'Betalingsachterstand'), (6, 'Klachten over de slechte bezorging'), (7, 'Blad retour/factuur retour'), (8, 'Is onder curatele gezet/schuldsanering'), (9, 'Dubbel abonnement'), (10, 'Einde proef/kado abonnement'), (11, 'Bezuinigen/ financieel'), (12, 'Gaat samenlezen, ivm financien'), (13, 'Geen BDU-medewerker meer'), (14, 'Geen interesse'), (15, 'Geen opgave'), (16, 'Gezondheidsredenen (ouderd./ziek/dement)'), (17, 'Geen student meer'), (18, 'In overleg met ACM'), (19, 'Leest via werkgever / leest samen'), (20, 'Met pensioen'), (21, 'Verhuizen/emigreren'), (22, 'Nabellen opzeggers'), (23, 'Naar incassobureau'), (24, 'Nogmaals toegestuurd'), (25, 'Niet meer werkzaam'), (26, 'Omgezet naar digitaal/ander soort abo'), (27, 'Overstap naar concurrent / Andere keuze'), (28, 'Oneens met verlenging'), (29, 'Ontevreden over digitale versie'), (30, 'Overleden'), (31, 'Op verzoek betalende instantie'), (32, 'Persoonlijke omstandigheden'), (33, 'Redactioneel / inhoud'), (34, 'Retour'), (35, 'Te duur'), (36, 'Telefonische opzegging'), (37, 'Tijdelijke stopzetting'), (38, 'Telemarketing actie Tijdschriften'), (39, 'Verlengingsaanbieding'), (40, 'Via de mail benaderd')]
 
@@ -380,11 +382,25 @@ class SaleOrderLine(models.Model):
         if not self.subscription:
             return {'value': vals}
         if self.product_id and self.product_template_id:
-            if not self.start_date:
+            startdate= self.start_date
+            if not self.start_date :
+                startdate = datetime.today().date()
                 vals['start_date'] = datetime.today().date()
             elif self.start_date:
-                vals['end_date'] = datetime.strptime(str(self.start_date), "%Y-%m-%d").date() + timedelta(
-                days=self.product_template_id.subscr_number_of_days)
+                enddate = self.subscription_enddate(startdate, self.product_id.subscr_number_of_days)
+                vals['end_date'] = enddate
+            #change name to reflect new period
+            name = self.product_id.name_get()[0][1]
+            if self.product_id.product_tmpl_id.number_of_issues == 0 and startdate and enddate :
+                if type(startdate) in [unicode, str] :
+                    startdate = datetime.strptime(startdate,DF).date()
+                #dutch product name and period naming
+                name += ' van ' + startdate.strftime('%d-%m-%Y') + ' tot ' + enddate.strftime('%d-%m-%Y')
+            else :
+                name += '\n' + str(self.product_id.product_tmpl_id.number_of_issues) + ' edities'
+            if self.product_id.description_sale:
+                name += '\n' + self.product_id.description_sale
+            vals.update({'name' : name})
         else:
             vals = {'end_date': False}
             if not self.title:
@@ -409,8 +425,8 @@ class SaleOrderLine(models.Model):
                 start_date = datetime.today().date()
                 dic['start_date'] = start_date
             if start_date:
-                dic['end_date'] = datetime.strptime(str(start_date), "%Y-%m-%d").date() + timedelta(
-                    days=product_template_id.subscr_number_of_days)
+                dic['end_date']  = self.subscription_enddate(start_date, product_template_id.subscr_number_of_days)    
+
             return dic
 
         def _reset_line():
@@ -430,21 +446,14 @@ class SaleOrderLine(models.Model):
             attr = product_id.attribute_value_ids[0]
             vals['title'] = self.env['sale.advertising.issue'].search(
                 [('product_attribute_value_id', '=', attr.id)], limit=1).id
-
-            if product_id:
-                name = product_id.name_get()[0][1]
-                if product_id.description_sale:
-                    name += '\n' + product_id.description_sale
-                vals.update({
-                    'product_template_id': product_id.product_tmpl_id.id,
-                    'name': name,
-                })
-                vals.update(_line_update(self))
-            else:
-                vals.update(_reset_line())
-
+            #no name update because next line will trigger name update in onchange of dates
+            vals.update(_line_update(self)) 
+            vals.update({
+                'product_template_id': product_id.product_tmpl_id.id,
+            })
         else:
             vals.update(_reset_line())
+
         return {'value': vals}
 
     @api.multi
@@ -459,75 +468,69 @@ class SaleOrderLine(models.Model):
             res['price_unit'] = self.actual_unit_price
         return res
 
+    def subscription_enddate(self, startdate, number_of_days):
+        #some better handling of leap day, months and quarters
+        if number_of_days==730 :
+            delta = relativedelta(months=24)
+        elif number_of_days==365 :
+            delta = relativedelta(months=12)
+        elif number_of_days==183 :
+            delta = relativedelta(months=6)
+        elif number_of_days==92 :
+            delta = relativedelta(months=3)
+        elif number_of_days==61 :
+            delta = relativedelta(months=2)
+        elif number_of_days==31 :
+            delta = relativedelta(months=1)
+        else :
+            #as it was
+            delta = timedelta(days=number_of_days)
+        if type(startdate) in [unicode, str] :
+            startdate = datetime.strptime(startdate,DF).date()
+        enddate = startdate + delta
+        return enddate
 
+    @job
     @api.multi
     def create_renewal_line(self, order_lines=[]):
         sol_obj = self.env['sale.order.line']
-        
-        #new period start on end date of expired subscription, has end_date with more robust delta period, regardless of rundate
-        for line in order_lines:
-
-            #some better handling of leap day, months and quarters
-            if line.renew_product_id.subscr_number_of_days==730 :
-                delta = relativedelta(months=24)
-            elif line.renew_product_id.subscr_number_of_days==365 :
-                delta = relativedelta(months=12)
-            elif line.renew_product_id.subscr_number_of_days==183 :
-                delta = relativedelta(months=6)
-            elif line.renew_product_id.subscr_number_of_days==92 :
-                delta = relativedelta(months=3)
-            elif line.renew_product_id.subscr_number_of_days==61 :
-                delta = relativedelta(months=2)
-            elif line.renew_product_id.subscr_number_of_days==31 :
-                delta = relativedelta(months=1)
-            else :
-                #as it was
-                delta = timedelta(days=line.renew_product_id.subscr_number_of_days)
-            new_end_date = datetime.strptime(line.end_date,DF).date() + delta
-
-            res = {
-                'start_date'      : line.end_date,
-                'end_date'        : new_end_date,
-                'order_id'        : line.order_id.id,
-                'price_unit'      : line.renew_product_id.lst_price or False,
-                'number_of_issues': line.renew_product_id.product_tmpl_id.number_of_issues or 0,
-                'can_renew'       : True,
-                'renew_product_id': line.renew_product_id.id,
-                'discount'        : 0
-            }
-            if line.product_id != line.renew_product_id:
-                res.update({
-                    'product_template_id' : line.renew_product_id.product_tmpl_id.id or False,
-                    'product_id'          : line.renew_product_id.id or False,
-                    'number_of_issues'    : line.renew_product_id.product_tmpl_id.number_of_issues or 0,
-                })
         ctx = self.env.context.copy()
         ctx.update({'cronRenewal':True})
         for line in order_lines:
+            if line.line_renewed:
+                continue
             res = line.with_context(ctx).onchange_product_subs()['value']
             tmpl_prod = line.renew_product_id.product_tmpl_id
+            startdate =line.end_date
+            if type(startdate) in [unicode, str] :
+                startdate = datetime.strptime(startdate,DF).date()
+            enddate = self.subscription_enddate(line.end_date, line.renew_product_id.subscr_number_of_days)
             res.update({
-                'start_date': datetime.today().date(),
-                'end_date': datetime.today().date() + timedelta(days=line.renew_product_id.subscr_number_of_days),
-                'order_id': line.order_id.id,
+                'start_date'      : line.end_date,
+                'end_date'        : enddate,
+                'order_id'        : line.order_id.id,
                 'product_template_id': tmpl_prod and tmpl_prod.id,
-                'product_id': line.renew_product_id.id,
+                'product_id'      : line.renew_product_id.id,
                 'number_of_issues': tmpl_prod.number_of_issues,
-                'can_renew': tmpl_prod.can_renew,
+                'can_renew'       : tmpl_prod.can_renew,
                 'renew_product_id': tmpl_prod.renew_product_id and tmpl_prod.renew_product_id.id,
-                'price_unit':self.env['account.tax']._fix_tax_included_price_company(line._get_display_price(line.renew_product_id), line.renew_product_id.taxes_id, line.tax_id, line.company_id),
-                'discount':0.0,
+                'price_unit'      : self.env['account.tax']._fix_tax_included_price_company(line._get_display_price(line.renew_product_id), line.renew_product_id.taxes_id, line.tax_id, line.company_id),
+                'discount'        : 0.0,
+                'name'            : line.renew_product_id.name_get()[0][1] + 
+                                    ' van ' + startdate.strftime('%d-%m-%Y') + 
+                                    ' tot ' + enddate.strftime('%d-%m-%Y')
             })
             if line.renew_disc:
                 res.update({
                     'discount': line.discount,
                     'discount_reason_id': line.discount_reason_id.id,
+                    'renew_disc' : True,
                 })
 
             vals = line.copy_data(default=res)[0]
             sol_obj.create(vals)
-
             line.line_renewed = True
+
 
     @api.onchange('number_of_issues')
     def onchange_edition(self):
@@ -544,9 +547,21 @@ class SaleOrderLine(models.Model):
         offset = int(self.env['ir.config_parameter'].search([('key','=','subscription_renewal_offset_in_days')]).value) or 10
         expiration_date = (datetime.today().date() + timedelta(days=offset)).strftime('%Y-%m-%d')
         order_lines = self.search(
-            [('subscription','=',True),('state', 'in', ('sale', 'done')), ('can_renew', '=', True),('line_renewed', '=' ,False), ('end_date', '<', expiration_date )])
-        self.create_renewal_line(order_lines)
+            [('subscription','=',True),('state', 'in', ('sale', 'done')), ('renew_product_id', '!=', False),('line_renewed', '=' ,False), ('end_date', '<', expiration_date )])
+        self._split_renewal_actions(order_lines)
         return True
+
+    @job
+    def _split_renewal_actions(self, orderlines=[]):
+        size = int(self.env['ir.config_parameter'].search([('key','=','subscription_renewal_chunk_size')]).value) or 10000 
+        if size < 1 :
+            return
+        for x in xrange(0, len(orderlines), size):
+            chunk  = orderlines[x:x + size]
+            info   = 'Renewal run for lines '+str(x+1)+' to '+str(x+len(chunk))
+            result = self.with_delay(description=info).create_renewal_line(chunk)
+
+
 
 class AdvertisingIssue(models.Model):
     _inherit = "sale.advertising.issue"

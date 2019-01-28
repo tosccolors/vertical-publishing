@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+        <record id="view_order_form_advertising_package" model="ir.ui.view">
+            <field name="name">sale.order.form.advertising.package</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='opportunity_subject']" position="after">
+                    <field name="package"/>
+                </xpath>
+                <xpath expr="//field[@name='display_discount_to_customer']" position="after">
+                    <field name="package_description" attrs="{'invisible':[('package', '=', False)],'required':[('package', '=', True)]}"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="view_adv_order_line_tree_package" model="ir.ui.view">
+            <field name="name">sale.order.tree.advertising.package</field>
+            <field name="model">sale.order.line</field>
+            <field name="inherit_id" ref="sale_advertising_order.view_adv_order_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="before">
+                  <field name="package"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
