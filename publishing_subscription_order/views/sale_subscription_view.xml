@@ -809,7 +809,8 @@
             <field name="model">sale.advertising.issue</field>
             <field name="inherit_id" ref="sale_advertising_order.view_advertising_issue_filter"/>
             <field name="arch" type="xml">
-                <xpath expr="filter[1]"  position="after">
+                <xpath expr="filter[2]"  position="after">
+                    <separator/>
                     <filter name="subs" string="Subscription Titles" domain="['|',('subscription_title','=', True),('parent_id.subscription_title','=', True)]"/>
                 </xpath>
             </field>
