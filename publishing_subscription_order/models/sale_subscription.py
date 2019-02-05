@@ -199,6 +199,7 @@ class SaleOrderLine(models.Model):
     tmp_start_date = fields.Date('Start Of Delivery Stop')
     tmp_end_date = fields.Date('End Of Delivery Stop')
     renew_disc = fields.Boolean('Renew With Discount', copy=False)
+    subscription_origin = fields.Integer(string='Original orderline', copy=False)
 
     @api.multi
     @api.constrains('start_date', 'end_date', 'temporary_stop', 'tmp_start_date', 'tmp_end_date')
@@ -506,19 +507,20 @@ class SaleOrderLine(models.Model):
                 startdate = datetime.strptime(startdate,DF).date()
             enddate = self.subscription_enddate(line.end_date, line.renew_product_id.subscr_number_of_days)
             res.update({
-                'start_date'      : line.end_date,
-                'end_date'        : enddate,
-                'order_id'        : line.order_id.id,
+                'start_date'         : line.end_date,
+                'end_date'           : enddate,
+                'order_id'           : line.order_id.id,
                 'product_template_id': tmpl_prod and tmpl_prod.id,
-                'product_id'      : line.renew_product_id.id,
-                'number_of_issues': tmpl_prod.number_of_issues,
-                'can_renew'       : tmpl_prod.can_renew,
-                'renew_product_id': tmpl_prod.renew_product_id and tmpl_prod.renew_product_id.id,
-                'price_unit'      : self.env['account.tax']._fix_tax_included_price_company(line._get_display_price(line.renew_product_id), line.renew_product_id.taxes_id, line.tax_id, line.company_id),
-                'discount'        : 0.0,
-                'name'            : line.renew_product_id.name_get()[0][1] + 
-                                    ' van ' + startdate.strftime('%d-%m-%Y') + 
-                                    ' tot ' + enddate.strftime('%d-%m-%Y')
+                'product_id'         : line.renew_product_id.id,
+                'number_of_issues'   : tmpl_prod.number_of_issues,
+                'can_renew'          : tmpl_prod.can_renew,
+                'renew_product_id'   : tmpl_prod.renew_product_id and tmpl_prod.renew_product_id.id,
+                'price_unit'         : self.env['account.tax']._fix_tax_included_price_company(line._get_display_price(line.renew_product_id), line.renew_product_id.taxes_id, line.tax_id, line.company_id),
+                'discount'           : 0.0,
+                'name'               : line.renew_product_id.name_get()[0][1] + 
+                                       ' van ' + startdate.strftime('%d-%m-%Y') + 
+                                       ' tot ' + enddate.strftime('%d-%m-%Y'),
+                'subscription_origin': line.id
             })
             if line.renew_disc:
                 res.update({
