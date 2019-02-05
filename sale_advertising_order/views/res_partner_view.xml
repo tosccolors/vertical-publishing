@@ -129,6 +129,9 @@
                 <xpath expr="//span[@t-if='record.sale_order_count.value>0']" position="replace">
                     <span t-if="record.total_sales_order.value>0" class="badge"><i class="fa fa-fw fa-usd"/><t t-esc="record.total_sales_order.value"/></span>
                 </xpath>
+                <field name="sale_order_count" position="replace">
+                    <!-- prevent slow query by removing field -->
+                </field>
             </field>
         </record>
 
