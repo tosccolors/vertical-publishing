@@ -247,8 +247,7 @@ class SaleOrder(models.Model):
             if not olines == []:
                 self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
         self._cr.commit()
-        orders.write({'state': 'sent'})
-        return super(SaleOrder, self).print_quotation()
+        return self.env['report'].get_action(self, 'sale.report_saleorder')
 
     @api.multi
     def action_quotation_send(self):
