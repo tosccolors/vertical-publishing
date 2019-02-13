@@ -972,6 +972,16 @@ class SaleOrderLine(models.Model):
         self.adv_issue = ai
         self.adv_issue_ids = ais
 
+    #added by sushma
+    @api.onchange('dateperiods')
+    def onchange_dateperiods(self):
+        if self.date_type == 'validity':
+            arr_frm_dates = [d.from_date for d in self.dateperiods]
+            arr_to_dates = [d.to_date for d in self.dateperiods]
+            if arr_frm_dates and arr_to_dates :
+                self.from_date = min(arr_frm_dates)
+                self.to_date = max(arr_to_dates)
+
 
     @api.multi
     def _prepare_invoice_line(self, qty):
