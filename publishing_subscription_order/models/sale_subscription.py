@@ -500,9 +500,16 @@ class SaleOrderLine(models.Model):
         for line in order_lines:
             if line.line_renewed:
                 continue
-            res = line.with_context(ctx).onchange_product_subs()['value']
             tmpl_prod = line.renew_product_id.product_tmpl_id
-            startdate =line.end_date
+            #do not renew if order not fullfilled
+            if tmpl_prod.number_of_issues != 0 and line.delivered_issues < line.number_of_issues :
+                continue
+            res = line.with_context(ctx).onchange_product_subs()['value']
+            #shift start date when number of issues is leading
+            if tmpl_prod.number_of_issues != 0 :
+                startdate = datetime.today().date()
+            else :
+                startdate = line.end_date
             if type(startdate) in [unicode, str] :
                 startdate = datetime.strptime(startdate,DF).date()
             enddate = self.subscription_enddate(line.end_date, line.renew_product_id.subscr_number_of_days)
