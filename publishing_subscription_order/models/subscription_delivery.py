@@ -434,13 +434,21 @@ class SubscriptionDeliveryLine(models.Model):
         """
             Update Sale order line delivered Issues from all delivery lines
         """
-
+        if len(self) == 0:
+            return
+        cond = '='
+        rec = self.id
+        if len(self) > 1:
+            cond = 'IN'
+            rec = tuple(self.ids)
         list_query = (""" 
                    UPDATE sale_order_line SET (delivered_issues) =
                    (SELECT count(sub_order_line) FROM subscription_delivery_line
-                   WHERE subscription_delivery_line.sub_order_line = sale_order_line.id AND sale_order_line.subscription = 't' group by subscription_delivery_line.sub_order_line)                   
+                   WHERE subscription_delivery_line %s %s
+                   AND subscription_delivery_line.sub_order_line = sale_order_line.id 
+                   AND sale_order_line.subscription = 't' group by subscription_delivery_line.sub_order_line)                   
         """)
-        self.env.cr.execute(list_query)
+        self.env.cr.execute(list_query % (cond, rec))
 
 
 class SaleOrderLine(models.Model):

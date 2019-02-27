@@ -247,8 +247,8 @@ class SaleOrder(models.Model):
             if not olines == []:
                 self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
         self._cr.commit()
-        orders.write({'state': 'sent'})
-        return super(SaleOrder, self).print_quotation()
+        # orders.write({'state': 'sent'}) #Commented to avoid changing the state of the record while printing reports.
+        return self.env['report'].get_action(self, 'sale.report_saleorder') #Super method is not called to avoid changing the state of the record while printing reports.
 
     @api.multi
     def action_quotation_send(self):
@@ -971,6 +971,16 @@ class SaleOrderLine(models.Model):
         self.multi_line_number = ml_qty
         self.adv_issue = ai
         self.adv_issue_ids = ais
+
+    #added by sushma
+    @api.onchange('dateperiods')
+    def onchange_dateperiods(self):
+        if self.date_type == 'validity':
+            arr_frm_dates = [d.from_date for d in self.dateperiods]
+            arr_to_dates = [d.to_date for d in self.dateperiods]
+            if arr_frm_dates and arr_to_dates :
+                self.from_date = min(arr_frm_dates)
+                self.to_date = max(arr_to_dates)
 
 
     @api.multi
