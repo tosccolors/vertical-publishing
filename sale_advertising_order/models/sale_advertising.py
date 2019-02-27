@@ -613,14 +613,22 @@ class SaleOrderLine(models.Model):
         vals, data, result = {}, {}, {}
         if not self.advertising:
             return {'value': vals}
+        titles = self.title_ids if self.title_ids else self.title or False
+        domain = []
+        if titles:
+            product_ids = self.env['product.product']
+            for title in titles:
+                if title.product_attribute_value_id:
+                    ids = product_ids.search([('attribute_value_ids', '=', [title.product_attribute_value_id.id])])
+                    product_ids += ids
+            product_tmpl_ids = product_ids.mapped('product_tmpl_id').ids
+            domain = [('id', 'in', product_tmpl_ids)]
         if self.ad_class:
-            product_ids = self.env['product.template'].search([('categ_id', '=', self.ad_class.id)])
-            if product_ids:
-                data['product_template_id'] = [('categ_id', '=', self.ad_class.id)]
-                if len(product_ids) == 1:
-                    vals['product_template_id'] = product_ids[0]
-                else:
-                    vals['product_template_id'] = False
+            product_ids = self.env['product.template'].search(domain+[('categ_id', '=', self.ad_class.id)])
+            if product_ids and len(product_ids) == 1:
+                vals['product_template_id'] = product_ids[0]
+            else:
+                vals['product_template_id'] = False
             date_type = self.ad_class.date_type
             if date_type:
                 vals['date_type'] = date_type
