@@ -247,8 +247,8 @@ class SaleOrder(models.Model):
             if not olines == []:
                 self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
         self._cr.commit()
-        # orders.write({'state': 'sent'}) #Commented to avoid changing the state of the record while printing reports.
-        return self.env['report'].get_action(self, 'sale.report_saleorder') #Super method is not called to avoid changing the state of the record while printing reports.
+        orders.write({'state': 'sent'})
+        return super(SaleOrder, self).print_quotation()
 
     @api.multi
     def action_quotation_send(self):
