@@ -265,8 +265,8 @@ class SaleOrder(models.Model):
                 if line.multi_line:
                     olines.append(line.id)
             if not olines == []:
-                self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
-            self._cr.commit()
+                self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines,
+                                                                                             orders=self)
         # self.write({'state': 'sent'}) #Task: SMA-1 Action button for state [sent] in sale.order
 
         ir_model_data = self.env['ir.model.data']
@@ -318,7 +318,8 @@ class SaleOrder(models.Model):
                     if line.deadline_check():
                         line.page_qty_check_create()
             if not olines == []:
-                list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
+                list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(
+                    orderlines=olines, orders=order)
                 newlines = self.env['sale.order.line'].browse(list)
                 for newline in newlines:
                     if newline.deadline_check():
@@ -338,7 +339,8 @@ class SaleOrder(models.Model):
     @api.multi
     def write(self, vals):
         result = super(SaleOrder, self).write(vals)
-        for order in self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks')):
+        orders = self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks'))
+        for order in orders:
             user = self.env['res.users'].browse(self.env.uid)
             if not user.has_group('sale_advertising_order.group_no_discount_check') \
                and self.ver_tr_exc:
@@ -351,7 +353,8 @@ class SaleOrder(models.Model):
                     olines.append(line.id)
                     continue
             if not olines == []:
-                list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
+                list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(
+                    orderlines=olines, orders=order)
                 newlines = self.env['sale.order.line'].browse(list)
                 for newline in newlines:
                     if newline.deadline_check():
@@ -1002,7 +1005,8 @@ class SaleOrderLine(models.Model):
             return result
         self = self.with_context(LoopBreaker=True)
         if result.state == 'sale' and result.advertising and result.multi_line:
-            newlines = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=[result.id])
+            newlines = self.env['sale.order.line.create.multi.lines'].\
+                create_multi_from_order_lines(orderlines=[result.id], orders=None)
             lines = self.env['sale.order.line'].browse(newlines)
             for line in lines:
                 line.page_qty_check_create()
