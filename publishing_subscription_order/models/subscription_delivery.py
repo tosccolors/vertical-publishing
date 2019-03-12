@@ -431,7 +431,6 @@ class SubscriptionDeliveryLine(models.Model):
 
 
     def update_delivered_issues(self):
-        import pdb;pdb.set_trace()
         """
             Update Sale order line delivered Issues from all delivery lines
         """
