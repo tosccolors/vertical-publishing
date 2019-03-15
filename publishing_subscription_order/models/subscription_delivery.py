@@ -153,7 +153,7 @@ class SubscriptionDeliveryList(models.Model):
     name = fields.Char(string='Delivery List#', copy=False, readonly=True,
                        states={'draft': [('readonly', False)]}, index=True, default=lambda self: _('New'))
     delivery_id = fields.Many2one('subscription.title.delivery', 'Delivery Title', readonly=True, states={'draft': [('readonly', False)]}, ondelete='cascade')
-    delivery_date = fields.Date('Delivery Date', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
+    delivery_date = fields.Date('Prepared on', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
     weekday_id = fields.Many2one('week.days', compute=_compute_weekday, store=True, string='Weekday', readonly=True, copy=False)
     type = fields.Many2one('delivery.list.type', string='Type', readonly=True, states={'draft': [('readonly', False)]}, copy=False)
     title_id = fields.Many2one(related='delivery_id.title_id', string='Title', store=True, readonly=True)
