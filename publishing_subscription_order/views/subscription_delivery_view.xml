@@ -112,10 +112,10 @@
             <field name="model">subscription.delivery.list</field>
             <field name="arch" type="xml">
                 <tree string="Subscription Delivery" colors="blue:state=='draft'" create="false" edit="false" delete="false" copy="false">
-                    <field name="delivery_date" />
                     <field name="title_id"/>
                     <field name="issue_id"/>
                     <field name="issue_date"/>
+                    <field name="delivery_date" />
                     <field name="type"/>
                     <field name="weekday_id"/>
                     <field name="state"/>
