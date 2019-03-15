@@ -443,8 +443,8 @@ class SubscriptionDeliveryLine(models.Model):
             rec = tuple(self.ids)
         list_query = (""" 
                    UPDATE sale_order_line SET (delivered_issues) =
-                   (SELECT count(sub_order_line) FROM subscription_delivery_line
-                   WHERE subscription_delivery_line %s %s
+                   (SELECT sum(product_uom_qty) FROM subscription_delivery_line
+                   WHERE subscription_delivery_line.id %s %s
                    AND subscription_delivery_line.sub_order_line = sale_order_line.id 
                    AND sale_order_line.subscription = 't' group by subscription_delivery_line.sub_order_line)                   
         """)
