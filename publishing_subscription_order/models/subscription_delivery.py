@@ -155,7 +155,7 @@ class SubscriptionDeliveryList(models.Model):
     delivery_id = fields.Many2one('subscription.title.delivery', 'Delivery Title', readonly=True, states={'draft': [('readonly', False)]}, ondelete='cascade')
     delivery_date = fields.Date('Prepared on', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
     weekday_id = fields.Many2one('week.days', compute=_compute_weekday, store=True, string='Weekday', readonly=True, copy=False)
-    type = fields.Many2one('delivery.list.type', string='Type', readonly=True, states={'draft': [('readonly', False)]}, copy=False)
+    type = fields.Many2one('delivery.list.type', string='Delivery type', readonly=True, states={'draft': [('readonly', False)]}, copy=False)
     title_id = fields.Many2one(related='delivery_id.title_id', string='Title', store=True, readonly=True)
     issue_id = fields.Many2one('sale.advertising.issue', 'Issue', readonly=True, states={'draft': [('readonly', False)]})
     issue_date = fields.Date(related='issue_id.issue_date', string='Issue Date', store=True, readonly=True)
@@ -395,7 +395,10 @@ class SubscriptionDeliveryList(models.Model):
 
     @api.multi
     def action_cancel(self):
-        return self.write({'state': 'cancel'})
+        result = self.write({'state': 'cancel'})
+        lines = self.env['subscription.delivery.line'].search([('delivery_list_id', 'in', tuple(self.ids))])
+        lines.update_delivered_issues()
+        return result
 
     @api.multi
     def print_xls_report(self):
@@ -436,22 +439,30 @@ class SubscriptionDeliveryLine(models.Model):
         """
         if len(self) == 0:
             return
-        cond = '='
-        rec = self.sub_order_line.id
-        if len(self) > 1:
+        elif len(self) == 1:
+            cond = '='
+            rec = self.sub_order_line.id
+        else :
             cond = 'IN'
             rec = tuple(self.mapped('sub_order_line').ids)
+        self.env.cr.commit() #next steps need up-to-date database
         list_query = (""" 
-                  WITH  delivered AS
-                        ( SELECT sub_order_line, sum(subscription_delivery_line.product_uom_qty) as total_per_sub_order_line
-                          FROM subscription_delivery_line
-                          WHERE subscription_delivery_line.sub_order_line %s %s
-                          GROUP BY sub_order_line )
-                  UPDATE sale_order_line 
-                  SET delivered_issues = delivered.total_per_sub_order_line
-                  FROM  delivered
-                  WHERE sale_order_line.id = delivered.sub_order_line
-                        AND sale_order_line.subscription = 't'                  
+            WITH  delivered AS
+                ( SELECT sub_order_line, 
+                         sum(CASE WHEN subscription_delivery_list.state ='cancel' 
+                               THEN 0 
+                               ELSE subscription_delivery_line.product_uom_qty 
+                             END
+                          ) as total_per_sub_order_line
+                  FROM subscription_delivery_line
+                  JOIN subscription_delivery_list ON subscription_delivery_list.id = subscription_delivery_line.delivery_list_id
+                  WHERE subscription_delivery_line.sub_order_line %s %s
+                  GROUP BY sub_order_line )
+            UPDATE sale_order_line 
+            SET delivered_issues = delivered.total_per_sub_order_line
+            FROM  delivered
+            WHERE sale_order_line.id = delivered.sub_order_line
+                  AND sale_order_line.subscription = 't'                  
         """)
         self.env.cr.execute(list_query % (cond, rec))
 
