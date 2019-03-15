@@ -19,7 +19,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-import pdb
+
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
