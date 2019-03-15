@@ -445,7 +445,7 @@ class SubscriptionDeliveryLine(models.Model):
         else :
             cond = 'IN'
             rec = tuple(self.mapped('sub_order_line').ids)
-        self.env.cr.commit() #next steps need up-to-date database
+        self.env.invalidate_all() #next steps need up-to-date database
         list_query = (""" 
             WITH  delivered AS
                 ( SELECT sub_order_line, 
