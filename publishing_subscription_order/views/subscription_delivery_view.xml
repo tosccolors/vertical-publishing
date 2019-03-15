@@ -90,10 +90,10 @@
                             </h1>
                         </div>
                         <group cols="4">
-                            <field name="delivery_date"/>
                             <field name="title_id"/>
                             <field name="issue_id" domain="[('subscription_title','=',True),('parent_id','=',title_id)]"/>
                             <field name="issue_date"/>
+                            <field name="delivery_date"/>
                             <field name="type"/>
                             <field name="weekday_id"/>
                             <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
