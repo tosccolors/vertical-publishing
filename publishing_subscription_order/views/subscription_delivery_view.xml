@@ -80,7 +80,7 @@
                         <button class="oe_highlight" name="generate_delivery_lines" string="Re-Generate Delivery Lines" type="object" states="progress"/>
                         <button class="oe_highlight" name="print_xls_report" string="Print" type="object" states="progress,done"/>
                         <button class="oe_highlight" name="action_done" string="Validate" type="object" states="progress"/>
-                        <button class="oe_highlight" name="action_cancel" string="Cancel" type="object" states="progress"/>
+                        <button class="oe_highlight" name="action_cancel" string="Cancel" type="object" states="draft,progress"/>
                         <field name="state" widget="statusbar" />
                     </header>
                     <sheet>
