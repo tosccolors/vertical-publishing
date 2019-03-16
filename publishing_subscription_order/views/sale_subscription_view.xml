@@ -304,7 +304,6 @@
                     <field name="date_order"/>
                     <field name="partner_shipping_id"/>
                     <field name="partner_id"/>
-                    <field name="date_order"/>
                     <field name="user_id" invisible="1"/>
                     <field name="amount_untaxed" sum="Total Amount Untaxed" widget="monetary"/>
                     <field name="currency_id" invisible="1"/>
