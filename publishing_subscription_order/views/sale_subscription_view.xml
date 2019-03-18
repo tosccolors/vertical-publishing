@@ -145,8 +145,8 @@
                                                 </div>
                                             </group>
                                             <group>
-                                                <field name="number_of_issues" attrs="{'readonly': [('state','!=','draft')],'invisible':[('number_of_issues','=',0)]}"/>
-                                                <field name="delivered_issues" attrs="{'invisible':[('number_of_issues','=',0)]}"/>
+                                                <field name="number_of_issues" readonly="1" attrs="{'invisible':[('number_of_issues','=',0)]}"/>
+                                                <field name="delivered_issues" readonly="1" attrs="{'invisible':[('number_of_issues','=',0)]}"/>
                                             </group>
                                         </group>
                                         
