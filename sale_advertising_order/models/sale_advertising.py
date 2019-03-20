@@ -866,6 +866,15 @@ class SaleOrderLine(models.Model):
 
 
 
+    @api.onchange('price_unit')
+    def onchange_price_unit(self):
+        result = {}
+        if not self.advertising:
+            return {'value': result}
+        if self.price_unit > 0 and self.product_uom_qty > 0:
+            result['subtotal_before_agency_disc'] = self.price_unit * self.product_uom_qty
+        return {'value': result}
+
     @api.onchange('computed_discount')
     def onchange_actualcd(self):
         result = {}
