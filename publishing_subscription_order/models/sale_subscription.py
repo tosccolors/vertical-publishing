@@ -518,7 +518,7 @@ class SaleOrderLine(models.Model):
                 'price_unit'         : self.env['account.tax']._fix_tax_included_price_company(line._get_display_price(line.renew_product_id), line.renew_product_id.taxes_id, line.tax_id, line.company_id),
                 'discount'           : 0.0,
                 'name'               : line.renew_product_id.name_get()[0][1] + 
-                                       ' van ' + startdate.strftime('%d-%m-%Y') + 
+                                       ' van ' + line.end_date.strftime('%d-%m-%Y') + 
                                        ' tot ' + enddate.strftime('%d-%m-%Y'),
                 'subscription_origin': line.id
             })
