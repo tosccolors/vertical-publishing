@@ -451,7 +451,7 @@ class SubscriptionDeliveryLine(models.Model):
                 ( SELECT sub_order_line, 
                          sum(CASE WHEN subscription_delivery_list.state ='cancel' 
                                THEN 0 
-                               ELSE subscription_delivery_line.product_uom_qty 
+                               ELSE 1                              #was subscription_delivery_line.product_uom_qty 
                              END
                           ) as total_per_sub_order_line
                   FROM subscription_delivery_line
@@ -465,6 +465,7 @@ class SubscriptionDeliveryLine(models.Model):
                   AND sale_order_line.subscription = 't'                  
         """)
         self.env.cr.execute(list_query % (cond, rec))
+        self.env.cr.commit()
 
 
 class SaleOrderLine(models.Model):

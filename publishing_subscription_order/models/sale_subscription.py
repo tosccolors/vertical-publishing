@@ -41,9 +41,7 @@ class SaleOrder(models.Model):
 
     @api.depends('order_line.price_total', 'order_line.computed_discount', 'partner_id')
     def _amount_all(self):
-        """
-        Compute the total amounts of the SO.
-        """
+        #Compute the total amounts of the SO.
         super(SaleOrder, self.filtered(lambda record: record.subscription != True))._amount_all()
         for order in self.filtered('subscription'):
             amount_untaxed = amount_tax = 0.0
@@ -64,19 +62,10 @@ class SaleOrder(models.Model):
 
 
     @api.multi
-    def check_limit(self):
-        """Check if credit limit for partner was exceeded."""
+    def check_payment_setting(self):
         self.ensure_one()
         partner = self.partner_id
         partner.is_subscription_customer = True
-        if not partner.is_subscription_customer:
-            partner.is_subscription_customer = True
-        # if not partner.subscription_customer_payment_mode_id or not partner.property_subscription_payment_term_id:
-        #     raise UserError(_("Can not confirm Sale Order Partner subscription's details are not completed"))
-
-        if not partner.is_subscription_customer:
-            raise UserError(_("Can not confirm Sale Order Partner is not subscription partner"
-                              ))
         #set payment term and payment mode from customer
         if not self.payment_term_id:
             self.payment_term_id = partner.property_subscription_payment_term_id and partner.property_subscription_payment_term_id.id or False
@@ -86,10 +75,10 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_confirm(self):
-        """Extend to check credit limit before confirming sale order."""
+        """Extend to check payment settings before confirming sale order."""
         for order in self.filtered('subscription'):
             if order.partner_id:
-                order.check_limit()
+                order.check_payment_setting()
         return super(SaleOrder, self).action_confirm()
 
     def update_acc_mgr_sp(self):
@@ -104,16 +93,13 @@ class SaleOrder(models.Model):
     @api.multi
     @api.onchange('partner_id', 'published_customer', 'advertising_agency', 'agency_is_publish')
     def onchange_partner_id(self):
-        """
-        Update the following fields when the partner is changed:
-        - Subscription Payment term
-        """
+        #set partners and payment terms
         super(SaleOrder, self).onchange_partner_id()
         if self.subscription:
-            address = self.published_customer.address_get(['delivery'])
+            address = self.partner_id.address_get(['delivery','invoice','contact'])
             self.partner_shipping_id = address['delivery']
+            self.partner_invoice_id  = address['invoice']
             if self.partner_id:
-                # Subscription:
                 self.payment_term_id = self.partner_id.property_subscription_payment_term_id and self.partner_id.property_subscription_payment_term_id.id or False
                 self.payment_mode_id = self.partner_id.subscription_customer_payment_mode_id
 
@@ -176,30 +162,30 @@ class SaleOrderLine(models.Model):
         """
         super(SaleOrderLine, self.filtered(lambda record: record.subscription != True))._compute_price_edit()
         for line in self.filtered('subscription'):
-            line.number_of_issues = line.product_template_id.number_of_issues
             if line.product_template_id.price_edit:
                 line.price_edit = True
 
-    subscription = fields.Boolean(related='order_id.subscription', string='Subscription', readonly=True, store=True)
-    start_date = fields.Date('Start Date')
-    end_date = fields.Date('End Date')
-    must_have_dates = fields.Boolean(related='product_id.product_tmpl_id.subscription_product', readonly=True, copy=False, store=True)
-    number_of_issues = fields.Integer(string='No. Of Issues', digits=dp.get_precision('Product Unit of Measure'))
-    delivered_issues = fields.Integer(string='Issues delivered', digits=dp.get_precision('Product Unit of Measure'), copy=False)
-    can_cancel = fields.Boolean('Can cancelled?')
-    can_renew = fields.Boolean('Can Renewed?', default=False)
-    date_cancel = fields.Date('Cancelled date', help="Cron will cancel this line on selected date.")
-    reason_cancel = fields.Selection(VALUES, string='Reason Cancellation')
+    subscription     = fields.Boolean(related='order_id.subscription', string='Subscription', readonly=True, store=True)
+    start_date       = fields.Date('Start Date')
+    end_date         = fields.Date('End Date')
+    must_have_dates  = fields.Boolean(related='product_id.product_tmpl_id.subscription_product', readonly=True, copy=False, store=True)
+    number_of_issues = fields.Integer(string='No. of Issues')
+    delivered_issues = fields.Integer(string='Issues delivered', copy=False)
+    can_cancel       = fields.Boolean('Can cancelled?')
+    can_renew        = fields.Boolean('Can Renewed?', default=False)
+    date_cancel      = fields.Date('Cancelled date', help="Cron will cancel this line on selected date.")
+    reason_cancel    = fields.Selection(VALUES, string='Reason Cancellation')
     renew_product_id = fields.Many2one('product.product','Renewal Product')
     subscription_cancel = fields.Boolean('Subscription cancelled',copy=False)
-    line_renewed = fields.Boolean('Subscription Renewed', copy=False)
-    delivery_type = fields.Many2one(related='order_id.delivery_type', readonly=True, copy=False, store=True)
-    weekday_ids = fields.Many2many('week.days', 'weekday_sale_line_rel', 'order_line_id', 'weekday_id', 'Weekdays')
-    temporary_stop = fields.Boolean('Temporary Delivery Stop', copy=False)
-    tmp_start_date = fields.Date('Start Of Delivery Stop')
-    tmp_end_date = fields.Date('End Of Delivery Stop')
-    renew_disc = fields.Boolean('Renew With Discount', copy=False)
+    line_renewed     = fields.Boolean('Subscription Renewed', copy=False)
+    delivery_type    = fields.Many2one(related='order_id.delivery_type', readonly=True, copy=False, store=True)
+    weekday_ids      = fields.Many2many('week.days', 'weekday_sale_line_rel', 'order_line_id', 'weekday_id', 'Weekdays')
+    temporary_stop   = fields.Boolean('Temporary Delivery Stop', copy=False)
+    tmp_start_date   = fields.Date('Start Of Delivery Stop')
+    tmp_end_date     = fields.Date('End Of Delivery Stop')
+    renew_disc       = fields.Boolean('Renew With Discount', copy=False)
     subscription_origin = fields.Integer(string='Original orderline', copy=False)
+    deliveries       = fields.One2many('subscription.delivery.line', 'sub_order_line', string="Deliveries")
 
     @api.multi
     @api.constrains('start_date', 'end_date', 'temporary_stop', 'tmp_start_date', 'tmp_end_date')
@@ -506,20 +492,22 @@ class SaleOrderLine(models.Model):
                 continue
             res = line.with_context(ctx).onchange_product_subs()['value']
             enddate = self.subscription_enddate(line.end_date, line.renew_product_id.subscr_number_of_days)
+            if tmpl_prod.number_of_issues == 0 :
+                new_name = line.renew_product_id.name_get()[0][1] + ' van ' + line.end_date.strftime('%d-%m-%Y') + ' tot ' + enddate.strftime('%d-%m-%Y')
+            else :
+                new_name = line.renew_product_id.name_get()[0][1] + '\n' + str(self.product_id.product_tmpl_id.number_of_issues) + ' edities'
             res.update({
                 'start_date'         : line.end_date,
                 'end_date'           : enddate,
                 'order_id'           : line.order_id.id,
                 'product_template_id': tmpl_prod and tmpl_prod.id,
                 'product_id'         : line.renew_product_id.id,
-                'number_of_issues'   : tmpl_prod.number_of_issues,
+                'number_of_issues'   : tmpl_prod.number_of_issues,  #new count according to actual definition
                 'can_renew'          : tmpl_prod.can_renew,
                 'renew_product_id'   : tmpl_prod.renew_product_id and tmpl_prod.renew_product_id.id,
                 'price_unit'         : self.env['account.tax']._fix_tax_included_price_company(line._get_display_price(line.renew_product_id), line.renew_product_id.taxes_id, line.tax_id, line.company_id),
                 'discount'           : 0.0,
-                'name'               : line.renew_product_id.name_get()[0][1] + 
-                                       ' van ' + startdate.strftime('%d-%m-%Y') + 
-                                       ' tot ' + enddate.strftime('%d-%m-%Y'),
+                'name'               : new_name,
                 'subscription_origin': line.id
             })
             if line.renew_disc:
@@ -534,11 +522,6 @@ class SaleOrderLine(models.Model):
             line.line_renewed = True
 
 
-    @api.onchange('number_of_issues')
-    def onchange_edition(self):
-        if self.product_id and self.number_of_issues != self._origin.number_of_issues:
-            self.number_of_issues = self.product_id.product_tmpl_id.number_of_issues
-
     @api.model
     def run_order_line_cancel(self):
         order_lines = self.search([('subscription','=',True),('state','in',('sale','done')),('subscription_cancel','=',False),('can_cancel','=',True),('date_cancel','<=',datetime.today().date())])
@@ -548,8 +531,25 @@ class SaleOrderLine(models.Model):
     def run_order_line_renew(self):
         offset = int(self.env['ir.config_parameter'].search([('key','=','subscription_renewal_offset_in_days')]).value) or 10
         expiration_date = (datetime.today().date() + timedelta(days=offset)).strftime('%Y-%m-%d')
-        order_lines = self.search(
-            [('subscription','=',True),('state', 'in', ('sale', 'done')), ('renew_product_id', '!=', False),('line_renewed', '=' ,False), ('end_date', '<', expiration_date )])
+        expired_period_subs = self.search(
+            [ ('subscription','=',True),
+              ('state', 'in', ('sale', 'done')),
+              ('renew_product_id', '!=', False),
+              ('line_renewed', '=' ,False), 
+              ('end_date', '<', expiration_date ),
+              ('number_of_issues', '=', 0),            #period based subscriptions
+              ('product_uom_qty','>', 0)               #no canceled orderlines
+            ])
+        number_based_subs = self.search(
+            [ ('subscription','=',True),
+              ('state', 'in', ('sale', 'done')),
+              ('renew_product_id', '!=', False),
+              ('line_renewed', '=' ,False), 
+              ('number_of_issues', '!=', 0),           #number based subscriptions
+              ('product_uom_qty','>', 0)               #no canceled orderlines
+            ])
+        fulfilled_subs = number_based_subs.filtered(lambda r: r.number_of_issues <= r.delivered_issues) 
+        order_lines = expired_period_subs | fulfilled_subs
         self._split_renewal_actions(order_lines)
         return True
 
@@ -562,6 +562,18 @@ class SaleOrderLine(models.Model):
             chunk  = orderlines[x:x + size]
             info   = 'Renewal run for lines '+str(x+1)+' to '+str(x+len(chunk))
             result = self.with_delay(description=info).create_renewal_line(chunk)
+
+    @api.model
+    def create(self, values):    
+        #repair of unknown cause, hence symptom management, replace if RCA done
+        template_id = values['product_template_id'] or False
+        if template_id : 
+            template = self.env['product.template'].search([('id','=',template_id)])
+            if template and template.subscription_product and not ('number_of_issues' in values) :
+                values['number_of_issues']=template.number_of_issues
+        #respecting the chain
+        result = super(SaleOrderLine, self).create(values)
+        return result
 
 
 

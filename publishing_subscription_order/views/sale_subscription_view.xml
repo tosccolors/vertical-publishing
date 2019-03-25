@@ -51,11 +51,22 @@
                         </div>
                         <group>
                             <group>
-                                <field name="published_customer" string="Customer" domain="[('customer','=',True),('parent_id','=',False),('is_subscription_customer','=',True)]" context="{'search_default_customer':1, 'show_address': 1}" options="{&quot;always_reload&quot;: True}"/>
-                                <field name="partner_shipping_id" groups="sale.group_delivery_invoice_address" context="{'default_type':'delivery', 'show_address': 1}" options="{&quot;always_reload&quot;: True}" attrs="{'readonly': False}"/>
-                                <field name="partner_id" string="Payer" domain="[('customer','=',True),('parent_id','=',False),('is_subscription_customer','=',True)]" context="{'search_default_customer':1, 'show_address': 1}" options="{&quot;always_reload&quot;: True}"/>
-                                <field name="partner_invoice_id" string="Invoice Address" context="{'default_type':'invoice', 'show_address': 1}" attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}" groups="sale.group_delivery_invoice_address"/>
-                                <field name="customer_contact" domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]" context="{'default_parent_id': partner_id, 'show_email': 1}" required="False" options="{&quot;always_reload&quot;: True}" attrs="{'readonly':[('state','in', ['cancel','done'])]}"/>
+                                 <!--field name="published_customer" string="Customer" domain="[('customer','=',True),('parent_id','=',False),('is_subscription_customer','=',True)]" context="{'search_default_customer':1, 'show_address': 1}" options="{&quot;always_reload&quot;: True}"/-->
+                                <field name="partner_id"  
+                                    context="{'default_parent_id':False, 'show_address': 1}" 
+                                    options="{&quot;always_reload&quot;: True}"/>   
+                                <field name="partner_shipping_id"  
+                                    groups="sale.group_delivery_invoice_address" 
+                                    context="{'default_type':'delivery', 'default_parent_id': partner_id, 'show_address': 1}"
+                                    options="{&quot;always_reload&quot;: True}" attrs="{'readonly': False}"/>
+                                <field name="partner_invoice_id" 
+                                    context="{'default_type':'invoice', 'default_parent_id': partner_id,'show_address': 1}" 
+                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}" />
+                                <field name="customer_contact" 
+                                    domain="[('is_company', '=', False)]" 
+                                    context="{'default_parent_id': partner_id, 'show_email': 1, 'default_type':'contact'}" 
+                                    required="False" options="{&quot;always_reload&quot;: True}" 
+                                    attrs="{'readonly':[('state','in', ['cancel','done'])]}"/>
                             </group>
                             <group>
                                 <field name="date_order" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
@@ -184,6 +195,21 @@
                                             <!--label for="invoice_lines"/-->
                                             <field name="invoice_lines" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
                                         </div>
+
+                                        <div >
+                                            <separator string="Deliveries" colspan="2"/>
+                                            <field name="deliveries" readonly="1">                              
+                                                <field name="partner_id" />
+                                                <field name="subscription_number"/>
+                                                <field name="sub_order_line"/>
+                                                <field name="product_uom_qty"/>
+                                                <field name="title_id"/>
+                                                <field name="issue_id"/>
+                                                <field name="state"/>
+                                                <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                                            </field>
+                                        </div>
+
                                         <field name="state" invisible="1"/>
                                         <field name="subscription_cancel" invisible="1"/>
                                     </form>
