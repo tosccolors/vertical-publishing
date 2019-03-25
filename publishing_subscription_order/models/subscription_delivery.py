@@ -423,7 +423,7 @@ class SubscriptionDeliveryLine(models.Model):
     @api.model
     def create(self, values):
         res = super(SubscriptionDeliveryLine, self).create(values)
-        self.update_delivered_issues()
+        res.update_delivered_issues()
         return res
 
     @api.multi
@@ -451,7 +451,7 @@ class SubscriptionDeliveryLine(models.Model):
                 ( SELECT sub_order_line, 
                          sum(CASE WHEN subscription_delivery_list.state ='cancel' 
                                THEN 0 
-                               ELSE 1                              #was subscription_delivery_line.product_uom_qty 
+                               ELSE 1                              
                              END
                           ) as total_per_sub_order_line
                   FROM subscription_delivery_line
