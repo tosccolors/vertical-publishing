@@ -566,7 +566,10 @@ class SaleOrderLine(models.Model):
     @api.model
     def create(self, values):    
         #repair of unknown cause, hence symptom management, replace if RCA done
-        template_id = values['product_template_id'] or False
+        if 'product_template_id' in values :
+            template_id = values['product_template_id']
+        else :
+            template_id = False
         if template_id : 
             template = self.env['product.template'].search([('id','=',template_id)])
             if template and template.subscription_product and not ('number_of_issues' in values) :
