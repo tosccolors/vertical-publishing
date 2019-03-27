@@ -491,9 +491,10 @@ class SaleOrderLine(models.Model):
             if tmpl_prod.number_of_issues != 0 and line.delivered_issues < line.number_of_issues :
                 continue
             res = line.with_context(ctx).onchange_product_subs()['value']
-            enddate = self.subscription_enddate(line.end_date, line.renew_product_id.subscr_number_of_days)
+            enddate   = self.subscription_enddate(line.end_date, line.renew_product_id.subscr_number_of_days)
+            startdate = self.subscription_enddate(line.end_date, 0) #make date object
             if tmpl_prod.number_of_issues == 0 :
-                new_name = line.renew_product_id.name_get()[0][1] + ' van ' + line.end_date.strftime('%d-%m-%Y') + ' tot ' + enddate.strftime('%d-%m-%Y')
+                new_name = line.renew_product_id.name_get()[0][1] + ' van ' + startdate.strftime('%d-%m-%Y') + ' tot ' + enddate.strftime('%d-%m-%Y')
             else :
                 new_name = line.renew_product_id.name_get()[0][1] + '\n' + str(self.product_id.product_tmpl_id.number_of_issues) + ' edities'
             res.update({
