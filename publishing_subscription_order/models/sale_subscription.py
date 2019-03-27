@@ -562,7 +562,6 @@ class SaleOrderLine(models.Model):
         for x in xrange(0, len(orderlines), size):
             chunk  = orderlines[x:x + size]
             info   = 'Renewal run for lines '+str(x+1)+' to '+str(x+len(chunk))
-            result = self.create_renewal_line(chunk)
             result = self.with_delay(description=info).create_renewal_line(chunk)
 
     @api.model
