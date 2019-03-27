@@ -420,18 +420,6 @@ class SubscriptionDeliveryLine(models.Model):
     issue_id = fields.Many2one(related='delivery_list_id.issue_id', string='Issue', readonly=True)
     state = fields.Selection(related='delivery_list_id.state', string='State', readonly=True)
 
-    @api.model
-    def create(self, values):
-        res = super(SubscriptionDeliveryLine, self).create(values)
-        res.update_delivered_issues()
-        return res
-
-    @api.multi
-    def write(self, values):
-        res = super(SubscriptionDeliveryLine, self).write(values)
-        self.update_delivered_issues()
-        return res
-
 
     def update_delivered_issues(self):
         """
