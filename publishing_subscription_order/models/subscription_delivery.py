@@ -439,7 +439,7 @@ class SubscriptionDeliveryLine(models.Model):
                 ( SELECT sub_order_line, 
                          sum(CASE WHEN subscription_delivery_list.state ='cancel' 
                                THEN 0 
-                               ELSE 1                              
+                               ELSE subscription_delivery_line.product_uom_qty 
                              END
                           ) as total_per_sub_order_line
                   FROM subscription_delivery_line
