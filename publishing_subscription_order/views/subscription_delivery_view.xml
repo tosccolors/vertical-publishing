@@ -213,7 +213,7 @@
             </field>
         </record>
 
-        <record id="view_subscription_order_line_form_delivery_list" model="ir.ui.view">
+        <!--record id="view_subscription_order_line_form_delivery_list" model="ir.ui.view">
             <field name="name">sale.order.line.delivery.list</field>
             <field name="model">sale.order.line</field>
             <field name="inherit_id" ref="publishing_subscription_order.view_subscription_order_line_form" />
@@ -225,7 +225,7 @@
                     </div>
                 </field>
             </field>
-        </record>
+        </record-->
 
         <!--<menuitem id="subscription_delivery_line_menu" parent="menu_subscription_sales_main" action="subscription_delivery_line_action" groups="sales_team.group_sale_salesman,sales_team.group_sale_manager" sequence="23"/>-->
 
