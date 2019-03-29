@@ -1,0 +1,1502 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* publishing_subscription_order
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-29 13:01+0000\n"
+"PO-Revision-Date: 2019-03-29 13:01+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_res_partner_subs_quotation_count
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_res_users_subs_quotation_count
+msgid "# of Quotations"
+msgstr "# Offertes"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_res_partner_subs_sale_order_count
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_res_users_subs_sale_order_count
+msgid "# of Sales Orders"
+msgstr "# Orders"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_crm_lead_subs_quotations_count
+msgid "# of Subscription Quotations"
+msgstr "# Abo offertes"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "(update)"
+msgstr "(update)"
+
+#. module: publishing_subscription_order
+#. openerp-web
+#: code:addons/publishing_subscription_order/static/src/xml/sales_team_dashboard.xml:18
+#, python-format
+msgid "3 exp. closing"
+msgstr ""
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.crm_case_form_view_oppor_button_subscription
+msgid "<span class=\"o_stat_text\"> Subs. Orders</span>"
+msgstr "<span class=\"o_stat_text\"> Abo. Orders</span>"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_quotation
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
+msgid "Account Manager"
+msgstr "Account manager"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Actie/proefabonnement"
+msgstr "Actie/proefabonnement"
+
+#. module: publishing_subscription_order
+#: model:ir.model,name:publishing_subscription_order.model_ad_order_line_make_invoice
+msgid "Advertising Order Line Make_invoice"
+msgstr ""
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "Analytic tag"
+msgstr "Rapportage label"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Anbos lid"
+msgstr "Anbos lid"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Andere nieuwsbronnen/internet"
+msgstr "Andere nieuwsbronnen/internet"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Bedrijf is opgeheven/failliet/fusie"
+msgstr "Bedrijf is opgeheven/failliet/fusie"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Betalingsachterstand"
+msgstr "Betalingsachterstand"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Bezuinigen/ financieel"
+msgstr "Bezuinigen/ financieel"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Blad retour/factuur retour"
+msgstr "Blad retour/factuur retour"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_carrier_can_renew
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_product_can_renew
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_template_can_renew
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_can_renew
+msgid "Can Renewed?"
+msgstr "Verlengen?"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_can_cancel
+msgid "Can cancelled?"
+msgstr ""
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_form
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_multi_wizard_form_view
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Cancel"
+msgstr "Annuleer"
+
+#. module: publishing_subscription_order
+#: selection:subscription.delivery.list,state:0
+msgid "Cancelled"
+msgstr "Gestopt"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_date_cancel
+msgid "Cancelled date"
+msgstr "Stop m.i.v."
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Category"
+msgstr "Categorie"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,help:publishing_subscription_order.action_partner_form_crm_publishing
+msgid "Click to add a contact in your address book."
+msgstr "Klik om contact toe te voegen in je adresboek"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,help:publishing_subscription_order.subscription_product_normal_action_sell
+#: model:ir.actions.act_window,help:publishing_subscription_order.subscription_product_template_action
+msgid "Click to define a new product."
+msgstr "Klik om nieuw product te definiëren"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,help:publishing_subscription_order.subscription_delivery_line_action
+msgid "Click to start preparing a new delivery line."
+msgstr "Maak nieuwe leveringsregel"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,help:publishing_subscription_order.delivery_list_type_action
+msgid "Click to start preparing a new delivery list type."
+msgstr "Maak leveringslijst type"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,help:publishing_subscription_order.subscription_delivery_list_action
+msgid "Click to start preparing a new delivery list."
+msgstr "Maak nieuwe leveringslijst"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,help:publishing_subscription_order.subscription_title_delivery_action
+msgid "Click to start preparing a new title delivery."
+msgstr "Maak nieuwe titelcategorie voor leveringen"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
+msgid "Companies"
+msgstr "Bedrijven"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_company_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_company_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery_company_id
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
+msgid "Company"
+msgstr "Bedrijf"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Confirm Sale"
+msgstr "Bevestig verkoop"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
+msgid "Country"
+msgstr "Land"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,name:publishing_subscription_order.action_create_delivery_lines
+msgid "Create Delivery Line"
+msgstr "Maak leveringsregel"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,name:publishing_subscription_order.action_create_delivery_list
+msgid "Create Delivery Lists"
+msgstr "Maak leveringslijst"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_multi_wizard_form_view
+msgid "Create Delivery Lists/Lines"
+msgstr "Maak leveringslijsten en regels"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_multi_wizard_form_view
+msgid "Create List/Lines"
+msgstr "Maak leveringslijst en regels"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,help:publishing_subscription_order.action_orders_subscription
+#: model:ir.actions.act_window,help:publishing_subscription_order.action_quotation_subscription
+msgid "Create a Quotation, the first step of a new sale."
+msgstr "Maak offerte"
+
+#. module: publishing_subscription_order
+#: model:ir.model,name:publishing_subscription_order.model_subscription_multi_wizard
+msgid "Create delivery list/delivery lines"
+msgstr "Maak leveringslijst en regels"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_list_type_create_uid
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_create_uid
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_create_uid
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_multi_wizard_create_uid
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery_create_uid
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_week_days_create_uid
+msgid "Created by"
+msgstr "Gemaakt door"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_list_type_create_date
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_create_date
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_create_date
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_multi_wizard_create_date
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery_create_date
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_week_days_create_date
+msgid "Created on"
+msgstr "Gemaakt op"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,help:publishing_subscription_order.field_sale_order_line_date_cancel
+msgid "Cron will cancel this line on selected date."
+msgstr "Het systeem zal deze orderregel stoppen op gekozen datum"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
+msgid "Customer Partners"
+msgstr "Klant (OG)"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,name:publishing_subscription_order.action_partner_form_crm_publishing
+#: model:ir.ui.menu,name:publishing_subscription_order.menu_partner_form1
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
+msgid "Customers"
+msgstr "Klanten"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_week_days_name
+msgid "Day Name"
+msgstr "Naam dag"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "Delivered Quantity"
+msgstr "Geleverd"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_product_uom_qty
+msgid "Delivered per subscription"
+msgstr "Geleverd per abo."
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_deliveries
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "Deliveries"
+msgstr "Leveringen"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_partner_id
+msgid "Delivery Address"
+msgstr "Afleveradres"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_delivery_line_ids
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_delivery_line_ids
+msgid "Delivery Lines"
+msgstr "Leveringsregels"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery_delivery_list_ids
+msgid "Delivery List"
+msgstr "Leveringslijst"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_delivery_list_id
+msgid "Delivery List Reference"
+msgstr "Leveringslijst referentie"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,name:publishing_subscription_order.delivery_list_type_action
+#: model:ir.model,name:publishing_subscription_order.model_delivery_list_type
+#: model:ir.ui.menu,name:publishing_subscription_order.menu_delivery_list_type
+#: model:ir.ui.view,arch_db:publishing_subscription_order.delivery_list_type_form
+#: model:ir.ui.view,arch_db:publishing_subscription_order.delivery_list_type_tree
+msgid "Delivery List Type"
+msgstr "Standaard lijsttype"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.report.xml,name:publishing_subscription_order.report_delivery_list_report_xlsx
+msgid "Delivery List XLSX"
+msgstr "Leveringslijst XLSX"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.report.xml,name:publishing_subscription_order.delivery_list_xml
+msgid "Delivery List XML"
+msgstr "Leveringslijst XML"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_name
+msgid "Delivery List#"
+msgstr "Leveringslijst#"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_account_config_settings_delivery_obligation_account_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_carrier_delivery_obligation_account_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_product_delivery_obligation_account_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_template_delivery_obligation_account_id
+msgid "Delivery Obligation Account"
+msgstr "GB rekeningnr. leververplichtingen"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_delivery_id
+msgid "Delivery Title"
+msgstr "Te leveren titel"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_list_type_name
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_delivery_type
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_delivery_type
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
+msgid "Delivery Type"
+msgstr "Type levering"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,help:publishing_subscription_order.field_subscription_delivery_line_partner_id
+msgid "Delivery address for current sales order."
+msgstr "Afleveradres voor huidige verkooporder. Abonnee bij abonnement."
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_type
+msgid "Delivery type"
+msgstr "Type levering"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
+msgid "Department"
+msgstr "Afdeling"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_partner_form_susbcription_inherit
+msgid "Dependent Records"
+msgstr "Afhankelijke regels"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_carrier_digital_subscription
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_product_digital_subscription
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_template_digital_subscription
+msgid "Digital only"
+msgstr "Alleen digitale levering"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_list_type_display_name
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_display_name
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_display_name
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_multi_wizard_display_name
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery_display_name
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_week_days_display_name
+msgid "Display Name"
+msgstr "Te tonen naam"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_multi_wizard_form_view
+msgid "Do you want to create delivery list/lines?"
+msgstr "Wil je leveringslijst en regels maken?"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
+#: selection:subscription.delivery.list,state:0
+msgid "Done"
+msgstr "Klaar"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
+msgid "Draft"
+msgstr "Concept"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Dubbel abonnement"
+msgstr "Dubbel abonnement"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Einde proef/kado abonnement"
+msgstr "Einde proef/kado abonnement"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_end_date
+msgid "End Date"
+msgstr "Einddatum"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_tmp_end_date
+msgid "End Of Delivery Stop"
+msgstr "Einde leverstop"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "Final stop"
+msgstr "Definitieve stop"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "From"
+msgstr "Vanaf"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Gaat samenlezen, ivm financien"
+msgstr "Gaat samenlezen, ivm financien"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Geen BDU-medewerker meer"
+msgstr "Geen BDU-medewerker meer"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Geen interesse"
+msgstr "Geen interesse"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Geen opgave"
+msgstr "Geen opgave"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Geen student meer"
+msgstr "Geen student meer"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_form
+msgid "Generate Delivery Lines"
+msgstr "Maak leveringsregels"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_title_delivery_form
+msgid "Generate Delivery List"
+msgstr "Maak leveringslijst"
+
+#. module: publishing_subscription_order
+#. openerp-web
+#: code:addons/publishing_subscription_order/static/src/xml/qweb.xml:10
+#, python-format
+msgid "Generate Lists"
+msgstr "Maak lijsten"
+
+#. module: publishing_subscription_order
+#. openerp-web
+#: code:addons/publishing_subscription_order/static/src/xml/qweb.xml:7
+#, python-format
+msgid "Generate Titles"
+msgstr "Maak titels"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Gezondheidsredenen (ouderd./ziek/dement)"
+msgstr "Gezondheidsredenen (ouderd./ziek/dement)"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_title_delivery_filter
+msgid "Group By"
+msgstr "Groepeer per"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
+msgid "Group By..."
+msgstr "Groepeer per ..."
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_list_type_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_multi_wizard_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_week_days_id
+msgid "ID"
+msgstr "ID"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "If the sale is locked, you can not modify it anymore. However, you will still be able to invoice or deliver."
+msgstr "De verkoop zit op slot en kan niet worden gewijzigd. Je kunt nog wel factureren en leveren."
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_form
+#: selection:subscription.delivery.list,state:0
+msgid "In Progress"
+msgstr "Bezig"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "In overleg met ACM"
+msgstr "In overleg met ACM"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
+msgid "Invoice"
+msgstr "Factuur"
+
+#. module: publishing_subscription_order
+#: code:addons/publishing_subscription_order/wizard/adv_line_invoice.py:103
+#: code:addons/publishing_subscription_order/wizard/adv_line_invoice.py:109
+#, python-format
+msgid "Invoice cannot be created for this Subscription Order Line due to one of the following reasons:\n"
+"1.The state of these order lines are not \"sale\" or \"done\"!\n"
+"2.The Lines are already Invoiced!\n"
+""
+msgstr ""
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "Invoice lines"
+msgstr "Factuurregels"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "Invoice remark"
+msgstr "Opmerking factuur"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "Invoiced Quantity"
+msgstr "Gefactureerd"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Invoices"
+msgstr "Facturen"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Invoicing"
+msgstr "Facturering"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_product_template_search_view
+msgid "Is Subscription"
+msgstr "Is abonnement"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
+msgid "Is Subscription Customer"
+msgstr "Is abonnementsklant"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Is onder curatele gezet/schuldsanering"
+msgstr "Is onder curatele gezet/schuldsanering"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_carrier_subscription_product
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_product_subscription_product
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_template_subscription_product
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_must_have_dates
+msgid "Is subscription"
+msgstr "Is abonnement"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_category_subscription_categ
+msgid "Is subscription Category?"
+msgstr "Is abonnementscategorie?"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_issue_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_issue_id
+msgid "Issue"
+msgstr "Editie"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_issue_date
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
+msgid "Issue Date"
+msgstr "Editiedatum"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_delivered_issues
+msgid "Issues delivered"
+msgstr "Geleverde edities"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Klachten over de slechte bezorging"
+msgstr "Klachten over de slechte bezorging"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_list_type___last_update
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line___last_update
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list___last_update
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_multi_wizard___last_update
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery___last_update
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_week_days___last_update
+msgid "Last Modified on"
+msgstr "Laatste wijziging op"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_list_type_write_uid
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_write_uid
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_write_uid
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_multi_wizard_write_uid
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery_write_uid
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_week_days_write_uid
+msgid "Last Updated by"
+msgstr "Laatste wijziging door"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_list_type_write_date
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_write_date
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_write_date
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_multi_wizard_write_date
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery_write_date
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_week_days_write_date
+msgid "Last Updated on"
+msgstr "Laaste bijwerking op"
+
+#. module: publishing_subscription_order
+#: model:ir.model,name:publishing_subscription_order.model_crm_lead
+msgid "Lead/Opportunity"
+msgstr "Lead/Opportunity"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Leest via werkgever / leest samen"
+msgstr "Leest via werkgever / leest samen"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Lock"
+msgstr "Op slot"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Log in the chatter from which opportunity the order originates"
+msgstr "Schrijf in de chatter uit welke kans deze order voortkomt"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Met pensioen"
+msgstr "Met pensioen"
+
+#. module: publishing_subscription_order
+#: code:addons/publishing_subscription_order/models/sale_subscription.py:196
+#, python-format
+msgid "Missing End Date for order line with Description '%s'."
+msgstr "Einddatum mist voor orderregel '%s'."
+
+#. module: publishing_subscription_order
+#: code:addons/publishing_subscription_order/models/sale_subscription.py:213
+#, python-format
+msgid "Missing End Of Delivery Stop Date for order line with Description '%s'."
+msgstr "Einddatum van leverstop mist voor orderregel %s."
+
+#. module: publishing_subscription_order
+#: code:addons/publishing_subscription_order/models/sale_subscription.py:201
+#, python-format
+msgid "Missing Start Date for order line with Description '%s'."
+msgstr "Startdatum mist voor orderregel '%s'."
+
+#. module: publishing_subscription_order
+#: code:addons/publishing_subscription_order/models/sale_subscription.py:218
+#, python-format
+msgid "Missing Start Of Delivery Stop date for order line with Description '%s'."
+msgstr "Start- of einddatum leverstop mist voor orderregel '%s'."
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
+msgid "My Customers"
+msgstr "Mijn klanten"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_quotation
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
+msgid "My Sales Orders (Account Manager)"
+msgstr "Mijn verkooporders (als Account manager)"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_quotation
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
+msgid "My Sales Orders as Account manager"
+msgstr "Mijn verkooporders als account manager"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.delivery_list_xml_report
+msgid "NORM"
+msgstr "Norm"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.delivery_list_xml_report
+msgid "NVT"
+msgstr "n.v.t."
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Naar incassobureau"
+msgstr "Naar incassobureau"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Nabellen opzeggers"
+msgstr "Nabellen opzeggers"
+
+#. module: publishing_subscription_order
+#: code:addons/publishing_subscription_order/models/subscription_delivery.py:154
+#: code:addons/publishing_subscription_order/models/subscription_delivery.py:173
+#: code:addons/publishing_subscription_order/models/subscription_delivery.py:176
+#: code:addons/publishing_subscription_order/models/subscription_delivery.py:178
+#: code:addons/publishing_subscription_order/models/subscription_delivery.py:263
+#: code:addons/publishing_subscription_order/models/subscription_delivery.py:265
+#: selection:subscription.delivery.list,state:0
+#, python-format
+msgid "New"
+msgstr "Nieuw"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Niet meer werkzaam"
+msgstr "Niet meer werkzaam"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_carrier_subscr_number_of_days
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_product_subscr_number_of_days
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_template_subscr_number_of_days
+msgid "No. Of Days"
+msgstr "Aantal dagen"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_carrier_number_of_issues
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_product_number_of_issues
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_template_number_of_issues
+msgid "No. Of Issues"
+msgstr "Aantal edities"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_number_of_issues
+msgid "No. of Issues"
+msgstr "Aantal edities"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Nogmaals toegestuurd"
+msgstr "Nogmaals toegestuurd"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,help:publishing_subscription_order.action_orders_subscription
+#: model:ir.actions.act_window,help:publishing_subscription_order.action_quotation_subscription
+msgid "Note that once a Quotation becomes a Sale Order, it will be moved from the Quotations list to the Sales Order list."
+msgstr "NB : Als offerte een order wordt, verschijnt deze niet meer in de offertelijst maar in de verkooporderlijst."
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Omgezet naar digitaal/ander soort abo"
+msgstr "Omgezet naar digitaal/ander soort abo"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Oneens met verlenging"
+msgstr "Oneens met verlenging"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Ontevreden over digitale versie"
+msgstr "Ontevreden over digitale versie"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Op verzoek betalende instantie"
+msgstr "Op verzoek betalende instantie"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,help:publishing_subscription_order.action_partner_form_crm_publishing
+msgid "OpenERP helps you easily track all activities related to\n"
+"            a customer; discussions, history of business opportunities,\n"
+"            documents, etc."
+msgstr "Odoo helpt je om eenvoudig al je activiteiten bij te houden in relatie tot\n"
+"            klanten; discussie, historie van zakelijke kansen,\n"
+"            documenten, etc."
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Order Lines"
+msgstr "Order regels"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_subscription_tree
+msgid "Order Number"
+msgstr "Order nummer"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "Ordered Quantity"
+msgstr "Besteld"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_subscription_origin
+msgid "Original orderline"
+msgstr "Verlenging van orderregel"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Other Information"
+msgstr "Overige informatie"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
+msgid "Overdue Quotations"
+msgstr "Vervallen offertes"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Overleden"
+msgstr "Overleden"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Overstap naar concurrent / Andere keuze"
+msgstr "Overstap naar concurrent / Andere keuze"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Analytic tags"
+msgstr "Rapportage labels"
+
+#. module: publishing_subscription_order
+#: model:ir.model,name:publishing_subscription_order.model_res_partner
+msgid "Partner"
+msgstr "Partner"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Payer default"
+msgstr "Betaalwijze factuurontvanger"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_subscription_payment_mode_id
+msgid "Payment method"
+msgstr "Betaalwijze"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Payment mode"
+msgstr "Betaalafspraken"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
+msgid "Persons"
+msgstr "Personen"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Persoonlijke omstandigheden"
+msgstr "Persoonlijke omstandigheden"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_delivery_date
+msgid "Prepared on"
+msgstr ""
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.sale_advertising_issue_tree
+msgid "Price edit"
+msgstr "Wijzigbare prijs"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_form
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Print"
+msgstr "Print"
+
+#. module: publishing_subscription_order
+#: model:ir.model,name:publishing_subscription_order.model_product_category
+msgid "Product Category"
+msgstr "Product categorie"
+
+#. module: publishing_subscription_order
+#: model:ir.model,name:publishing_subscription_order.model_product_template
+msgid "Product Template"
+msgstr "Product sjabloon"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,name:publishing_subscription_order.subscription_product_normal_action_sell
+#: model:ir.ui.menu,name:publishing_subscription_order.menu_products_subs
+msgid "Product Variants"
+msgstr "Product variant"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Product category"
+msgstr "Product categorie"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,name:publishing_subscription_order.subscription_product_template_action
+#: model:ir.ui.menu,name:publishing_subscription_order.menu_product_template_action2
+msgid "Products"
+msgstr "Producten"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_quotation_subscription_tree
+msgid "Quotation"
+msgstr "Offerte"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_quotation_subscription_tree
+msgid "Quotation Number"
+msgstr "Offerte nr."
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_quotation
+msgid "Quotations"
+msgstr "Offertes"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_quotation
+msgid "Quotations Sent"
+msgstr "Verzonden offertes"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_form
+msgid "Re-Generate Delivery Lines"
+msgstr "Maak leveringsregels"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_reason_cancel
+msgid "Reason Cancellation"
+msgstr "Stop-reden"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Redactioneel / inhoud"
+msgstr "Redactioneel / inhoud"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_renew_disc
+msgid "Renew With Discount"
+msgstr "Behoud korting"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "Renewal"
+msgstr "Verlenging"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_carrier_renew_product_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_product_renew_product_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_template_renew_product_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_renew_product_id
+msgid "Renewal Product"
+msgstr "Product"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "Renewed from"
+msgstr "Verlenging van"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Reporting"
+msgstr "Rapportage"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Retour"
+msgstr "Retour"
+
+#. module: publishing_subscription_order
+#: model:ir.model,name:publishing_subscription_order.model_sale_advertising_issue
+msgid "Sale Advertising Issue"
+msgstr "Editie"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_quotation
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
+msgid "Sales"
+msgstr "Verkopen"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Sales Information"
+msgstr "Verkoop informatie"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_quotation
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
+msgid "Sales Mgr Approved"
+msgstr "Akkoord Sales manager"
+
+#. module: publishing_subscription_order
+#: model:ir.model,name:publishing_subscription_order.model_sale_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Sales Order"
+msgstr "Verkoop orders"
+
+#. module: publishing_subscription_order
+#: model:ir.model,name:publishing_subscription_order.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Verkoop order regel"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_adv_order_line_tree
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "Sales Order Lines"
+msgstr "Verkoop order regels"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_subscription_tree
+msgid "Sales Orders"
+msgstr "Verkoop orders"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
+msgid "Search List Delivery"
+msgstr "Zoek leveringslijst"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
+msgid "Search Partner"
+msgstr "Zoek partner"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_title_delivery_filter
+msgid "Search Title Delivery"
+msgstr "Zoek titel levering"
+
+#. module: publishing_subscription_order
+#: model:ir.model,name:publishing_subscription_order.model_sale_order_type
+msgid "Select sale order type"
+msgstr "Kies verkoop order type"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,help:publishing_subscription_order.field_res_partner_subscription_customer_payment_mode_id
+#: model:ir.model.fields,help:publishing_subscription_order.field_res_users_subscription_customer_payment_mode_id
+#: model:ir.model.fields,help:publishing_subscription_order.field_sale_order_subscription_payment_mode_id
+msgid "Select the default subscription payment mode for this customer."
+msgstr "Kies de standaard abonnementsbetaalwijze voor deze klant."
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Send by Email"
+msgstr "Stuur per email"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Set to Quotation"
+msgstr "Naar offerte"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Setup default terms and conditions in your company settings."
+msgstr "Stel de standaard leveringscondities in in de bedrijfsgegevens."
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
+msgid "Show all subscription quotations for which the expiration date is before today"
+msgstr "Toon alle abonnementsoffertes met vervallen expiratie datum"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_start_date
+msgid "Start Date"
+msgstr "Startdatum"
+
+#. module: publishing_subscription_order
+#: code:addons/publishing_subscription_order/models/sale_subscription.py:207
+#, python-format
+msgid "Start Date should be before or be the same as End Date for order line with Description '%s'."
+msgstr "Startdatum moet vroeger of gelijk zijn aan einddatum voor orderregel '%s'."
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_tmp_start_date
+msgid "Start Of Delivery Stop"
+msgstr "Start van leveringsstop"
+
+#. module: publishing_subscription_order
+#: code:addons/publishing_subscription_order/models/sale_subscription.py:224
+#, python-format
+msgid "Start Of Delivery Stop Date should be before End Of Delivery Stop Date for order line with Description '%s'."
+msgstr "Startdatum van leveringsstop moet vroeger of gelijk zijn aan einde leveringsstop voor orderregel '%s'."
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_state
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
+msgid "State"
+msgstr "Status"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_state
+msgid "Status"
+msgstr "Status"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_quotation
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
+msgid "Submitted"
+msgstr "Ingevoerd"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.crm_case_form_view_oppor_button_subscription
+#: model:ir.ui.view,arch_db:publishing_subscription_order.crm_case_form_view_oppor_subscription
+#: model:ir.ui.view,arch_db:publishing_subscription_order.res_partner_view_buttons_subscription
+msgid "Subs. Quote(s)"
+msgstr "Abo. offerte(s)"
+
+#. module: publishing_subscription_order
+#. openerp-web
+#: code:addons/publishing_subscription_order/static/src/xml/sales_team_dashboard.xml:7
+#, python-format
+msgid "Subs. Quotes"
+msgstr "Abo. offertes"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.res_partner_view_buttons_subscription
+msgid "Subs. Sales"
+msgstr "Abo. verkoop"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_subscription
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_subscription
+#: model:ir.ui.view,arch_db:publishing_subscription_order.product_template_form_view_subscription
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_partner_form_susbcription_inherit
+msgid "Subscription"
+msgstr "Abonnement"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_account_settings
+msgid "Subscription Configuration"
+msgstr "Abonnement configuratie"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_res_partner_is_subscription_customer
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_res_users_is_subscription_customer
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
+msgid "Subscription Customer"
+msgstr "Abonnement klant"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_res_partner_subscription_customer_payment_mode_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_res_users_subscription_customer_payment_mode_id
+msgid "Subscription Customer Payment Mode"
+msgstr "Abonnement klant betaalwijze"
+
+#. module: publishing_subscription_order
+#: model:ir.model,name:publishing_subscription_order.model_subscription_delivery
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_tree
+msgid "Subscription Delivery"
+msgstr "Abonnement levering"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,name:publishing_subscription_order.subscription_delivery_line_action
+#: model:ir.model,name:publishing_subscription_order.model_subscription_delivery_line
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_line_form
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_line_tree
+msgid "Subscription Delivery Line"
+msgstr "Abonnement leveringsregel"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,name:publishing_subscription_order.subscription_delivery_list_action
+#: model:ir.model,name:publishing_subscription_order.model_subscription_delivery_list
+#: model:ir.ui.menu,name:publishing_subscription_order.subscription_delivery_list_menu
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_form
+msgid "Subscription Delivery List"
+msgstr "Leveringslijsten"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_subscription_number
+msgid "Subscription Number"
+msgstr "Numer abonnement"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,name:publishing_subscription_order.all_subscription_order_lines_action
+#: model:ir.ui.menu,name:publishing_subscription_order.menu_sale_subscription_order_lines
+msgid "Subscription Order Lines"
+msgstr "Abo order regels"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_res_partner_property_subscription_payment_term_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_res_users_property_subscription_payment_term_id
+msgid "Subscription Payment Terms"
+msgstr "Abonnement betaalconditie"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,name:publishing_subscription_order.act_crm_lead_2_quotation_subscription
+#: model:ir.actions.act_window,name:publishing_subscription_order.act_res_partner_2_quotation_subscription
+#: model:ir.actions.act_window,name:publishing_subscription_order.action_quotation_subscription
+msgid "Subscription Quotations"
+msgstr "Abonnement offertes"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_line_renewed
+msgid "Subscription Renewed"
+msgstr "Verlengd abonnement"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_account_config_settings_subscription_revenue_account_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_carrier_subscription_revenue_account_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_product_subscription_revenue_account_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_template_subscription_revenue_account_id
+msgid "Subscription Revenue Account"
+msgstr "Abonnementen opbrengsten rekening GB"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,name:publishing_subscription_order.act_crm_lead_2_sale_order_subscription
+msgid "Subscription Sale Orders"
+msgstr "Abonnement verkooporder"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.menu,name:publishing_subscription_order.menu_subscription_sales_main
+msgid "Subscription Sales"
+msgstr "Abonnementen verkoop"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,name:publishing_subscription_order.act_res_partner_2_sales_subscription
+#: model:ir.actions.act_window,name:publishing_subscription_order.action_orders_subscription
+#: model:ir.ui.menu,name:publishing_subscription_order.menu_subscription_sales
+msgid "Subscription Sales Orders"
+msgstr "Verkoop orders"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_advertising_issue_subscription_title
+#: model:ir.ui.view,arch_db:publishing_subscription_order.sale_advertising_issue_form
+#: model:ir.ui.view,arch_db:publishing_subscription_order.sale_advertising_issue_tree
+msgid "Subscription Title"
+msgstr "Abonnementen titel"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,name:publishing_subscription_order.subscription_title_delivery_action
+#: model:ir.model,name:publishing_subscription_order.model_subscription_title_delivery
+#: model:ir.ui.menu,name:publishing_subscription_order.subscription_title_delivery_menu
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_title_delivery_tree
+msgid "Subscription Title Delivery"
+msgstr "Leveringen per titel"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_title_delivery_form
+msgid "Subscription Title delivery"
+msgstr "Titel leveringen"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_advertising_issue_filter
+msgid "Subscription Titles"
+msgstr "Abonnementen titels"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_subscription_cancel
+msgid "Subscription cancelled"
+msgstr "Abonnement stop gezet"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_sub_order_line
+msgid "Subscription order line"
+msgstr "Abonnementen order regel"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.menu,name:publishing_subscription_order.menu_subscription_config_main
+msgid "Subscriptions"
+msgstr "Abonnementen"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_crm_lead_subs_sale_amount_total
+msgid "Sum of Subs. Orders"
+msgstr "Totaal van abo. orders"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
+msgid "Tag"
+msgstr "Label"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Te duur"
+msgstr "Te duur"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Telefonische opzegging"
+msgstr "Telefonische opzegging"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Telemarketing actie Tijdschriften"
+msgstr "Telemarketing actie Tijdschriften"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_temporary_stop
+msgid "Temporary Delivery Stop"
+msgstr "Tijdelijke leverstop"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "Temporary Stop"
+msgstr "Tijdelijke stopzetting"
+
+#. module: publishing_subscription_order
+#: sql_constraint:subscription.title.delivery:0
+msgid "The Title must be unique"
+msgstr "Titel moet uniek zijn"
+
+#. module: publishing_subscription_order
+#: code:addons/publishing_subscription_order/wizard/adv_line_invoice.py:125
+#: code:addons/publishing_subscription_order/wizard/adv_line_invoice.py:129
+#, python-format
+msgid "The details of the error:'%s' regarding '%s'"
+msgstr "De details van fout:'%s' betreffend '%s'"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,help:publishing_subscription_order.subscription_product_normal_action_sell
+msgid "The product form contains information to simplify the sale\n"
+"                process: price, notes in the quotation, accounting data,\n"
+"                procurement methods, etc."
+msgstr "Het product formulier bevat informatie om de verkoop te vergemakkelijken\n"
+"                zoals: prijs, aantekeningen, stuurinformatie voor de boekhouding,\n"
+"                inkoopwijze, etc."
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,help:publishing_subscription_order.subscription_product_template_action
+msgid "The product form contains information to simplify the sale process: price, notes in the quotation, accounting data, procurement methods, etc."
+msgstr "Het productformulier bevat informatie om de verkoop te ondersteunen met bijv. prijzen, aantekeningen, boekhoudkundige en logistieke informatie."
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
+msgid "This Week"
+msgstr "Deze week"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,help:publishing_subscription_order.field_res_partner_property_subscription_payment_term_id
+#: model:ir.model.fields,help:publishing_subscription_order.field_res_users_property_subscription_payment_term_id
+msgid "This payment term will be used instead of the default one for subscription orders and subscription bills"
+msgstr "Deze betaalconditie wordt gebruikt in plaats van de standaard"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Tijdelijke stopzetting"
+msgstr "Tijdelijke stopzetting"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_res_users_dependent_ids
+msgid "Time Faced"
+msgstr "Tijd gebaseerd"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_partner_form_susbcription_inherit
+msgid "Time dependent Address Data"
+msgstr "Tijd gebaseerde adresgegevens"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_title_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_title_id
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery_title_id
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_title_delivery_filter
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "Title"
+msgstr "Titel"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
+msgid "To Invoice"
+msgstr "Te factureren"
+
+#. module: publishing_subscription_order
+#. openerp-web
+#: code:addons/publishing_subscription_order/static/src/xml/sales_team_dashboard.xml:5
+#: code:addons/publishing_subscription_order/static/src/xml/sales_team_dashboard.xml:13
+#, python-format
+msgid "To Subscription Quotations"
+msgstr "Naar abonnementen offertes"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_subscription_tree
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_quotation_subscription_tree
+msgid "Total Amount Untaxed"
+msgstr "Totaal netto"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_quotation
+msgid "Traffic Approved"
+msgstr "Door Traffic goedgekeurd"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "Until including"
+msgstr "Tot en met"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_res_users_validity_date
+msgid "Valid On"
+msgstr "Geldig op"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_form
+msgid "Validate"
+msgstr "Controleer"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Verhuizen/emigreren"
+msgstr "Verhuizen/emigreren"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Verlengingsaanbieding"
+msgstr "Verlengingsaanbieding"
+
+#. module: publishing_subscription_order
+#: selection:sale.order.line,reason_cancel:0
+msgid "Via de mail benaderd"
+msgstr "Via de mail benaderd"
+
+#. module: publishing_subscription_order
+#: model:ir.model,name:publishing_subscription_order.model_week_days
+msgid "Week Days"
+msgstr "Weekdagen"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_weekday_id
+msgid "Weekday"
+msgstr "Weekdag"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_carrier_weekday_ids
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_product_weekday_ids
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_product_template_weekday_ids
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_weekday_ids
+msgid "Weekdays"
+msgstr "Weekdagen"
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,help:publishing_subscription_order.subscription_product_normal_action_sell
+msgid "You must define a product for everything you sell, whether it's\n"
+"                a physical product, a consumable or a service you offer to\n"
+"                customers."
+msgstr "Je moet een product definiëren voor alles wat je verkoopt, of het nu een\n"
+"                fysiek product is, een verbruiksartikel of dienst is die je aan klanten\n"
+"                aanbiedt."
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,help:publishing_subscription_order.subscription_product_template_action
+msgid "You must define a product for everything you sell, whether it's a physical product, a consumable or a service you offer to customers."
+msgstr "Je moet een product definiëren voor alles wat je verkoopt, of het nu een fysiek product is, een verbruiksartikel of een dienst die je aan klanten aanbiedt."
+
+#. module: publishing_subscription_order
+#: model:ir.actions.act_window,help:publishing_subscription_order.action_orders_subscription
+#: model:ir.actions.act_window,help:publishing_subscription_order.action_quotation_subscription
+msgid "Your next actions should flow efficiently: confirm the Quotation to a Sale Order, then create the Invoice and collect the Payment."
+msgstr "De volgende acties zijn: bevestig offerte tot verkooporder, maak een factuur en verwerk de betaling."
+
+#. module: publishing_subscription_order
+#: model:ir.model,name:publishing_subscription_order.model_account_config_settings
+msgid "account.config.settings"
+msgstr "account.config.settings"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
+msgid "days"
+msgstr "dagen"
+
+#. module: publishing_subscription_order
+#. openerp-web
+#: code:addons/publishing_subscription_order/static/src/xml/sales_team_dashboard.xml:16
+#, python-format
+msgid "exp. closing"
+msgstr "exp. closing"
+

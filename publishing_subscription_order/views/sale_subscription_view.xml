@@ -115,6 +115,7 @@
                                                 <field name="discount_reason_id" attrs="{'invisible': [('discount','=', 0.0)],'required': [('discount','!=', 0.0)],'readonly': [('subscription_cancel', '=', True)]}"/>
                                                 <field name="price_subtotal" readonly="True"/>
                                                 <field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]" groups="sale_advertising_order.group_traffic_user" attrs="{'readonly': ['|',('qty_invoiced', '&gt;', 0),('subscription_cancel', '=', True)]}"/>
+                                                <label for="analytic_tag_ids" string="Analytic tags"/>
                                                 <div>
                                                     <field name="analytic_tag_ids" string="Analytic tag" widget="many2many_tags" domain="page_class_domain" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/>
                                                 </div>
@@ -129,13 +130,12 @@
                                             </group>
                                             <group>
                                                 <label for="customer_lead" groups="base.group_no_one"/>
-                                                <div groups="base.group_no_one">
+                                                <div>
                                                     <field name="customer_lead" class="oe_inline" groups="base.group_no_one" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/> days
                                                 </div>
                                                 <field name="subscription_origin" string="Renewed from" 
                                                     attrs="{'invisible': [('subscription_origin','!=', False)]}"/>
                                                 <field name="page_class_domain" invisible="1"/>
-                                                <label for="analytic_tag_ids" string="Page Category"/>
                                                 <field name="procurement_ids" invisible="1"/>
                                                 <field name="qty_delivered_updateable" invisible="1"/>
                                             </group>
