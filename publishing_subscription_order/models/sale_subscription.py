@@ -488,7 +488,7 @@ class SaleOrderLine(models.Model):
                 continue
             tmpl_prod = line.renew_product_id.product_tmpl_id
             #do not renew if order not fullfilled
-            if tmpl_prod.number_of_issues != 0 and line.delivered_issues < line.number_of_issues :
+            if line.number_of_issues != 0 and line.delivered_issues < line.number_of_issues :
                 continue
             res = line.with_context(ctx).onchange_product_subs()['value']
             enddate   = self.subscription_enddate(line.end_date, line.renew_product_id.subscr_number_of_days)
@@ -496,7 +496,7 @@ class SaleOrderLine(models.Model):
             if tmpl_prod.number_of_issues == 0 :
                 new_name = line.renew_product_id.name_get()[0][1] + ' van ' + startdate.strftime('%d-%m-%Y') + ' tot ' + enddate.strftime('%d-%m-%Y')
             else :
-                new_name = line.renew_product_id.name_get()[0][1] + '\n' + str(self.product_id.product_tmpl_id.number_of_issues) + ' edities'
+                new_name = line.renew_product_id.name_get()[0][1] + '\n' + str(tmpl_prod.number_of_issues) + ' edities'
             res.update({
                 'start_date'         : line.end_date,
                 'end_date'           : enddate,
@@ -509,6 +509,7 @@ class SaleOrderLine(models.Model):
                 'price_unit'         : self.env['account.tax']._fix_tax_included_price_company(line._get_display_price(line.renew_product_id), line.renew_product_id.taxes_id, line.tax_id, line.company_id),
                 'discount'           : 0.0,
                 'name'               : new_name,
+                'tax_id'             : [(6, 0, [tmpl_prod.taxes_id.id])],
                 'subscription_origin': line.id
             })
             if line.renew_disc:
