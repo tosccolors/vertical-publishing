@@ -153,9 +153,9 @@ class SubscriptionDeliveryList(models.Model):
     name = fields.Char(string='Delivery List#', copy=False, readonly=True,
                        states={'draft': [('readonly', False)]}, index=True, default=lambda self: _('New'))
     delivery_id = fields.Many2one('subscription.title.delivery', 'Delivery Title', readonly=True, states={'draft': [('readonly', False)]}, ondelete='cascade')
-    delivery_date = fields.Date('Delivery Date', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
+    delivery_date = fields.Date('Prepared on', default=fields.Date.today,  readonly=True, states={'draft': [('readonly', False)]})
     weekday_id = fields.Many2one('week.days', compute=_compute_weekday, store=True, string='Weekday', readonly=True, copy=False)
-    type = fields.Many2one('delivery.list.type', string='Type', readonly=True, states={'draft': [('readonly', False)]}, copy=False)
+    type = fields.Many2one('delivery.list.type', string='Delivery type', readonly=True, states={'draft': [('readonly', False)]}, copy=False)
     title_id = fields.Many2one(related='delivery_id.title_id', string='Title', store=True, readonly=True)
     issue_id = fields.Many2one('sale.advertising.issue', 'Issue', readonly=True, states={'draft': [('readonly', False)]})
     issue_date = fields.Date(related='issue_id.issue_date', string='Issue Date', store=True, readonly=True)
@@ -395,7 +395,10 @@ class SubscriptionDeliveryList(models.Model):
 
     @api.multi
     def action_cancel(self):
-        return self.write({'state': 'cancel'})
+        result = self.write({'state': 'cancel'})
+        lines = self.env['subscription.delivery.line'].search([('delivery_list_id', 'in', tuple(self.ids))])
+        lines.update_delivered_issues()
+        return result
 
     @api.multi
     def print_xls_report(self):
@@ -411,23 +414,11 @@ class SubscriptionDeliveryLine(models.Model):
     sub_order_line = fields.Many2one('sale.order.line', string='Subscription order line')
     subscription_number = fields.Many2one(related='sub_order_line.order_id', string='Subscription Number', store=True, readonly=True)
     partner_id = fields.Many2one(related='subscription_number.partner_shipping_id', string='Delivery Address',copy=False, readonly=True, store=True)
-    product_uom_qty = fields.Float(string='Quantity', digits=dp.get_precision('Product Unit of Measure'), required=True)
+    product_uom_qty = fields.Float(string='Delivered per subscription', digits=(16,0), required=True)
     company_id = fields.Many2one(related='delivery_list_id.company_id', string='Company', store=True, readonly=True)
     title_id = fields.Many2one(related='delivery_list_id.title_id', string='Title', readonly=True)
     issue_id = fields.Many2one(related='delivery_list_id.issue_id', string='Issue', readonly=True)
     state = fields.Selection(related='delivery_list_id.state', string='State', readonly=True)
-
-    @api.model
-    def create(self, values):
-        res = super(SubscriptionDeliveryLine, self).create(values)
-        self.update_delivered_issues()
-        return res
-
-    @api.multi
-    def write(self, values):
-        res = super(SubscriptionDeliveryLine, self).write(values)
-        self.update_delivered_issues()
-        return res
 
 
     def update_delivered_issues(self):
@@ -436,19 +427,33 @@ class SubscriptionDeliveryLine(models.Model):
         """
         if len(self) == 0:
             return
-        cond = '='
-        rec = self.id
-        if len(self) > 1:
+        elif len(self) == 1:
+            cond = '='
+            rec = self.sub_order_line.id
+        else :
             cond = 'IN'
-            rec = tuple(self.ids)
+            rec = tuple(self.mapped('sub_order_line').ids)
+        self.env.invalidate_all() #next steps need up-to-date database
         list_query = (""" 
-                   UPDATE sale_order_line SET (delivered_issues) =
-                   (SELECT sum(product_uom_qty) FROM subscription_delivery_line
-                   WHERE subscription_delivery_line.id %s %s
-                   AND subscription_delivery_line.sub_order_line = sale_order_line.id 
-                   AND sale_order_line.subscription = 't' group by subscription_delivery_line.sub_order_line)                   
+            WITH  delivered AS
+                ( SELECT sub_order_line, 
+                         sum(CASE WHEN subscription_delivery_list.state ='cancel' 
+                               THEN 0 
+                               ELSE subscription_delivery_line.product_uom_qty 
+                             END
+                          ) as total_per_sub_order_line
+                  FROM subscription_delivery_line
+                  JOIN subscription_delivery_list ON subscription_delivery_list.id = subscription_delivery_line.delivery_list_id
+                  WHERE subscription_delivery_line.sub_order_line %s %s
+                  GROUP BY sub_order_line )
+            UPDATE sale_order_line 
+            SET delivered_issues = delivered.total_per_sub_order_line
+            FROM  delivered
+            WHERE sale_order_line.id = delivered.sub_order_line
+                  AND sale_order_line.subscription = 't'                  
         """)
         self.env.cr.execute(list_query % (cond, rec))
+        self.env.cr.commit()
 
 
 class SaleOrderLine(models.Model):

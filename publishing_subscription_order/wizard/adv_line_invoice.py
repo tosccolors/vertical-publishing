@@ -139,6 +139,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             res['account_analytic_id'] = line.title.analytic_account_id and \
                                          line.title.analytic_account_id.id
             res['name'] = line.name
+            res['price_unit'] = line.price_unit  #when call origins from adorder invoice
         return res
 
 
