@@ -247,8 +247,8 @@ class SaleOrder(models.Model):
             if not olines == []:
                 self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
         self._cr.commit()
-        # orders.write({'state': 'sent'}) #Commented to avoid changing the state of the record while printing reports.
-        return self.env['report'].get_action(self, 'sale.report_saleorder') #Super method is not called to avoid changing the state of the record while printing reports.
+        orders.write({'state': 'sent'})
+        return super(SaleOrder, self).print_quotation()
 
     @api.multi
     def action_quotation_send(self):
@@ -265,8 +265,8 @@ class SaleOrder(models.Model):
                 if line.multi_line:
                     olines.append(line.id)
             if not olines == []:
-                self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
-            self._cr.commit()
+                self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines,
+                                                                                             orders=self)
         # self.write({'state': 'sent'}) #Task: SMA-1 Action button for state [sent] in sale.order
 
         ir_model_data = self.env['ir.model.data']
@@ -318,7 +318,8 @@ class SaleOrder(models.Model):
                     if line.deadline_check():
                         line.page_qty_check_create()
             if not olines == []:
-                list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
+                list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(
+                    orderlines=olines, orders=order)
                 newlines = self.env['sale.order.line'].browse(list)
                 for newline in newlines:
                     if newline.deadline_check():
@@ -338,7 +339,8 @@ class SaleOrder(models.Model):
     @api.multi
     def write(self, vals):
         result = super(SaleOrder, self).write(vals)
-        for order in self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks')):
+        orders = self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks'))
+        for order in orders:
             user = self.env['res.users'].browse(self.env.uid)
             if not user.has_group('sale_advertising_order.group_no_discount_check') \
                and self.ver_tr_exc:
@@ -351,7 +353,8 @@ class SaleOrder(models.Model):
                     olines.append(line.id)
                     continue
             if not olines == []:
-                list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
+                list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(
+                    orderlines=olines, orders=order)
                 newlines = self.env['sale.order.line'].browse(list)
                 for newline in newlines:
                     if newline.deadline_check():
@@ -613,14 +616,22 @@ class SaleOrderLine(models.Model):
         vals, data, result = {}, {}, {}
         if not self.advertising:
             return {'value': vals}
+        titles = self.title_ids if self.title_ids else self.title or False
+        domain = []
+        if titles:
+            product_ids = self.env['product.product']
+            for title in titles:
+                if title.product_attribute_value_id:
+                    ids = product_ids.search([('attribute_value_ids', '=', [title.product_attribute_value_id.id])])
+                    product_ids += ids
+            product_tmpl_ids = product_ids.mapped('product_tmpl_id').ids
+            domain = [('id', 'in', product_tmpl_ids)]
         if self.ad_class:
-            product_ids = self.env['product.template'].search([('categ_id', '=', self.ad_class.id)])
-            if product_ids:
-                data['product_template_id'] = [('categ_id', '=', self.ad_class.id)]
-                if len(product_ids) == 1:
-                    vals['product_template_id'] = product_ids[0]
-                else:
-                    vals['product_template_id'] = False
+            product_ids = self.env['product.template'].search(domain+[('categ_id', '=', self.ad_class.id)])
+            if product_ids and len(product_ids) == 1:
+                vals['product_template_id'] = product_ids[0]
+            else:
+                vals['product_template_id'] = False
             date_type = self.ad_class.date_type
             if date_type:
                 vals['date_type'] = date_type
@@ -855,6 +866,15 @@ class SaleOrderLine(models.Model):
 
 
 
+    @api.onchange('price_unit')
+    def onchange_price_unit(self):
+        result = {}
+        if not self.advertising:
+            return {'value': result}
+        if self.price_unit > 0 and self.product_uom_qty > 0:
+            result['subtotal_before_agency_disc'] = self.price_unit * self.product_uom_qty
+        return {'value': result}
+
     @api.onchange('computed_discount')
     def onchange_actualcd(self):
         result = {}
@@ -1002,7 +1022,8 @@ class SaleOrderLine(models.Model):
             return result
         self = self.with_context(LoopBreaker=True)
         if result.state == 'sale' and result.advertising and result.multi_line:
-            newlines = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=[result.id])
+            newlines = self.env['sale.order.line.create.multi.lines'].\
+                create_multi_from_order_lines(orderlines=[result.id], orders=None)
             lines = self.env['sale.order.line'].browse(newlines)
             for line in lines:
                 line.page_qty_check_create()

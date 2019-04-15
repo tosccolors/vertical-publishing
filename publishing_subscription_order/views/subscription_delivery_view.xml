@@ -80,7 +80,7 @@
                         <button class="oe_highlight" name="generate_delivery_lines" string="Re-Generate Delivery Lines" type="object" states="progress"/>
                         <button class="oe_highlight" name="print_xls_report" string="Print" type="object" states="progress,done"/>
                         <button class="oe_highlight" name="action_done" string="Validate" type="object" states="progress"/>
-                        <button class="oe_highlight" name="action_cancel" string="Cancel" type="object" states="progress"/>
+                        <button class="oe_highlight" name="action_cancel" string="Cancel" type="object" states="draft,progress"/>
                         <field name="state" widget="statusbar" />
                     </header>
                     <sheet>
@@ -90,10 +90,10 @@
                             </h1>
                         </div>
                         <group cols="4">
-                            <field name="delivery_date"/>
                             <field name="title_id"/>
                             <field name="issue_id" domain="[('subscription_title','=',True),('parent_id','=',title_id)]"/>
                             <field name="issue_date"/>
+                            <field name="delivery_date"/>
                             <field name="type"/>
                             <field name="weekday_id"/>
                             <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
@@ -112,10 +112,10 @@
             <field name="model">subscription.delivery.list</field>
             <field name="arch" type="xml">
                 <tree string="Subscription Delivery" colors="blue:state=='draft'" create="false" edit="false" delete="false" copy="false">
-                    <field name="delivery_date" />
                     <field name="title_id"/>
                     <field name="issue_id"/>
                     <field name="issue_date"/>
+                    <field name="delivery_date" />
                     <field name="type"/>
                     <field name="weekday_id"/>
                     <field name="state"/>
@@ -213,7 +213,7 @@
             </field>
         </record>
 
-        <record id="view_subscription_order_line_form_delivery_list" model="ir.ui.view">
+        <!--record id="view_subscription_order_line_form_delivery_list" model="ir.ui.view">
             <field name="name">sale.order.line.delivery.list</field>
             <field name="model">sale.order.line</field>
             <field name="inherit_id" ref="publishing_subscription_order.view_subscription_order_line_form" />
@@ -225,7 +225,7 @@
                     </div>
                 </field>
             </field>
-        </record>
+        </record-->
 
         <!--<menuitem id="subscription_delivery_line_menu" parent="menu_subscription_sales_main" action="subscription_delivery_line_action" groups="sales_team.group_sale_salesman,sales_team.group_sale_manager" sequence="23"/>-->
 
