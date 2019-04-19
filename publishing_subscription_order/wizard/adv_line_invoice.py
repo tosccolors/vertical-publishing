@@ -37,21 +37,34 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     def make_invoices_split_lines_jq(self, inv_date, post_date, olines, eta,
                                      size):
         subscription_lines = olines.filtered('subscription')
-        other_lines = olines - subscription_lines
-        super(AdOrderLineMakeInvoice, self).make_invoices_split_lines_jq(
+        advertorial_lines  = olines.filtered('advertising')
+        other_lines = olines - subscription_lines - advertorial_lines
+        r1 = super(AdOrderLineMakeInvoice, self).make_invoices_split_lines_jq(
             inv_date,
             post_date,
             subscription_lines,
             eta,
             size
         )
-        super(AdOrderLineMakeInvoice, self).make_invoices_split_lines_jq(
+        r2 = super(AdOrderLineMakeInvoice, self).make_invoices_split_lines_jq(
+            inv_date,
+            post_date,
+            advertorial_lines,
+            eta,
+            size
+        )
+        r3 = super(AdOrderLineMakeInvoice, self).make_invoices_split_lines_jq(
             inv_date,
             post_date,
             other_lines,
             eta,
             size
         )
+        #result for job_queue form
+        return "Split done by orderline type, result :\n" + \
+               "- Subscriptions : " + r1 + \
+               "- Advertorial   : " + r2 + \
+               "- Other         : " + r3
 
 
     @job
