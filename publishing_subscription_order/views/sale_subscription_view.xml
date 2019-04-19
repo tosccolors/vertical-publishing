@@ -133,6 +133,7 @@
                                                 <div>
                                                     <field name="customer_lead" class="oe_inline" groups="base.group_no_one" attrs="{'readonly': [('subscription_cancel', '=', True)]}"/> days
                                                 </div>
+                                                <field name="subscription_delivery_info"/>
                                                 <field name="subscription_origin" string="Renewed from" 
                                                     attrs="{'invisible': [('subscription_origin','!=', False)]}"/>
                                                 <field name="page_class_domain" invisible="1"/>

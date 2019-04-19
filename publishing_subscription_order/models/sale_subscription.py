@@ -186,6 +186,7 @@ class SaleOrderLine(models.Model):
     renew_disc       = fields.Boolean('Renew With Discount', copy=False)
     subscription_origin = fields.Integer(string='Original orderline', copy=False)
     deliveries       = fields.One2many('subscription.delivery.line', 'sub_order_line', string="Deliveries")
+    subscription_delivery_info = fields.Char("Delivery information", size=40)
 
     @api.multi
     @api.constrains('start_date', 'end_date', 'temporary_stop', 'tmp_start_date', 'tmp_end_date')
