@@ -114,7 +114,12 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             size = self.chunk_size
             eta = fields.Datetime.from_string(self.execution_datetime)
         if not context.get('active_ids', []):
-            raise UserError(_('No Ad Order lines are selected for invoicing:\n'))
+            message = 'No ad order lines selected for invoicing.'
+            if context.get('job_queue') == True :
+                _logger.info(message)
+                return message+"\n"
+            else :
+                raise UserError(_(message))
         else:
             lids = context.get('active_ids', [])
             OrderLines = self.env['sale.order.line'].browse(lids)
@@ -141,8 +146,10 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                 self.with_delay(eta=eta, description=description).make_invoices_split_lines_jq(inv_date, post_date, OrderLines, eta, size)
             else :
                 self.with_delay(eta=eta).make_invoices_split_lines_jq(inv_date, post_date, OrderLines, eta, size)
+            return "Lines dispatched for async processing. See separate job(s) for result(s).\n"
         else:
             self.make_invoices_job_queue(inv_date, post_date, OrderLines)
+            return "Lines dispatched."
 
     @job
     @api.multi
@@ -171,6 +178,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                     chunk = False
             if chunk:
                     self.with_delay(eta=eta).make_invoices_job_queue(inv_date, post_date, chunk)
+            return "Invoice lines successfully chopped in chunks. Chunks will be processed in separate jobs.\n"
 
 
 
@@ -219,7 +227,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                     raise FailedJobError(_("The details of the error:'%s' regarding '%s'") % (unicode(e), il['name'] ))
                 else:
                     raise UserError(_("The details of the error:'%s' regarding '%s'") % (unicode(e), il['name'] ))
-        return True
+        return "Invoice(s) successfully made."
 
 
     @api.model
