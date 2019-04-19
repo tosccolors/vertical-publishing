@@ -174,10 +174,12 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                     chunk = lines if not chunk else chunk | lines
                     if len(chunk) < size:
                         continue
-                    self.with_delay(eta=eta).make_invoices_job_queue(inv_date, post_date, chunk)
+                    description = "invoicing " + str(len(chunk)) + " orderlines"
+                    self.with_delay(eta=eta, description=description).make_invoices_job_queue(inv_date, post_date, chunk)
                     chunk = False
             if chunk:
-                    self.with_delay(eta=eta).make_invoices_job_queue(inv_date, post_date, chunk)
+                    description = "invoicing " + str(len(chunk)) + " orderlines"
+                    self.with_delay(eta=eta, description=description).make_invoices_job_queue(inv_date, post_date, chunk)
             return "Invoice lines successfully chopped in chunks. Chunks will be processed in separate jobs.\n"
 
 
