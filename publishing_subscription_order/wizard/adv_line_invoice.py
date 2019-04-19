@@ -62,9 +62,9 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         )
         #result for job_queue form
         return "Split done by orderline type, result :\n" + \
-               "- Subscriptions : " + r1 + \
-               "- Advertorial   : " + r2 + \
-               "- Other         : " + r3
+               "- Subscriptions (" + len(subscription_lines) + ") : " + r1 + \
+               "- Advertorial ("   + len(advertorial_lines)  + ") : " + r2 + \
+               "- Other ("         + len(other_lines)        + ") : " + r3
 
 
     @job
