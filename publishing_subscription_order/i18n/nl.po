@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-29 13:01+0000\n"
-"PO-Revision-Date: 2019-03-29 13:01+0000\n"
+"POT-Creation-Date: 2019-04-19 19:36+0000\n"
+"PO-Revision-Date: 2019-04-19 19:36+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -35,14 +35,14 @@ msgstr "# Abo offertes"
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 msgid "(update)"
-msgstr "(update)"
+msgstr "(bijwerken)"
 
 #. module: publishing_subscription_order
 #. openerp-web
 #: code:addons/publishing_subscription_order/static/src/xml/sales_team_dashboard.xml:18
 #, python-format
 msgid "3 exp. closing"
-msgstr ""
+msgstr "3 exp. closing"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.crm_case_form_view_oppor_button_subscription
@@ -54,7 +54,7 @@ msgstr "<span class=\"o_stat_text\"> Abo. Orders</span>"
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
 msgid "Account Manager"
-msgstr "Account manager"
+msgstr "Klanteigenaar"
 
 #. module: publishing_subscription_order
 #: selection:sale.order.line,reason_cancel:0
@@ -64,13 +64,18 @@ msgstr "Actie/proefabonnement"
 #. module: publishing_subscription_order
 #: model:ir.model,name:publishing_subscription_order.model_ad_order_line_make_invoice
 msgid "Advertising Order Line Make_invoice"
-msgstr ""
+msgstr "Aanmaken factuur orderregel"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
 msgid "Analytic tag"
 msgstr "Rapportage label"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
+msgid "Analytic tags"
+msgstr "Rapportage labels"
 
 #. module: publishing_subscription_order
 #: selection:sale.order.line,reason_cancel:0
@@ -113,7 +118,7 @@ msgstr "Verlengen?"
 #. module: publishing_subscription_order
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_can_cancel
 msgid "Can cancelled?"
-msgstr ""
+msgstr "Can cancelled?"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_form
@@ -140,13 +145,13 @@ msgstr "Categorie"
 #. module: publishing_subscription_order
 #: model:ir.actions.act_window,help:publishing_subscription_order.action_partner_form_crm_publishing
 msgid "Click to add a contact in your address book."
-msgstr "Klik om contact toe te voegen in je adresboek"
+msgstr "Klik om een contact toe te voegen in uw adresboek."
 
 #. module: publishing_subscription_order
 #: model:ir.actions.act_window,help:publishing_subscription_order.subscription_product_normal_action_sell
 #: model:ir.actions.act_window,help:publishing_subscription_order.subscription_product_template_action
 msgid "Click to define a new product."
-msgstr "Klik om nieuw product te definiëren"
+msgstr "Klik om een nieuw product te definiëren."
 
 #. module: publishing_subscription_order
 #: model:ir.actions.act_window,help:publishing_subscription_order.subscription_delivery_line_action
@@ -215,7 +220,7 @@ msgstr "Maak leveringslijst en regels"
 #: model:ir.actions.act_window,help:publishing_subscription_order.action_orders_subscription
 #: model:ir.actions.act_window,help:publishing_subscription_order.action_quotation_subscription
 msgid "Create a Quotation, the first step of a new sale."
-msgstr "Maak offerte"
+msgstr "Maak een offerte aan, de eerste stap in een nieuwe verkoop."
 
 #. module: publishing_subscription_order
 #: model:ir.model,name:publishing_subscription_order.model_subscription_multi_wizard
@@ -230,7 +235,7 @@ msgstr "Maak leveringslijst en regels"
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery_create_uid
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_week_days_create_uid
 msgid "Created by"
-msgstr "Gemaakt door"
+msgstr "Aangemaakt door"
 
 #. module: publishing_subscription_order
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_list_type_create_date
@@ -240,7 +245,7 @@ msgstr "Gemaakt door"
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery_create_date
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_week_days_create_date
 msgid "Created on"
-msgstr "Gemaakt op"
+msgstr "Aangemaakt op"
 
 #. module: publishing_subscription_order
 #: model:ir.model.fields,help:publishing_subscription_order.field_sale_order_line_date_cancel
@@ -250,7 +255,7 @@ msgstr "Het systeem zal deze orderregel stoppen op gekozen datum"
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
 msgid "Customer Partners"
-msgstr "Klant (OG)"
+msgstr "Relatie partners"
 
 #. module: publishing_subscription_order
 #: model:ir.actions.act_window,name:publishing_subscription_order.action_partner_form_crm_publishing
@@ -268,7 +273,7 @@ msgstr "Naam dag"
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
 msgid "Delivered Quantity"
-msgstr "Geleverd"
+msgstr "Geleverde hoeveelheid"
 
 #. module: publishing_subscription_order
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_product_uom_qty
@@ -346,12 +351,17 @@ msgstr "Te leveren titel"
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_delivery_type
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
 msgid "Delivery Type"
-msgstr "Type levering"
+msgstr "Soort levering"
 
 #. module: publishing_subscription_order
 #: model:ir.model.fields,help:publishing_subscription_order.field_subscription_delivery_line_partner_id
 msgid "Delivery address for current sales order."
-msgstr "Afleveradres voor huidige verkooporder. Abonnee bij abonnement."
+msgstr "Afleveradres voor de huidige verkooporder"
+
+#. module: publishing_subscription_order
+#: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_subscription_delivery_info
+msgid "Delivery information"
+msgstr "Bezorg info"
 
 #. module: publishing_subscription_order
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_type
@@ -383,7 +393,7 @@ msgstr "Alleen digitale levering"
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery_display_name
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_week_days_display_name
 msgid "Display Name"
-msgstr "Te tonen naam"
+msgstr "Weergave naam"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_multi_wizard_form_view
@@ -394,7 +404,7 @@ msgstr "Wil je leveringslijst en regels maken?"
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
 #: selection:subscription.delivery.list,state:0
 msgid "Done"
-msgstr "Klaar"
+msgstr "Verwerkt"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
@@ -431,7 +441,7 @@ msgstr "Definitieve stop"
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
 msgid "From"
-msgstr "Vanaf"
+msgstr "Van"
 
 #. module: publishing_subscription_order
 #: selection:sale.order.line,reason_cancel:0
@@ -491,12 +501,12 @@ msgstr "Gezondheidsredenen (ouderd./ziek/dement)"
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_title_delivery_filter
 msgid "Group By"
-msgstr "Groepeer per"
+msgstr "Groepeer op"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
 msgid "Group By..."
-msgstr "Groepeer per ..."
+msgstr "Groepeer op..."
 
 #. module: publishing_subscription_order
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_list_type_id
@@ -511,7 +521,7 @@ msgstr "ID"
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 msgid "If the sale is locked, you can not modify it anymore. However, you will still be able to invoice or deliver."
-msgstr "De verkoop zit op slot en kan niet worden gewijzigd. Je kunt nog wel factureren en leveren."
+msgstr "Als de verkooporder geblokkeerd is kunt u deze niet meer aanpassen. Het is wel mogelijk de order te factureren of te leveren."
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_form
@@ -530,14 +540,17 @@ msgid "Invoice"
 msgstr "Factuur"
 
 #. module: publishing_subscription_order
-#: code:addons/publishing_subscription_order/wizard/adv_line_invoice.py:103
-#: code:addons/publishing_subscription_order/wizard/adv_line_invoice.py:109
+#: code:addons/publishing_subscription_order/wizard/adv_line_invoice.py:116
+#: code:addons/publishing_subscription_order/wizard/adv_line_invoice.py:122
 #, python-format
 msgid "Invoice cannot be created for this Subscription Order Line due to one of the following reasons:\n"
 "1.The state of these order lines are not \"sale\" or \"done\"!\n"
 "2.The Lines are already Invoiced!\n"
 ""
-msgstr ""
+msgstr "Invoice cannot be created for this Subscription Order Line due to one of the following reasons:\n"
+"1.The state of these order lines are not \"sale\" or \"done\"!\n"
+"2.The Lines are already Invoiced!\n"
+""
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
@@ -555,7 +568,7 @@ msgstr "Opmerking factuur"
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
 msgid "Invoiced Quantity"
-msgstr "Gefactureerd"
+msgstr "Gefactureerde hoeveelheid"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
@@ -565,7 +578,7 @@ msgstr "Facturen"
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 msgid "Invoicing"
-msgstr "Facturering"
+msgstr "Facturatie"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_product_template_search_view
@@ -625,7 +638,7 @@ msgstr "Klachten over de slechte bezorging"
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery___last_update
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_week_days___last_update
 msgid "Last Modified on"
-msgstr "Laatste wijziging op"
+msgstr "Laatst gewijzigd op"
 
 #. module: publishing_subscription_order
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_list_type_write_uid
@@ -635,7 +648,7 @@ msgstr "Laatste wijziging op"
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery_write_uid
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_week_days_write_uid
 msgid "Last Updated by"
-msgstr "Laatste wijziging door"
+msgstr "Laatst bijgewerkt door"
 
 #. module: publishing_subscription_order
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_delivery_list_type_write_date
@@ -645,7 +658,7 @@ msgstr "Laatste wijziging door"
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_title_delivery_write_date
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_week_days_write_date
 msgid "Last Updated on"
-msgstr "Laaste bijwerking op"
+msgstr "Laatst bijgewerkt op"
 
 #. module: publishing_subscription_order
 #: model:ir.model,name:publishing_subscription_order.model_crm_lead
@@ -660,12 +673,12 @@ msgstr "Leest via werkgever / leest samen"
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 msgid "Lock"
-msgstr "Op slot"
+msgstr "Blokkeer"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 msgid "Log in the chatter from which opportunity the order originates"
-msgstr "Schrijf in de chatter uit welke kans deze order voortkomt"
+msgstr "In het activiteitenlog opslaan welke opportunity aan de basis van deze verkoop ligt"
 
 #. module: publishing_subscription_order
 #: selection:sale.order.line,reason_cancel:0
@@ -673,25 +686,25 @@ msgid "Met pensioen"
 msgstr "Met pensioen"
 
 #. module: publishing_subscription_order
-#: code:addons/publishing_subscription_order/models/sale_subscription.py:196
+#: code:addons/publishing_subscription_order/models/sale_subscription.py:197
 #, python-format
 msgid "Missing End Date for order line with Description '%s'."
 msgstr "Einddatum mist voor orderregel '%s'."
 
 #. module: publishing_subscription_order
-#: code:addons/publishing_subscription_order/models/sale_subscription.py:213
+#: code:addons/publishing_subscription_order/models/sale_subscription.py:214
 #, python-format
 msgid "Missing End Of Delivery Stop Date for order line with Description '%s'."
 msgstr "Einddatum van leverstop mist voor orderregel %s."
 
 #. module: publishing_subscription_order
-#: code:addons/publishing_subscription_order/models/sale_subscription.py:201
+#: code:addons/publishing_subscription_order/models/sale_subscription.py:202
 #, python-format
 msgid "Missing Start Date for order line with Description '%s'."
 msgstr "Startdatum mist voor orderregel '%s'."
 
 #. module: publishing_subscription_order
-#: code:addons/publishing_subscription_order/models/sale_subscription.py:218
+#: code:addons/publishing_subscription_order/models/sale_subscription.py:219
 #, python-format
 msgid "Missing Start Of Delivery Stop date for order line with Description '%s'."
 msgstr "Start- of einddatum leverstop mist voor orderregel '%s'."
@@ -699,19 +712,19 @@ msgstr "Start- of einddatum leverstop mist voor orderregel '%s'."
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
 msgid "My Customers"
-msgstr "Mijn klanten"
+msgstr "Mijn relaties"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_quotation
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
 msgid "My Sales Orders (Account Manager)"
-msgstr "Mijn verkooporders (als Account manager)"
+msgstr "Mijn verkooporders (klanteigenaar)"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_quotation
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
 msgid "My Sales Orders as Account manager"
-msgstr "Mijn verkooporders als account manager"
+msgstr "Mijn verkooporders (klanteigenaar)"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.delivery_list_xml_report
@@ -778,7 +791,7 @@ msgstr "Nogmaals toegestuurd"
 #: model:ir.actions.act_window,help:publishing_subscription_order.action_orders_subscription
 #: model:ir.actions.act_window,help:publishing_subscription_order.action_quotation_subscription
 msgid "Note that once a Quotation becomes a Sale Order, it will be moved from the Quotations list to the Sales Order list."
-msgstr "NB : Als offerte een order wordt, verschijnt deze niet meer in de offertelijst maar in de verkooporderlijst."
+msgstr "Merk op dat eenmaal een offerte verandert in een verkooporder, het niet meer in de offertelijst voorkomt, maar zichtbaar wordt in de verkooporderlijst."
 
 #. module: publishing_subscription_order
 #: selection:sale.order.line,reason_cancel:0
@@ -812,18 +825,18 @@ msgstr "Odoo helpt je om eenvoudig al je activiteiten bij te houden in relatie t
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 msgid "Order Lines"
-msgstr "Order regels"
+msgstr "Orderregels"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_subscription_tree
 msgid "Order Number"
-msgstr "Order nummer"
+msgstr "Ordernummer"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
 msgid "Ordered Quantity"
-msgstr "Besteld"
+msgstr "Bestelde hoeveelheid"
 
 #. module: publishing_subscription_order
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_order_line_subscription_origin
@@ -852,13 +865,13 @@ msgstr "Overstap naar concurrent / Andere keuze"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
-msgid "Analytic tags"
-msgstr "Rapportage labels"
+msgid "Page Category"
+msgstr "Paginasoort"
 
 #. module: publishing_subscription_order
 #: model:ir.model,name:publishing_subscription_order.model_res_partner
 msgid "Partner"
-msgstr "Partner"
+msgstr "Relatie"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
@@ -888,7 +901,7 @@ msgstr "Persoonlijke omstandigheden"
 #. module: publishing_subscription_order
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_delivery_date
 msgid "Prepared on"
-msgstr ""
+msgstr "Prepared on"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.sale_advertising_issue_tree
@@ -899,23 +912,23 @@ msgstr "Wijzigbare prijs"
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_form
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 msgid "Print"
-msgstr "Print"
+msgstr "Afdrukken"
 
 #. module: publishing_subscription_order
 #: model:ir.model,name:publishing_subscription_order.model_product_category
 msgid "Product Category"
-msgstr "Product categorie"
+msgstr "Productcategorie"
 
 #. module: publishing_subscription_order
 #: model:ir.model,name:publishing_subscription_order.model_product_template
 msgid "Product Template"
-msgstr "Product sjabloon"
+msgstr "Sjabloonproduct"
 
 #. module: publishing_subscription_order
 #: model:ir.actions.act_window,name:publishing_subscription_order.subscription_product_normal_action_sell
 #: model:ir.ui.menu,name:publishing_subscription_order.menu_products_subs
 msgid "Product Variants"
-msgstr "Product variant"
+msgstr "Productvarianten"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
@@ -936,7 +949,7 @@ msgstr "Offerte"
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_quotation_subscription_tree
 msgid "Quotation Number"
-msgstr "Offerte nr."
+msgstr "Offerte nummer"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_quotation
@@ -991,7 +1004,7 @@ msgstr "Verlenging van"
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 msgid "Reporting"
-msgstr "Rapportage"
+msgstr "Rapportages"
 
 #. module: publishing_subscription_order
 #: selection:sale.order.line,reason_cancel:0
@@ -1018,30 +1031,30 @@ msgstr "Verkoop informatie"
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_quotation
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
 msgid "Sales Mgr Approved"
-msgstr "Akkoord Sales manager"
+msgstr "Akkoord Sales Manager"
 
 #. module: publishing_subscription_order
 #: model:ir.model,name:publishing_subscription_order.model_sale_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 msgid "Sales Order"
-msgstr "Verkoop orders"
+msgstr "Verkooporder"
 
 #. module: publishing_subscription_order
 #: model:ir.model,name:publishing_subscription_order.model_sale_order_line
 msgid "Sales Order Line"
-msgstr "Verkoop order regel"
+msgstr "Verkooporderregel"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_adv_order_line_tree
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_subscription_order_line_form
 msgid "Sales Order Lines"
-msgstr "Verkoop order regels"
+msgstr "Verkooporderregels"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_subscription_tree
 msgid "Sales Orders"
-msgstr "Verkoop orders"
+msgstr "Verkooporders"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
@@ -1051,7 +1064,7 @@ msgstr "Zoek leveringslijst"
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_res_partner_filter_crm_publishing
 msgid "Search Partner"
-msgstr "Zoek partner"
+msgstr "Zoek relatie"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_title_delivery_filter
@@ -1073,17 +1086,17 @@ msgstr "Kies de standaard abonnementsbetaalwijze voor deze klant."
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 msgid "Send by Email"
-msgstr "Stuur per email"
+msgstr "Verzenden via e-mail"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 msgid "Set to Quotation"
-msgstr "Naar offerte"
+msgstr "Zet op offerte"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
 msgid "Setup default terms and conditions in your company settings."
-msgstr "Stel de standaard leveringscondities in in de bedrijfsgegevens."
+msgstr "Stel de algemene verkoopvoorwaarden in bij uw bedrijfsinstellingen."
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
@@ -1096,7 +1109,7 @@ msgid "Start Date"
 msgstr "Startdatum"
 
 #. module: publishing_subscription_order
-#: code:addons/publishing_subscription_order/models/sale_subscription.py:207
+#: code:addons/publishing_subscription_order/models/sale_subscription.py:208
 #, python-format
 msgid "Start Date should be before or be the same as End Date for order line with Description '%s'."
 msgstr "Startdatum moet vroeger of gelijk zijn aan einddatum voor orderregel '%s'."
@@ -1107,7 +1120,7 @@ msgid "Start Of Delivery Stop"
 msgstr "Start van leveringsstop"
 
 #. module: publishing_subscription_order
-#: code:addons/publishing_subscription_order/models/sale_subscription.py:224
+#: code:addons/publishing_subscription_order/models/sale_subscription.py:225
 #, python-format
 msgid "Start Of Delivery Stop Date should be before End Of Delivery Stop Date for order line with Description '%s'."
 msgstr "Startdatum van leveringsstop moet vroeger of gelijk zijn aan einde leveringsstop voor orderregel '%s'."
@@ -1116,7 +1129,7 @@ msgstr "Startdatum van leveringsstop moet vroeger of gelijk zijn aan einde lever
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_line_state
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
 msgid "State"
-msgstr "Status"
+msgstr "Staat / Provincie"
 
 #. module: publishing_subscription_order
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_subscription_delivery_list_state
@@ -1127,7 +1140,7 @@ msgstr "Status"
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_quotation
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_sale
 msgid "Submitted"
-msgstr "Ingevoerd"
+msgstr "Ingediend"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.crm_case_form_view_oppor_button_subscription
@@ -1332,8 +1345,8 @@ msgid "The Title must be unique"
 msgstr "Titel moet uniek zijn"
 
 #. module: publishing_subscription_order
-#: code:addons/publishing_subscription_order/wizard/adv_line_invoice.py:125
-#: code:addons/publishing_subscription_order/wizard/adv_line_invoice.py:129
+#: code:addons/publishing_subscription_order/wizard/adv_line_invoice.py:138
+#: code:addons/publishing_subscription_order/wizard/adv_line_invoice.py:142
 #, python-format
 msgid "The details of the error:'%s' regarding '%s'"
 msgstr "De details van fout:'%s' betreffend '%s'"
@@ -1343,14 +1356,16 @@ msgstr "De details van fout:'%s' betreffend '%s'"
 msgid "The product form contains information to simplify the sale\n"
 "                process: price, notes in the quotation, accounting data,\n"
 "                procurement methods, etc."
-msgstr "Het product formulier bevat informatie om de verkoop te vergemakkelijken\n"
-"                zoals: prijs, aantekeningen, stuurinformatie voor de boekhouding,\n"
-"                inkoopwijze, etc."
+msgstr "Het productformulier bevat informatie om het verkoop\n"
+"proces te vergemakkelijken: prijs, notities in de offerte, boekhouding data,\n"
+"verwervingsmethodes, enz."
 
 #. module: publishing_subscription_order
 #: model:ir.actions.act_window,help:publishing_subscription_order.subscription_product_template_action
 msgid "The product form contains information to simplify the sale process: price, notes in the quotation, accounting data, procurement methods, etc."
-msgstr "Het productformulier bevat informatie om de verkoop te ondersteunen met bijv. prijzen, aantekeningen, boekhoudkundige en logistieke informatie."
+msgstr "Het productformulier bevat informatie om het verkoopproces\n"
+"te vergemakkelijken: prijs, notities in de offerte, boekhouding data,\n"
+"verwervingsmethodes, enz."
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_filter
@@ -1406,12 +1421,12 @@ msgstr "Naar abonnementen offertes"
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_subscription_tree
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_quotation_subscription_tree
 msgid "Total Amount Untaxed"
-msgstr "Totaal netto"
+msgstr "Totaalbedrag excl. BTW"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_order_view_search_inherit_quotation
 msgid "Traffic Approved"
-msgstr "Door Traffic goedgekeurd"
+msgstr "Akkoord Traffic"
 
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.view_order_form_subscriptions
@@ -1427,7 +1442,7 @@ msgstr "Geldig op"
 #. module: publishing_subscription_order
 #: model:ir.ui.view,arch_db:publishing_subscription_order.subscription_delivery_list_form
 msgid "Validate"
-msgstr "Controleer"
+msgstr "Bevestig"
 
 #. module: publishing_subscription_order
 #: selection:sale.order.line,reason_cancel:0
@@ -1467,20 +1482,20 @@ msgstr "Weekdagen"
 msgid "You must define a product for everything you sell, whether it's\n"
 "                a physical product, a consumable or a service you offer to\n"
 "                customers."
-msgstr "Je moet een product definiëren voor alles wat je verkoopt, of het nu een\n"
-"                fysiek product is, een verbruiksartikel of dienst is die je aan klanten\n"
-"                aanbiedt."
+msgstr "U moet een product definiëren voor alles dat u verkoopt, of het nu\n"
+"een fysiek product, verbruiksartikel of een dienst is die u aanbied aan uw\n"
+"klanten."
 
 #. module: publishing_subscription_order
 #: model:ir.actions.act_window,help:publishing_subscription_order.subscription_product_template_action
 msgid "You must define a product for everything you sell, whether it's a physical product, a consumable or a service you offer to customers."
-msgstr "Je moet een product definiëren voor alles wat je verkoopt, of het nu een fysiek product is, een verbruiksartikel of een dienst die je aan klanten aanbiedt."
+msgstr "U moet een product definiëren voor alles dat u verkoopt, of het nu een fysiek product, verbruiksartikel of een dienst is die u aanbied aan uw klanten."
 
 #. module: publishing_subscription_order
 #: model:ir.actions.act_window,help:publishing_subscription_order.action_orders_subscription
 #: model:ir.actions.act_window,help:publishing_subscription_order.action_quotation_subscription
 msgid "Your next actions should flow efficiently: confirm the Quotation to a Sale Order, then create the Invoice and collect the Payment."
-msgstr "De volgende acties zijn: bevestig offerte tot verkooporder, maak een factuur en verwerk de betaling."
+msgstr "Uw volgende acties moeten efficiënt verlopen: verander de offerte in een verkooporder, maak daarna de factuur aan en verwerk de betaling ervan."
 
 #. module: publishing_subscription_order
 #: model:ir.model,name:publishing_subscription_order.model_account_config_settings
