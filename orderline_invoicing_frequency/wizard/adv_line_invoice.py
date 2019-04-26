@@ -16,7 +16,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
              To make invoices.
              @return: A dictionary which exists of fields with values.
         """
-        import pdb; pdb.set_trace()
         context = self.env.context.copy()
         if not context.get('active_ids', []):
             message = 'No ad order lines selected for invoicing.'
