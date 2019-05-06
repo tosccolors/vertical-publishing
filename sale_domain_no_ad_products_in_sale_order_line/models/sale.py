@@ -11,8 +11,9 @@ class SaleOrderLine(models.Model):
     def _get_product_domain(self):
         domain = [('sale_ok', '=', True)]
         if 'default_advertising' not in self._context or not self._context.get('default_advertising'):
-            id = self.env.ref('sale_advertising_order.advertising_category').id
-            product_ids = self.env['product.product'].search([('categ_id', 'child_of', id)])
+            ads = self.env.ref('sale_advertising_order.advertising_category').id
+            title_pricelist = self.env.ref('sale_advertising_order.title_pricelist_category').id
+            product_ids = self.env['product.product'].search(['|', ('categ_id', 'child_of', ads), ('categ_id', 'child_of', title_pricelist)])
             domain.append(('id', 'not in', product_ids.ids))
         return domain
 
