@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+import logging
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from datetime import date, datetime
+
+_logger = logging.getLogger(__name__)
 
 class AdOrderLineMakeInvoice(models.TransientModel):
     _inherit = "ad.order.line.make.invoice"
@@ -15,7 +18,12 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         """
         context = self.env.context.copy()
         if not context.get('active_ids', []):
-            raise UserError(_('No Ad Order lines are selected for invoicing:\n'))
+            message = 'No ad order lines selected for invoicing.'
+            if context.get('job_uuid') :
+                _logger.info(message)
+                return message+"\n"
+            else :
+                raise UserError(_(message))
         else: active_order_line_ids = context.get('active_ids', [])
 
         OrderLine = self.env['sale.order.line']
@@ -40,6 +48,11 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                         order_line_ids.append(line.id)
         context.update({'active_ids':order_line_ids}),context.update({'active_id':order_line_ids[0]}) if order_line_ids else context
         if not order_line_ids:
-            raise UserError(_('No Ad Order lines are selected under this criteria.'))
+            message = 'Invoicing frequency prevented invoicing. Invoicing too recently done. No ad order line remains for invoicing under invoicing frequency criteria.'
+            if context.get('job_uuid') :
+                _logger.info(message)
+                return message+"\n"
+            else :
+                raise UserError(_(message))
         return super(AdOrderLineMakeInvoice, self.with_context(context)).make_invoices_from_lines()
 
