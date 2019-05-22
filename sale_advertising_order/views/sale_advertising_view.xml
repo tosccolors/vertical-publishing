@@ -1230,6 +1230,7 @@
                         <filter string="Salesperson" domain="[]" context="{'group_by':'salesman_id'}"/>
                         <filter string="Account Manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
                         <filter string="Issue Date" icon="terp-personal" domain="[]" context="{'group_by':'issue_date'}"/>
+                        <filter string="Advertising Issue" domain="[]" context="{'group_by':'adv_issue'}"/>
                     </group>
                 </search>
             </field>
