@@ -40,7 +40,8 @@ This module allows you to use Sales Management to run your subscription sales
         'report_xlsx',
         'report_xml',
         'l10n_nl_partner_name',
-        'hr'
+        'hr',
+        'project_issue', #for positioning "subs as reader smart button" 
     ],
     'data': [
         "data/ir_sequence_data.xml",
