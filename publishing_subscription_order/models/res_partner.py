@@ -31,6 +31,7 @@ class Partner(models.Model):
     subscription_customer_payment_mode_id = fields.Many2one('account.payment.mode', string='Subscription Customer Payment Mode',company_dependent=True,domain=[('payment_type', '=', 'inbound')],help="Select the default subscription payment mode for this customer.")
     subs_quotation_count = fields.Integer(compute='_compute_subs_quotation_count', string='# of Quotations')
     subs_sale_order_count = fields.Integer(compute='_compute_subs_sale_order_count', string='# of Sales Orders')
+    subs_as_reader_count = fields.Integer(compute='_compute_subs_as_reader_count', string='# of Sales Orders as reader')
     department_id = fields.Many2one('hr.department', string='Department')
 
     def _compute_subs_quotation_count(self):
@@ -58,6 +59,13 @@ class Partner(models.Model):
             partner_ids = [partner_ids.get('id')] + partner_ids.get('child_ids')
             # then we can sum for all the partner's child
             partner.subs_sale_order_count = sum(mapped_data.get(child, 0) for child in partner_ids)
+
+    def _compute_subs_as_reader_count(self):
+        subscription_orders = self.env['sale.order'].search([('partner_shipping_id', '=', self.ids),
+                                                             ('subscription','=',True),
+                                                             ('state','in',('sale','done'))])
+        for partner in self:
+            partner.subs_as_reader_count = len(subscription_orders)
 
     @api.multi
     def _compute_total_sales_order(self):
