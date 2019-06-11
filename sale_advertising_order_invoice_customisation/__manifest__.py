@@ -32,10 +32,11 @@ This module improves the integration between sale advertising orders and adverti
     'author': 'Magnus - DK',
     'website': 'http://www.magnus.nl',
     'depends': [
-                'sale_advertising_order',
+                'sale_advertising_order','magnus_account'
                 ],
     'data': [
              "views/account_invoice_view.xml",
+             "views/report_invoice.xml",
              ],
     'demo': [],
     'installable': True
