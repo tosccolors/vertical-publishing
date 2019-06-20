@@ -7,6 +7,9 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_form" />
             <field name="arch" type="xml">
+                <field name="partner_id" position="attributes">
+                    <attribute name="context">{'search_default_customer':1, 'show_address': 1, 'show_email':1}</attribute>
+                </field>
                 <field name="partner_id" position="after">
                     <field name="published_customer"
                            attrs="{'invisible': [('ad','!=',True)]}"/>
