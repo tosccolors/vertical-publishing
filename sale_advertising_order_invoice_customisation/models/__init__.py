@@ -22,5 +22,6 @@
 
 import account_invoice
 import adv_line_invoice
+import sale_order
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 
