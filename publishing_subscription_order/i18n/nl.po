@@ -1261,7 +1261,13 @@ msgstr "Abonnementen verkoop"
 #: model:ir.actions.act_window,name:publishing_subscription_order.action_orders_subscription
 #: model:ir.ui.menu,name:publishing_subscription_order.menu_subscription_sales
 msgid "Subscription Sales Orders"
-msgstr "Verkoop orders"
+msgstr "Abonnement verkooporder"
+
+#. module: publishing_subscription_order
+#: model:ir.ui.view,arch_db:publishing_subscription_order.res_partner_view_buttons_reader_subscription
+#: model:ir.actions.act_window,name:publishing_subscription_order.act_res_partner_2_reader_subscription
+msgid "Reader subscriptions"
+msgstr "Lezer abo's"
 
 #. module: publishing_subscription_order
 #: model:ir.model.fields,field_description:publishing_subscription_order.field_sale_advertising_issue_subscription_title

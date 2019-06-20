@@ -339,14 +339,14 @@ class SaleOrder(models.Model):
     @api.multi
     def write(self, vals):
         result = super(SaleOrder, self).write(vals)
-        orders = self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks'))
+        orders = self.filtered(lambda s: s.advertising and not s.env.context.get('no_checks'))
         for order in orders:
             user = self.env['res.users'].browse(self.env.uid)
             if not user.has_group('sale_advertising_order.group_no_discount_check') \
                and self.ver_tr_exc:
                     raise UserError(_(
-                    'You cannot save a Sale Order with a line more than 60% discount. You\'ll have to cancel the order and '
-                    'resubmit it or ask Sales Support for help'))
+                    'You cannot save a Sale Order with a line more than %s%s discount. You\'ll have to cancel the order and '
+                    'resubmit it or ask Sales Support for help')%(order.company_id.verify_discount_setting, '%'))
             olines = []
             for line in order.order_line:
                 if line.multi_line:
@@ -408,6 +408,8 @@ class SaleOrderLine(models.Model):
                     comp_discount = round((1.0 - float(subtotal_bad) / (float(price_unit) * float(qty) + float(csa) *
                                                                         float(qty))) * 100.0, 5)
                     unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), 5)
+                    decimals=self.env['decimal.precision'].search([('name','=','Product Price')]).digits or 4
+                    unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), decimals)
                 elif qty == 0.0:
                     unit_price = 0.0
                     comp_discount = 0.0
@@ -1037,9 +1039,11 @@ class SaleOrderLine(models.Model):
         for line in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
             if 'pubble_sent' in vals:
                 continue
+            is_allowed = user.has_group('account.group_account_invoice') or 'allow_user' in self.env.context
             if line.invoice_status == 'invoiced' and not (vals.get('product_uom_qty') == 0 and line.qty_invoiced == 0) \
-                                                 and not user.has_group('account.group_account_invoice') \
+                                                 and not is_allowed \
                                                  and not user.id == 1:
+
                 raise UserError(_('You cannot change an order line after it has been fully invoiced.'))
             if not line.multi_line and ('product_id' in vals or 'adv_issue' in vals or 'product_uom_qty' in vals):
                 if line.deadline_check():
