@@ -14,6 +14,40 @@
         </field>
     </record>
 
+    <record id="view_order_form_advertising_digital_domain" model="ir.ui.view">
+        <field name="name">sale.order.form.advertising.digital.domain</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <field name="adv_issue" position="after">
+                <field name="ad_class_digital" invisible="1"/>
+            </field>
+            <field name="adv_issue" position="attributes">
+                <attribute name="domain">['&amp;', ('parent_id','!=', False), '&amp;', ('parent_id','=', title),('digital','=', ad_class_digital), '|','|',('deadline','&gt;=', deadline_offset), ('deadline','=', False), ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]</attribute>
+            </field>
+            <field name="adv_issue_ids" position="attributes">
+                <attribute name="domain">[('parent_id','!=', False),'|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),('digital','=', ad_class_digital), '|','|',('deadline','&gt;=', deadline_offset), ('deadline','=', False), ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]</attribute>
+            </field>
+        </field>
+    </record>
+
+    <!--No Deadline Check User group views-->
+    <record id="view_order_form_advertising_digital_domain_no_deadline_check" model="ir.ui.view">
+        <field name="name">sale.order.form.advertising.digital.domain</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
+        <field name="priority" eval="21"/>
+        <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_no_deadline_check'))]"/>
+        <field name="arch" type="xml">
+            <field name="adv_issue" position="attributes">
+                <attribute name="domain">['&amp;', ('parent_id','!=', False), '&amp;', ('parent_id','=', title),('digital','=', ad_class_digital)]</attribute>
+            </field>
+            <field name="adv_issue_ids" position="attributes">
+                <attribute name="domain">[('parent_id','!=', False),'|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),('digital','=', ad_class_digital)]</attribute>
+            </field>
+        </field>
+    </record>
+
   </data>
 </odoo>
-
