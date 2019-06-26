@@ -73,7 +73,7 @@
                                    context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}'
                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"/>
                             <field name="partner_invoice_id" string="Payer Invoice Address"
-                                   context="{'default_type':'invoice', 'show_address': 1}" domain="[('id','child_of',partner_id)]"
+                                   context="{'default_type':'invoice', 'show_address': 1, 'show_email':1}" options='{"always_reload": True}' domain="[('id','child_of',partner_id)]"
                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"
                                    groups="sale.group_delivery_invoice_address"/>
                             <field name="customer_contact" required="False" context="{'default_parent_id': partner_id, 'show_email': 1}"
