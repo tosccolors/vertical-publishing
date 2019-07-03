@@ -255,9 +255,9 @@
                 <search string="Search Partner">
                    <field name="name"
                        filter_domain="['|','|',('name','ilike',self),('parent_id','ilike',self),('ref','=',self)]"/>
+                   <field name="zip" filter_domain="['|',('zip','ilike',self),('zip','=',self)]"/>
                    <field name="email" filter_domain="['|',('email','ilike',self),('email','=',self)]"/>
                    <field name="city" filter_domain="['|',('city','ilike',self),('city','=',self)]"/>
-                   <field name="zip" filter_domain="['|',('zip','ilike',self),('zip','=',self)]"/>
                    <filter help="My Customers" name="my_partners" icon="terp-personal+" domain="[('user_id','=',uid)]"/>
                    <separator/>
                    <filter string="Persons" name="type_person" domain="[('is_company','=',0),('type','=','contact')]"/>
@@ -362,6 +362,8 @@
             <field name="inherit_id" ref="base.view_res_partner_filter"/>
             <field name="arch" type="xml">
                 <field name="name" position="after">
+                    <field name="zip" filter_domain="['|',('zip','ilike',self),('zip','=',self)]"/>
+                    <field name="email" filter_domain="['|',('email','ilike',self),('email','=',self)]"/>
                     <field name="city" filter_domain="['|',('city','ilike',self),('city','=',self)]"/>
                 </field>
             </field>
