@@ -324,7 +324,9 @@ class SaleOrder(models.Model):
                 for newline in newlines:
                     if newline.deadline_check():
                         newline.page_qty_check_create()
-        return super(SaleOrder, self.with_context(no_checks=True)).action_confirm()
+        #@by Sushma: context no_checks always by pass order comparision with verify_discount_setting & verify_order_setting
+        # return super(SaleOrder, self.with_context(no_checks=True)).action_confirm()
+        return super(SaleOrder, self).action_confirm()
 
     @api.model
     def create(self, vals):
