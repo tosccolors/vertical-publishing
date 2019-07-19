@@ -313,8 +313,6 @@
                                     <field name="id"/>
                                     <field name="title" />
                                     <field name="issue_date" />
-                                    <field name="from_date" />
-                                    <field name="to_date" />
                                     <field name="ad_class" groups="base.group_no_one"/>
                                     <field name="product_id"
                                         attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
