@@ -227,6 +227,7 @@ class ActivityLog(models.TransientModel):
 
     @api.multi
     def action_log(self):
+        res = super(ActivityLog,self).action_log()
         stage_logged = self.env.ref("sale_advertising_order.stage_logged")
         for log in self:
             body_html = "<div><b>%(title)s</b>: %(next_activity)s</div>%(description)s%(note)s" % {
@@ -248,7 +249,7 @@ class ActivityLog(models.TransientModel):
                 'title_action': False,
             })
             if log.lead_id.is_activity: log.lead_id.write({'stage_id': stage_logged.id})
-        return True
+        return res
 
 
 

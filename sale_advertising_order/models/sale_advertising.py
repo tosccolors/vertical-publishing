@@ -324,7 +324,9 @@ class SaleOrder(models.Model):
                 for newline in newlines:
                     if newline.deadline_check():
                         newline.page_qty_check_create()
-        return super(SaleOrder, self.with_context(no_checks=True)).action_confirm()
+        #@by Sushma: context no_checks always by pass order comparision with verify_discount_setting & verify_order_setting
+        # return super(SaleOrder, self.with_context(no_checks=True)).action_confirm()
+        return super(SaleOrder, self).action_confirm()
 
     @api.model
     def create(self, vals):
@@ -339,14 +341,16 @@ class SaleOrder(models.Model):
     @api.multi
     def write(self, vals):
         result = super(SaleOrder, self).write(vals)
-        orders = self.filtered(lambda s: s.advertising and not s.env.context.get('no_checks'))
+        orders = self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks'))
         for order in orders:
             user = self.env['res.users'].browse(self.env.uid)
             if not user.has_group('sale_advertising_order.group_no_discount_check') \
                and self.ver_tr_exc:
-                    raise UserError(_(
-                    'You cannot save a Sale Order with a line more than %s%s discount. You\'ll have to cancel the order and '
-                    'resubmit it or ask Sales Support for help')%(order.company_id.verify_discount_setting, '%'))
+                raise UserError(_(
+                    'You cannot save a Sale Order with a line more than %s%s discount or order total amount is more than %s.'
+                    '\nYou\'ll have to cancel the order and '
+                    'resubmit it or ask Sales Support for help.') % (
+                                order.company_id.verify_discount_setting, '%', order.company_id.verify_order_setting))
             olines = []
             for line in order.order_line:
                 if line.multi_line:
