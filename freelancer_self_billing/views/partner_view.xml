@@ -1,0 +1,59 @@
+<odoo>
+
+    <record id="view_partner_supplier_tree_portal_usermgt_ext" model="ir.ui.view">
+        <field name="name">res.partner.tree</field>
+        <field name="model">res.partner</field>
+        <!--<field name="inherit_id" ref="nsm_supplier_portal.view_partner_supplier_tree_portal_usermgt"/>-->
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <field name="display_name" position="after">
+                <field name="product_price_ids"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_nsm_res_partner_form_hon" model="ir.ui.view">
+        <field name="name">res.partner.form.hon</field>
+        <field name="model">res.partner</field>
+        <field name="type">form</field>
+        <!--<field name="inherit_id" ref="nsm_supplier_portal.view_nsm_res_partner_form"/>-->
+        <field name="inherit_id" ref="account.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <page name="accounting" position="after" >
+                <page string="Product Prices" col="4" name="supplier_product_prices" attrs="{'invisible': [('is_company','=',False),('parent_id','!=',False)]}">
+                    <group>
+                        <field name="product_price_ids" string="Product Prices per Vendor">
+                             <tree string="Product Prices per Vendor" editable="bottom">
+                                 <field name="product_id"/>
+                                 <field name="price_unit" />
+                                 <field name="company_id" invisible="1"/>
+                                 <field name="comment" />
+                             </tree>
+                         </field>
+                    </group>
+                </page>
+            </page>
+        </field>
+    </record>
+
+    <record id="view_company_form_hon" model="ir.ui.view">
+        <field name="name">res.company.form</field>
+        <field name="model">res.company</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <data>
+                <xpath expr="//notebook[last()]" position="inside">
+                    <page string="HON configuration" >
+                        <group string="Honorarium App" cols="2" >
+                            <field name="hon_journal"/>
+                            <field name="report_background_image_hon1" no_label="1" widget="image" class="oe_avatar oe_left"/>
+                            <field name="report_background_image_hon2" no_label="1" widget="image" class="oe_avatar oe_left"/>
+                        </group>
+                    </page>
+                </xpath>
+            </data>
+        </field>
+    </record>
+
+</odoo>

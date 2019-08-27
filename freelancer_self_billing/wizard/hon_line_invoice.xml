@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_hon_issue_line_make_invoice" model="ir.ui.view">
+            <field name="name">Honorarium Issue Line Make Invoice</field>
+            <field name="model">hon.issue.line.make.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Create invoices" version="7.0">
+                    <p class="oe_grey">
+                        All selected and eligible issue lines will be invoiced.
+                    </p>
+                    <footer>
+                        <button name="make_invoices_from_lines" string="Create Invoices" type="object" class="oe_highlight"/>
+                        <!--button string="Cancel" class="oe_link" special="cancel" /-->
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="view_hon_issue_make_invoice" model="ir.ui.view">
+            <field name="name">Honorarium Issue Make Invoice</field>
+            <field name="model">hon.issue.make.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Create invoices" version="7.0">
+                    <p class="oe_grey">
+                        All eligible items in these issues will be invoiced.
+                    </p>
+                    <footer>
+                        <button name="make_invoices_from_issues" string="Create Invoices" type="object" class="oe_highlight"/>
+                        <!--button string="Cancel" class="oe_link" special="cancel" /-->
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_view_hon_issue_line_make_invoice" model="ir.actions.act_window">
+            <field name="name">Make Invoices</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hon.issue.line.make.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_hon_issue_line_make_invoice"/>
+            <field name="target">new</field>
+        </record>
+        <record id="action_view_hon_issue_make_invoice" model="ir.actions.act_window">
+            <field name="name">Make Invoices</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hon.issue.make.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_hon_issue_make_invoice"/>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.values" id="hon_issue_line_make_invoice">
+            <field name="model_id" ref="model_hon_issue_line" />
+            <field name="name">Make Invoices</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('action_view_hon_issue_line_make_invoice'))" />
+            <field name="key">action</field>
+            <field name="model">hon.issue.line</field>
+        </record>
+
+        <record model="ir.values" id="hon_issue_make_invoice">
+            <field name="model_id" ref="model_hon_issue" />
+            <field name="name">Make Invoices</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('action_view_hon_issue_make_invoice'))" />
+            <field name="key">action</field>
+            <field name="model">hon.issue</field>
+        </record>
+    </data>
+</openerp>
