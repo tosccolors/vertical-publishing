@@ -24,7 +24,8 @@
 			 	<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
 				<field name="arch" type="xml">
 					<field name="type" position="after">
-						<field name="date_type" required="1"/>
+						<field name="adv_parent" attrs="{'invisible':[('parent_id', '!=', False)]}"/>
+						<field name="date_type" attrs="{'required':[('adv_parent', '=', True)]}"/>
 						<field name="deadline_offset" required="1"/>
 						<field name="tag_ids" widget="many2many"/>
 					</field>

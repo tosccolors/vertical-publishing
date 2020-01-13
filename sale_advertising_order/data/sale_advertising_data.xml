@@ -18,6 +18,7 @@
 			<field name="name">Ads</field>
             <field name="type">view</field>
 			<field name="date_type">date</field>
+			<field name="adv_parent">True</field>
 		</record>
 
 		<record id="newspaper_advertising_category" model="product.category">

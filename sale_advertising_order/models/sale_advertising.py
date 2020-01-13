@@ -324,7 +324,9 @@ class SaleOrder(models.Model):
                 for newline in newlines:
                     if newline.deadline_check():
                         newline.page_qty_check_create()
-        return super(SaleOrder, self.with_context(no_checks=True)).action_confirm()
+        #@by Sushma: context no_checks always by pass order comparision with verify_discount_setting & verify_order_setting
+        # return super(SaleOrder, self.with_context(no_checks=True)).action_confirm()
+        return super(SaleOrder, self).action_confirm()
 
     @api.model
     def create(self, vals):
@@ -344,9 +346,11 @@ class SaleOrder(models.Model):
             user = self.env['res.users'].browse(self.env.uid)
             if not user.has_group('sale_advertising_order.group_no_discount_check') \
                and self.ver_tr_exc:
-                    raise UserError(_(
-                    'You cannot save a Sale Order with a line more than 60% discount. You\'ll have to cancel the order and '
-                    'resubmit it or ask Sales Support for help'))
+                raise UserError(_(
+                    'You cannot save a Sale Order with a line more than %s%s discount or order total amount is more than %s.'
+                    '\nYou\'ll have to cancel the order and '
+                    'resubmit it or ask Sales Support for help.') % (
+                                order.company_id.verify_discount_setting, '%', order.company_id.verify_order_setting))
             olines = []
             for line in order.order_line:
                 if line.multi_line:
@@ -407,7 +411,9 @@ class SaleOrderLine(models.Model):
                 elif price_unit > 0.0 and qty > 0.0 :
                     comp_discount = round((1.0 - float(subtotal_bad) / (float(price_unit) * float(qty) + float(csa) *
                                                                         float(qty))) * 100.0, 5)
-                    unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), 2)
+                    unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), 5)
+                    decimals=self.env['decimal.precision'].search([('name','=','Product Price')]).digits or 4
+                    unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), decimals)
                 elif qty == 0.0:
                     unit_price = 0.0
                     comp_discount = 0.0
@@ -1013,6 +1019,17 @@ class SaleOrderLine(models.Model):
             res['ad_number'] = self.ad_number
             res['computed_discount'] = self.computed_discount
             res['opportunity_subject'] = self.order_id.opportunity_subject
+            start_date = None
+            end_date = None
+            if self.to_date and self.from_date:
+                start_date = self.from_date
+                end_date = self.to_date
+            else:
+                if self.issue_date:
+                    start_date = self.issue_date
+                    end_date = self.issue_date
+            res['start_date']=start_date,
+            res['end_date']=end_date,
         return res
 
     @api.model
@@ -1037,9 +1054,11 @@ class SaleOrderLine(models.Model):
         for line in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
             if 'pubble_sent' in vals:
                 continue
+            is_allowed = user.has_group('account.group_account_invoice') or 'allow_user' in self.env.context
             if line.invoice_status == 'invoiced' and not (vals.get('product_uom_qty') == 0 and line.qty_invoiced == 0) \
-                                                 and not user.has_group('account.group_account_invoice') \
+                                                 and not is_allowed \
                                                  and not user.id == 1:
+
                 raise UserError(_('You cannot change an order line after it has been fully invoiced.'))
             if not line.multi_line and ('product_id' in vals or 'adv_issue' in vals or 'product_uom_qty' in vals):
                 if line.deadline_check():
@@ -1202,8 +1221,6 @@ class MailComposeMessage(models.TransientModel):
             if order.state in ['approved2','approved1']:
                 order.state = 'sent'
         return super(MailComposeMessage, self.with_context(mail_post_autofollow=True)).send_mail(auto_commit=auto_commit)
-
-
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

@@ -20,6 +20,16 @@
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('view_order_subscription_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_order_form_subscriptions')})]"/>
     </record>
+    <!--Action for finding subscriptions for readers in Partners (not Customers)-->
+    <record id="act_res_partner_2_reader_subscription" model="ir.actions.act_window">
+        <field name="name">Reader subscriptions</field>
+        <field name="res_model">sale.order</field>
+        <field name="domain">[('subscription','=',True), ('state','in',('sale','done')), ('partner_shipping_id','child_of',active_id)]</field>
+        <field name="context">{'default_subscription':True, 'default_partner_shipping_id':active_id}</field>
+        <field name="view_ids"
+                   eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('view_order_subscription_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('view_order_form_subscriptions')})]"/>
+    </record>
 
     <!--Inherited Action for Quotations smart button in res.partner-->
     <!--Adding ('subscription', '=', False) in domain to filter out subscription records from regular quotations smart button-->
@@ -88,6 +98,23 @@
             </xpath>
         </field>
     </record>
+    
+    <!-- If partner is reader and someone else pays, then there still should be a linek to subscriptions, i.e. smart button
+         button is placed before issues because of possible relationship with a complaint (thus other inherit) -->
+    <record id="res_partner_view_buttons_reader_subscription" model="ir.ui.view">
+        <field name="name">res.partner.susbcription</field>
+        <field name="inherit_id" ref="project_issue.res_partner_issues_button_view"/>
+        <field name="model">res.partner</field>
+        <field type="xml" name="arch">
+            <xpath expr="//button[@name='%(project_issue.action_view_issues)d']" position="before">
+                <button class="oe_stat_button" type="action" name="%(act_res_partner_2_reader_subscription)d"
+                    icon="fa-truck">
+                    <field string="Reader subscriptions" name="subs_as_reader_count" widget="statinfo"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
 
     <record id="view_res_partner_filter_crm_publishing" model="ir.ui.view">
         <field name="name">res.partner.select</field>
@@ -96,9 +123,9 @@
             <search string="Search Partner">
                <field name="name"
                    filter_domain="['|','|',('name','ilike',self),('parent_id','ilike',self),('ref','=',self)]"/>
+               <field name="zip" filter_domain="['|',('zip','ilike',self),('zip','=',self)]"/>
                <field name="email" filter_domain="['|',('email','ilike',self),('email','=',self)]"/>
                <field name="city" filter_domain="['|',('city','ilike',self),('city','=',self)]"/>
-               <field name="zip" filter_domain="['|',('zip','ilike',self),('zip','=',self)]"/>
                <filter help="My Customers" name="my_partners" icon="terp-personal+" domain="[('user_id','=',uid)]"/>
                <separator/>
                <filter string="Subscription Customer" name="subscription_customer" domain="[('is_subscription_customer','=',1)]" help="Is Subscription Customer"/>

@@ -1,0 +1,188 @@
+<?xml version="1.0"?>
+<odoo>
+<data>
+
+<template id="external_layout_hon">
+    <!-- Multicompany -->
+    <t t-if="not o and doc">
+        <t t-set="o" t-value="doc"/>
+    </t>
+    <t t-if="o and 'company_id' in o">
+        <t t-set="company" t-value="o.company_id"></t>
+    </t>
+    <t t-if="not o or not 'company_id' in o">
+        <t t-set="company" t-value="res_company"></t>
+    </t>
+
+    <t t-call="freelancer_self_billing.external_layout_header_hon" />
+    <t t-raw="0" />
+</template>
+
+<template id="external_layout_header_hon">
+    <div class="header">
+        <div class="row">
+            <div class="row backgroundimage" style="position:relative;font-size:3em;
+                        width:100%;height:100%;z-index:1000;padding-left:5px;">
+                <img t-if="company" t-att-src="'data:image/png;base64,%s' % company.report_background_image_hon1"
+                        style="width:100%; display: block;"/>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="report_invoice_document_hon">
+    <t t-call="freelancer_self_billing.external_layout_hon">
+        <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
+        <div class="page" style="font-family: 'Titillium Web', sans-serif;page-break-after:always;">
+            <div class="row mt32 mb32" style="padding-left:85px;">
+                 <div class="col-xs-7" style="padding:0px;">
+                    <strong>
+                         <t t-if="o.partner_id.is_company">
+                             <div t-field="o.partner_id.name"/>
+                             <div t-field="o.partner_id.street"/>
+                             <div t-field="o.partner_id.street2"/>
+                             <span t-field="o.partner_id.zip"/> <span t-field="o.partner_id.city"/>
+                             <div t-field="o.partner_id.country_id.name"/>
+                         </t>
+                         <t t-if="not o.partner_id.is_company">
+                             <span t-if="o.partner_id.title" t-field="o.partner_id.title.name"/> <span t-field="o.partner_id.initials"/> <span t-field="o.partner_id.infix"/> <span t-field="o.partner_id.lastname"/>
+                             <div t-field="o.partner_id.street"/>
+                             <div t-field="o.partner_id.street2"/>
+                             <span t-field="o.partner_id.zip"/> <span t-field="o.partner_id.city"/>
+                             <div t-field="o.partner_id.country_id.name"/>
+                         </t>
+                        <t t-if="not o.partner_id.name">
+                            <br/>
+                        </t>
+                        <t t-if="not o.partner_id.street">
+                            <br/>
+                        </t>
+                        <t t-if="not o.partner_id.street2">
+                            <br/>
+                        </t>
+                        <t t-if="not o.partner_id.zip and not o.partner_id.city">
+                            <br/>
+                        </t>
+                        <t t-if="not o.partner_id.country_id">
+                            <br/>
+                        </t>
+                    </strong>
+                 </div>
+            </div>
+
+            <div t-if="o.product_category.hon_type == 'letter_a'" class="row" style="padding-left:85px;">
+                <div name="invoice_title" class="col-xs-7" style="padding:0px;">
+                    <h3>
+                        <span>Factuur uitgereikt door afnemer</span>
+                    </h3>
+                </div>
+            </div>
+            <br/>
+            <div t-if="o.product_category.hon_type == 'letter_a'" style="padding-left:85px;">
+                <span t-if="o.supplier_invoice_number">Betaalreferentie: </span><span t-field="o.supplier_invoice_number"/>
+            </div>
+            <br/>
+            <br/>
+            <div class="row" style="padding-left:650px;">
+                <div class="col-xs-5 col-xs-offset-7" style="padding:0px;">
+                    <span t-if="o.date_invoice" t-esc="datetime.datetime.strptime(o.date_invoice, '%Y-%m-%d').strftime('%d-%m-%Y')"/>
+                </div>
+            </div>
+
+            <div style="padding-left:85px;padding-right:15px;">
+                <span>Geachte </span><span t-if="o.partner_id.title" t-field="o.partner_id.title"/> <span t-field="o.partner_id.infix"/> <span t-field="o.partner_id.lastname"/>,
+                <br/>
+                <br/>
+                <div t-if="o.product_category.hon_type == 'letter_a'">
+                    <span>Voor onderstaand(e) artikel(en), gepubliceerd in </span><span t-field="o.origin"/><span> d.d. </span><span t-if="o.invoice_line_ids and o.invoice_line_ids[0].account_analytic_id.date_publish" t-esc="datetime.datetime.strptime(o.invoice_line_ids[0].account_analytic_id.date_publish, '%Y-%m-%d').strftime('%d-%m-%Y')"/><span> ontvangt u op uw IBAN nummer </span><span t-if="o.partner_bank_id and o.partner_bank_id.acc_number" t-field="o.partner_bank_id.acc_number" /><span> het volgende bedrag:</span>
+                </div>
+                <div t-if="o.product_category.hon_type == 'letter_b'">
+                    <span>Hierbij verzoeken wij u ons een rekening te zenden voor de hieronder vermelde foto('s)/illustratie(s) gepubliceerd in </span><span t-field="o.origin"/><span> d.d. </span><span t-if="o.invoice_line_ids and o.invoice_line_ids[0].account_analytic_id.date_publish" t-esc="datetime.datetime.strptime(o.invoice_line_ids[0].account_analytic_id.date_publish, '%Y-%m-%d').strftime('%d-%m-%Y')"/>
+                </div>
+                <br/>
+                <br/>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th style="width:15%">
+                                Pagina nr.
+                            </th>
+                            <th style="width:60%">
+                                <span>Omschrijving</span>
+                            </th>
+                            <th style="width:1%">
+                            </th>
+                            <th class="text-right" style="width:10%">
+                                <span>Publicatie rechten</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="sale_tbody">
+                        <t t-foreach="o.invoice_line_ids" t-as="l">
+                            <tr>
+                                <td>
+                                    <t t-if="l.hon_issue_line_id"><span t-field="l.hon_issue_line_id.page_number"/></t>
+                                </td>
+                                <td>
+                                    <span t-field="l.name"/>
+                                </td>
+                                <td>
+                                    <t t-if="o.currency_id"><span t-field="o.currency_id.symbol"/></t>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="'%.2f'% l.price_subtotal" />
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                    <tr>
+                        <td>
+                            Totaal
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            <t t-if="o.currency_id"><span t-field="o.currency_id.symbol"/></t>
+                        </td>
+                        <td class="text-right">
+                            <t t-set="total" t-value="sum(line.price_subtotal for line in o.invoice_line_ids)"/>
+                            <span t-esc="'%.2f'% total"/>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <br/>
+                <br/>
+
+                <table>
+                    <tr>
+                        <td>
+                            <t t-if="o.product_category.hon_type == 'letter_b'">
+                                <p>U wordt verzocht deze originele brief tegelijk met de rekening terug te zenden. Zonder deze brief kan niet tot betaling worden overgegaan.</p>
+                                <br/>
+                            </t>
+                            <p>Hoogachtend,</p>
+                            <br/>
+                            <t t-if="o.product_category.hon_type == 'letter_b'"><p>Fotoredactie.</p><br/></t>
+
+                            <t t-if="o.product_category.hon_type == 'letter_a'"><p>Secretariaat hoofdredactie.</p><br/></t>
+
+                            <t t-if="o.product_category.hon_type == 'letter_b'">Uw rekening s.v.p. zenden aan: crediteuren@onebusiness.nl</t>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </t>
+</template>
+
+<template id="report_invoice_hon">
+    <t t-call="report.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="freelancer_self_billing.report_invoice_document_hon" t-lang="o.partner_id.lang"/>
+        </t>
+    </t>
+</template>
+
+</data>
+</odoo>

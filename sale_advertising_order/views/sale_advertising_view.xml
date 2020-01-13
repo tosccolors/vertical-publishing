@@ -73,7 +73,7 @@
                                    context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}'
                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"/>
                             <field name="partner_invoice_id" string="Payer Invoice Address"
-                                   context="{'default_type':'invoice', 'show_address': 1}" domain="[('id','child_of',partner_id)]"
+                                   context="{'default_type':'invoice', 'show_address': 1, 'show_email':1}" options='{"always_reload": True}' domain="[('id','child_of',partner_id)]"
                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"
                                    groups="sale.group_delivery_invoice_address"/>
                             <field name="customer_contact" required="False" context="{'default_parent_id': partner_id, 'show_email': 1}"
@@ -1211,6 +1211,8 @@
                             domain="[('partner_acc_mgr','=',uid)]" help="My Sales Order Lines as Account manager" />
                     <filter name="issue_date_sale_orders_filter" string="Order Lines with Issue Date before today"
                             domain="[('issue_date','&lt;=', datetime.datetime.now())]" help="Order Lines with Issue Date before today" />
+                    <filter name="from_date_sale_orders_filter" string="Order Lines with Start of Validity before today"
+                            domain="[('from_date','&lt;=', datetime.datetime.now())]" help="Order Lines with Start of validity before today" />
                     <field name="order_id"/>
                     <field name="order_partner_id" operator="child_of"/>
                     <field name="order_advertiser_id" operator="child_of"/>
@@ -1228,6 +1230,7 @@
                         <filter string="Salesperson" domain="[]" context="{'group_by':'salesman_id'}"/>
                         <filter string="Account Manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
                         <filter string="Issue Date" icon="terp-personal" domain="[]" context="{'group_by':'issue_date'}"/>
+                        <filter string="Advertising Issue" domain="[]" context="{'group_by':'adv_issue'}"/>
                     </group>
                 </search>
             </field>
