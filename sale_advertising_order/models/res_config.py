@@ -57,7 +57,7 @@ class Partner(models.Model):
     def _compute_adv_opportunity_count(self):
         for partner in self:
             operator = 'child_of' if partner.is_company else '='  # the opportunity count should counts the opportunities of this company and all its contacts
-            partner.adv_opportunity_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('is_activity', '=', False), '|', ('stage_id.name','=','Qualified'), ('stage_id.name','=','Proposition')])
+            partner.adv_opportunity_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('type', '=', 'opportunity'), ('partner_id', operator, partner.id), ('is_activity', '=', False), ('stage_id.name','not in',('Won','Logged','Lost'))])
 
     @api.multi
     def _compute_next_activities_count(self):
