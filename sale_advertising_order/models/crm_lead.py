@@ -85,7 +85,7 @@ class Lead(models.Model):
     @api.multi
     def _compute_activities_count(self):
         for lead in self:
-            lead.activities_count = self.env['crm.activity.report'].search_count([('lead_id', '=', lead.id)])
+            lead.activities_count = self.env['crm.activity.report'].search_count([('lead_id', '=', lead.id), ('subtype_id','not in', ('Lead Created','Stage Changed','Opportunity Won','Discussions','Note','Lead aangemaakt','Fase gewijzigd','Prospect gewonnen','Discussies','Notitie')), ('subtype_id','!=',False)])
 
     @api.model
     def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
