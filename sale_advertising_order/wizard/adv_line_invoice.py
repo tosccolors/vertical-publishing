@@ -42,9 +42,7 @@ class AdOrderMakeInvoice(models.TransientModel):
 
         order_ids = context.get('active_ids', [])
         his_obj = self.env['ad.order.line.make.invoice']
-
         lines = self.env['sale.order.line'].search([('order_id','in', order_ids)])
-
         ctx = context.copy()
         ctx['active_ids'] = lines.ids
         ctx['invoice_date'] = self.invoice_date
@@ -264,7 +262,14 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         fpos = line.order_id.fiscal_position_id or line.order_id.partner_id.property_account_position_id
         if fpos:
             account = fpos.map_account(account)
-
+        
+        if line.to_date and line.from_date:
+            start_date = line.from_date
+            end_date = line.to_date
+        else:
+            if line.issue_date:
+                start_date = line.issue_date
+                end_date = line.issue_date
         res = {
             'name': line.title.name or "/",
             'sequence': line.sequence,
@@ -283,6 +288,8 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'computed_discount': line.computed_discount,
             'ad_number': line.ad_number,
             'opportunity_subject': line.order_id.opportunity_subject,
+            'start_date':start_date,
+            'end_date':end_date,
             'sale_line_ids': [(6, 0, [line.id])]
         }
         return res

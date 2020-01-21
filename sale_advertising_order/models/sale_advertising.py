@@ -411,6 +411,7 @@ class SaleOrderLine(models.Model):
                 elif price_unit > 0.0 and qty > 0.0 :
                     comp_discount = round((1.0 - float(subtotal_bad) / (float(price_unit) * float(qty) + float(csa) *
                                                                         float(qty))) * 100.0, 5)
+                    unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), 5)
                     decimals=self.env['decimal.precision'].search([('name','=','Product Price')]).digits or 4
                     unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), decimals)
                 elif qty == 0.0:
@@ -1018,6 +1019,17 @@ class SaleOrderLine(models.Model):
             res['ad_number'] = self.ad_number
             res['computed_discount'] = self.computed_discount
             res['opportunity_subject'] = self.order_id.opportunity_subject
+            start_date = None
+            end_date = None
+            if self.to_date and self.from_date:
+                start_date = self.from_date
+                end_date = self.to_date
+            else:
+                if self.issue_date:
+                    start_date = self.issue_date
+                    end_date = self.issue_date
+            res['start_date']=start_date,
+            res['end_date']=end_date,
         return res
 
     @api.model
@@ -1209,8 +1221,6 @@ class MailComposeMessage(models.TransientModel):
             if order.state in ['approved2','approved1']:
                 order.state = 'sent'
         return super(MailComposeMessage, self.with_context(mail_post_autofollow=True)).send_mail(auto_commit=auto_commit)
-
-
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

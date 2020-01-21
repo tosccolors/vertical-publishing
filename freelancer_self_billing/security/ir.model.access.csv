@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hon_issue_user,hon.issue.user,model_hon_issue,freelancer_self_billing.group_module_hon_user,1,1,1,1
+access_hon_issue_line_user,hon.issue.line.user,model_hon_issue_line,freelancer_self_billing.group_module_hon_user,1,1,1,1
+access_partner_product_price_user,partner.product.price.user,model_partner_product_price,freelancer_self_billing.group_module_hon_user,1,1,1,1
+access_partner_product_price_view_user,partner.product.price.view.user,model_partner_product_price,base.group_user,1,0,0,0
+hon_user_invoice,hon_user_invoice,account.model_account_invoice,freelancer_self_billing.group_module_hon_user,1,1,1,1
+hon_user_invoice_line,hon_user_invoice_line,account.model_account_invoice_line,freelancer_self_billing.group_module_hon_user,1,1,1,1
