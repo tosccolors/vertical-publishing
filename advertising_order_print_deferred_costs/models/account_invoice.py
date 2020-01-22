@@ -24,7 +24,7 @@ class AccountInvoiceLine(models.Model):
     @api.onchange('account_analytic_id')
     def onchange_account_analytic_id(self):
         """
-        :return: Update start_date & end_date Update start_date & end_date from advertising.issue looking into account_analytic_id
+        :return: Update start_date & end_date from advertising.issue looking into account_analytic_id
         """
         vals = {}
         if self.sale_line_ids:
