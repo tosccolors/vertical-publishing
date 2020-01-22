@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "advertising_order_print_revenue",
+    'name': "advertising_order_revenue_recognition",
 
     'summary': """
-        Advertising Order Print Revenue""",
+        Advertising Order Revenue Recognition""",
 
     'description': """
-        Advertising Order Print Revenue
+        Advertising Order Revenue Recognition
     """,
 
-    'author': 'Magnus - Willem Hulshof',
+    'author': 'Magnus - K.Sushma',
     'website': 'http://www.magnus.nl',
 
     # Categories can be used to filter modules in modules listing
@@ -25,8 +25,7 @@
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
-        # 'views/views.xml',
-        # 'views/templates.xml',
+        'views/sale_advertising_views.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
