@@ -27,6 +27,6 @@ class SaleOrderLine(models.Model):
         vals = {}
         if not self.advertising:
             return {'value':vals}
-        if self.date_type == 'validity' and self.issue_date:
+        if self.date_type == 'issue_date' and self.issue_date:
             vals['from_date'] = vals['to_date'] = self.issue_date
         return {'value': vals}
