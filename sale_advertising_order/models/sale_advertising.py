@@ -1019,17 +1019,6 @@ class SaleOrderLine(models.Model):
             res['ad_number'] = self.ad_number
             res['computed_discount'] = self.computed_discount
             res['opportunity_subject'] = self.order_id.opportunity_subject
-            start_date = None
-            end_date = None
-            if self.to_date and self.from_date:
-                start_date = self.from_date
-                end_date = self.to_date
-            else:
-                if self.issue_date:
-                    start_date = self.issue_date
-                    end_date = self.issue_date
-            res['start_date']=start_date,
-            res['end_date']=end_date,
         return res
 
     @api.model

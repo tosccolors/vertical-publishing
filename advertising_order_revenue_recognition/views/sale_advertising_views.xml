@@ -1,0 +1,17 @@
+<odoo>
+    <data>
+        <record id="view_order_form_advertising_revenue" model="ir.ui.view">
+            <field name="name">sale.order.form.advertising.revenue</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[2]/group[last()]//field[@name='from_date']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')]}</attribute>
+                </xpath>
+                <xpath expr="//group[2]/group[last()]//field[@name='to_date']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')]}</attribute>
+                </xpath>
+            </field>
+        </record>
+  </data>
+</odoo>
