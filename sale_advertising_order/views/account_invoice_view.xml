@@ -18,8 +18,8 @@
                     <field name="ad" />
                 </field>
                 <xpath expr="//sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='product_id']" position="before">
-                    <field name="sale_order_id" widget="many2one_clickable"
-                           context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}"/>
+                    <field name="sale_order_id" widget="many2one_unclickable" options="{'no_open': True}" context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}"/>
+                    <button type="object" name="open_sale_order" icon="fa-external-link" string="Open SO" class="oe_link btn-link"/>
                 </xpath>
                 <xpath expr="//sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='origin']" position="attributes">
                     <attribute name="invisible" >1</attribute>
