@@ -27,6 +27,8 @@ import sale_advertising
 import crm_lead
 import advertising_issue
 import account_invoice
+import sale_config_settings
+import company
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
