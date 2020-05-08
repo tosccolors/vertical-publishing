@@ -171,10 +171,11 @@ class SaleOrder(models.Model):
             result = super(SaleOrder, self).onchange_partner_id()
             return result
         # Advertiser:
-        if self.published_customer:
-            self.partner_id = self.published_customer.id
-        else:
-            self.partner_id = self.advertising_agency = False
+        if self.env.user.company_id.call_onchange_for_payers_advertisers:
+            if self.published_customer:
+                self.partner_id = self.published_customer.id
+            else:
+                self.partner_id = self.advertising_agency = False
         if self.advertising_agency:
             self.partner_id = self.advertising_agency
         if not self.partner_id:

@@ -810,6 +810,9 @@
                 <xpath expr="//group[1]/filter[1]" position="after">
                    <filter string="Name Salesperson" context="{'group_by':'name_salesperson'}"/>
                 </xpath>
+                <xpath expr="//filter[@name='today']" position="attributes">
+                    <attribute name="domain">[('date_action', '&gt;', (context_today()-datetime.timedelta(days=1)).strftime('%Y-%m-%d')),('date_action', '&lt;', (context_today()+datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]</attribute>
+                </xpath>
             </field>
         </record>
 
