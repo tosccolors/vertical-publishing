@@ -176,8 +176,8 @@ class SaleOrder(models.Model):
                 self.partner_id = self.published_customer.id
             else:
                 self.partner_id = self.advertising_agency = False
-            if self.advertising_agency:
-                self.partner_id = self.advertising_agency
+        if self.advertising_agency:
+            self.partner_id = self.advertising_agency
         if not self.partner_id:
             self.update({
                 'customer_contact': False
