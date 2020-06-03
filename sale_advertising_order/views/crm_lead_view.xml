@@ -602,12 +602,14 @@
                         <field name="contact_name"/>
                         <field name="title" placeholder="Title" domain="[]" options='{"no_open": True}'/>
                     </div>
-                    <field name="is_activity" invisible="1"/>
                 </xpath>
                 <xpath expr="//page[@name='lead']/group[1]/group[2]/label[@for='contact_name']" position="replace" />
                 <xpath expr="//page[@name='lead']/group[1]/group[2]/div[1]" position="replace" />
                 <xpath expr="//field[@name='partner_id']" position="attributes">
                     <attribute name="domain">[('customer', '=', True), ('parent_id', '=', False)]</attribute>
+                </xpath>
+                <xpath expr="//sheet/group/group[2]/label[@for='next_activity_id']" position="before">
+                    <field name="is_activity" readonly="True" />
                 </xpath>
                 <xpath expr="//sheet/group/group[2]/div/div/field[@name='next_activity_id']" position="attributes" >
                     <attribute name="attrs" >{'required':[('is_activity', '=', True)]}</attribute>
