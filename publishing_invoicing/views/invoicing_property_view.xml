@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+        <record id="view_invoicing_property_form" model="ir.ui.view">
+            <field name="name">invoicing.property.form</field>
+            <field name="model">invoicing.property</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" required="1" placeholder="Invoicing Property"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Invoice control" name="invoice_control">
+                                <field name="group_invoice_lines_per_period"/>
+                                <field name="group_invoice_lines_per_title"/>
+                                <field name="group_invoice_lines_per_po_number"/>
+                            </group>
+                            <group string="Payment control" name="payment_control">
+                                <field name="pre_pay_publishing_add"/>
+                                <field name="pre_pay_online_add"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_invoicing_property_tree" model="ir.ui.view">
+            <field name="name">invoicing.property.tree</field>
+            <field name="model">invoicing.property</field>
+            <field name="arch" type="xml">
+                <tree string="arch">
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_invoicing_property" model="ir.actions.act_window">
+            <field name="name">Invoicing Properties</field>
+            <field name="res_model">invoicing.property</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="menu_invoicing_property" name="Invoicing Properties"
+            parent="sale.menu_sale_invoicing" sequence="10"
+            action="action_invoicing_property"/>
+
+    </data>
+</odoo>
