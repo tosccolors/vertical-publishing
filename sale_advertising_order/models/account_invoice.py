@@ -66,7 +66,7 @@ class InvoiceLine(models.Model):
 
     @api.multi
     def open_sale_order(self):
-        view_id = self.env.ref('sale_advertising_order.view_order_form_advertising').id
+        view_id = self.env.ref('sale_advertising_order.view_order_form_advertising').id if self.sale_order_id.advertising else self.env.ref('sale.view_order_form').id
         return {
             'type': 'ir.actions.act_window',
             'name': 'Sale Order',

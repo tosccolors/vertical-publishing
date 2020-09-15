@@ -1020,6 +1020,9 @@ class SaleOrderLine(models.Model):
             res['ad_number'] = self.ad_number
             res['computed_discount'] = self.computed_discount
             res['opportunity_subject'] = self.order_id.opportunity_subject
+        else:
+            res['so_line_id'] = self.id
+            
         return res
 
     @api.model
