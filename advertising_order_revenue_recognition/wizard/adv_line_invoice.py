@@ -31,6 +31,8 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         :param line: sales order line to invoice
         """
         line.ensure_one()
+        start_date = 0
+        end_date = 0
         res = super(AdOrderLineMakeInvoice, self)._prepare_invoice_line(line)
 
         if line.to_date and line.from_date:
