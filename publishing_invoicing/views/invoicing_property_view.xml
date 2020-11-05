@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 	<data>
+        <record id="view_invoicing_property_search" model="ir.ui.view">
+            <field name="name">invoicing.property.select</field>
+            <field name="model">invoicing.property</field>
+            <field name="arch" type="xml">
+                <search string="Search Invoicing Property">
+                   <field name="name"/>
+               </search>
+            </field>
+        </record>
         <record id="view_invoicing_property_form" model="ir.ui.view">
             <field name="name">invoicing.property.form</field>
             <field name="model">invoicing.property</field>
@@ -12,17 +21,59 @@
                                 <field name="name" required="1" placeholder="Invoicing Property"/>
                             </h1>
                         </div>
-                        <group>
+                        
                             <group string="Invoice control" name="invoice_control">
-                                <field name="group_invoice_lines_per_period"/>
-                                <field name="group_invoice_lines_per_title"/>
-                                <field name="group_invoice_lines_per_po_number"/>
+                                <field name="group_invoice_lines_per_period"  invisible="1"/>
+                                <field name="group_invoice_lines_per_title" invisible="1"/>
+                                <field name="group_invoice_lines_per_po_number" invisible="1"/>
+                                <field name="only_invoice_published_adv" invisible="1"/>
+                                <field name="group_by_week" invisible="1"/>
+                                <field name="group_by_month" invisible="1"/>
+                                <!-- newly added below -->
+                            <div class="address_format">
+                                
+                                <field name="inv_package_deal"/>
+                                <label for="inv_package_deal"/><br/>
+                                
+                                <field name="inv_per_line_adv_print"/>
+                                <label for="inv_per_line_adv_print"/><br/>
+                                
+                                <field name="inv_per_line_after_online"/>
+                                <label for="inv_per_line_after_online"/><br/>
+                                
+                                <field name="inv_whole_order_at_once"/>
+                                <label for="inv_whole_order_at_once"/><br/>
+                                
+                                <field name="pay_in_terms"/>
+                                <label for="pay_in_terms"/><br/>
+                                
+                                <field name="inv_per_line_after_print"/>
+                                <label for="inv_per_line_after_print"/><br/>
+                                
+                                <field name="inv_per_line_adv_online"/>
+                                <label for="inv_per_line_adv_online"/><br/>
+                            
+                                <!-- below should be there -->
+                                
+                                <field name="group_by_order"/>
+                                <label for="group_by_order"/><br/>
+                                
+                                <field name="group_by_advertiser"/>
+                                <label for="group_by_advertiser"/><br/>
+                                
+                                <field name="group_by_edition"/>
+                                <label for="group_by_edition"/><br/>
+                                
+                                <field name="group_by_online_separate"/>
+                                <label for="group_by_online_separate"/><br/>
+                                </div>
                             </group>
-                            <group string="Payment control" name="payment_control">
-                                <field name="pre_pay_publishing_add"/>
-                                <field name="pre_pay_online_add"/>
+                            <group string="Payment control" name="payment_control" invisible="1">
+                                <!-- will be removed -->
+                                <field name="pre_pay_publishing_add" invisible="1"/>
+                                <field name="pre_pay_online_add" invisible="1"/>
                             </group>
-                        </group>
+                        
                     </sheet>
                 </form>
             </field>

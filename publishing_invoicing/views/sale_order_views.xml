@@ -5,11 +5,51 @@
         <field name="name">sale.order.form</field>
         <field name="model">sale.order</field>
         <field name="type">form</field>
-        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='sale_pay']" position="inside">
+            <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="invoicing_property_id" options="{'no_create': True}"/>
+                <field name="inv_date_bool" invisible="1"/>
+                <field name="invoicing_date" attrs="{'required':[('inv_date_bool', '=', True)],'invisible':[('inv_date_bool', '!=', True)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='payment_mode_id']" position="after">
+                <field name="terms_cond_bool" invisible="1"/>
+                <field name="terms_condition" attrs="{'required':[('terms_cond_bool', '=', True)],'invisible':[('terms_cond_bool', '!=', True)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='payment_mode_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='client_order_ref']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='pricelist_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='validity_date']" position="attributes">
+                <attribute name="invisible">1</attribute>
             </xpath>
         </field>
     </record>
+    <record id="view_order_form_advertising_package_invoicing_form" model="ir.ui.view">
+        <field name="name">sale.order.form</field>
+        <field name="model">sale.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="package_sale_advertising_order.view_order_form_advertising_package"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='package']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="publishing_invoicing_sales_order_line_filter_view">
+            <field name="name">publising.sale.order.line.filter.view</field>
+            <field name="model">sale.order.line</field>
+            <field name="inherit_id" ref="sale_advertising_order.view_advertising_sales_order_line_filter" />
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='from_date_sale_orders_filter']" position="after">
+                    <filter name="pay_in_terms_bool" string="To be invoiced in terms" domain="[('order_id.terms_cond_bool','=', True)]" />
+                </xpath>
+            </field>
+        </record>
 </odoo> 
