@@ -144,9 +144,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 									if adv_issue_order_line_ids:
 										for order_line_ids in adv_issue_order_line_ids:
 											group_adv_issue_order_id.append(order_line_ids) 
-											print("group advertising issue",group_adv_issue_order_id)
 									set_group_adv_issue_order_id = list(set(group_adv_issue_order_id))
-									print("Set of group titles",set_group_adv_issue_order_id)
 								if set_group_adv_issue_order_id:
 									# Condition is used to truncate the null value
 									self.make_invoices_job_queue(inv_date, post_date, set_group_adv_issue_order_id)
@@ -260,11 +258,20 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 										for line_ids in order_line_ids:
 											if not line_ids.issue_date:
 												for date_lines in line_ids.dateperiods:
-													if self.invoice_date > date_lines.from_date:
-														group_order_lines.append(line_ids)
+													if self.invoice_date:
+														if self.invoice_date > date_lines.from_date:
+															group_order_lines.append(line_ids)
+													else:
+														if self._context['invoice_date'] > date_lines.from_date:
+															group_order_lines.append(line_ids)
+
 											else:
-												if self.invoice_date > line_ids.order_id.invoicing_date:
-													group_order_lines.append(line_ids)
+												if self.invoice_date:
+													if self.invoice_date > line_ids.order_id.invoicing_date:
+														group_order_lines.append(line_ids)
+												else:
+													if self._context['invoice_date'] > line_ids.order_id.invoicing_date:
+														group_order_lines.append(line_ids)
 								set_group_order_line_id = list(set(group_order_lines))
 								if set_group_order_line_id:
 									# Condition is used to truncate the null value
@@ -296,12 +303,22 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 										for line_ids in order_line_ids:
 											if not line_ids.issue_date:
 												for date_lines in line_ids.dateperiods:
-													if self.invoice_date > date_lines.from_date:
-														group_order_lines.append(line_ids)
+													if self.invoice_date:
+														if self.invoice_date > date_lines.from_date:
+															group_order_lines.append(line_ids)
+													else:
+														if self._context['invoice_date'] > date_lines.from_date:
+															group_order_lines.append(line_ids)
+
 											else:
-												# for date_lines in line_ids.dateperiods:
-												if self.invoice_date > line_ids.issue_date:
-													group_order_lines.append(line_ids)
+												if self.invoice_date:
+													# for date_lines in line_ids.dateperiods:
+													if self.invoice_date > line_ids.issue_date:
+														group_order_lines.append(line_ids)
+												else:
+													if self._context['invoice_date'] > line_ids.issue_date:
+														group_order_lines.append(line_ids)
+
 								set_group_order_line_id = list(set(group_order_lines))
 								if set_group_order_line_id:
 									# Condition is used to truncate the null value
@@ -332,8 +349,13 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 									if order_line_ids:
 										for line_ids in order_line_ids:
 											if line_ids.order_id.invoicing_date:
-												if self.invoice_date > line_ids.order_id.invoicing_date:
-													group_order_lines.append(line_ids)
+												if self.invoice_date:
+													if self.invoice_date > line_ids.order_id.invoicing_date:
+														group_order_lines.append(line_ids)
+												else:
+													if self._context['invoice_date'] > line_ids.order_id.invoicing_date:
+														group_order_lines.append(line_ids)
+
 							set_group_order_line_id = list(set(group_order_lines))
 							if set_group_order_line_id:
 								# Condition is used to truncate the null value
@@ -365,12 +387,22 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 										for line_ids in order_line_ids:
 											if not line_ids.issue_date:
 												for date_lines in line_ids.dateperiods:
-													if self.invoice_date > date_lines.from_date:
-														group_order_lines.append(line_ids)
+													if self.invoice_date:
+														if self.invoice_date > date_lines.from_date:
+															group_order_lines.append(line_ids)
+													else:
+														if self._context['invoice_date'] > date_lines.from_date:
+															group_order_lines.append(line_ids)
+														
 											else:
-												# for date_lines in line_ids.dateperiods:
-												if self.invoice_date > line_ids.issue_date:
-													group_order_lines.append(line_ids)
+												if self.invoice_date:
+													# for date_lines in line_ids.dateperiods:
+													if self.invoice_date > line_ids.issue_date:
+														group_order_lines.append(line_ids)
+												else:
+													if self._context['invoice_date'] > line_ids.issue_date:
+														group_order_lines.append(line_ids)
+
 								set_group_order_line_id = list(set(group_order_lines))
 								if set_group_order_line_id:
 									# Condition is used to truncate the null value
@@ -401,13 +433,22 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 									if order_line_ids:
 										for line_ids in order_line_ids:
 											if not line_ids.issue_date:
-												if self.invoice_date > line_ids.order_id.invoicing_date:
-													group_order_lines.append(line_ids)
+												if self.invoice_date:
+													if self.invoice_date > line_ids.order_id.invoicing_date:
+														group_order_lines.append(line_ids)
+												else:
+													if self._context['invoice_date'] > line_ids.order_id.invoicing_date:
+														group_order_lines.append(line_ids)
 											else:
-												# for date_lines in line_ids.dateperiods:
-												if self.invoice_date > line_ids.issue_date:
-													group_order_lines.append(line_ids)
+												if self.invoice_date:
+													if self.invoice_date > line_ids.issue_date:
+														group_order_lines.append(line_ids)
+												else:
+													# for date_lines in line_ids.dateperiods:
+													if self._context['invoice_date'] > line_ids.issue_date:
+														group_order_lines.append(line_ids)
 								set_group_order_line_id = list(set(group_order_lines))
+
 								if set_group_order_line_id:
 									# Condition is used to truncate the null value
 									self.make_invoices_job_queue(inv_date, post_date, set_group_order_line_id)
