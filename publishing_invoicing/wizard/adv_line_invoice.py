@@ -257,12 +257,16 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 									if order_line_ids:
 										for line_ids in order_line_ids:
 											if not line_ids.issue_date:
-												for date_lines in line_ids.dateperiods:
-													if self.invoice_date:
-														if self.invoice_date > date_lines.from_date:
+												# for date_lines in line_ids.dateperiods:
+												if self.invoice_date:
+													# if self.invoice_date > date_lines.from_date:
+													if line_ids.from_date:
+														if self.invoice_date > line_ids.from_date:
 															group_order_lines.append(line_ids)
-													else:
-														if self._context['invoice_date'] > date_lines.from_date:
+												else:
+													# if self._context['invoice_date'] > date_lines.from_date:
+													if line_ids.from_date:
+														if self._context['invoice_date'] > line_ids.from_date:
 															group_order_lines.append(line_ids)
 
 											else:
@@ -302,12 +306,16 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 									if order_line_ids:
 										for line_ids in order_line_ids:
 											if not line_ids.issue_date:
-												for date_lines in line_ids.dateperiods:
-													if self.invoice_date:
-														if self.invoice_date > date_lines.from_date:
+												# for date_lines in line_ids.dateperiods:
+												if self.invoice_date:
+													# if self.invoice_date > date_lines.from_date:
+													if line_ids.from_date:
+														if self.invoice_date > line_ids.from_date:
 															group_order_lines.append(line_ids)
-													else:
-														if self._context['invoice_date'] > date_lines.from_date:
+												else:
+													# if self._context['invoice_date'] > date_lines.from_date:
+													if line_ids.from_date:
+														if self._context['invoice_date'] > line_ids.from_date:
 															group_order_lines.append(line_ids)
 
 											else:
@@ -386,12 +394,16 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 									if order_line_ids:
 										for line_ids in order_line_ids:
 											if not line_ids.issue_date:
-												for date_lines in line_ids.dateperiods:
-													if self.invoice_date:
-														if self.invoice_date > date_lines.from_date:
+												# for date_lines in line_ids.dateperiods:
+												if self.invoice_date:
+													# if self.invoice_date > date_lines.from_date:
+													if line_ids.from_date:
+														if self.invoice_date > line_ids.from_date:
 															group_order_lines.append(line_ids)
-													else:
-														if self._context['invoice_date'] > date_lines.from_date:
+												else:
+													# if self._context['invoice_date'] > date_lines.from_date:
+													if line_ids.from_date:
+														if self._context['invoice_date'] > line_ids.from_date:
 															group_order_lines.append(line_ids)
 														
 											else:
