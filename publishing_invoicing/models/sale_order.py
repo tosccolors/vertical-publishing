@@ -24,73 +24,33 @@ class SaleOrder(models.Model):
 
 					
 	@api.multi
-	@api.onchange('published_customer','advertising_agency','invoicing_property_id')
+	@api.onchange('invoicing_property_id')
 	def onchange_partner_package(self):
 		for line in self:
-			if line.advertising_agency:
-				if line.advertising_agency.invoicing_property_id:
-					if line.invoicing_property_id.inv_package_deal == True:
-						line.package = True
-					else:
-						line.package = False
-			elif line.published_customer:
-				if line.published_customer.invoicing_property_id:
-					if line.invoicing_property_id.inv_package_deal == True:
-						line.package = True
-					else:
-						line.package = False
+			if line.invoicing_property_id.inv_package_deal == True:
+				line.package = True
 			else:
-				if line.invoicing_property_id.inv_package_deal == True:
-						line.package = True
-				else:
-					line.package = False
+				line.package = False
+
 	@api.multi
-	@api.onchange('published_customer','advertising_agency','invoicing_property_id')
+	@api.onchange('invoicing_property_id')
 	def onchange_partner_invoicing_date(self):
 		for line in self:
-			if line.advertising_agency:
-				if line.advertising_agency.invoicing_property_id:
-					if line.invoicing_property_id.inv_per_line_adv_print == True or line.invoicing_property_id.inv_per_line_adv_online == True:
-						line.inv_date_bool = True
-					else:
-						line.inv_date_bool = False
-			elif line.published_customer:
-				if line.published_customer.invoicing_property_id:
-					if line.invoicing_property_id.inv_per_line_adv_print == True or line.invoicing_property_id.inv_per_line_adv_online == True:
-						line.inv_date_bool = True
-					else:
-						line.inv_date_bool = False
+			if line.invoicing_property_id.inv_per_line_adv_print == True or line.invoicing_property_id.inv_per_line_adv_online == True or line.invoicing_property_id.inv_whole_order_at_once == True:
+				line.inv_date_bool = True
 			else:
-				if line.invoicing_property_id.inv_per_line_adv_print == True or line.invoicing_property_id.inv_per_line_adv_online == True:
-						line.inv_date_bool = True
-				else:
-					line.inv_date_bool = False
+				line.inv_date_bool = False
+				line.invoicing_date = False
 
 	@api.multi
-	@api.onchange('published_customer','advertising_agency','invoicing_property_id')
+	@api.onchange('invoicing_property_id')
 	def onchange_partner_pay_terms(self):
 		for line in self:
-			if line.advertising_agency:
-				if line.advertising_agency.invoicing_property_id:
-					if line.invoicing_property_id.pay_in_terms == True:
-						line.terms_cond_bool = True
-					else:
-						line.terms_cond_bool = False
-			elif line.published_customer:
-				if line.published_customer.invoicing_property_id:
-					if line.invoicing_property_id.pay_in_terms == True:
-						line.terms_cond_bool = True
-					else:
-						line.terms_cond_bool = False
+			if line.invoicing_property_id.pay_in_terms == True:
+				line.terms_cond_bool = True
 			else:
-				if line.invoicing_property_id.pay_in_terms == True:
-						line.terms_cond_bool = True
-				else:
-					line.terms_cond_bool = False
-
-
-
-
+				line.terms_cond_bool = False
+				line.terms_condition = False
 
 
 class SaleOrderLine(models.Model):
