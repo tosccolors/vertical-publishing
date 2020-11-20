@@ -64,8 +64,7 @@
                                 <field name="group_by_edition"/>
                                 <label for="group_by_edition"/><br/>
                                 
-                                <field name="group_by_online_separate"/>
-                                <label for="group_by_online_separate"/><br/>
+                                <field name="group_by_online_separate invisible="1""/>
                                 </div>
                             </group>
                             <group string="Payment control" name="payment_control" invisible="1">
