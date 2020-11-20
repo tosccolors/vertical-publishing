@@ -67,11 +67,13 @@
                                 <field name="group_by_online_separate"/>
                                 <label for="group_by_online_separate"/><br/>
                                 </div>
+                                <field name="default_property" invisible="1"/>
                             </group>
                             <group string="Payment control" name="payment_control" invisible="1">
                                 <!-- will be removed -->
                                 <field name="pre_pay_publishing_add" invisible="1"/>
                                 <field name="pre_pay_online_add" invisible="1"/>
+
                             </group>
                         
                     </sheet>
