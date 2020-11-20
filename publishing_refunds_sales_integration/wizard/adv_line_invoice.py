@@ -104,6 +104,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 			res['quantity'] = line.product_uom_qty - \
 			line.qty_invoiced
 		else:
-			res['quantity'] = 10
+			res['quantity'] = line.product_uom_qty
 		return res
 
