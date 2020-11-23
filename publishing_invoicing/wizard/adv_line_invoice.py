@@ -93,7 +93,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 			set_advertiser_ids = list(set(advertiser_ids))
 			title_count = 0
 			for inv_ids in set_inv_property_ids:
-				if inv_ids.group_by_order == True and inv_ids.group_by_advertiser == False and inv_ids.group_by_edition == False:
+				if inv_ids.group_by_order == True and inv_ids.group_by_advertiser == False and inv_ids.group_by_edition == False and inv_ids.default_property == False:
 					# Loop over the customer to generate the invoice
 					for cus_id in set_customer_ids:
 						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
@@ -122,7 +122,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 									# Condition is used to truncate the null value
 									self.make_invoices_job_queue(inv_date, post_date, set_group_order_line_id)
 				# -------------Group by Edition only----------------
-				elif inv_ids.group_by_edition == True and inv_ids.group_by_order == False and inv_ids.group_by_advertiser == False:
+				elif inv_ids.group_by_edition == True and inv_ids.group_by_order == False and inv_ids.group_by_advertiser == False and inv_ids.default_property == False:
 					for cus_id in set_customer_ids:
 						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
 						if customer_id:
@@ -150,7 +150,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 									self.make_invoices_job_queue(inv_date, post_date, set_group_adv_issue_order_id)
 
 				# -------------Group by Advertiser ---------------
-				elif inv_ids.group_by_advertiser == True and inv_ids.group_by_order == False and inv_ids.group_by_edition == False:
+				elif inv_ids.group_by_advertiser == True and inv_ids.group_by_order == False and inv_ids.group_by_edition == False and inv_ids.default_property == False:
 					# Loop over the customer to generate the invoice
 					for adv_id in set_advertiser_ids:
 						advertiser_id = self.env['res.partner'].search([('id','=',adv_id)])
@@ -233,7 +233,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 				
 
 				# Group by Invoice per orderline in advance print
-				elif inv_ids.inv_per_line_adv_print == True and inv_ids.inv_per_line_after_online == False and inv_ids.inv_whole_order_at_once == False and inv_ids.inv_per_line_after_print == False and inv_ids.inv_per_line_adv_online == False:
+				elif inv_ids.inv_per_line_adv_print == True and inv_ids.inv_per_line_after_online == False and inv_ids.inv_whole_order_at_once == False and inv_ids.inv_per_line_after_print == False and inv_ids.inv_per_line_adv_online == False and inv_ids.default_property == False:
 					# Loop over the customer to generate the invoice
 					for cus_id in set_customer_ids:
 						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
@@ -282,7 +282,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 									self.make_invoices_job_queue(inv_date, post_date, set_group_order_line_id)
 
 				# Group by Invoice per OrderLine afterwards online
-				elif inv_ids.inv_per_line_after_online == True and inv_ids.inv_per_line_adv_print == False and inv_ids.inv_whole_order_at_once == False and inv_ids.inv_per_line_after_print == False and inv_ids.inv_per_line_adv_online == False:
+				elif inv_ids.inv_per_line_after_online == True and inv_ids.inv_per_line_adv_print == False and inv_ids.inv_whole_order_at_once == False and inv_ids.inv_per_line_after_print == False and inv_ids.inv_per_line_adv_online == False and inv_ids.default_property == False:
 					# Loop over the customer to generate the invoice
 					for cus_id in set_customer_ids:
 						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
@@ -333,7 +333,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 									self.make_invoices_job_queue(inv_date, post_date, set_group_order_line_id)
 
 				# Group by Invoice whole order at once
-				elif inv_ids.inv_whole_order_at_once == True and inv_ids.inv_per_line_adv_print == False and inv_ids.inv_per_line_after_online == False and inv_ids.inv_per_line_after_print == False and inv_ids.inv_per_line_adv_online == False:
+				elif inv_ids.inv_whole_order_at_once == True and inv_ids.inv_per_line_adv_print == False and inv_ids.inv_per_line_after_online == False and inv_ids.inv_per_line_after_print == False and inv_ids.inv_per_line_adv_online == False and inv_ids.default_property == False:
 					# Loop over the customer to generate the invoice
 					for cus_id in set_customer_ids:
 						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
@@ -370,7 +370,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 								self.make_invoices_job_queue(inv_date, post_date, set_group_order_line_id)
 
 				# Group by Invoice per orderline afterwards print
-				elif inv_ids.inv_per_line_after_print == True and inv_ids.inv_per_line_adv_online == False and inv_ids.inv_per_line_adv_print == False and inv_ids.inv_per_line_after_online == False and inv_ids.inv_whole_order_at_once == False:
+				elif inv_ids.inv_per_line_after_print == True and inv_ids.inv_per_line_adv_online == False and inv_ids.inv_per_line_adv_print == False and inv_ids.inv_per_line_after_online == False and inv_ids.inv_whole_order_at_once == False and inv_ids.default_property == False:
 					# Loop over the customer to generate the invoice
 					for cus_id in set_customer_ids:
 						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
@@ -421,7 +421,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 									self.make_invoices_job_queue(inv_date, post_date, set_group_order_line_id)
 
 				# Group by Invoice per orderline in advance online
-				elif inv_ids.inv_per_line_adv_online == True and inv_ids.inv_per_line_after_print == False and inv_ids.inv_per_line_adv_print == False and inv_ids.inv_per_line_after_online == False and inv_ids.inv_whole_order_at_once == False:
+				elif inv_ids.inv_per_line_adv_online == True and inv_ids.inv_per_line_after_print == False and inv_ids.inv_per_line_adv_print == False and inv_ids.inv_per_line_after_online == False and inv_ids.inv_whole_order_at_once == False and inv_ids.default_property == False:
 					# Loop over the customer to generate the invoice
 					for cus_id in set_customer_ids:
 						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
@@ -464,7 +464,44 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 								if set_group_order_line_id:
 									# Condition is used to truncate the null value
 									self.make_invoices_job_queue(inv_date, post_date, set_group_order_line_id)
+				elif inv_ids.default_property == True:
+					# Loop over the customer to generate the invoice
+					for cus_id in set_customer_ids:
+						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
+						if customer_id:
+							# Loop over the selected order lines
+							set_group_default_order = []
+							group_default_order = []
+							for lines in OrderLines:
+								# Filter the order lines based on the customer
+								sale_order_line_id = self.env['sale.order.line'].search([('id','=',lines.id),'&',('order_partner_id','=',customer_id.id),'&',('invoicing_property_id','=',inv_ids.id),('invoice_status','!=','invoiced')])
+								if sale_order_line_id:
+									# Fetching the order number
+									for line in sale_order_line_id:
+										group_default_order.append(line)
+									set_group_default_order = list(set(group_default_order))
+							if set_group_default_order:
+								# Condition is used to truncate the null value
+								self.make_invoices_job_queue(inv_date, post_date, set_group_default_order)
+				elif inv_ids.inv_package_deal == True or inv_ids.pay_in_terms == True:
+					# Loop over the customer to generate the invoice
+					for cus_id in set_customer_ids:
+						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
+						if customer_id:
+							# Loop over the selected order lines
+							set_group_default_order = []
+							group_default_order = []
+							for lines in OrderLines:
+								# Filter the order lines based on the customer
+								sale_order_line_id = self.env['sale.order.line'].search([('id','=',lines.id),'&',('order_partner_id','=',customer_id.id),'&',('invoicing_property_id','=',inv_ids.id),('invoice_status','!=','invoiced')])
+								if sale_order_line_id:
+									# Fetching the order number
+									for line in sale_order_line_id:
+										group_default_order.append(line)
+									set_group_default_order = list(set(group_default_order))
+							if set_group_default_order:
+								# Condition is used to truncate the null value
+								self.make_invoices_job_queue(inv_date, post_date, set_group_default_order)
 				else:
-					self.make_invoices_job_queue(inv_date, post_date, OrderLines)
 					return "Lines dispatched."
 
