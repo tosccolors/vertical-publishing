@@ -26,7 +26,8 @@ class nsm_invoicing_property(models.Model):
 	inv_package_deal = fields.Boolean(string="Invoice package deal")
 	inv_per_line_adv_print = fields.Boolean(string="Invoice per OrderLine in advance print")
 	inv_per_line_after_online = fields.Boolean(string="Invoice per OrderLine afterwards online")
-	inv_whole_order_at_once = fields.Boolean(string="Invoice whole order at once")
+	inv_whole_order_at_once = fields.Boolean(string="Invoice whole order in advance")
+	inv_whole_order_afterwards = fields.Boolean(string="Invoice whole order afterwards")
 	pay_in_terms = fields.Boolean(string="Pay in terms")
 
 	inv_per_line_after_print = fields.Boolean(string="Invoice per orderline afterwards print")
@@ -36,13 +37,13 @@ class nsm_invoicing_property(models.Model):
 
 
 	@api.depends('group_by_edition','group_by_order','group_by_advertiser','group_by_online_separate','inv_package_deal','inv_per_line_adv_print','inv_per_line_after_online',
-		'inv_whole_order_at_once','pay_in_terms','inv_per_line_after_print','inv_per_line_adv_online')
+		'inv_whole_order_at_once','pay_in_terms','inv_per_line_after_print','inv_per_line_adv_online','inv_whole_order_afterwards')
 	def check_default_property(self):
 		for line in self:
 			if line.group_by_edition == True or line.group_by_order == True or line.group_by_advertiser == True  \
 					or line.group_by_online_separate == True or line.inv_package_deal == True or line.inv_per_line_adv_print == True \
 					or line.inv_per_line_after_online == True or line.inv_whole_order_at_once == True \
-					or line.pay_in_terms == True or line.inv_per_line_after_print == True or line.inv_per_line_adv_online == True:
+					or line.pay_in_terms == True or line.inv_per_line_after_print == True or line.inv_per_line_adv_online == True or line.inv_whole_order_afterwards == True:
 				line.default_property = False
 			else:
 				line.default_property = True
