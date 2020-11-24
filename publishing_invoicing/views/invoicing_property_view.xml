@@ -43,6 +43,9 @@
                                 
                                 <field name="inv_whole_order_at_once"/>
                                 <label for="inv_whole_order_at_once"/><br/>
+
+                                <field name="inv_whole_order_afterwards"/>
+                                <label for="inv_whole_order_afterwards"/><br/>
                                 
                                 <field name="pay_in_terms"/>
                                 <label for="pay_in_terms"/><br/>
