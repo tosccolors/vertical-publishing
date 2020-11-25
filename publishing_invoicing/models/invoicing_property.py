@@ -15,11 +15,12 @@ class nsm_invoicing_property(models.Model):
 	group_by_month = fields.Boolean(string="Group by Month")
 	pre_pay_publishing_add = fields.Boolean(string="Group by pre-pay publishing advertisements")
 	pre_pay_online_add = fields.Boolean(string="Group by pre-pay online advertisements")
+	group_by_online_separate = fields.Boolean(string="Group by online / print separate")
 	# remove above
 	group_by_edition = fields.Boolean(string="Group by Edition")
-	group_by_order = fields.Boolean(string="Group by order")
+	group_by_order = fields.Boolean(string="Group by Order")
 	group_by_advertiser = fields.Boolean(string="Group by Advertiser")
-	group_by_online_separate = fields.Boolean(string="Group by online / print separate")
+	
 
 
 	# newly added
@@ -30,8 +31,8 @@ class nsm_invoicing_property(models.Model):
 	inv_whole_order_afterwards = fields.Boolean(string="Invoice whole order afterwards")
 	pay_in_terms = fields.Boolean(string="Pay in terms")
 
-	inv_per_line_after_print = fields.Boolean(string="Invoice per orderline afterwards print")
-	inv_per_line_adv_online = fields.Boolean(string="Invoice per orderline in advance online")
+	inv_per_line_after_print = fields.Boolean(string="Invoice per OrderLine afterwards print")
+	inv_per_line_adv_online = fields.Boolean(string="Invoice per OrderLine in advance online")
 
 	default_property = fields.Boolean(string="Check if it is a default property",compute="check_default_property")
 
