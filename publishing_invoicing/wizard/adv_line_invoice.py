@@ -95,7 +95,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 			for inv_ids in set_inv_property_ids:
 				# Group by order
 				if inv_ids.group_by_order == True and inv_ids.group_by_advertiser == False and inv_ids.group_by_edition == False and inv_ids.default_property == False and \
-				   inv_ids.inv_per_line_adv_print == False and inv_ids.inv_whole_order_at_once == False and inv_ids.inv_whole_order_afterwards == False and inv_ids.inv_per_line_after_print == False:
+				   inv_ids.inv_per_line_adv_print == False and inv_ids.inv_whole_order_at_once == False and inv_ids.inv_whole_order_afterwards == False and inv_ids.inv_per_line_after_print == False and inv_ids.inv_per_line_adv_online == False:
 					# Loop over the customer to generate the invoice
 					for cus_id in set_customer_ids:
 						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
@@ -125,7 +125,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 									self.make_invoices_job_queue(inv_date, post_date, set_group_order_line_id)
 				# -------------Group by Edition only----------------
 				elif inv_ids.group_by_edition == True and inv_ids.group_by_order == False and inv_ids.group_by_advertiser == False and inv_ids.default_property == False and \
-					 inv_ids.inv_per_line_adv_print == False and inv_ids.inv_whole_order_at_once == False and inv_ids.inv_whole_order_afterwards == False and inv_ids.inv_per_line_after_print == False:
+					 inv_ids.inv_per_line_adv_print == False and inv_ids.inv_whole_order_at_once == False and inv_ids.inv_whole_order_afterwards == False and inv_ids.inv_per_line_after_print == False and inv_ids.inv_per_line_adv_online == False:
 					for cus_id in set_customer_ids:
 						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
 						if customer_id:
@@ -154,7 +154,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 
 				# -------------Group by Advertiser ---------------
 				elif inv_ids.group_by_advertiser == True and inv_ids.group_by_order == False and inv_ids.group_by_edition == False and inv_ids.default_property == False and inv_ids.inv_per_line_adv_print == False and inv_ids.inv_whole_order_at_once == False and \
-					 inv_ids.inv_whole_order_afterwards == False and inv_ids.inv_per_line_after_print == False:
+					 inv_ids.inv_whole_order_afterwards == False and inv_ids.inv_per_line_after_print == False and inv_ids.inv_per_line_adv_online == False:
 					# Loop over the customer to generate the invoice
 					for adv_id in set_advertiser_ids:
 						advertiser_id = self.env['res.partner'].search([('id','=',adv_id)])
@@ -880,7 +880,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 
 
 				# Group by Invoice per orderline in advance online
-				elif inv_ids.inv_per_line_adv_online == True and inv_ids.inv_per_line_after_print == False and inv_ids.inv_per_line_adv_print == False and inv_ids.inv_per_line_after_online == False and inv_ids.inv_whole_order_at_once == False and inv_ids.default_property == False and inv_ids.inv_whole_order_afterwards == False:
+				elif inv_ids.inv_per_line_adv_online == True and inv_ids.group_by_order == False and inv_ids.group_by_advertiser == False and inv_ids.group_by_edition == False and inv_ids.inv_per_line_after_print == False and inv_ids.inv_per_line_adv_print == False and inv_ids.inv_per_line_after_online == False and inv_ids.inv_whole_order_at_once == False and inv_ids.default_property == False and inv_ids.inv_whole_order_afterwards == False:
 					# Loop over the customer to generate the invoice
 					for cus_id in set_customer_ids:
 						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
