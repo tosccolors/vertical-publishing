@@ -50,6 +50,68 @@ class nsm_invoicing_property(models.Model):
 				line.default_property = True
 
 
+	@api.onchange('group_by_order')
+	def _onchange_invoicing_layout_group_by_order(self):
+		for line in self:
+			if line.group_by_order == True:
+				line.group_by_edition = False
+				line.group_by_advertiser = False
+	@api.onchange('group_by_edition')
+	def _onchange_invoicing_layout_group_by_edition(self):
+		for line in self:
+			if line.group_by_edition == True:
+				line.group_by_order = False
+				line.group_by_advertiser = False
+	@api.onchange('group_by_advertiser')
+	def _onchange_invoicing_layout_group_by_advertiser(self):
+		for line in self:
+			if line.group_by_advertiser == True:
+				line.group_by_edition = False
+				line.group_by_order = False
+
+
+	@api.onchange('inv_per_line_after_print')
+	def _onchange_invoice_timing_inv_per_line_after_print(self):
+		for line in self:
+			if line.inv_per_line_after_print == True:
+				line.inv_per_line_adv_print = line.inv_per_line_after_online = line.inv_whole_order_at_once = line.inv_whole_order_afterwards = line.inv_per_line_adv_online = False
+
+	@api.onchange('inv_per_line_adv_print')
+	def _onchange_invoice_timing_inv_per_line_adv_print(self):
+		for line in self:
+			if line.inv_per_line_adv_print == True:
+				line.inv_per_line_after_print = line.inv_per_line_after_online = line.inv_whole_order_at_once = line.inv_whole_order_afterwards = line.inv_per_line_adv_online = False
+
+	@api.onchange('inv_per_line_after_online')
+	def _onchange_invoice_timing_inv_per_line_after_online(self):
+		for line in self:
+			if line.inv_per_line_after_online == True:
+				line.inv_per_line_after_print = line.inv_per_line_adv_print = line.inv_whole_order_at_once = line.inv_whole_order_afterwards = line.inv_per_line_adv_online = False
+
+	@api.onchange('inv_whole_order_at_once')
+	def _onchange_invoice_timing_inv_whole_order_at_once(self):
+		for line in self:
+			if line.inv_whole_order_at_once == True:
+				line.inv_per_line_after_print = line.inv_per_line_adv_print = line.inv_per_line_after_online = line.inv_whole_order_afterwards = line.inv_per_line_adv_online = False
+
+	@api.onchange('inv_whole_order_afterwards')
+	def _onchange_invoice_timing_inv_whole_order_afterwards(self):
+		for line in self:
+			if line.inv_whole_order_afterwards == True:
+				line.inv_per_line_after_print = line.inv_per_line_adv_print = line.inv_per_line_after_online = line.inv_whole_order_at_once = line.inv_per_line_adv_online = False
+
+	@api.onchange('inv_per_line_adv_online')
+	def _onchange_invoice_timing_inv_per_line_adv_online(self):
+		for line in self:
+			if line.inv_per_line_adv_online == True:
+				line.inv_per_line_after_print = line.inv_per_line_adv_print = line.inv_per_line_after_online = line.inv_whole_order_at_once = line.inv_whole_order_afterwards = False
+
+
+
+
+
+
+
 
 
 
