@@ -1363,6 +1363,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 									# Condition is used to truncate the null value
 									self.make_invoices_job_queue(inv_date, post_date, set_group_adv_issue_order_id)
 
+				#------------------- No need to change below 3------------
 				elif inv_ids.default_property == True:
 					# Loop over the customer to generate the invoice
 					for cus_id in set_customer_ids:
@@ -1430,5 +1431,5 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 									# Condition is used to truncate the null value
 									self.make_invoices_job_queue(inv_date, post_date, set_group_order_line_id)
 				else:
-					return "Lines dispatched."
+					return "Lines dispatched.."
 

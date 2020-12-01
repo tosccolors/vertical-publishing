@@ -21,8 +21,7 @@ class nsm_invoicing_property(models.Model):
 	# Not using the above feature
 	
 	group_by_order = fields.Boolean(string="Group by Order")
-	
-	# newly added
+
 	inv_package_deal = fields.Boolean(string="Invoice package deal")
 	pay_in_terms = fields.Boolean(string="Pay in terms")
 

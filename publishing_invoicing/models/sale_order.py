@@ -59,7 +59,6 @@ class SaleOrderLine(models.Model):
 
 	invoicing_property_id = fields.Many2one('invoicing.property',related='order_id.invoicing_property_id',string="Invoicing Property")
 
-
 	@api.multi
 	def write(self, vals):
 		result = super(SaleOrderLine, self).write(vals)
