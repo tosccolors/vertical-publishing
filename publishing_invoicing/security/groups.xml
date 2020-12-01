@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<openerp>
+    <data noupdate="0">
+        <record id="advertising_sale_superuser" model="res.groups">
+            <field name="name">Advertising Sale Superuser</field>
+        </record>
+    </data>
+</openerp>
