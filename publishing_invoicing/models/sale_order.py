@@ -60,3 +60,22 @@ class SaleOrderLine(models.Model):
 
 	invoicing_property_id = fields.Many2one('invoicing.property',related='order_id.invoicing_property_id',string="Invoicing Property")
 
+
+	@api.multi
+	def write(self, vals):
+		result = super(SaleOrderLine, self).write(vals)
+		user = self.env['res.users'].browse(self.env.uid)
+		for line in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
+			if 'pubble_sent' in vals:
+				continue
+			is_allowed = user.has_group('account.group_account_invoice') or user.has_group('advertising_sale_superuser') or 'allow_user' in self.env.context
+			if line.invoice_status == 'invoiced' and not (vals.get('product_uom_qty') == 0 and line.qty_invoiced == 0) \
+												 and not is_allowed \
+												 and not user.id == 1:
+
+				raise UserError(_('You cannot change an order line after it has been fully invoiced.'))
+			if not line.multi_line and ('product_id' in vals or 'adv_issue' in vals or 'product_uom_qty' in vals):
+				if line.deadline_check():
+					line.page_qty_check_update()
+		return result
+
