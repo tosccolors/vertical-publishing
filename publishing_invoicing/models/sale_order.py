@@ -54,7 +54,6 @@ class SaleOrder(models.Model):
 				line.terms_cond_bool = False
 				line.terms_condition = False
 
-
 class SaleOrderLine(models.Model):
 	_inherit = 'sale.order.line'
 

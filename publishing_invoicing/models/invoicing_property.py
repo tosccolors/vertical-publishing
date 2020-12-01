@@ -35,7 +35,6 @@ class nsm_invoicing_property(models.Model):
 
 	default_property = fields.Boolean(string="Check if it is a default property",compute="check_default_property")
 
-
 	@api.depends('group_by_edition','group_by_order','group_by_advertiser','group_by_online_separate','inv_package_deal','inv_per_line_adv_print','inv_per_line_after_online',
 		'inv_whole_order_at_once','pay_in_terms','inv_per_line_after_print','inv_per_line_adv_online','inv_whole_order_afterwards')
 	def check_default_property(self):

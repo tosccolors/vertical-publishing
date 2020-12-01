@@ -21,7 +21,6 @@
                                 <field name="name" required="1" placeholder="Invoicing Property"/>
                             </h1>
                         </div>
-                        
                             <group name="invoice_control">
                                 <field name="group_invoice_lines_per_period"  invisible="1"/>
                                 <field name="group_invoice_lines_per_title" invisible="1"/>
@@ -56,10 +55,7 @@
 
                                         <field name="inv_whole_order_afterwards"/>
                                         <label for="inv_whole_order_afterwards"/><br/>
-
-                                        
                                     </div>
-
                                 </group>
                                 <group string="Invoicing Layout">
                                     <div class="address_format">
