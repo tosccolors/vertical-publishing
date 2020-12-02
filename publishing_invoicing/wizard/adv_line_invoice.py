@@ -1035,7 +1035,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 					 inv_ids.inv_per_line_after_online == False and inv_ids.inv_per_line_adv_print == False and inv_ids.inv_whole_order_afterwards == False and \
 					 inv_ids.inv_per_line_adv_online == False and inv_ids.default_property == False and inv_ids.inv_whole_order_at_once == False:
 					# Loop over the customer to generate the invoice
-					print("testing-------------")
 					for cus_id in set_customer_ids:
 						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
 						if customer_id:
@@ -1383,7 +1382,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 							if set_group_default_order:
 								# Condition is used to truncate the null value
 								self.make_invoices_job_queue(inv_date, post_date, set_group_default_order)
-				elif inv_ids.inv_package_deal == True or inv_ids.pay_in_terms == True:
+				elif inv_ids.pay_in_terms == True:
 					# Loop over the customer to generate the invoice
 					for cus_id in set_customer_ids:
 						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
@@ -1402,6 +1401,34 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 							if set_group_default_order:
 								# Condition is used to truncate the null value
 								self.make_invoices_job_queue(inv_date, post_date, set_group_default_order)
+				elif inv_ids.inv_package_deal == True:
+					# Loop over the customer to generate the invoice
+					for cus_id in set_customer_ids:
+						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
+						if customer_id:
+							# Loop over the selected order lines
+							set_group_order = []
+							group_order = []
+							for lines in OrderLines:
+								# Filter the order lines based on the customer
+								sale_order_line_id = self.env['sale.order.line'].search([('id','=',lines.id),'&',('order_partner_id','=',customer_id.id),'&',('invoicing_property_id','=',inv_ids.id),('invoice_status','!=','invoiced')])
+								if sale_order_line_id:
+									# Fetching the order number
+									for line in sale_order_line_id:
+										group_order.append(line.order_id.id)
+									set_group_order = list(set(group_order))
+							# looping over the orders to generate invoices
+							for sale_id in set_group_order:
+								group_order_lines = []
+								for lines in OrderLines:
+									order_line_ids = self.env['sale.order.line'].search(['&',('id','=',lines.id),'&',('order_id','=',sale_id),'&',('order_partner_id','=',customer_id.id),'&',('invoicing_property_id','=',inv_ids.id),('invoice_status','!=','invoiced')])
+									if order_line_ids:
+										for line_ids in order_line_ids:
+											group_order_lines.append(line_ids)
+								set_group_order_line_id = list(set(group_order_lines))
+								if set_group_order_line_id:
+									# Condition is used to truncate the null value
+									self.make_invoices_job_queue(inv_date, post_date, set_group_order_line_id)
 				else:
 					return "Lines dispatched."
 
