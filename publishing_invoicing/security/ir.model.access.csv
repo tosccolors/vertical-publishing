@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_invoicing_property,invoicing_property,model_invoicing_property,,1,1,1,1

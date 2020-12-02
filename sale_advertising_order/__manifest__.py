@@ -58,6 +58,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
              "views/crm_lead_view.xml",
              "views/res_partner_view.xml",
              "views/menuitems.xml",
+             "views/sale_config_settings.xml"
              ],
     'qweb': [
         "static/src/xml/sales_team_dashboard.xml",
