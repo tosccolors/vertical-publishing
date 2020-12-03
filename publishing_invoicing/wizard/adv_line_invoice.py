@@ -24,11 +24,37 @@ from odoo.exceptions import UserError
 from odoo.addons.queue_job.job import job, related_action
 from odoo.addons.queue_job.exception import FailedJobError
 from unidecode import unidecode
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+import dateutil.relativedelta
+
+class AdOrderMakeInvoice(models.TransientModel):
+	_inherit = "ad.order.make.invoice"
+
+
+	@api.onchange('invoice_date')
+	def fetch_posting_date_form(self):
+		for line in self:
+			invoice_date = fields.Date.from_string(self.invoice_date)
+			current_day = datetime.strptime(str(invoice_date), '%Y-%m-%d').weekday()
+			posting_date=str(invoice_date + relativedelta(days=-(current_day+1)))
+			line.posting_date = posting_date
+
 
 class AdOrderLineMakeInvoice(models.TransientModel):
 	_inherit = "ad.order.line.make.invoice"
 	_description = "Advertising Order Line Make_invoice"
 
+
+	@api.onchange('invoice_date')
+	def fetch_posting_date_line(self):
+		for line in self:
+			invoice_date = fields.Date.from_string(self.invoice_date)
+			current_day = datetime.strptime(str(invoice_date), '%Y-%m-%d').weekday()
+			posting_date=str(invoice_date + relativedelta(days=-(current_day+1)))
+			line.posting_date = posting_date
+
+	# need to check the issue with passing payer id as customer to invoice
 
 	@api.multi
 	def make_invoices_from_lines(self):

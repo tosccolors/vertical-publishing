@@ -36,7 +36,7 @@ class SaleOrder(models.Model):
 	@api.onchange('invoicing_property_id')
 	def onchange_partner_invoicing_date(self):
 		for line in self:
-			if line.invoicing_property_id.inv_per_line_adv_print == True or line.invoicing_property_id.inv_per_line_adv_online == True or line.invoicing_property_id.inv_whole_order_at_once == True:
+			if line.invoicing_property_id.inv_per_line_adv_print == True or line.invoicing_property_id.inv_per_line_adv_online == True or line.invoicing_property_id.inv_whole_order_at_once == True or line.invoicing_property_id.inv_package_deal == True:
 				line.inv_date_bool = True
 			else:
 				line.inv_date_bool = False
