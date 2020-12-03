@@ -31,6 +31,39 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 	_description = "Advertising Order Line Make_invoice"
 
 
+	@api.model
+	def _prepare_invoice(self, partner, published_customer, payment_mode, operating_unit, lines, invoice_date, posting_date,customer_contact):
+		
+#        self.ensure_one()
+#        line_ids = [x.id for x in lines['lines']]
+		journal_id = self.env['account.invoice'].default_get(['journal_id'])['journal_id']
+		if not journal_id:
+			raise UserError(_('Please define an accounting sale journal for this company.'))
+		
+		vals = {
+			'date_invoice': invoice_date,
+			# 'date': posting_date or False,
+			'date': False,
+			'type': 'out_invoice',
+			'account_id': partner.property_account_receivable_id.id,
+			'partner_id': partner.id,
+			'published_customer': published_customer.id,
+			'invoice_line_ids': lines['lines'],
+			'comment': lines['name'],
+			'payment_term_id': partner.property_payment_term_id.id or False,
+			'journal_id': journal_id,
+			'fiscal_position_id': partner.property_account_position_id.id or False,
+			'user_id': self.env.user.id,
+			'company_id': self.env.user.company_id.id,
+			'operating_unit_id': operating_unit.id,
+			'payment_mode_id': payment_mode.id or False,
+			'partner_bank_id': payment_mode.fixed_journal_id.bank_account_id.id
+							   if payment_mode.bank_account_link == 'fixed'
+							   else partner.bank_ids and partner.bank_ids[0].id or False,
+			'customer_contact':customer_contact.id,
+		}
+		return vals
+
 	@job
 	@api.multi
 	def make_invoices_job_queue(self, inv_date, post_date, chunk):
