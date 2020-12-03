@@ -58,7 +58,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 			return invoice.id
 		count = 0
 		for line in chunk:
-			key = (line.order_id.partner_invoice_id, line.order_id.published_customer, line.order_id.payment_mode_id,
+			key = (line.order_id.partner_id, line.order_id.published_customer, line.order_id.payment_mode_id,
 				   line.order_id.operating_unit_id,line.order_id.customer_contact)
 			if (line.state in ('sale', 'done')) :
 				if not key in invoices:
@@ -80,6 +80,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 								  '1.The state of these ad order lines are not "sale" or "done"!\n'
 								  '2.The Lines are already Invoiced!\n'))
 		for key, il in invoices.items():
+
 			partner = key[0]
 			published_customer = key[1]
 			payment_mode = key[2]
