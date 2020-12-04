@@ -54,4 +54,13 @@
                 </xpath>
             </field>
         </record>
+
+    <!-- Start -->
+    <!-- Incase if the below menu required, comment the below code and update 'sale' module  -->
+    <data noupdate="1">
+        <delete model="ir.actions.act_window" id="sale.action_view_sale_advance_payment_inv"/>
+    </data>
+    <!-- End -->
+
+
 </odoo> 
