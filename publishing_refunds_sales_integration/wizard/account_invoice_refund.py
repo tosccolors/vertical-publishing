@@ -88,12 +88,12 @@ class AccountInvoiceRefund(models.TransientModel):
 							inv_refund._onchange_payment_term_date_invoice()
 						created_inv.append(inv_refund.id)
 						# code added to update customer contact and advertiser to refund invoice
-						for inv_refund_id in created_inv:
-							refund_inv = self.env['account.invoice'].search([('id','=',inv_refund_id)])
-							if refund_inv:
-								for refund_acc in refund_inv:
-									refund_acc.update({'published_customer': inv.published_customer.id,
-										'customer_contact':inv.customer_contact.id})
+				for inv_refund_id in created_inv:
+					refund_inv = self.env['account.invoice'].search([('id','=',inv_refund_id)])
+					if refund_inv:
+						for refund_acc in refund_inv:
+							refund_acc.update({'published_customer': inv.published_customer.id,
+								'customer_contact':inv.customer_contact.id})
 
 				xml_id = (inv.type in ['out_refund', 'out_invoice']) and 'action_invoice_tree1' or \
 						 (inv.type in ['in_refund', 'in_invoice']) and 'action_invoice_tree2_standard'
