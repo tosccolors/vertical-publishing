@@ -36,7 +36,7 @@ class SaleOrder(models.Model):
 	@api.onchange('invoicing_property_id')
 	def onchange_partner_invoicing_date(self):
 		for line in self:
-			if line.invoicing_property_id.inv_per_line_adv_print == True or line.invoicing_property_id.inv_per_line_adv_online == True or line.invoicing_property_id.inv_whole_order_at_once == True:
+			if line.invoicing_property_id.inv_per_line_adv_print == True or line.invoicing_property_id.inv_per_line_adv_online == True or line.invoicing_property_id.inv_whole_order_at_once == True or line.invoicing_property_id.inv_package_deal == True:
 				line.inv_date_bool = True
 			else:
 				line.inv_date_bool = False
@@ -57,4 +57,23 @@ class SaleOrderLine(models.Model):
 	_inherit = 'sale.order.line'
 
 	invoicing_property_id = fields.Many2one('invoicing.property',related='order_id.invoicing_property_id',string="Invoicing Property")
+
+
+	@api.multi
+	def write(self, vals):
+		result = super(SaleOrderLine, self).write(vals)
+		user = self.env['res.users'].browse(self.env.uid)
+		for line in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
+			if 'pubble_sent' in vals:
+				continue
+			is_allowed = user.has_group('account.group_account_invoice') or user.has_group('advertising_sale_superuser') or 'allow_user' in self.env.context
+			if line.invoice_status == 'invoiced' and not (vals.get('product_uom_qty') == 0 and line.qty_invoiced == 0) \
+												 and not is_allowed \
+												 and not user.id == 1:
+
+				raise UserError(_('You cannot change an order line after it has been fully invoiced.'))
+			if not line.multi_line and ('product_id' in vals or 'adv_issue' in vals or 'product_uom_qty' in vals):
+				if line.deadline_check():
+					line.page_qty_check_update()
+		return result
 

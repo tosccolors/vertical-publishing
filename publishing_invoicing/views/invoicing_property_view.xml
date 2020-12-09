@@ -33,6 +33,8 @@
                                 <field name="pre_pay_publishing_add" invisible="1"/>
                                 <field name="pre_pay_online_add" invisible="1"/>
                                 <field name="default_property" invisible="1"/>
+                                <field name="group_by_advertiser" invisible="1"/>
+                                <field name="group_by_edition" invisible="1"/>
 
                                 <group string="Invoice Timing">
                                     <div class="address_format">
@@ -54,8 +56,6 @@
 
                                         <field name="inv_whole_order_afterwards"/>
                                         <label for="inv_whole_order_afterwards"/><br/>
-
-                                        
                                     </div>
 
                                 </group>
@@ -64,11 +64,6 @@
                                         <field name="group_by_order"/>
                                         <label for="group_by_order"/><br/>
                                         
-                                        <field name="group_by_advertiser"/>
-                                        <label for="group_by_advertiser"/><br/>
-                                        
-                                        <field name="group_by_edition"/>
-                                        <label for="group_by_edition"/><br/>
                                     </div>
                                 </group>
                                 <group string="Special Invoice Properties">
