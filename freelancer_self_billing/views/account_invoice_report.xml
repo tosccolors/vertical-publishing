@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!--<report auto="False"
+            id="account_invoices_hon"
+            model="account.invoice"
+            name="account.invoice.hon"
+            rml="freelancer_self_billing/report/report_account_invoice_print.rml"
+            string="HON Invoices"
+            report_type="pdf"
+            attachment="(object.state in ('open','paid')) and ('HON'+(object.number or '').replace('/','')+'.pdf')"
+            attachment_use="True"
+            usage="default"
+            header="False"/>-->
+
+        <report id="account_invoices_hon"
+            string="HON Invoices"
+            model="account.invoice"
+            report_type="qweb-pdf"
+            file="freelancer_self_billing.report_invoice_hon"
+            name="freelancer_self_billing.report_invoice_hon"
+            paperformat="operating_unit_report_layout.paperformat_ou_layout"
+        />
+
+        <!--Email template -->
+        <record id="email_template_hon_invoice" model="mail.template">
+            <field name="name">Invoice - Send by Email</field>
+            <field name="email_from">${(object.user_id.email or object.company_id.email or 'noreply@localhost')|safe}</field>
+            <field name="subject">${object.company_id.name|safe} Invoice (Ref ${object.number or 'n/a'})</field>
+            <field name="partner_to">${object.partner_id.id}</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="report_template" ref="account_invoices_hon"/>
+            <field name="report_name">Invoice_${(object.number or '').replace('/','_')}_${object.state == 'draft' and 'draft' or ''}</field>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="body_html"></field>
+        </record>
+
+
+    </data>
+</openerp>

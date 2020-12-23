@@ -602,12 +602,14 @@
                         <field name="contact_name"/>
                         <field name="title" placeholder="Title" domain="[]" options='{"no_open": True}'/>
                     </div>
-                    <field name="is_activity" invisible="1"/>
                 </xpath>
                 <xpath expr="//page[@name='lead']/group[1]/group[2]/label[@for='contact_name']" position="replace" />
                 <xpath expr="//page[@name='lead']/group[1]/group[2]/div[1]" position="replace" />
                 <xpath expr="//field[@name='partner_id']" position="attributes">
                     <attribute name="domain">[('customer', '=', True), ('parent_id', '=', False)]</attribute>
+                </xpath>
+                <xpath expr="//sheet/group/group[2]/label[@for='next_activity_id']" position="before">
+                    <field name="is_activity" readonly="True" />
                 </xpath>
                 <xpath expr="//sheet/group/group[2]/div/div/field[@name='next_activity_id']" position="attributes" >
                     <attribute name="attrs" >{'required':[('is_activity', '=', True)]}</attribute>
@@ -707,7 +709,7 @@
                 <xpath expr="//button[@name='action_schedule_meeting']" position="after">
                     <button class="oe_stat_button" type="action"
                         name="%(crm_activity_report_action_tree2)d"
-                        icon="fa-clock-o">
+                        icon="fa-clock-o" context="{'search_default_activities': 1}" >
                         <field string="Activities Log" name="activities_count" widget="statinfo"/>
                     </button>
                     <button class="oe_stat_button" type="action"
@@ -809,6 +811,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//group[1]/filter[1]" position="after">
                    <filter string="Name Salesperson" context="{'group_by':'name_salesperson'}"/>
+                </xpath>
+                <xpath expr="//filter[@name='today']" position="attributes">
+                    <attribute name="domain">[('date_action', '&gt;', (context_today()-datetime.timedelta(days=1)).strftime('%Y-%m-%d')),('date_action', '&lt;', (context_today()+datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]</attribute>
                 </xpath>
             </field>
         </record>

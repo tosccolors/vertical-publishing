@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<openerp>
+    <data noupdate="0">
+        <record id="advertising_sale_superuser" model="res.groups">
+            <field name="name">Advertising Sales SuperUser</field>
+            <field name="category_id" ref="base.module_category_sales_management"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+        </record>
+    </data>
+</openerp>

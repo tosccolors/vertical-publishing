@@ -64,3 +64,17 @@ class InvoiceLine(models.Model):
     ad = fields.Boolean(related='so_line_id.advertising', string='Ad', store=True,
                                 help="It indicates that the invoice line is from an Advertising Invoice.")
 
+    @api.multi
+    def open_sale_order(self):
+        view_id = self.env.ref('sale_advertising_order.view_order_form_advertising').id if self.sale_order_id.advertising else self.env.ref('sale.view_order_form').id
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Sale Order',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'view_id':view_id,
+            'res_model': 'sale.order',
+            'res_id': self.sale_order_id.id,
+            'target': 'current',
+            'flags': {'initial_mode': 'view'},
+        }

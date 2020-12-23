@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_config_settings" model="ir.ui.view">
+        <field name="name">payer onchange settings</field>
+        <field name="model">sale.config.settings</field>
+        <field name="inherit_id" ref="sale.view_sales_config"/>
+        <field name="arch" type="xml">
+            <field name="group_warning_sale" position="after">
+                <field name="call_onchange_for_payers_advertisers"/>
+            </field>
+        </field>
+    </record>
+</odoo>
