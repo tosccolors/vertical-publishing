@@ -43,15 +43,27 @@
     </record>
 
     <record model="ir.ui.view" id="publishing_invoicing_sales_order_line_filter_view">
-            <field name="name">publising.sale.order.line.filter.view</field>
-            <field name="model">sale.order.line</field>
-            <field name="inherit_id" ref="sale_advertising_order.view_advertising_sales_order_line_filter" />
-            <field name="arch" type="xml">
-                <xpath expr="//filter[@name='from_date_sale_orders_filter']" position="after">
-                    <filter name="pay_in_terms_bool" string="To be invoiced in terms" domain="[('order_id.terms_cond_bool','=', True),('qty_to_invoice','&lt;&gt;', 0)]" />
-                    <filter name="package_bool" string="To be invoiced as Package Deal" domain="[('order_id.package','=', True),('qty_to_invoice','&lt;&gt;', 0)]" />
-                    <filter name="regular_invoices" string="Regular invoicing properties" domain="['&amp;',('order_id.package','!=', True),('order_id.terms_cond_bool','!=', True),('qty_to_invoice','&lt;&gt;', 0)]" />
-                </xpath>
-            </field>
-        </record>
+        <field name="name">publising.sale.order.line.filter.view</field>
+        <field name="model">sale.order.line</field>
+        <field name="inherit_id" ref="sale_advertising_order.view_advertising_sales_order_line_filter" />
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='from_date_sale_orders_filter']" position="after">
+                <filter name="pay_in_terms_bool" string="To be invoiced in terms" domain="[('order_id.terms_cond_bool','=', True),('qty_to_invoice','&lt;&gt;', 0)]" />
+                <filter name="package_bool" string="To be invoiced as Package Deal" domain="[('order_id.package','=', True),('qty_to_invoice','&lt;&gt;', 0)]" />
+                <filter name="regular_invoices" string="Regular invoicing properties" domain="['&amp;',('order_id.package','!=', True),('order_id.terms_cond_bool','!=', True),('qty_to_invoice','&lt;&gt;', 0)]" />
+            </xpath>
+        </field>
+    </record>
+        
+    <record id="sale.action_view_sale_advance_payment_inv" model="ir.actions.act_window">
+        <field name="name">DO NOT USE</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.advance.payment.inv</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="groups_id" eval="[(4,ref('sales_team.group_sale_salesman'))]"/>
+    </record>
+
+
 </odoo> 
