@@ -1047,7 +1047,7 @@ class SaleOrderLine(models.Model):
         for line in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
             if 'pubble_sent' in vals:
                 continue
-            is_allowed = user.has_group('account.group_account_invoice') or user.has_group('publishing_invoicing.advertising_sale_superuser') or 'allow_user' in self.env.context
+            is_allowed = user.has_group('account.group_account_invoice') or 'allow_user' in self.env.context
             if line.invoice_status == 'invoiced' and not (vals.get('product_uom_qty') == 0 and line.qty_invoiced == 0) \
                                                  and not is_allowed \
                                                  and not user.id == 1:
