@@ -20,6 +20,7 @@ class nsm_invoicing_property(models.Model):
 	group_by_edition = fields.Boolean(string="Group by Edition")
 	group_by_order = fields.Boolean(string="Group by Order")
 	group_by_advertiser = fields.Boolean(string="Group by Advertiser")
+	active = fields.Boolean(default=True)
 	
 
 
