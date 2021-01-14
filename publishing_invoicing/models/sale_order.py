@@ -58,4 +58,12 @@ class SaleOrderLine(models.Model):
 
 	invoicing_property_id = fields.Many2one('invoicing.property',related='order_id.invoicing_property_id',string="Invoicing Property")
 
+	@api.multi
+	def write(self, vals):
+		user = self.env['res.users'].browse(self.env.uid)
+		ctx = self.env.context.copy()
+		if self.env.user.has_group('publishing_invoicing.advertising_sale_superuser'):
+			ctx.update({'allow_user':True})
+		return super(SaleOrderLine, self.with_context(ctx)).write(vals)
+
 
