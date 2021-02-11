@@ -7,6 +7,7 @@ class SaleOrder(models.Model):
 	invoicing_property_id = fields.Many2one('invoicing.property',string="Invoicing Property",required=True)
 	invoicing_date = fields.Date(string="Invoicing Date")
 	inv_date_bool = fields.Boolean(string="Set attribute to Invoicing date field")
+	inv_package_bool = fields.Boolean(string="Set attribute to Package")
 	terms_condition = fields.Text(string="Terms and condition")
 	terms_cond_bool = fields.Boolean(string="Set attribute to Terms & condition field")
 
@@ -31,6 +32,19 @@ class SaleOrder(models.Model):
 				line.package = True
 			else:
 				line.package = False
+
+	@api.multi
+	@api.onchange('invoicing_property_id')
+	def onchange_partner_packagedeal_payinterms(self):
+		for line in self:
+			if line.invoicing_property_id.inv_package_deal == True and line.invoicing_property_id.pay_in_terms == True:
+				line.inv_date_bool = False
+				line.package = True
+				line.inv_package_bool = True
+			else:
+				line.inv_date_bool = True
+				line.package = False
+				line.inv_package_bool = False
 
 	@api.multi
 	@api.onchange('invoicing_property_id')
