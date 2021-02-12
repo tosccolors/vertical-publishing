@@ -5,7 +5,7 @@ class SaleOrder(models.Model):
 	_inherit = 'sale.order'
 
 	invoicing_property_id = fields.Many2one('invoicing.property',string="Invoicing Property",required=True)
-	invoicing_date = fields.Date(string="Invoicing Date")
+	invoicing_date = fields.Date(string="Invoiceable From")
 	inv_date_bool = fields.Boolean(string="Set attribute to Invoicing date field")
 	inv_package_bool = fields.Boolean(string="Set attribute to Package")
 	terms_condition = fields.Text(string="Terms and condition")
