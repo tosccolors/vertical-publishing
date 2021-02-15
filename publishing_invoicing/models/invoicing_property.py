@@ -54,13 +54,13 @@ class nsm_invoicing_property(models.Model):
 	def _onchange_inv_package_deal(self):
 		for line in self:
 			if line.inv_package_deal == True:
-				line.group_by_order = line.pay_in_terms = line.inv_per_line_after_print = line.inv_per_line_adv_print = line.inv_per_line_after_online = line.inv_whole_order_at_once = line.inv_whole_order_afterwards = line.inv_per_line_adv_online = False
+				line.group_by_order = line.inv_per_line_after_print = line.inv_per_line_adv_print = line.inv_per_line_after_online = line.inv_whole_order_at_once = line.inv_whole_order_afterwards = line.inv_per_line_adv_online = False
 
 	@api.onchange('pay_in_terms')
 	def _onchange_pay_in_terms(self):
 		for line in self:
 			if line.pay_in_terms == True:
-				line.group_by_order = line.inv_package_deal = line.inv_per_line_after_print = line.inv_per_line_adv_print = line.inv_per_line_after_online = line.inv_whole_order_at_once = line.inv_whole_order_afterwards = line.inv_per_line_adv_online = False
+				line.group_by_order = line.inv_per_line_after_print = line.inv_per_line_adv_print = line.inv_per_line_after_online = line.inv_whole_order_at_once = line.inv_whole_order_afterwards = line.inv_per_line_adv_online = False
 
 	@api.onchange('inv_per_line_after_print')
 	def _onchange_invoice_timing_inv_per_line_after_print(self):
