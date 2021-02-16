@@ -4,15 +4,15 @@ from odoo import api, fields, models, _
 class SaleOrder(models.Model):
 	_inherit = 'sale.order'
 
-	invoicing_property_id = fields.Many2one('invoicing.property',string="Invoicing Property",required=True)
+	invoicing_property_id = fields.Many2one('invoicing.property', string="Invoicing Property", required=True)
 	invoicing_date = fields.Date(string="Invoiceable From")
 	inv_date_bool = fields.Boolean(string="Set attribute to Invoicing date field")
 	inv_package_bool = fields.Boolean(string="Set attribute to Package")
-	terms_condition = fields.Text(string="Terms and condition")
+	terms_condition = fields.Text(string="Description of terms")
 	terms_cond_bool = fields.Boolean(string="Set attribute to Terms & condition field")
 
 	@api.multi
-	@api.onchange('published_customer','advertising_agency')
+	@api.onchange('published_customer', 'advertising_agency')
 	def onchange_customer_publishing_invoicing(self):
 		for line in self:
 			if line.advertising_agency:

@@ -294,11 +294,11 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not line_ids.issue_date:
 												if self.posting_date:
 													if line_ids.from_date:
-														if self.posting_date > line_ids.from_date:
+														if self.posting_date >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 												else:
 													if line_ids.from_date:
-														if self._context['posting_date'] > line_ids.from_date:
+														if self._context['posting_date'] >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 											else:
 												if self.posting_date:
@@ -341,11 +341,11 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not line_ids.issue_date:
 												if self.posting_date:
 													if line_ids.from_date:
-														if self.posting_date > line_ids.from_date:
+														if self.posting_date >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 												else:
 													if line_ids.from_date:
-														if self._context['posting_date'] > line_ids.from_date:
+														if self._context['posting_date'] >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 											else:
 												if self.posting_date:
@@ -386,11 +386,11 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not order_line_ids.issue_date:
 												if self.posting_date:
 													if order_line_ids.from_date:
-														if self.posting_date > order_line_ids.from_date:
+														if self.posting_date >= order_line_ids.from_date:
 															group_advertiser_order_id.append(order_line_ids)
 												else:
 													if order_line_ids.from_date:
-														if self._context['posting_date'] > order_line_ids.from_date:
+														if self._context['posting_date'] >= order_line_ids.from_date:
 															group_advertiser_order_id.append(order_line_ids)
 											else:
 												if self.posting_date:
@@ -437,11 +437,11 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not order_line_ids.issue_date:
 												if self.posting_date:
 													if order_line_ids.from_date:
-														if self.posting_date > order_line_ids.from_date:
+														if self.posting_date >= order_line_ids.from_date:
 															group_adv_issue_order_id.append(order_line_ids) 
 												else:
 													if order_line_ids.from_date:
-														if self._context['posting_date'] > order_line_ids.from_date:
+														if self._context['posting_date'] >= order_line_ids.from_date:
 															group_adv_issue_order_id.append(order_line_ids) 
 											else:
 												if self.posting_date:
@@ -484,22 +484,22 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not line_ids.issue_date:
 												# for date_lines in line_ids.dateperiods:
 												if self.posting_date:
-													# if self.posting_date > date_lines.from_date:
+													# if self.posting_date >= date_lines.from_date:
 													if line_ids.from_date:
-														if self.posting_date > line_ids.from_date:
+														if self.posting_date >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 												else:
-													# if self._context['posting_date'] > date_lines.from_date:
+													# if self._context['posting_date'] >= date_lines.from_date:
 													if line_ids.from_date:
-														if self._context['posting_date'] > line_ids.from_date:
+														if self._context['posting_date'] >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 											else:
 												if self.posting_date:
 													# for date_lines in line_ids.dateperiods:
-													if self.posting_date > line_ids.issue_date:
+													if self.posting_date >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 												else:
-													if self._context['posting_date'] > line_ids.issue_date:
+													if self._context['posting_date'] >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 
 								set_group_order_line_id = list(set(group_order_lines))
@@ -536,18 +536,18 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not line_ids.issue_date:
 												if self.posting_date:
 													if line_ids.from_date:
-														if self.posting_date > line_ids.from_date:
+														if self.posting_date >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 												else:
 													if line_ids.from_date:
-														if self._context['posting_date'] > line_ids.from_date:
+														if self._context['posting_date'] >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 											else:
 												if self.posting_date:
-													if self.posting_date > line_ids.issue_date:
+													if self.posting_date >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 												else:
-													if self._context['posting_date'] > line_ids.issue_date:
+													if self._context['posting_date'] >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 								set_group_order_line_id = list(set(group_order_lines))
 								if set_group_order_line_id:
@@ -582,19 +582,19 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not order_line_ids.issue_date:
 												if self.posting_date:
 													if order_line_ids.from_date:
-														if self.posting_date > order_line_ids.from_date:
+														if self.posting_date >= order_line_ids.from_date:
 															group_advertiser_order_id.append(order_line_ids)
 												else:
 													if order_line_ids.from_date:
-														if self._context['posting_date'] > order_line_ids.from_date:
+														if self._context['posting_date'] >= order_line_ids.from_date:
 															group_advertiser_order_id.append(order_line_ids)
 														
 											else:
 												if self.posting_date:
-													if self.posting_date > order_line_ids.issue_date:
+													if self.posting_date >= order_line_ids.issue_date:
 														group_advertiser_order_id.append(order_line_ids)
 												else:
-													if self._context['posting_date'] > order_line_ids.issue_date:
+													if self._context['posting_date'] >= order_line_ids.issue_date:
 														group_advertiser_order_id.append(order_line_ids)
 									set_group_advertiser_order_id = list(set(group_advertiser_order_id))
 								if set_group_advertiser_order_id:
@@ -634,19 +634,19 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not order_line_ids.issue_date:
 												if self.posting_date:
 													if order_line_ids.from_date:
-														if self.posting_date > order_line_ids.from_date:
+														if self.posting_date >= order_line_ids.from_date:
 															group_adv_issue_order_id.append(order_line_ids)
 												else:
 													if order_line_ids.from_date:
-														if self._context['posting_date'] > order_line_ids.from_date:
+														if self._context['posting_date'] >= order_line_ids.from_date:
 															group_adv_issue_order_id.append(order_line_ids)
 														
 											else:
 												if self.posting_date:
-													if self.posting_date > order_line_ids.issue_date:
+													if self.posting_date >= order_line_ids.issue_date:
 														group_adv_issue_order_id.append(order_line_ids)
 												else:
-													if self._context['posting_date'] > order_line_ids.issue_date:
+													if self._context['posting_date'] >= order_line_ids.issue_date:
 														group_adv_issue_order_id.append(order_line_ids)
 									set_group_adv_issue_order_id = list(set(group_adv_issue_order_id))
 								if set_group_adv_issue_order_id:
@@ -839,19 +839,19 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not line_ids.issue_date:
 												if self.posting_date:
 													if line_ids.from_date:
-														if self.posting_date > line_ids.from_date:
+														if self.posting_date >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 												else:
 													if line_ids.from_date:
-														if self._context['posting_date'] > line_ids.from_date:
+														if self._context['posting_date'] >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 														
 											else:
 												if self.posting_date:
-													if self.posting_date > line_ids.issue_date:
+													if self.posting_date >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 												else:
-													if self._context['posting_date'] > line_ids.issue_date:
+													if self._context['posting_date'] >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 
 								set_group_order_line_id = list(set(group_order_lines))
@@ -888,18 +888,18 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not line_ids.issue_date:
 												if self.posting_date:
 													if line_ids.from_date:
-														if self.posting_date > line_ids.from_date:
+														if self.posting_date >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 												else:
 													if line_ids.from_date:
-														if self._context['posting_date'] > line_ids.from_date:
+														if self._context['posting_date'] >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 											else:
 												if self.posting_date:
-													if self.posting_date > line_ids.issue_date:
+													if self.posting_date >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 												else:
-													if self._context['posting_date'] > line_ids.issue_date:
+													if self._context['posting_date'] >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 								set_group_order_line_id = list(set(group_order_lines))
 								if set_group_order_line_id:
@@ -934,19 +934,19 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not order_line_ids.issue_date:
 												if self.posting_date:
 													if order_line_ids.from_date:
-														if self.posting_date > order_line_ids.from_date:
+														if self.posting_date >= order_line_ids.from_date:
 															group_advertiser_order_id.append(order_line_ids)
 												else:
 													if order_line_ids.from_date:
-														if self._context['posting_date'] > order_line_ids.from_date:
+														if self._context['posting_date'] >= order_line_ids.from_date:
 															group_advertiser_order_id.append(order_line_ids)
 														
 											else:
 												if self.posting_date:
-													if self.posting_date > order_line_ids.issue_date:
+													if self.posting_date >= order_line_ids.issue_date:
 														group_advertiser_order_id.append(order_line_ids)
 												else:
-													if self._context['posting_date'] > order_line_ids.issue_date:
+													if self._context['posting_date'] >= order_line_ids.issue_date:
 														group_advertiser_order_id.append(order_line_ids)
 									set_group_advertiser_order_id = list(set(group_advertiser_order_id))
 								if set_group_advertiser_order_id:
@@ -986,19 +986,19 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not order_line_ids.issue_date:
 												if self.posting_date:
 													if order_line_ids.from_date:
-														if self.posting_date > order_line_ids.from_date:
+														if self.posting_date >= order_line_ids.from_date:
 															group_adv_issue_order_id.append(order_line_ids)
 												else:
 													if order_line_ids.from_date:
-														if self._context['posting_date'] > order_line_ids.from_date:
+														if self._context['posting_date'] >= order_line_ids.from_date:
 															group_adv_issue_order_id.append(order_line_ids)
 														
 											else:
 												if self.posting_date:
-													if self.posting_date > order_line_ids.issue_date:
+													if self.posting_date >= order_line_ids.issue_date:
 														group_adv_issue_order_id.append(order_line_ids)
 												else:
-													if self._context['posting_date'] > order_line_ids.issue_date:
+													if self._context['posting_date'] >= order_line_ids.issue_date:
 														group_adv_issue_order_id.append(order_line_ids)
 									set_group_adv_issue_order_id = list(set(group_adv_issue_order_id))
 								if set_group_adv_issue_order_id:
@@ -1036,19 +1036,19 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not line_ids.issue_date:
 												if self.posting_date:
 													if line_ids.from_date:
-														if self.posting_date > line_ids.from_date:
+														if self.posting_date >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 												else:
 													if line_ids.from_date:
-														if self._context['posting_date'] > line_ids.from_date:
+														if self._context['posting_date'] >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 														
 											else:
 												if self.posting_date:
-													if self.posting_date > line_ids.issue_date:
+													if self.posting_date >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 												else:
-													if self._context['posting_date'] > line_ids.issue_date:
+													if self._context['posting_date'] >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 
 								set_group_order_line_id = list(set(group_order_lines))
@@ -1085,18 +1085,18 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not line_ids.issue_date:
 												if self.posting_date:
 													if line_ids.from_date:
-														if self.posting_date > line_ids.from_date:
+														if self.posting_date >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 												else:
 													if line_ids.from_date:
-														if self._context['posting_date'] > line_ids.from_date:
+														if self._context['posting_date'] >= line_ids.from_date:
 															group_order_lines.append(line_ids)
 											else:
 												if self.posting_date:
-													if self.posting_date > line_ids.issue_date:
+													if self.posting_date >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 												else:
-													if self._context['posting_date'] > line_ids.issue_date:
+													if self._context['posting_date'] >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 								set_group_order_line_id = list(set(group_order_lines))
 								if set_group_order_line_id:
@@ -1131,19 +1131,19 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not order_line_ids.issue_date:
 												if self.posting_date:
 													if order_line_ids.from_date:
-														if self.posting_date > order_line_ids.from_date:
+														if self.posting_date >= order_line_ids.from_date:
 															group_advertiser_order_id.append(order_line_ids)
 												else:
 													if order_line_ids.from_date:
-														if self._context['posting_date'] > order_line_ids.from_date:
+														if self._context['posting_date'] >= order_line_ids.from_date:
 															group_advertiser_order_id.append(order_line_ids)
 														
 											else:
 												if self.posting_date:
-													if self.posting_date > order_line_ids.issue_date:
+													if self.posting_date >= order_line_ids.issue_date:
 														group_advertiser_order_id.append(order_line_ids)
 												else:
-													if self._context['posting_date'] > order_line_ids.issue_date:
+													if self._context['posting_date'] >= order_line_ids.issue_date:
 														group_advertiser_order_id.append(order_line_ids)
 									set_group_advertiser_order_id = list(set(group_advertiser_order_id))
 								if set_group_advertiser_order_id:
@@ -1183,19 +1183,19 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 											if not order_line_ids.issue_date:
 												if self.posting_date:
 													if order_line_ids.from_date:
-														if self.posting_date > order_line_ids.from_date:
+														if self.posting_date >= order_line_ids.from_date:
 															group_adv_issue_order_id.append(order_line_ids)
 												else:
 													if order_line_ids.from_date:
-														if self._context['posting_date'] > order_line_ids.from_date:
+														if self._context['posting_date'] >= order_line_ids.from_date:
 															group_adv_issue_order_id.append(order_line_ids)
 														
 											else:
 												if self.posting_date:
-													if self.posting_date > order_line_ids.issue_date:
+													if self.posting_date >= order_line_ids.issue_date:
 														group_adv_issue_order_id.append(order_line_ids)
 												else:
-													if self._context['posting_date'] > order_line_ids.issue_date:
+													if self._context['posting_date'] >= order_line_ids.issue_date:
 														group_adv_issue_order_id.append(order_line_ids)
 									set_group_adv_issue_order_id = list(set(group_adv_issue_order_id))
 								if set_group_adv_issue_order_id:
@@ -1238,10 +1238,10 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 														group_order_lines.append(line_ids)
 											else:
 												if self.posting_date:
-													if self.posting_date > line_ids.issue_date:
+													if self.posting_date >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 												else:
-													if self._context['posting_date'] > line_ids.issue_date:
+													if self._context['posting_date'] >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 								set_group_order_line_id = list(set(group_order_lines))
 
@@ -1285,10 +1285,10 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 														group_order_lines.append(line_ids)
 											else:
 												if self.posting_date:
-													if self.posting_date > line_ids.issue_date:
+													if self.posting_date >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 												else:
-													if self._context['posting_date'] > line_ids.issue_date:
+													if self._context['posting_date'] >= line_ids.issue_date:
 														group_order_lines.append(line_ids)
 								set_group_order_line_id = list(set(group_order_lines))
 								if set_group_order_line_id:
@@ -1329,11 +1329,11 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 														group_advertiser_order_id.append(order_line_ids)
 											else:
 												if self.posting_date:
-													if self.posting_date > order_line_ids.issue_date:
+													if self.posting_date >= order_line_ids.issue_date:
 														group_advertiser_order_id.append(order_line_ids)
 												else:
 													# for date_lines in order_line_ids.dateperiods:
-													if self._context['posting_date'] > order_line_ids.issue_date:
+													if self._context['posting_date'] >= order_line_ids.issue_date:
 														group_advertiser_order_id.append(order_line_ids)
 									set_group_advertiser_order_id = list(set(group_advertiser_order_id))
 								if set_group_advertiser_order_id:
@@ -1379,10 +1379,10 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 														group_adv_issue_order_id.append(order_line_ids)
 											else:
 												if self.posting_date:
-													if self.posting_date > order_line_ids.issue_date:
+													if self.posting_date >= order_line_ids.issue_date:
 														group_adv_issue_order_id.append(order_line_ids)
 												else:
-													if self._context['posting_date'] > order_line_ids.issue_date:
+													if self._context['posting_date'] >= order_line_ids.issue_date:
 														group_adv_issue_order_id.append(order_line_ids)
 									set_group_adv_issue_order_id = list(set(group_adv_issue_order_id))
 								if set_group_adv_issue_order_id:
