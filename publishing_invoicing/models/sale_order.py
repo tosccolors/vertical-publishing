@@ -55,7 +55,7 @@ class SaleOrder(models.Model):
 				line.inv_package_bool = True
 				line.terms_cond_bool = False
 			else:
-				line.inv_date_bool = False
+				#line.inv_date_bool = False
 				line.package = False
 				line.inv_package_bool = False
 				line.terms_cond_bool = False
