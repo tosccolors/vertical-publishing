@@ -4,14 +4,15 @@ from odoo import api, fields, models, _
 class SaleOrder(models.Model):
 	_inherit = 'sale.order'
 
-	invoicing_property_id = fields.Many2one('invoicing.property',string="Invoicing Property",required=True)
-	invoicing_date = fields.Date(string="Invoicing Date")
+	invoicing_property_id = fields.Many2one('invoicing.property', string="Invoicing Property", required=True)
+	invoicing_date = fields.Date(string="Invoiceable From")
 	inv_date_bool = fields.Boolean(string="Set attribute to Invoicing date field")
-	terms_condition = fields.Text(string="Terms and condition")
+	inv_package_bool = fields.Boolean(string="Set attribute to Package")
+	terms_condition = fields.Text(string="Description of terms")
 	terms_cond_bool = fields.Boolean(string="Set attribute to Terms & condition field")
 
 	@api.multi
-	@api.onchange('published_customer','advertising_agency')
+	@api.onchange('published_customer', 'advertising_agency')
 	def onchange_customer_publishing_invoicing(self):
 		for line in self:
 			if line.advertising_agency:
@@ -31,6 +32,19 @@ class SaleOrder(models.Model):
 				line.package = True
 			else:
 				line.package = False
+
+	@api.multi
+	@api.onchange('invoicing_property_id')
+	def onchange_partner_packagedeal_payinterms(self):
+		for line in self:
+			if line.invoicing_property_id.inv_package_deal == True and line.invoicing_property_id.pay_in_terms == True:
+				line.inv_date_bool = False
+				line.package = True
+				line.inv_package_bool = True
+			else:
+				line.inv_date_bool = True
+				line.package = False
+				line.inv_package_bool = False
 
 	@api.multi
 	@api.onchange('invoicing_property_id')
@@ -57,5 +71,13 @@ class SaleOrderLine(models.Model):
 	_inherit = 'sale.order.line'
 
 	invoicing_property_id = fields.Many2one('invoicing.property',related='order_id.invoicing_property_id',string="Invoicing Property")
+
+	@api.multi
+	def write(self, vals):
+		user = self.env['res.users'].browse(self.env.uid)
+		ctx = self.env.context.copy()
+		if self.env.user.has_group('publishing_invoicing.advertising_sale_superuser'):
+			ctx.update({'allow_user':True})
+		return super(SaleOrderLine, self.with_context(ctx)).write(vals)
 
 

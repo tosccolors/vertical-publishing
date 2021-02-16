@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-27 09:20+0000\n"
-"PO-Revision-Date: 2020-11-27 10:39+0100\n"
+"POT-Creation-Date: 2021-02-16 12:08+0000\n"
+"PO-Revision-Date: 2021-02-16 13:29+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,9 +18,24 @@ msgstr ""
 "X-Generator: Poedit 2.4.1\n"
 
 #. module: publishing_invoicing
+#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_active
+msgid "Active"
+msgstr "Actief"
+
+#. module: publishing_invoicing
 #: model:ir.model,name:publishing_invoicing.model_ad_order_line_make_invoice
 msgid "Advertising Order Line Make_invoice"
 msgstr "Aanmaken factuur orderregel"
+
+#. module: publishing_invoicing
+#: model:ir.model,name:publishing_invoicing.model_ad_order_make_invoice
+msgid "Advertising Order Make_invoice"
+msgstr "Factuur aanmaken voor verkooporder"
+
+#. module: publishing_invoicing
+#: model:res.groups,name:publishing_invoicing.advertising_sale_superuser
+msgid "Advertising Sales SuperUser"
+msgstr "Advertising Sales SuperUser"
 
 #. module: publishing_invoicing
 #: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_default_property
@@ -36,6 +51,16 @@ msgstr "Aangemaakt door"
 #: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_create_date
 msgid "Created on"
 msgstr "Aangemaakt op"
+
+#. module: publishing_invoicing
+#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_inv_per_line_after_online
+msgid "Deprecated"
+msgstr "Vervallen"
+
+#. module: publishing_invoicing
+#: model:ir.model.fields,field_description:publishing_invoicing.field_sale_order_terms_condition
+msgid "Description of terms"
+msgstr "Description of terms"
 
 #. module: publishing_invoicing
 #: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_display_name
@@ -56,11 +81,6 @@ msgstr "Groeperen per editie"
 #: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_group_by_month
 msgid "Group by Month"
 msgstr "Group by Month"
-
-#. module: publishing_invoicing
-#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_group_by_order
-msgid "Group by Order"
-msgstr "Group by Order"
 
 #. module: publishing_invoicing
 #: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_group_by_week
@@ -98,6 +118,11 @@ msgid "Group invoice lines per title"
 msgstr "Group invoice lines per title"
 
 #. module: publishing_invoicing
+#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_group_by_order
+msgid "Group order lines with the same SO number on one invoice"
+msgstr "Groepeer orderregels met hetzelfde SO nummer op een factuur"
+
+#. module: publishing_invoicing
 #: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_id
 msgid "ID"
 msgstr "ID"
@@ -108,44 +133,44 @@ msgid "Invoice Timing"
 msgstr "Facturatiemoment"
 
 #. module: publishing_invoicing
-#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_inv_package_deal
-msgid "Invoice package deal"
-msgstr "Factureren als package deal"
+#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_inv_whole_order_at_once
+msgid "Invoice all order lines on or after selected date "
+msgstr "Factureer alle orderregels op of na de op de order ingestelde datum."
 
 #. module: publishing_invoicing
-#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_inv_per_line_after_online
-msgid "Invoice per OrderLine afterwards online"
-msgstr "Factureer online regels achteraf"
+#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_inv_package_deal
+msgid "Invoice as package deal"
+msgstr "Factureer als package deal."
+
+#. module: publishing_invoicing
+#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_pay_in_terms
+msgid "Invoice in terms"
+msgstr "Factureer in termijnen."
+
+#. module: publishing_invoicing
+#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_inv_per_line_adv_online
+msgid "Invoice online order lines on or after the selected date, invoice print order lines on or after issue date"
+msgstr "Factureer online orderregels op of na de op de order ingestelde datum, factureer print orderregels op of na editiedatum."
 
 #. module: publishing_invoicing
 #: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_inv_per_line_after_print
 msgid "Invoice per OrderLine afterwards print"
-msgstr "Factureer printregels achteraf"
-
-#. module: publishing_invoicing
-#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_inv_per_line_adv_online
-msgid "Invoice per OrderLine in advance online"
-msgstr "Factureer online regels vooraf"
-
-#. module: publishing_invoicing
-#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_inv_per_line_adv_print
-msgid "Invoice per OrderLine in advance print"
-msgstr "Factureer printregels vooraf"
+msgstr "Factureer online orderregels na startdatum, factureer print orderregels op of na editiedatum."
 
 #. module: publishing_invoicing
 #: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_inv_whole_order_afterwards
-msgid "Invoice whole order afterwards"
-msgstr "Factureer hele order achteraf"
+msgid "Invoice print order lines on or after issue date, invoice online order lines on or after start date"
+msgstr "Factureer print orderregels op of na editiedatum, factureer online orderregels op of na startdatum"
 
 #. module: publishing_invoicing
-#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_inv_whole_order_at_once
-msgid "Invoice whole order in advance"
-msgstr "Factureer hele order vooraf"
+#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_inv_per_line_adv_print
+msgid "Invoice print order lines on or after the selected date, invoice online order lines on or after startdate"
+msgstr "Factureer print orderregels op of na de ingestelde datum, factureer online orderregels op of na de startdatum"
 
 #. module: publishing_invoicing
 #: model:ir.model.fields,field_description:publishing_invoicing.field_sale_order_invoicing_date
-msgid "Invoicing Date"
-msgstr "Factuurdatum"
+msgid "Invoiceable From"
+msgstr "Invoiceable From"
 
 #. module: publishing_invoicing
 #: model:ir.ui.view,arch_db:publishing_invoicing.view_invoicing_property_form
@@ -185,7 +210,7 @@ msgid "Last Updated on"
 msgstr "Laatst bijgewerkt op"
 
 #. module: publishing_invoicing
-#: code:addons/publishing_invoicing/wizard/adv_line_invoice.py:49
+#: code:addons/publishing_invoicing/wizard/adv_line_invoice.py:75
 #, python-format
 msgid "No Ad Order lines are selected for invoicing:\n"
 msgstr "Er zijn geen orderregels geselecteerd om te factureren:\n"
@@ -199,11 +224,6 @@ msgstr "Only invoice published advertisements"
 #: model:ir.model,name:publishing_invoicing.model_res_partner
 msgid "Partner"
 msgstr "Relatie"
-
-#. module: publishing_invoicing
-#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_pay_in_terms
-msgid "Pay in terms"
-msgstr "Factureren in termijnen"
 
 #. module: publishing_invoicing
 #: model:ir.ui.view,arch_db:publishing_invoicing.publishing_invoicing_sales_order_line_filter_view
@@ -231,6 +251,11 @@ msgid "Set attribute to Invoicing date field"
 msgstr "Set attribute to Invoicing date field"
 
 #. module: publishing_invoicing
+#: model:ir.model.fields,field_description:publishing_invoicing.field_sale_order_inv_package_bool
+msgid "Set attribute to Package"
+msgstr "Set attribute to Package"
+
+#. module: publishing_invoicing
 #: model:ir.model.fields,field_description:publishing_invoicing.field_sale_order_terms_cond_bool
 msgid "Set attribute to Terms & condition field"
 msgstr "Set attribute to Terms & condition field"
@@ -239,11 +264,6 @@ msgstr "Set attribute to Terms & condition field"
 #: model:ir.ui.view,arch_db:publishing_invoicing.view_invoicing_property_form
 msgid "Special Invoice Properties"
 msgstr "Overige Facturatie Methoden"
-
-#. module: publishing_invoicing
-#: model:ir.model.fields,field_description:publishing_invoicing.field_sale_order_terms_condition
-msgid "Terms and condition"
-msgstr "Omschrijving termijnen"
 
 #. module: publishing_invoicing
 #: model:ir.ui.view,arch_db:publishing_invoicing.publishing_invoicing_sales_order_line_filter_view

@@ -16,6 +16,11 @@
             <field name="arch" type="xml">
                 <form>
                     <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
                         <div class="oe_title">
                             <h1>
                                 <field name="name" required="1" placeholder="Invoicing Property"/>
@@ -44,11 +49,11 @@
                                         <field name="inv_per_line_adv_online"/>
                                         <label for="inv_per_line_adv_online"/><br/>
 
-                                        <field name="inv_per_line_after_print"/>
-                                        <label for="inv_per_line_after_print"/><br/>
+                                        <field name="inv_per_line_after_print" invisible="1"/>
+<!--                                        <label for="inv_per_line_after_print"/><br/>-->
 
-                                        <field name="inv_per_line_after_online"/>
-                                        <label for="inv_per_line_after_online"/><br/>
+                                        <field name="inv_per_line_after_online" invisible="1"/>
+<!--                                        <label for="inv_per_line_after_online"/><br/>-->
                                         
 
                                         <field name="inv_whole_order_at_once"/>
