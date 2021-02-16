@@ -1408,7 +1408,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 							if set_group_default_order:
 								# Condition is used to truncate the null value
 								self.make_invoices_job_queue(inv_date, post_date, set_group_default_order)
-				elif inv_ids.pay_in_terms == True:
+				elif inv_ids.pay_in_terms == True and inv_ids.inv_package_deal == False:
 					# Loop over the customer to generate the invoice
 					for cus_id in set_customer_ids:
 						customer_id = self.env['res.partner'].search([('id','=',cus_id)])
