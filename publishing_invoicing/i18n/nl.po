@@ -60,7 +60,7 @@ msgstr "Vervallen"
 #. module: publishing_invoicing
 #: model:ir.model.fields,field_description:publishing_invoicing.field_sale_order_terms_condition
 msgid "Description of terms"
-msgstr "Description of terms"
+msgstr "Omschrijving van termijnen"
 
 #. module: publishing_invoicing
 #: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_display_name
@@ -170,7 +170,7 @@ msgstr "Factureer print orderregels op of na de ingestelde datum, factureer onli
 #. module: publishing_invoicing
 #: model:ir.model.fields,field_description:publishing_invoicing.field_sale_order_invoicing_date
 msgid "Invoiceable From"
-msgstr "Invoiceable From"
+msgstr "Factureerbaar op of na"
 
 #. module: publishing_invoicing
 #: model:ir.ui.view,arch_db:publishing_invoicing.view_invoicing_property_form
