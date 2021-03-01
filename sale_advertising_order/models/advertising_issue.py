@@ -77,27 +77,6 @@ class AdvertisingIssue(models.Model):
             av_space += line.available_qty or 0
         return av_space
 
-    @api.multi
-    def write(self, vals):
-        result = super(AdvertisingIssue, self).write(vals)
-        issue_date = vals.get('issue_date', False)
-        if issue_date:
-            issue_date = str(issue_date)
-            op, ids = ('IN', tuple(self.ids)) if len(self.ids) > 1 else ('=', self.id)
-            query = ("""
-                        UPDATE sale_order_line 
-                        SET from_date = {0},
-                            to_date = {0}
-                        WHERE adv_issue {1} {2}
-                        """.format(
-                "'%s'" % issue_date,
-                op,
-                ids
-            ))
-            self.env.cr.execute(query)
-        return result
-
-
     name = fields.Char('Name', size=64, required=True)
     code = fields.Char('Code', size=16, required=True)
     child_ids = fields.One2many('sale.advertising.issue', 'parent_id', 'Issues',)
