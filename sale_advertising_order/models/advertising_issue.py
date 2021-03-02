@@ -77,7 +77,6 @@ class AdvertisingIssue(models.Model):
             av_space += line.available_qty or 0
         return av_space
 
-
     name = fields.Char('Name', size=64, required=True)
     code = fields.Char('Code', size=16, required=True)
     child_ids = fields.One2many('sale.advertising.issue', 'parent_id', 'Issues',)

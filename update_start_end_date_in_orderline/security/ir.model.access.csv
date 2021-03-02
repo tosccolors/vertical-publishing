@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_magnus/vertical-publishing/update_start_end_date_in_orderline_magnus/vertical-publishing/update_start_end_date_in_orderline,magnus/vertical-publishing/update_start_end_date_in_orderline.magnus/vertical-publishing/update_start_end_date_in_orderline,model_magnus/vertical-publishing/update_start_end_date_in_orderline_magnus/vertical-publishing/update_start_end_date_in_orderline,,1,0,0,0
