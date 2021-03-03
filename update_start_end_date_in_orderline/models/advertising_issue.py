@@ -9,17 +9,17 @@ class AdvertisingIssue(models.Model):
 
     @api.multi
     def write(self, vals):
-        print '---AdvertisingIssue--------',vals
         result = super(AdvertisingIssue, self).write(vals)
         issue_date = vals.get('issue_date', False)
         if issue_date:
             issue_date = str(issue_date)
             op, ids = ('IN', tuple(self.ids)) if len(self.ids) > 1 else ('=', self.id)
-            query = ("""
+            self.env.cr.execute("""
                     UPDATE sale_order_line
                     SET from_date = {0},
                         to_date = {0}
                     WHERE adv_issue {1} {2}
+                    AND invoice_status = 'to invoice'
                     """.format(
                     "'%s'" % issue_date,
                     op,
