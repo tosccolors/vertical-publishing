@@ -19,7 +19,6 @@ class AdvertisingIssue(models.Model):
                     SET from_date = {0},
                         to_date = {0}
                     WHERE adv_issue {1} {2}
-                    AND invoice_status = 'to invoice'
                     """.format(
                     "'%s'" % issue_date,
                     op,
