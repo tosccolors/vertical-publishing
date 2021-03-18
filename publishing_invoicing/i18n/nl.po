@@ -169,8 +169,8 @@ msgstr "Factureer print orderregels op of na de ingestelde datum, factureer onli
 
 #. module: publishing_invoicing
 #: model:ir.model.fields,field_description:publishing_invoicing.field_sale_order_invoicing_date
-msgid "Invoiceable From"
-msgstr "Factureerbaar op of na"
+msgid "Invoicing date"
+msgstr "Factureerdatum"
 
 #. module: publishing_invoicing
 #: model:ir.ui.view,arch_db:publishing_invoicing.view_invoicing_property_form
