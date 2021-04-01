@@ -18,24 +18,24 @@ class nsm_invoicing_property(models.Model):
 	group_by_online_separate = fields.Boolean(string="Group by online / print separate")
 	# remove above
 	group_by_edition = fields.Boolean(string="Group by Edition")
-	group_by_order = fields.Boolean(string="Group by Order")
+	group_by_order = fields.Boolean(string="Group order lines with the same SO number on one invoice")
 	group_by_advertiser = fields.Boolean(string="Group by Advertiser")
 	active = fields.Boolean(default=True)
 	
 
 
 	# newly added
-	inv_package_deal = fields.Boolean(string="Invoice package deal")
-	inv_per_line_adv_print = fields.Boolean(string="Invoice per OrderLine in advance print")
-	inv_per_line_after_online = fields.Boolean(string="Invoice per OrderLine afterwards online")
-	inv_whole_order_at_once = fields.Boolean(string="Invoice whole order in advance")
-	inv_whole_order_afterwards = fields.Boolean(string="Invoice whole order afterwards")
-	pay_in_terms = fields.Boolean(string="Pay in terms")
+	inv_package_deal = fields.Boolean(string="Invoice as package deal")
+	inv_per_line_adv_print = fields.Boolean(string="Invoice print order lines on or after the selected date, invoice online order lines on or after startdate")
+	inv_per_line_after_online = fields.Boolean(string="Deprecated")
+	inv_whole_order_at_once = fields.Boolean(string="Invoice all order lines on or after selected date ")
+	inv_whole_order_afterwards = fields.Boolean(string="Invoice print order lines on or after issue date, invoice online order lines on or after start date")
+	pay_in_terms = fields.Boolean(string="Invoice in terms")
 
 	inv_per_line_after_print = fields.Boolean(string="Invoice per OrderLine afterwards print")
-	inv_per_line_adv_online = fields.Boolean(string="Invoice per OrderLine in advance online")
+	inv_per_line_adv_online = fields.Boolean(string="Invoice online order lines on or after the selected date, invoice print order lines on or after issue date")
 
-	default_property = fields.Boolean(string="Check if it is a default property",compute="check_default_property")
+	default_property = fields.Boolean(string="Check if it is a default property", compute="check_default_property")
 
 
 	@api.depends('group_by_edition','group_by_order','group_by_advertiser','group_by_online_separate','inv_package_deal','inv_per_line_adv_print','inv_per_line_after_online',

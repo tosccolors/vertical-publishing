@@ -49,11 +49,11 @@
                                         <field name="inv_per_line_adv_online"/>
                                         <label for="inv_per_line_adv_online"/><br/>
 
-                                        <field name="inv_per_line_after_print"/>
-                                        <label for="inv_per_line_after_print"/><br/>
+                                        <field name="inv_per_line_after_print" invisible="1"/>
+<!--                                        <label for="inv_per_line_after_print"/><br/>-->
 
-                                        <field name="inv_per_line_after_online"/>
-                                        <label for="inv_per_line_after_online"/><br/>
+                                        <field name="inv_per_line_after_online" invisible="1"/>
+<!--                                        <label for="inv_per_line_after_online"/><br/>-->
                                         
 
                                         <field name="inv_whole_order_at_once"/>

@@ -1,0 +1,59 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    <!--
+    <record model="ir.ui.view" id="magnus/vertical-publishing/update_start_end_date_in_orderline.list">
+      <field name="name">Magnus/vertical-publishing/update_start_end_date_in_orderline list</field>
+      <field name="model">magnus/vertical-publishing/update_start_end_date_in_orderline.magnus/vertical-publishing/update_start_end_date_in_orderline</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+    -->
+
+    <!-- actions opening views on models -->
+    <!--
+    <record model="ir.actions.act_window" id="magnus/vertical-publishing/update_start_end_date_in_orderline.action_window">
+      <field name="name">Magnus/vertical-publishing/update_start_end_date_in_orderline window</field>
+      <field name="res_model">magnus/vertical-publishing/update_start_end_date_in_orderline.magnus/vertical-publishing/update_start_end_date_in_orderline</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    -->
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="magnus/vertical-publishing/update_start_end_date_in_orderline.action_server">
+      <field name="name">Magnus/vertical-publishing/update_start_end_date_in_orderline server</field>
+      <field name="model_id" ref="model_magnus/vertical-publishing/update_start_end_date_in_orderline_magnus/vertical-publishing/update_start_end_date_in_orderline"/>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    <!--
+    <menuitem name="Magnus/vertical-publishing/update_start_end_date_in_orderline" id="magnus/vertical-publishing/update_start_end_date_in_orderline.menu_root"/>
+    -->
+    <!-- menu categories -->
+    <!--
+    <menuitem name="Menu 1" id="magnus/vertical-publishing/update_start_end_date_in_orderline.menu_1" parent="magnus/vertical-publishing/update_start_end_date_in_orderline.menu_root"/>
+    <menuitem name="Menu 2" id="magnus/vertical-publishing/update_start_end_date_in_orderline.menu_2" parent="magnus/vertical-publishing/update_start_end_date_in_orderline.menu_root"/>
+    -->
+    <!-- actions -->
+    <!--
+    <menuitem name="List" id="magnus/vertical-publishing/update_start_end_date_in_orderline.menu_1_list" parent="magnus/vertical-publishing/update_start_end_date_in_orderline.menu_1"
+              action="magnus/vertical-publishing/update_start_end_date_in_orderline.action_window"/>
+    <menuitem name="Server to list" id="magnus/vertical-publishing/update_start_end_date_in_orderline" parent="magnus/vertical-publishing/update_start_end_date_in_orderline.menu_2"
+              action="magnus/vertical-publishing/update_start_end_date_in_orderline.action_server"/>
+    -->
+  </data>
+</odoo>
