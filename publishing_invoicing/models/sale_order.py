@@ -21,50 +21,28 @@ class SaleOrder(models.Model):
 			else:
 				if line.published_customer.invoicing_property_id:
 					line.invoicing_property_id = line.published_customer.invoicing_property_id.id
-	
-
-					
-	# @api.multi
-	# @api.onchange('invoicing_property_id')
-	# def onchange_partner_package(self):
-	# 	for line in self:
-	# 		if line.invoicing_property_id.inv_package_deal and line.invoicing_property_id.pay_in_terms == False:
-	# 			line.package = True
-	# 			line.inv_package_bool = True
-	# 		else:
-	# 			line.package = False
-	# 			line.inv_package_bool = False
 
 	@api.multi
 	@api.onchange('invoicing_property_id')
-	def onchange_partner_packagedeal_payinterms(self):
+	def onchange_invoicing_property(self):
 		for line in self:
-			if line.invoicing_property_id.inv_package_deal == True and line.invoicing_property_id.pay_in_terms == True:
-				line.inv_date_bool = line.invoicing_date = False
-				line.package = line.inv_package_bool = line.terms_cond_bool = True
-			elif line.invoicing_property_id.inv_package_deal == False and line.invoicing_property_id.pay_in_terms == True:
+			if line.invoicing_property_id.inv_package_deal:
+				if line.invoicing_property_id.pay_in_terms:
+					line.inv_date_bool = line.invoicing_date = False
+					line.package = line.inv_package_bool = line.terms_cond_bool = True
+				else:
+					line.inv_date_bool = line.package = line.inv_package_bool = True
+					line.terms_cond_bool = line.terms_condition = False
+			elif not line.invoicing_property_id.inv_package_deal and line.invoicing_property_id.pay_in_terms:
 				line.inv_date_bool = line.package = line.inv_package_bool = line.package_description = line.invoicing_date = False
 				line.terms_cond_bool = True
-			elif line.invoicing_property_id.inv_package_deal == True and line.invoicing_property_id.pay_in_terms == False:
-				line.inv_date_bool = line.package = line.inv_package_bool = True
-				line.terms_cond_bool = line.terms_condition = False
 			else:
-				if line.invoicing_property_id.inv_per_line_adv_print == True or line.invoicing_property_id.inv_per_line_adv_online == True or line.invoicing_property_id.inv_whole_order_at_once == True:
+				if line.invoicing_property_id.inv_per_line_adv_print or line.invoicing_property_id.inv_per_line_adv_online or line.invoicing_property_id.inv_whole_order_at_once:
 					line.inv_date_bool = True
 					line.package = line.inv_package_bool = line.terms_cond_bool = line.terms_condition = line.package_description = False
 				else:
 					line.inv_date_bool = line.invoicing_date = line.package = line.inv_package_bool = False
 					line.terms_cond_bool = line.terms_condition = False
-
-	# @api.multi
-	# @api.onchange('invoicing_property_id')
-	# def onchange_partner_pay_terms(self):
-	# 	for line in self:
-	# 		if line.invoicing_property_id.pay_in_terms == True:
-	# 			line.terms_cond_bool = True
-	# 		else:
-	# 			line.terms_cond_bool = False
-	# 			line.terms_condition = False
 
 
 class SaleOrderLine(models.Model):
