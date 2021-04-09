@@ -66,9 +66,13 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     execution_datetime = fields.Datetime('Job Execution not before', default=fields.Datetime.now())
 
     @api.model
-    def _prepare_invoice(self, partner, published_customer, payment_mode, operating_unit, lines, invoice_date, posting_date):
+    def _prepare_invoice(self, keydict, lines, invoice_date, posting_date):
 #        self.ensure_one()
 #        line_ids = [x.id for x in lines['lines']]
+        partner = keydict['partner_id']
+        published_customer = keydict['published_customer']
+        payment_mode = keydict['payment_mode_id']
+        operating_unit = keydict['operating_unit_id']
         journal_id = self.env['account.invoice'].default_get(['journal_id'])['journal_id']
         if not journal_id:
             raise UserError(_('Please define an accounting sale journal for this company.'))
@@ -180,15 +184,16 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                     self.with_delay(eta=eta, description=description).make_invoices_job_queue(inv_date, post_date, chunk)
             return "Invoice lines successfully chopped in chunks. Chunks will be processed in separate jobs.\n"
 
-
+    def modify_key(self, key, keydict, line):
+        """Hook method to modify grouping key of advertising invoicing"""
+        return key, keydict
 
     @job
     @api.multi
     def make_invoices_job_queue(self, inv_date, post_date, chunk):
         invoices = {}
-        def make_invoice(partner, published_customer, payment_mode, operating_unit, lines, inv_date, post_date):
-            vals = self._prepare_invoice(partner, published_customer, payment_mode, operating_unit,
-                                         lines, inv_date, post_date)
+        def make_invoice(keydict, lines, inv_date, post_date):
+            vals = self._prepare_invoice(keydict, lines, inv_date, post_date)
             invoice = self.env['account.invoice'].create(vals)
             invoice.compute_taxes()
             return invoice.id
@@ -196,11 +201,18 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         for line in chunk:
             key = (line.order_id.partner_invoice_id, line.order_id.published_customer, line.order_id.payment_mode_id,
                    line.order_id.operating_unit_id)
+            keydict = {
+                'partner_id': line.order_id.partner_invoice_id,
+                'published_customer': line.order_id.published_customer,
+                'payment_mode_id': line.order_id.payment_mode_id,
+                'operating_unit_id': line.order_id.operating_unit_id,
+            }
+            key, keydict = self.modify_key(key, keydict, line)
 
             if (not line.invoice_lines) and (line.state in ('sale', 'done')) :
                 if not key in invoices:
                     invoices[key] = {'lines':[], 'name': ''}
-
+                    invoices[key]['keydict'] = keydict
                 inv_line_vals = self._prepare_invoice_line(line)
                 invoices[key]['lines'].append((0, 0, inv_line_vals))
                 if count < 3:
@@ -216,12 +228,12 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                                   '1.The state of these ad order lines are not "sale" or "done"!\n'
                                   '2.The Lines are already Invoiced!\n'))
         for key, il in invoices.items():
-            partner = key[0]
-            published_customer = key[1]
-            payment_mode = key[2]
-            operating_unit = key[3]
+            #partner = key[0]
+            #published_customer = key[1]
+            #payment_mode = key[2]
+            #operating_unit = key[3]
             try:
-                make_invoice(partner, published_customer, payment_mode, operating_unit, il, inv_date, post_date)
+                make_invoice(invoices[key]['keydict'], il, inv_date, post_date)
             except Exception, e:
                 if self.job_queue:
                     raise FailedJobError(_("The details of the error:'%s' regarding '%s'") % (unicode(e), il['name'] ))
