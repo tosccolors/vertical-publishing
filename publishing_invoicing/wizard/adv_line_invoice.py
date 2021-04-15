@@ -1,6 +1,7 @@
 from odoo import api, fields, models, _
 from odoo.addons.queue_job.job import job, related_action
 from odoo.addons.queue_job.exception import FailedJobError
+from odoo.exceptions import UserError, ValidationError
 
 class AdOrderLineMakeInvoice(models.TransientModel):
     _inherit = "ad.order.line.make.invoice"
@@ -26,6 +27,8 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                         or line.invoicing_property_id.inv_manually:
                     dropids.append(line.id)
         chunk = chunk.filtered(lambda r: r.id not in dropids)
+        if not chunk:
+            raise UserError(_('Only order lines are selected which should be invoiced at order level.'))
         return super(AdOrderLineMakeInvoice, self).make_invoices_job_queue(inv_date, post_date, chunk)
 
 class AdOrderMakeInvoice(models.TransientModel):
