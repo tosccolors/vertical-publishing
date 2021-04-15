@@ -20,7 +20,7 @@
 ##############################################################################
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from odoo.addons.queue_job.job import job, related_action
 from odoo.addons.queue_job.exception import FailedJobError
 from unidecode import unidecode
@@ -97,7 +97,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                                else partner.bank_ids and partner.bank_ids[0].id or False,
         }
         return vals
-
 
 
     @api.multi
@@ -188,15 +187,17 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         """Hook method to modify grouping key of advertising invoicing"""
         return key, keydict
 
+
+    def make_invoice(self, keydict, lines, inv_date, post_date):
+        vals = self._prepare_invoice(keydict, lines, inv_date, post_date)
+        invoice = self.env['account.invoice'].create(vals)
+        invoice.compute_taxes()
+        return invoice
+
     @job
     @api.multi
     def make_invoices_job_queue(self, inv_date, post_date, chunk):
         invoices = {}
-        def make_invoice(keydict, lines, inv_date, post_date):
-            vals = self._prepare_invoice(keydict, lines, inv_date, post_date)
-            invoice = self.env['account.invoice'].create(vals)
-            invoice.compute_taxes()
-            return invoice.id
         count = 0
         for line in chunk:
             key = (line.order_id.partner_invoice_id, line.order_id.published_customer, line.order_id.payment_mode_id,
@@ -209,7 +210,8 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             }
             key, keydict = self.modify_key(key, keydict, line)
 
-            if (not line.invoice_lines) and (line.state in ('sale', 'done')) :
+            #if (not line.invoice_lines) and (line.state in ('sale', 'done')) :
+            if line.qty_to_invoice > 0 and (line.state in ('sale', 'done')):
                 if not key in invoices:
                     invoices[key] = {'lines':[], 'name': ''}
                     invoices[key]['keydict'] = keydict
@@ -228,17 +230,14 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                                   '1.The state of these ad order lines are not "sale" or "done"!\n'
                                   '2.The Lines are already Invoiced!\n'))
         for key, il in invoices.items():
-            #partner = key[0]
-            #published_customer = key[1]
-            #payment_mode = key[2]
-            #operating_unit = key[3]
             try:
-                make_invoice(invoices[key]['keydict'], il, inv_date, post_date)
+                self.make_invoice(invoices[key]['keydict'], il, inv_date, post_date)
             except Exception, e:
                 if self.job_queue:
                     raise FailedJobError(_("The details of the error:'%s' regarding '%s'") % (unicode(e), il['name'] ))
                 else:
                     raise UserError(_("The details of the error:'%s' regarding '%s'") % (unicode(e), il['name'] ))
+        #raise ValidationError(_("Your selection consisted of:'%s' \n The number of succesfully invoiced lines is '%s'") % (len(chunk), len(chunk)))
         return "Invoice(s) successfully made."
 
 
@@ -296,6 +295,5 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'sale_line_ids': [(6, 0, [line.id])]
         }
         return res
-
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
