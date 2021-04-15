@@ -1,5 +1,6 @@
 
 from odoo import api, fields, models, _
+from datetime import date, timedelta, datetime
 
 class SaleOrder(models.Model):
 	_inherit = 'sale.order'
@@ -21,9 +22,7 @@ class SaleOrder(models.Model):
 			else:
 				if line.published_customer.invoicing_property_id:
 					line.invoicing_property_id = line.published_customer.invoicing_property_id.id
-	
 
-					
 	# @api.multi
 	# @api.onchange('invoicing_property_id')
 	# def onchange_partner_package(self):
@@ -71,21 +70,50 @@ class SaleOrder(models.Model):
 				line.inv_date_bool = False
 				line.invoicing_date = False
 
-	# @api.multi
-	# @api.onchange('invoicing_property_id')
-	# def onchange_partner_pay_terms(self):
-	# 	for line in self:
-	# 		if line.invoicing_property_id.pay_in_terms == True:
-	# 			line.terms_cond_bool = True
-	# 		else:
-	# 			line.terms_cond_bool = False
-	# 			line.terms_condition = False
-
-
 class SaleOrderLine(models.Model):
 	_inherit = 'sale.order.line'
 
-	invoicing_property_id = fields.Many2one('invoicing.property',related='order_id.invoicing_property_id',string="Invoicing Property")
+	invoicing_property_id = fields.Many2one('invoicing.property', related='order_id.invoicing_property_id', string="Invoicing Property")
+	cutoff_date = fields.Date(string="Cutoff Date", compute='_calculate_cutoff_date', store=True, readonly=True)
+
+	@api.multi
+	@api.depends('order_id.invoicing_property_id', 'order_id.invoicing_date')
+	def _calculate_cutoff_date(self):
+		""""Calculates the date after which an order line can be invoiced"""
+		for line in self:
+			line_print = not(line.product_id.categ_id.digital)
+			# All order lines after a selected date
+			if line.invoicing_property_id.inv_whole_order_at_once:
+				cutoff_date = line.order_id.invoicing_date
+			# All order lines after placement
+			elif line.invoicing_property_id.inv_whole_order_afterwards:
+				if line_print:
+					cutoff_date = line.issue_date
+				else:
+					cutoff_date = line.from_date
+			# Print after selected date, online after placement
+			elif line.invoicing_property_id.inv_per_line_adv_print:
+				if line_print:
+					cutoff_date = line.order_id.invoicing_date
+				else:
+					cutoff_date = line.from_date
+			# Online after selected date, print after placement
+			elif line.invoicing_property_id.inv_per_line_adv_online:
+				if not line_print:
+					cutoff_date = line.order_id.invoicing_date
+				else:
+					cutoff_date = line.issue_date
+			# In case of package deal, pay in terms etc.
+			else: cutoff_date = '1900-01-01'
+	#		cutoff_date = self.sunday_date(cutoff_date)
+			line.update({'cutoff_date': cutoff_date})
+		return True
+
+	def sunday_date(self, refdat):
+		refdat = datetime.strptime(refdat, "%Y-%m-%d")
+		weekday = date.isoweekday(refdat)
+		deltadays = 7 - weekday
+		return datetime.strftime(refdat + timedelta(days=deltadays), "%Y-%m-%d")
 
 	@api.multi
 	def write(self, vals):
@@ -94,5 +122,3 @@ class SaleOrderLine(models.Model):
 		if self.env.user.has_group('publishing_invoicing.advertising_sale_superuser'):
 			ctx.update({'allow_user':True})
 		return super(SaleOrderLine, self.with_context(ctx)).write(vals)
-
-

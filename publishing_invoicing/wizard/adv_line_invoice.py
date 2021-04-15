@@ -1,4 +1,6 @@
 from odoo import api, fields, models, _
+from odoo.addons.queue_job.job import job, related_action
+from odoo.addons.queue_job.exception import FailedJobError
 
 class AdOrderLineMakeInvoice(models.TransientModel):
     _inherit = "ad.order.line.make.invoice"
@@ -10,5 +12,27 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         if line.order_id.invoicing_property_id.group_by_order:
             key.append(line.order_id)
         key = tuple(key)
-        keydict['customer_contact_id'] = line.order_id.customer_contact
         return key, keydict
+
+    @job
+    @api.multi
+    def make_invoices_job_queue(self, inv_date, post_date, chunk):
+        """"Filter out lines with invoicing properties pay in terms or invoice as package deal"""
+        ctx = self._context
+        dropids = []
+        if not ctx.get('invoice_from_order'):
+            for line in chunk:
+                if line.invoicing_property_id.inv_package_deal or line.invoicing_property_id.pay_in_terms \
+                        or line.invoicing_property_id.inv_manually:
+                    dropids.append(line.id)
+        chunk = chunk.filtered(lambda r: r.id not in dropids)
+        return super(AdOrderLineMakeInvoice, self).make_invoices_job_queue(inv_date, post_date, chunk)
+
+class AdOrderMakeInvoice(models.TransientModel):
+    _inherit = "ad.order.make.invoice"
+
+    def make_invoices_from_ad_orders(self):
+        ctx = self._context.copy()
+        ctx.update({'invoice_from_order': True})
+        self = self.with_context(ctx)
+        return super(AdOrderMakeInvoice, self).make_invoices_from_ad_orders()
