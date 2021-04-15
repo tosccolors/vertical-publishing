@@ -41,7 +41,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         key = list(key)
         key.append(line.order_id.customer_contact)
         key = tuple(key)
-        keydict['customer_contact_id'] = line.order_id.customer_contact
+        keydict['customer_contact_id'] = line.order_id.customer_contact.id
         return key, keydict
 
     @api.multi
