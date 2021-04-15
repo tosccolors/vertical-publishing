@@ -32,104 +32,23 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 
 
 	@api.model
-	def _prepare_invoice(self, partner, published_customer, payment_mode, operating_unit, lines, invoice_date, posting_date,customer_contact):
-		
-#        self.ensure_one()
-#        line_ids = [x.id for x in lines['lines']]
-		journal_id = self.env['account.invoice'].default_get(['journal_id'])['journal_id']
-		if not journal_id:
-			raise UserError(_('Please define an accounting sale journal for this company.'))
-		
-		vals = {
-			'date_invoice': invoice_date,
-			# 'date': posting_date or False,
-			'date': False,
-			'type': 'out_invoice',
-			'account_id': partner.property_account_receivable_id.id,
-			'partner_id': partner.id,
-			'published_customer': published_customer.id,
-			'invoice_line_ids': lines['lines'],
-			'comment': lines['name'],
-			'payment_term_id': partner.property_payment_term_id.id or False,
-			'journal_id': journal_id,
-			'fiscal_position_id': partner.property_account_position_id.id or False,
-			'user_id': self.env.user.id,
-			'company_id': self.env.user.company_id.id,
-			'operating_unit_id': operating_unit.id,
-			'payment_mode_id': payment_mode.id or False,
-			'partner_bank_id': payment_mode.fixed_journal_id.bank_account_id.id
-							   if payment_mode.bank_account_link == 'fixed'
-							   else partner.bank_ids and partner.bank_ids[0].id or False,
-			'customer_contact':customer_contact.id,
-		}
+	def _prepare_invoice(self, keydict, lines, invoice_date, posting_date):
+		vals = super(AdOrderLineMakeInvoice, self)._prepare_invoice(keydict, lines, invoice_date, posting_date)
+		vals['date'] = False
 		return vals
 
-	@job
-	@api.multi
-	def make_invoices_job_queue(self, inv_date, post_date, chunk):
-		invoices = {}
-		def make_invoice(partner, published_customer, payment_mode, operating_unit, lines, inv_date, post_date,customer_contact):
-			vals = self._prepare_invoice(partner, published_customer, payment_mode, operating_unit,
-										 lines, inv_date, post_date,customer_contact)
-			
-			invoice = self.env['account.invoice'].create(vals)
-			for line in invoice.invoice_line_ids:
-				sale_line_id = self.env['sale.order.line'].search([('id','=',line.so_line_id.id)])
-
-				if sale_line_id:
-					for sale_line in sale_line_id:
-						if invoice.type =='out_invoice':
-							sale_line.invoice_lines = [(4, line.id)]
-						if invoice.type == 'out_refund':
-							sale_line.invoice_lines = [(4, line.id)]
-					#fetch the invoice lines to add the removed lines from standard 
-						inv_line_ids = self.env['account.invoice.line'].search([('so_line_id','=',sale_line.id)])
-						for inv_line in inv_line_ids:
-							if inv_line.invoice_id.state != 'cancel':
-								sale_line.invoice_lines = [(4, inv_line.id)]
-			invoice.compute_taxes()
-			return invoice.id
-		count = 0
-		for line in chunk:
-			key = (line.order_id.partner_id, line.order_id.published_customer, line.order_id.payment_mode_id,
-				   line.order_id.operating_unit_id,line.order_id.customer_contact)
-			if (line.state in ('sale', 'done')) :
-				if not key in invoices:
-					invoices[key] = {'lines':[], 'name': ''}
-
-				inv_line_vals = self._prepare_invoice_line(line)
-				invoices[key]['lines'].append((0, 0, inv_line_vals))
-				if count < 3:
-					invoices[key]['name'] += unidecode(line.name)+' / '
-				count += 1
-
-		
-		if not invoices and not self.job_queue:
-			raise UserError(_('Invoice cannot be created for this Advertising Order Line due to one of the following reasons:\n'
-							  '1.The state of these ad order lines are not "sale" or "done"!\n'
-							  '2.The Lines are already Invoiced!\n'))
-		elif not invoices:
-			raise FailedJobError(_('Invoice cannot be created for this Advertising Order Line due to one of the following reasons:\n'
-								  '1.The state of these ad order lines are not "sale" or "done"!\n'
-								  '2.The Lines are already Invoiced!\n'))
-		for key, il in invoices.items():
-
-			partner = key[0]
-			published_customer = key[1]
-			payment_mode = key[2]
-			operating_unit = key[3]
-			customer_contact = key[4]
-			try:
-				make_invoice(partner, published_customer, payment_mode, operating_unit, il, inv_date, post_date,customer_contact)
-			except Exception, e:
-				if self.job_queue:
-					raise FailedJobError(_("The details of the error:'%s' regarding '%s'") % (unicode(e), il['name'] ))
-				else:
-					raise UserError(_("The details of the error:'%s' regarding '%s'") % (unicode(e), il['name'] ))
-		return True
-
-
-
+	def make_invoice(self, keydict, lines, inv_date, post_date):
+		"""Links newly created invoice lines to order lines in case of a refund invoice"""
+		invoice = super(AdOrderLineMakeInvoice, self).make_invoice(keydict, lines, inv_date, post_date)
+		#invoice = self.env['account.invoice'].search([('id','=', res)])
+		for invoice_line in invoice.invoice_line_ids:
+			sale_order_lines_on_invoice = self.env['sale.order.line'].search([('id','=', invoice_line.so_line_id.id)])
+			if not sale_order_lines_on_invoice:
+				continue
+			for sale_order_line in sale_order_lines_on_invoice:
+				if invoice.type in ('out_invoice', 'out_refund'):
+					sale_order_line.invoice_lines = [(4, invoice_line.id)]
+		return invoice
 
 	@api.multi
 	def _prepare_invoice_line(self, line):
