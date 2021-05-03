@@ -284,3 +284,8 @@ msgstr "arch"
 #: model:ir.model,name:publishing_invoicing.model_invoicing_property
 msgid "invoicing.property"
 msgstr "invoicing.property"
+
+#. module: publishing_invoicing
+#: model:ir.ui.view,arch_db:publishing_invoicing.view_advertising_sales_order_line_filter_publishing_invoicing
+msgid "Invoiceable order lines with a cut off date before last sunday"
+msgstr "Order Regels factureerbaar tot en met de meest recente zondag"
