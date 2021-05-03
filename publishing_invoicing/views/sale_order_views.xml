@@ -11,7 +11,6 @@
                 <field name="invoicing_property_id" options="{'no_create': True}"/>
                 <field name="inv_date_bool" invisible="1"/>
                 <field name="invoicing_date" attrs="{'required':[('inv_date_bool', '=', True)],'invisible':[('inv_date_bool', '!=', True)]}"/>
-                
             </xpath>
             <xpath expr="//field[@name='payment_mode_id']" position="after">
                 <field name="terms_cond_bool" invisible="1"/>
@@ -39,8 +38,8 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='package']" position="replace">
                 <!-- <attribute name="invisible">1</attribute> -->
-                <field name="inv_package_bool" invisible="1"/>
-                <field name="package" attrs="{'invisible':[('inv_package_bool', '!=', True)]}"/>
+                <!--<field name="inv_package_bool" invisible="1"/> -->
+                <field name="package" readonly="1"/>
             </xpath>
         </field>
     </record>
