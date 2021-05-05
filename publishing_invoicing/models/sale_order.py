@@ -26,31 +26,30 @@ class SaleOrder(models.Model):
 	@api.multi
 	@api.onchange('invoicing_property_id')
 	def onchange_partner_packagedeal_payinterms(self):
-		for line in self:
-			if line.invoicing_property_id.inv_package_deal and line.invoicing_property_id.pay_in_terms:
-				line.inv_date_bool = False
-				line.package = True
-				#line.inv_package_bool = True
-				line.terms_cond_bool = True
-			elif line.invoicing_property_id.pay_in_terms and not line.invoicing_property_id.inv_package_deal:
-				line.inv_date_bool = False
-				line.package = False
-				#line.inv_package_bool = False
-				line.terms_cond_bool = True
-			elif line.invoicing_property_id.inv_package_deal and not line.invoicing_property_id.pay_in_terms:
-				line.inv_date_bool = True
-				line.package = True
-				#line.inv_package_bool = True
-				line.terms_cond_bool = False
-			elif line.invoicing_property_id.inv_per_line_adv_print or line.invoicing_property_id.inv_per_line_adv_online or line.invoicing_property_id.inv_whole_order_at_once or line.invoicing_property_id.inv_package_deal:
-				line.inv_date_bool = True
+			if self.invoicing_property_id.inv_package_deal and self.invoicing_property_id.pay_in_terms:
+				self.inv_date_bool = False
+				self.package = True
+				#self.inv_package_bool = True
+				self.terms_cond_bool = True
+			elif self.invoicing_property_id.pay_in_terms and not self.invoicing_property_id.inv_package_deal:
+				self.inv_date_bool = False
+				self.package = False
+				#self.inv_package_bool = False
+				self.terms_cond_bool = True
+			elif self.invoicing_property_id.inv_package_deal and not self.invoicing_property_id.pay_in_terms:
+				self.inv_date_bool = True
+				self.package = True
+				#self.inv_package_bool = True
+				self.terms_cond_bool = False
+			elif self.invoicing_property_id.inv_per_line_adv_print or self.invoicing_property_id.inv_per_line_adv_online or self.invoicing_property_id.inv_whole_order_at_once or self.invoicing_property_id.inv_package_deal:
+				self.inv_date_bool = True
 			else:
-				line.inv_date_bool = False
-				# line.inv_date_bool = False
-				line.package = False
-				# line.inv_package_bool = False
-				line.terms_cond_bool = False
-				line.terms_condition = False
+				self.inv_date_bool = False
+				# self.inv_date_bool = False
+				self.package = False
+				# self.inv_package_bool = False
+				self.terms_cond_bool = False
+				self.terms_condition = False
 
 class SaleOrderLine(models.Model):
 	_inherit = 'sale.order.line'
