@@ -7,10 +7,11 @@ class SaleOrder(models.Model):
 
 	invoicing_property_id = fields.Many2one('invoicing.property', string="Invoicing Property", required=True)
 	invoicing_date = fields.Date(string="Invoicing Date")
-	inv_date_bool = fields.Boolean(string="Set attribute to Invoicing date field")
+	inv_date_bool = fields.Boolean(string="Set attribute to Invoicing date field", compute="_calculate_helper_booleans", store=True)
 	inv_package_bool = fields.Boolean(string="Set attribute to Package")
 	terms_condition = fields.Text(string="Description of terms")
-	terms_cond_bool = fields.Boolean(string="Set attribute to Terms & condition field")
+	terms_cond_bool = fields.Boolean(string="Set attribute to Terms & condition field", compute="_calculate_helper_booleans", store=True)
+	package = fields.Boolean(string='Package', index=True, copy=False, compute="_calculate_helper_booleans", store=True)
 
 	@api.multi
 	@api.onchange('published_customer', 'advertising_agency')
@@ -23,33 +24,57 @@ class SaleOrder(models.Model):
 				if line.published_customer.invoicing_property_id:
 					line.invoicing_property_id = line.published_customer.invoicing_property_id.id
 
-	@api.multi
-	@api.onchange('invoicing_property_id')
-	def onchange_partner_packagedeal_payinterms(self):
-			if self.invoicing_property_id.inv_package_deal and self.invoicing_property_id.pay_in_terms:
-				self.inv_date_bool = False
-				self.package = True
-				#self.inv_package_bool = True
-				self.terms_cond_bool = True
-			elif self.invoicing_property_id.pay_in_terms and not self.invoicing_property_id.inv_package_deal:
-				self.inv_date_bool = False
-				self.package = False
-				#self.inv_package_bool = False
-				self.terms_cond_bool = True
-			elif self.invoicing_property_id.inv_package_deal and not self.invoicing_property_id.pay_in_terms:
-				self.inv_date_bool = True
-				self.package = True
-				#self.inv_package_bool = True
-				self.terms_cond_bool = False
-			elif self.invoicing_property_id.inv_per_line_adv_print or self.invoicing_property_id.inv_per_line_adv_online or self.invoicing_property_id.inv_whole_order_at_once or self.invoicing_property_id.inv_package_deal:
-				self.inv_date_bool = True
-			else:
-				self.inv_date_bool = False
-				# self.inv_date_bool = False
-				self.package = False
-				# self.inv_package_bool = False
-				self.terms_cond_bool = False
-				self.terms_condition = False
+	# @api.multi
+	# @api.onchange('invoicing_property_id')
+	# def onchange_partner_packagedeal_payinterms(self):
+	# 		if self.invoicing_property_id.inv_package_deal and self.invoicing_property_id.pay_in_terms:
+	# 			self.inv_date_bool = False
+	# 			#self.package = True
+	# 			#self.inv_package_bool = True
+	# 			self.terms_cond_bool = True
+	# 		elif self.invoicing_property_id.pay_in_terms and not self.invoicing_property_id.inv_package_deal:
+	# 			self.inv_date_bool = False
+	# 			self.package = False
+	# 			#self.inv_package_bool = False
+	# 			self.terms_cond_bool = True
+	# 		elif self.invoicing_property_id.inv_package_deal and not self.invoicing_property_id.pay_in_terms:
+	# 			self.inv_date_bool = True
+	# 			self.package = True
+	# 			#self.inv_package_bool = True
+	# 			self.terms_cond_bool = False
+	# 		elif self.invoicing_property_id.inv_per_line_adv_print or self.invoicing_property_id.inv_per_line_adv_online or self.invoicing_property_id.inv_whole_order_at_once or self.invoicing_property_id.inv_package_deal:
+	# 			self.inv_date_bool = True
+	# 		else:
+	# 			self.inv_date_bool = False
+	# 			# self.inv_date_bool = False
+	# 			# self.package = False
+	# 			# self.inv_package_bool = False
+	# 			self.terms_cond_bool = False
+	# 			self.terms_condition = False
+
+	@api.depends('invoicing_property_id')
+	def _calculate_helper_booleans(self):
+		if self.invoicing_property_id.inv_package_deal and self.invoicing_property_id.pay_in_terms:
+			self.update({'inv_date_bool': False})
+			self.update({'package': True})
+			self.update({'terms_cond_bool': True})
+		elif self.invoicing_property_id.pay_in_terms and not self.invoicing_property_id.inv_package_deal:
+			self.update({'terms_cond_bool': True})
+			self.update({'inv_date_bool': False})
+			self.update({'package': False})
+		elif self.invoicing_property_id.inv_package_deal and not self.invoicing_property_id.pay_in_terms:
+			self.update({'inv_date_bool': True})
+			self.update({'package': True})
+			#self.inv_package_bool = True
+			self.update({'terms_cond_bool': False})
+		elif self.invoicing_property_id.inv_per_line_adv_print or self.invoicing_property_id.inv_per_line_adv_online or self.invoicing_property_id.inv_whole_order_at_once:
+			self.update({'inv_date_bool': True})
+		else:
+			self.update({'inv_date_bool': False})
+			self.update({'inv_date_bool': False})
+			self.update({'package': False})
+			self.update({'terms_cond_bool': False})
+		return True
 
 class SaleOrderLine(models.Model):
 	_inherit = 'sale.order.line'
@@ -85,10 +110,11 @@ class SaleOrderLine(models.Model):
 				else:
 					cutoff_date = line.issue_date
 			# Package deal but not pay in terms
-			elif line.invoicing_property_id.inv_package_deal and not line.invoicing_property_id.pay_in_terms:
-				cutoff_date = line.issue_date
+			# elif line.invoicing_property_id.inv_package_deal and not line.invoicing_property_id.pay_in_terms:
+			# 	cutoff_date = line.issue_date
 			# In case of package deal, pay in terms etc.
-			else: cutoff_date = '1900-01-01'
+			else:
+				cutoff_date = '1900-01-01'
 			line.update({'cutoff_date': cutoff_date})
 		return True
 
