@@ -78,8 +78,6 @@
             <field name="inherit_id" ref="sale_advertising_order.view_advertising_sales_order_line_filter" />
             <field name="arch" type="xml">
                 <xpath expr="/search/filter[1]" position="after">
-                    <!-- <filter string="To Invoice" domain="[('qty_to_invoice','&lt;&gt;', 0)]"  help="Sales Order Lines ready to be invoiced"/>
-                    -->
                     <separator/>
                     <filter name="cut_off_date_order_lines" string="Order Lines with cut off date before last sunday" domain="[('qty_to_invoice','&gt;', 0), ('cutoff_date','&lt;=', (context_today() + relativedelta(weeks=-1, weekday=6)).strftime('%Y-%m-%d'))]" help="Invoiceable order lines with a cut off date before last sunday" />
                     <!--<filter name="cut_off_date_order_lines" string="Order Lines with cut off date before today" domain="['|',('qty_to_invoice','&lt;&gt;', 0), ('cutoff_date','&lt;=', datetime.datetime.now())]" help="Invoiceable order lines with a cut off date on or before last sunday" />
@@ -88,5 +86,14 @@
             </field>
         </record>
 
-
-</odoo> 
+    <record id="view_adv_order_line_tree_invoicing_property" model="ir.ui.view">
+            <field name="name">sale.adv.order.line.tree.invoicing.property</field>
+            <field name="model">sale.order.line</field>
+            <field name="inherit_id" ref="sale_advertising_order.view_adv_order_line_tree" />
+            <field name="arch" type="xml">
+                    <xpath expr="//field[@name='price_subtotal']" position="after">
+                        <field name="invoicing_property_id" invisible="0"/>
+                    </xpath>
+            </field>
+        </record>
+</odoo>
