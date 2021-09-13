@@ -21,7 +21,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['sale_advertising_order_invoice_customisation','base','package_sale_advertising_order','sale_advertising_order'],
+    'depends': ['sale_advertising_order_invoice_customisation', 'package_sale_advertising_order'],
 
     # always loaded
     'data': [

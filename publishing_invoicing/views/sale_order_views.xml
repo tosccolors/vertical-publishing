@@ -11,7 +11,6 @@
                 <field name="invoicing_property_id" options="{'no_create': True}"/>
                 <field name="inv_date_bool" invisible="1"/>
                 <field name="invoicing_date" attrs="{'required':[('inv_date_bool', '=', True)],'invisible':[('inv_date_bool', '!=', True)]}"/>
-                
             </xpath>
             <xpath expr="//field[@name='payment_mode_id']" position="after">
                 <field name="terms_cond_bool" invisible="1"/>
@@ -31,19 +30,17 @@
             </xpath>
         </field>
     </record>
-    <record id="view_order_form_advertising_package_invoicing_form" model="ir.ui.view">
-        <field name="name">sale.order.form</field>
-        <field name="model">sale.order</field>
-        <field name="type">form</field>
-        <field name="inherit_id" ref="package_sale_advertising_order.view_order_form_advertising_package"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='package']" position="replace">
-                <!-- <attribute name="invisible">1</attribute> -->
-                <field name="inv_package_bool" invisible="1"/>
-                <field name="package" attrs="{'invisible':[('inv_package_bool', '!=', True)]}"/>
-            </xpath>
-        </field>
-    </record>
+<!--    <record id="view_order_form_advertising_package_invoicing_form" model="ir.ui.view">-->
+<!--        <field name="name">sale.order.form</field>-->
+<!--        <field name="model">sale.order</field>-->
+<!--        <field name="type">form</field>-->
+<!--        <field name="inherit_id" ref="package_sale_advertising_order.view_order_form_advertising_package"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <xpath expr="//field[@name='package']" position="replace">-->
+<!--                <field name="package" readonly="1" force_save="True"/>-->
+<!--            </xpath>-->
+<!--        </field>-->
+<!--    </record>-->
 
     <record model="ir.ui.view" id="publishing_invoicing_sales_order_line_filter_view">
             <field name="name">publising.sale.order.line.filter.view</field>
@@ -75,5 +72,28 @@
     </data>
     <!-- End -->
 
+    <record id="view_advertising_sales_order_line_filter_publishing_invoicing" model="ir.ui.view">
+            <field name="name">adv.sale.order.line.select</field>
+            <field name="model">sale.order.line</field>
+            <field name="inherit_id" ref="sale_advertising_order.view_advertising_sales_order_line_filter" />
+            <field name="arch" type="xml">
+                <xpath expr="/search/filter[1]" position="after">
+                    <separator/>
+                    <filter name="cut_off_date_order_lines" string="Order Lines with cut off date before last sunday" domain="[('qty_to_invoice','&gt;', 0), ('cutoff_date','&lt;=', (context_today() + relativedelta(weeks=-1, weekday=6)).strftime('%Y-%m-%d'))]" help="Invoiceable order lines with a cut off date before last sunday" />
+                    <!--<filter name="cut_off_date_order_lines" string="Order Lines with cut off date before today" domain="['|',('qty_to_invoice','&lt;&gt;', 0), ('cutoff_date','&lt;=', datetime.datetime.now())]" help="Invoiceable order lines with a cut off date on or before last sunday" />
+                    -->
+                </xpath>
+            </field>
+        </record>
 
-</odoo> 
+    <record id="view_adv_order_line_tree_invoicing_property" model="ir.ui.view">
+            <field name="name">sale.adv.order.line.tree.invoicing.property</field>
+            <field name="model">sale.order.line</field>
+            <field name="inherit_id" ref="sale_advertising_order.view_adv_order_line_tree" />
+            <field name="arch" type="xml">
+                    <xpath expr="//field[@name='price_subtotal']" position="after">
+                        <field name="invoicing_property_id" invisible="0"/>
+                    </xpath>
+            </field>
+        </record>
+</odoo>

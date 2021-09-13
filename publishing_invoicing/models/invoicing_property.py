@@ -6,94 +6,90 @@ class nsm_invoicing_property(models.Model):
 	_name = 'invoicing.property'
 
 	name = fields.Char(string="Invoicing Property")
-	
-	group_invoice_lines_per_period = fields.Boolean(string="Group invoice lines per period")
-	group_invoice_lines_per_title = fields.Boolean(string="Group invoice lines per title")
-	group_invoice_lines_per_po_number = fields.Boolean(string="Group invoice lines per PO number")
-	only_invoice_published_adv = fields.Boolean(string="Only invoice published advertisements")
-	group_by_week = fields.Boolean(string="Group by Week")
-	group_by_month = fields.Boolean(string="Group by Month")
-	pre_pay_publishing_add = fields.Boolean(string="Group by pre-pay publishing advertisements")
-	pre_pay_online_add = fields.Boolean(string="Group by pre-pay online advertisements")
-	group_by_online_separate = fields.Boolean(string="Group by online / print separate")
-	# remove above
-	group_by_edition = fields.Boolean(string="Group by Edition")
-	group_by_order = fields.Boolean(string="Group order lines with the same SO number on one invoice")
 	group_by_advertiser = fields.Boolean(string="Group by Advertiser")
 	active = fields.Boolean(default=True)
-	
 
-
-	# newly added
+	# Correct invoice properties
+	group_by_order = fields.Boolean(string="Group order lines with the same SO number on one invoice")
 	inv_package_deal = fields.Boolean(string="Invoice as package deal")
 	inv_per_line_adv_print = fields.Boolean(string="Invoice print order lines on or after the selected date, invoice online order lines on or after startdate")
 	inv_per_line_after_online = fields.Boolean(string="Deprecated")
 	inv_whole_order_at_once = fields.Boolean(string="Invoice all order lines on or after selected date ")
 	inv_whole_order_afterwards = fields.Boolean(string="Invoice print order lines on or after issue date, invoice online order lines on or after start date")
 	pay_in_terms = fields.Boolean(string="Invoice in terms")
-
 	inv_per_line_after_print = fields.Boolean(string="Invoice per OrderLine afterwards print")
 	inv_per_line_adv_online = fields.Boolean(string="Invoice online order lines on or after the selected date, invoice print order lines on or after issue date")
+	inv_manually = fields.Boolean(string="Invoice Manually")
+	regular_layout = fields.Boolean(string="Regular")
+	default_property = fields.Boolean(string="Legacy")
 
-	default_property = fields.Boolean(string="Check if it is a default property", compute="check_default_property")
+	# The invoice properties below are deprecated, and should be removed if the database allows it
+	# group_invoice_lines_per_period = fields.Boolean(string="Group invoice lines per period")
+	# group_invoice_lines_per_title = fields.Boolean(string="Group invoice lines per title")
+	# group_invoice_lines_per_po_number = fields.Boolean(string="Group invoice lines per PO number")
+	# only_invoice_published_adv = fields.Boolean(string="Only invoice published advertisements")
+	# group_by_week = fields.Boolean(string="Group by Week")
+	# group_by_month = fields.Boolean(string="Group by Month")
+	# pre_pay_publishing_add = fields.Boolean(string="Group by pre-pay publishing advertisements")
+	# pre_pay_online_add = fields.Boolean(string="Group by pre-pay online advertisements")
+	# group_by_online_separate = fields.Boolean(string="Group by online / print separate")
+	# group_by_edition = fields.Boolean(string="Group by Edition")
 
+	selected_invoicing_property_timing = fields.Selection(
+		[
+			('inv_per_line_adv_print', 'Invoice print order lines on or after the selected date, invoice online order lines on or after startdate'),
+			('inv_whole_order_at_once', 'Invoice all order lines on or after selected date'),
+			('inv_whole_order_afterwards', 'Invoice print order lines on or after issue date, invoice online order lines on or after start date'),
+			('inv_per_line_adv_online', 'Invoice online order lines on or after the selected date, invoice print order lines on or after issue date'),
+			('pay_in_terms', 'Invoice in terms'),
+			('manually', 'Invoiced as specified in order')
+		]
+		, 'Timing'
+		, default='inv_per_line_adv_print'
+	)
 
-	@api.depends('group_by_edition','group_by_order','group_by_advertiser','group_by_online_separate','inv_package_deal','inv_per_line_adv_print','inv_per_line_after_online',
-		'inv_whole_order_at_once','pay_in_terms','inv_per_line_after_print','inv_per_line_adv_online','inv_whole_order_afterwards')
-	def check_default_property(self):
-		for line in self:
-			if line.group_by_edition == True or line.group_by_order == True or line.group_by_advertiser == True  \
-					or line.group_by_online_separate == True or line.inv_package_deal == True or line.inv_per_line_adv_print == True \
-					or line.inv_per_line_after_online == True or line.inv_whole_order_at_once == True \
-					or line.pay_in_terms == True or line.inv_per_line_after_print == True or line.inv_per_line_adv_online == True or line.inv_whole_order_afterwards == True:
-				line.default_property = False
-			else:
-				line.default_property = True
+	selected_invoicing_property_layout = fields.Selection(
+		[
+			('group_by_order', 'One invoice per SO number'),
+			('inv_package_deal', 'Invoice as package'),
+			('regular_layout', 'Regular layout')
+		]
+		, string='Layout'
+		, default='regular_layout'
+	)
 
-	@api.onchange('inv_package_deal')
-	def _onchange_inv_package_deal(self):
-		for line in self:
-			if line.inv_package_deal == True:
-				line.group_by_order = line.inv_per_line_after_print = line.inv_per_line_adv_print = line.inv_per_line_after_online = line.inv_whole_order_at_once = line.inv_whole_order_afterwards = line.inv_per_line_adv_online = False
+	@api.multi
+	def write(self, vals):
+		""" Convert a radio button value to a list of booleans (zero based) """
+		fields_timing = {
+			'inv_per_line_adv_print': self.inv_per_line_adv_print,
+			'inv_whole_order_at_once': self.inv_whole_order_at_once,
+			'inv_whole_order_afterwards': self.inv_whole_order_afterwards,
+			'pay_in_terms': self.pay_in_terms,
+			'inv_per_line_adv_online': self.inv_per_line_adv_online,
+			'inv_manually': self.inv_manually
+		}
+		fields_layout = {
+			'group_by_order': self.group_by_order,
+			'inv_package_deal': self.inv_package_deal,
+			'regular_layout': self.regular_layout
+		}
+		if 'selected_invoicing_property_timing' in vals:
+			for field_timing in fields_timing:
+				if field_timing == str(vals['selected_invoicing_property_timing']):
+					vals[field_timing] = True
+				else:
+					vals[field_timing] = False
+		if 'selected_invoicing_property_layout' in vals:
+			for field_layout in fields_layout:
+				if field_layout == str(vals['selected_invoicing_property_layout']):
+					vals[field_layout] = True
+				else:
+					vals[field_layout] = False
+		return super(nsm_invoicing_property, self).write(vals)
 
-	@api.onchange('pay_in_terms')
-	def _onchange_pay_in_terms(self):
-		for line in self:
-			if line.pay_in_terms == True:
-				line.group_by_order = line.inv_per_line_after_print = line.inv_per_line_adv_print = line.inv_per_line_after_online = line.inv_whole_order_at_once = line.inv_whole_order_afterwards = line.inv_per_line_adv_online = False
-
-	@api.onchange('inv_per_line_after_print')
-	def _onchange_invoice_timing_inv_per_line_after_print(self):
-		for line in self:
-			if line.inv_per_line_after_print == True:
-				line.inv_per_line_adv_print = line.inv_package_deal = line.pay_in_terms = line.inv_per_line_after_online = line.inv_whole_order_at_once = line.inv_whole_order_afterwards = line.inv_per_line_adv_online = False
-
-	@api.onchange('inv_per_line_adv_print')
-	def _onchange_invoice_timing_inv_per_line_adv_print(self):
-		for line in self:
-			if line.inv_per_line_adv_print == True:
-				line.inv_per_line_after_print = line.inv_package_deal = line.pay_in_terms = line.inv_per_line_after_online = line.inv_whole_order_at_once = line.inv_whole_order_afterwards = line.inv_per_line_adv_online = False
-
-	@api.onchange('inv_per_line_after_online')
-	def _onchange_invoice_timing_inv_per_line_after_online(self):
-		for line in self:
-			if line.inv_per_line_after_online == True:
-				line.inv_per_line_after_print = line.inv_package_deal = line.pay_in_terms = line.inv_per_line_adv_print = line.inv_whole_order_at_once = line.inv_whole_order_afterwards = line.inv_per_line_adv_online = False
-
-	@api.onchange('inv_whole_order_at_once')
-	def _onchange_invoice_timing_inv_whole_order_at_once(self):
-		for line in self:
-			if line.inv_whole_order_at_once == True:
-				line.inv_per_line_after_print = line.inv_package_deal = line.pay_in_terms = line.inv_per_line_adv_print = line.inv_per_line_after_online = line.inv_whole_order_afterwards = line.inv_per_line_adv_online = False
-
-	@api.onchange('inv_whole_order_afterwards')
-	def _onchange_invoice_timing_inv_whole_order_afterwards(self):
-		for line in self:
-			if line.inv_whole_order_afterwards == True:
-				line.inv_per_line_after_print = line.inv_package_deal = line.pay_in_terms = line.inv_per_line_adv_print = line.inv_per_line_after_online = line.inv_whole_order_at_once = line.inv_per_line_adv_online = False
-
-	@api.onchange('inv_per_line_adv_online')
-	def _onchange_invoice_timing_inv_per_line_adv_online(self):
-		for line in self:
-			if line.inv_per_line_adv_online == True:
-				line.inv_per_line_after_print = line.inv_package_deal = line.pay_in_terms = line.inv_per_line_adv_print = line.inv_per_line_after_online = line.inv_whole_order_at_once = line.inv_whole_order_afterwards = False
+	@api.model
+	def create(self, vals):
+		vals[str(vals['selected_invoicing_property_timing'])] = True
+		vals[str(vals['selected_invoicing_property_layout'])] = True
+		return super(nsm_invoicing_property, self).create(vals)
