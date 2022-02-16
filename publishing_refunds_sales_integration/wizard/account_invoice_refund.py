@@ -126,11 +126,9 @@ class AccountInvoiceRefund(models.TransientModel):
 								sale_line.invoice_lines = [(4, inv_line.id)]
 
 		if xml_id:
-			model = 'nsm_supplier_portal' if xml_id == 'action_invoice_tree2_standard' else 'account'
-			result = self.env.ref(model+'.%s' % (xml_id)).read()[0]
-			invoice_domain = eval(result['domain'])
+			result = self.env.ref('account.%s' % (xml_id)).read()[0]
+			invoice_domain = safe_eval(result['domain'])
 			invoice_domain.append(('id', 'in', created_inv))
 			result['domain'] = invoice_domain
 			return result
 		return True
-
