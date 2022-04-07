@@ -13,7 +13,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['nsm_supplier_portal','sale','account','sale_advertising_order_invoice_customisation'],
+    'depends': ['sale','account','sale_advertising_order_invoice_customisation'],
 
     # always loaded
     'data': [
