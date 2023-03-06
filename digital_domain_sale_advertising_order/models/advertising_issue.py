@@ -8,3 +8,4 @@ class AdvertisingIssue(models.Model):
     _inherit = "sale.advertising.issue"
 
     digital = fields.Boolean('Digital')
+    adv_pro_type_id = fields.Many2one('advertising.product.matrix', string='Advertising Product Types')

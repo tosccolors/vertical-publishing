@@ -1,0 +1,41 @@
+<odoo>
+  <data>
+      <record model="ir.ui.view" id="advertising_product_matrix_form">
+          <field name="name">advertising.product.matrix.form</field>
+          <field name="type">form</field>
+          <field name="model">advertising.product.matrix</field>
+          <field name="arch" type="xml">
+              <form string="Advertising Product Matrix">
+                  <sheet>
+                      <group>
+                          <field name="name"/>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+      <record model="ir.ui.view" id="advertising_product_matrix_tree">
+          <field name="name">advertising.product.matrix.tree</field>
+          <field name="type">tree</field>
+          <field name="model">advertising.product.matrix</field>
+          <field name="arch" type="xml">
+              <tree string="Advertising Product Matrix">
+                  <field name="name"/>
+              </tree>
+          </field>
+      </record>
+
+      <record model="ir.actions.act_window" id="action_advertising_product_matrix">
+			<field name="name">Advertising Product Types</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">advertising.product.matrix</field>
+			<field name="view_type">form</field>
+			<field name="view_id" ref="advertising_product_matrix_tree"/>
+      </record>
+
+      <menuitem name="Advertising Product Types" id="menu_advertising_product_type" parent="sales_team.menu_sale_config"
+                  action="action_advertising_product_matrix"/>
+
+  </data>
+</odoo>
