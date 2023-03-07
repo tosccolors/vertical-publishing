@@ -27,8 +27,8 @@ class SaleOrderLine(models.Model):
 
     ad_class_digital = fields.Boolean(compute='_compute_digital', string='Advertising Class Digital')
 
-    adv_pro_type_ids = fields.Many2many('advertising.product.matrix', compute='_compute_ad_issue_pro_type',
-                                        string='Advertising Issue Pro Type')
+    matrix_adv_issue_ids = fields.Many2many('sale.advertising.issue', compute='_compute_matrix_issue_pro_type',
+                                            string='Advertising Issue Pro Type')
 
     @api.multi
     @api.depends('ad_class')
@@ -37,8 +37,16 @@ class SaleOrderLine(models.Model):
             ol.ad_class_digital = ol.ad_class and ol.ad_class.digital or False
 
     @api.multi
-    @api.depends('ad_class')
-    def _compute_ad_issue_pro_type(self):
+    @api.depends('ad_class', 'title', 'title_ids')
+    def _compute_matrix_issue_pro_type(self):
         for ol in self:
             ad_class_pro_type = ol.ad_class.adv_pro_type_ids
-            ol.adv_pro_type_ids = ad_class_pro_type and ad_class_pro_type.ids
+            categ_pro_type_ids = ad_class_pro_type and ad_class_pro_type.ids or []
+            titles = self.title + self.title_ids
+            domain =[('parent_id', 'in', titles.ids)]
+            if categ_pro_type_ids:
+                domain += [('adv_pro_type_id', 'in', ad_class_pro_type.ids)]
+
+            issue_ids = self.env['sale.advertising.issue'].search(domain).ids
+            ol.matrix_adv_issue_ids = issue_ids
+
