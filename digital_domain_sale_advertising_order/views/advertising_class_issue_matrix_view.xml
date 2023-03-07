@@ -1,11 +1,11 @@
 <odoo>
   <data>
-      <record model="ir.ui.view" id="advertising_product_matrix_form">
-          <field name="name">advertising.product.matrix.form</field>
+      <record model="ir.ui.view" id="advertising_class_issue_matrix_form">
+          <field name="name">advertising.class.issue.matrix.form</field>
           <field name="type">form</field>
           <field name="model">advertising.class.issue.matrix</field>
           <field name="arch" type="xml">
-              <form string="Advertising Product Matrix">
+              <form string="Advertising Class issue Matrix">
                   <sheet>
                       <group>
                           <field name="name"/>
@@ -15,8 +15,8 @@
           </field>
       </record>
 
-      <record model="ir.ui.view" id="advertising_product_matrix_tree">
-          <field name="name">advertising.product.matrix.tree</field>
+      <record model="ir.ui.view" id="advertising_class_issue_matrix_tree">
+          <field name="name">advertising.class.issue.matrix.tree</field>
           <field name="type">tree</field>
           <field name="model">advertising.class.issue.matrix</field>
           <field name="arch" type="xml">
@@ -26,8 +26,8 @@
           </field>
       </record>
 
-      <record model="ir.actions.act_window" id="action_advertising_product_matrix">
-			<field name="name">Advertising Product Types</field>
+      <record model="ir.actions.act_window" id="action_advertising_class_issue_matrix">
+			<field name="name">Advertising Class Issue matrix</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">advertising.class.issue.matrix</field>
 			<field name="view_type">form</field>
