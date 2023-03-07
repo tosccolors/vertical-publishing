@@ -30,6 +30,7 @@
         # 'security/ir.model.access.csv',
         'views/product_view.xml',
         'views/sale_advertising_view.xml',
+        'views/advertising_product_matrix_views.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

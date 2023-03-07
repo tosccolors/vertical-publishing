@@ -8,3 +8,4 @@ class productCategory(models.Model):
     _inherit = "product.category"
 
     digital = fields.Boolean('Digital')
+    adv_pro_type_ids = fields.Many2many('advertising.product.matrix', string='Advertising Product Types')
