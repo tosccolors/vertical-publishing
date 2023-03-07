@@ -9,3 +9,13 @@ class AdvertisingIssue(models.Model):
 
     digital = fields.Boolean('Digital')
     adv_pro_type_id = fields.Many2one('advertising.product.matrix', string='Advertising Product Types')
+
+    @api.onchange('medium')
+    def onchange_medium(self):
+        data = {}
+        matrix_ids = []
+        for categ in self.medium:
+            matrix_ids += categ.adv_pro_type_ids.ids
+        if matrix_ids:
+            data = {'adv_pro_type_id': [('id', 'in', matrix_ids)]}
+        return {'domain': data}
