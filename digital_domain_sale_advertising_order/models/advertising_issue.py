@@ -8,14 +8,14 @@ class AdvertisingIssue(models.Model):
     _inherit = "sale.advertising.issue"
 
     digital = fields.Boolean('Digital')
-    adv_pro_type_id = fields.Many2one('advertising.product.matrix', string='Advertising Product Types')
+    adv_class_issue_id = fields.Many2one('advertising.class.issue.matrix', string='Advertising Class Issue Link')
 
     @api.onchange('medium')
     def onchange_medium(self):
         data = {}
         matrix_ids = []
         for categ in self.medium:
-            matrix_ids += categ.adv_pro_type_ids.ids
+            matrix_ids += categ.adv_class_issue_ids.ids
         if matrix_ids:
-            data = {'adv_pro_type_id': [('id', 'in', matrix_ids)]}
+            data = {'adv_class_issue_id': [('id', 'in', matrix_ids)]}
         return {'domain': data}

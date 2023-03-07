@@ -4,8 +4,8 @@
 
 from odoo import models, fields, api
 
-class productCategory(models.Model):
+class ProductCategory(models.Model):
     _inherit = "product.category"
 
     digital = fields.Boolean('Digital')
-    adv_pro_type_ids = fields.Many2many('advertising.product.matrix', string='Advertising Product Types')
+    adv_class_issue_ids = fields.Many2many('advertising.class.issue.matrix', string='Advertising Class Issue Types')
