@@ -42,7 +42,7 @@ class SaleOrderLine(models.Model):
         for ol in self:
             adv_class_issue_ids = ol.ad_class.adv_class_issue_ids
             class_issue_ids = adv_class_issue_ids and adv_class_issue_ids.ids or []
-            titles = self.title + self.title_ids
+            titles = ol.title + ol.title_ids
             domain =[('parent_id', 'in', titles.ids)]
             if class_issue_ids:
                 domain += [('adv_class_issue_id', 'in', adv_class_issue_ids.ids)]
