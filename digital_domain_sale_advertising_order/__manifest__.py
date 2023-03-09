@@ -9,8 +9,9 @@
         """,
 
     'description': """
-        It creates a boolean field "Digital" product.category and sale.advertising.issue objects.
-        It's used for filtering values in sale.order.line object in sale orders.
+        This module takes care of a link between advertising class and advertising issues. 
+        The cases where this is relevant is for digital media and for (also mainly digital) media where the issue itself is an advertising product. [? Is this true?]
+        It also contains a boolean "digital", which provided the same function, but only for classes and issues, where the boolean was true. This boolean will be deprecated.
     """,
 
     'author': "Magnus",
@@ -30,7 +31,7 @@
         # 'security/ir.model.access.csv',
         'views/product_view.xml',
         'views/sale_advertising_view.xml',
-        'views/advertising_product_matrix_views.xml',
+        'views/advertising_class_issue_matrix_view.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
