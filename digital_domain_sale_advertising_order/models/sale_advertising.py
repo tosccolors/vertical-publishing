@@ -27,8 +27,25 @@ class SaleOrderLine(models.Model):
 
     ad_class_digital = fields.Boolean(compute='_compute_digital', string='Advertising Class Digital')
 
+    adv_class_issue_ids = fields.Many2many('sale.advertising.issue', compute='_compute_class_issue_matrix',
+                                            string='Advertising Class Issue Link')
+
     @api.multi
     @api.depends('ad_class')
     def _compute_digital(self):
         for ol in self:
             ol.ad_class_digital = ol.ad_class and ol.ad_class.digital or False
+
+    @api.multi
+    @api.depends('ad_class', 'title', 'title_ids')
+    def _compute_class_issue_matrix(self):
+        for ol in self:
+            adv_class_issue_ids = ol.ad_class.adv_class_issue_ids
+            class_issue_ids = adv_class_issue_ids and adv_class_issue_ids.ids or []
+            titles = ol.title + ol.title_ids
+            domain =[('parent_id', 'in', titles.ids)]
+            if class_issue_ids:
+                domain += [('adv_class_issue_id', 'in', adv_class_issue_ids.ids)]
+
+            ol.adv_class_issue_ids = self.env['sale.advertising.issue'].search(domain).ids
+
