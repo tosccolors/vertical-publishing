@@ -97,6 +97,12 @@ class SaleOrderLine(models.Model):
 					cutoff_date = line.issue_date
 				else:
 					cutoff_date = line.from_date
+			# All order lines end date
+			elif line.invoicing_property_id.inv_whole_order_enddate:
+				if line_print:
+					cutoff_date = line.issue_date
+				else:
+					cutoff_date = line.to_date
 			# Print after selected date, online after placement
 			elif line.invoicing_property_id.inv_per_line_adv_print:
 				if line_print:

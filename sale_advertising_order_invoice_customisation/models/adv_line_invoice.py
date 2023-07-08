@@ -53,6 +53,8 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         inv_date = self.invoice_date
         post_date = self.posting_date
         jq = False
+        size = False
+        eta = False
         if self.job_queue:
             jq = self.job_queue
             size = self.chunk_size
@@ -72,7 +74,9 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         if posting_date_ctx and not post_date:
             post_date = posting_date_ctx
         if jq_ctx and not jq:
-            jq = self.job_queue = True
+            jq = True
+            if len(self) == 1:
+                self.job_queue = True
             if size_ctx and not size:
                 size = size_ctx
             if eta_ctx and not eta:

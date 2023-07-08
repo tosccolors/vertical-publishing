@@ -9,6 +9,7 @@
       <field name="arch" type="xml">
         <xpath expr="//field[@name='parent_id']" position="after">
           <field name="digital"/>
+          <field name="adv_class_issue_ids" widget="many2many_tags" options='{"no_open": True, "no_create": True}'/>
         </xpath>
       </field>
     </record>
