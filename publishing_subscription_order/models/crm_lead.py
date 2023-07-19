@@ -30,13 +30,13 @@ class Lead(models.Model):
     subs_quotations_count = fields.Integer("# of Subscription Quotations", compute='_compute_subs_quotations_count')
     subs_sale_amount_total= fields.Monetary(compute='_compute_sale_amount_total', string="Sum of Subs. Orders", currency_field='company_currency')
 
-    @api.multi
+    
     def _compute_subs_quotations_count(self):
         for lead in self:
             lead.subs_quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done','cancel')), ('subscription', '=', True)])
 
     # Adding ('subscription', '=', False) in filter criteria to filter subscription records in regular quotations smart button
-    @api.multi
+    
     def _compute_quotations_count(self):
         for lead in self:
             lead.quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',['sale','done','cancel']), ('advertising', '=', False), ('subscription', '=', False)])

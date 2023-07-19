@@ -19,11 +19,11 @@
 
         <record id="view_account_invoice_filter_revbil" model="ir.ui.view">
             <field name="name">account.invoice.select.revbil</field>
-            <field name="model">account.invoice</field>
+            <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_account_invoice_filter"/>
             <field name="arch" type="xml">
                 <group position="inside">
-                        <filter string="Batch" icon="terp-partner" domain="[]" context="{'group_by':'origin'}"
+                        <filter string="Batch" icon="terp-partner" domain="[]" context="{'group_by':'invoice_origin'}"
                                 groups="reverse_billing.group_module_revbil_user"/>
                 </group>
             </field>

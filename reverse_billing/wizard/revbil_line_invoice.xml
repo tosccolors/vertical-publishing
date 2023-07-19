@@ -36,7 +36,7 @@
             <field name="name">Make Invoices</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">revbil.statement.of.work.make.invoice</field>
-            <field name="view_type">form</field>
+            <!--<field name="view_type">form</field>-->
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_revbil_statement_of_work_make_invoice"/>
             <field name="target">new</field>
@@ -45,28 +45,49 @@
             <field name="name">Make Invoices</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sow.batch.make.invoice</field>
-            <field name="view_type">form</field>
+            <!--<field name="view_type">form</field>-->
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_sow_batch_make_invoice"/>
             <field name="target">new</field>
         </record>
 
-        <record model="ir.values" id="revbil_statement_of_work_make_invoice">
+        <record id="revbil_statement_of_work_make_invoice" model="ir.actions.act_window">
+            <field name="name">Make Invoices</field>
+            <field name="res_model">revbil.statement.of.work</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_revbil_statement_of_work"/>
+            <field name="binding_view_types">list</field>
+            <field name="view_id" ref="action_view_revbil_statement_of_work_make_invoice"/>
+        </record>
+
+        <!--<record model="ir.values" id="revbil_statement_of_work_make_invoice">
             <field name="model_id" ref="model_revbil_statement_of_work" />
             <field name="name">Make Invoices</field>
             <field name="key2">client_action_multi</field>
             <field name="value" eval="'ir.actions.act_window,' + str(ref('action_view_revbil_statement_of_work_make_invoice'))" />
             <field name="key">action</field>
             <field name="model">revbil.statement.of.work</field>
-        </record>
+        </record>-->
 
-        <record model="ir.values" id="sow_batch_make_invoice">
+        <!--<record model="ir.values" id="sow_batch_make_invoice">
             <field name="model_id" ref="model_sow_batch" />
             <field name="name">Make Invoices</field>
             <field name="key2">client_action_multi</field>
             <field name="value" eval="'ir.actions.act_window,' + str(ref('action_view_sow_batch_make_invoice'))" />
             <field name="key">action</field>
             <field name="model">sow.batch</field>
+        </record>   -->
+
+        <record id="sow_batch_make_invoice" model="ir.actions.act_window">
+            <field name="name">Make Invoices</field>
+            <field name="res_model">sow.batch</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_model_sow_batch"/>
+            <field name="binding_view_types">list</field>
+            <field name="view_id" ref="action_view_sow_batch_make_invoice"/>
         </record>
+
     </data>
 </openerp>

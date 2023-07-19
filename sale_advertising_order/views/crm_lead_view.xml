@@ -6,7 +6,7 @@
         <record id="act_crm_lead_2_quotation" model="ir.actions.act_window">
             <field name="name">Quotations</field>
             <field name="res_model">sale.order</field>
-            <field name="view_type">form</field>
+            <!--<field name="view_type">form</field>-->
             <field name="domain">[('advertising','=',False), ('state','not in',('sale','done')), ('opportunity_id','=',active_id)]</field>
             <field name="view_mode">tree,form</field>
             <field name="context">{'default_advertising':False, 'default_opportunity_id':active_id}</field>
@@ -72,7 +72,7 @@
                                 <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
                             </button>
                         </div>
-                        <div class="label label-success pull-right" attrs="{'invisible': [('probability', '&lt;', 100)]}">Won</div>
+                        <div class="label label-success pull-right" >Won</div>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only" string="Lead"/>
                             <h1><field name="name" placeholder="Describe the lead..."/></h1>
@@ -84,13 +84,13 @@
                                        attrs="{'invisible': [('published_customer','!=',False)]}"/>
                                 <field name="partner_id" string="Customer" invisible="1"
                                     options='{"create_name_field": "name"}'
-                                    context="{'default_name': contact_name, 'default_street': street, 'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_function': function, 'default_phone': phone, 'default_mobile': mobile, 'default_fax': fax, 'default_email': email_from, 'default_user_id': user_id, 'default_team_id': team_id}" groups="base.group_no_one"/>
+                                    context="{'default_name': contact_name, 'default_street': street, 'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_function': function, 'default_phone': phone, 'default_mobile': mobile, 'default_email': email_from, 'default_user_id': user_id, 'default_team_id': team_id}" groups="base.group_no_one"/>
 
                                 <field name="partner_invoice_id" string="Payer Invoice Address" invisible="True"
-                                       domain="[('is_company','!=', True),('customer','=', True),('type', '=', 'invoice')]"/>
+                                       domain="[('is_company','!=', True),('type', '=', 'invoice')]"/>
                                 <field name="published_customer" string="Advertiser"
-                                       domain="[('is_ad_agency','!=', True),('is_company','=', True),('customer','=', True)]"/>
-                                <field name="ad_agency_id" string="Agency" domain="[('is_ad_agency','=', True),('customer','=',True), ('is_company','=', True)]"
+                                       domain="[('is_ad_agency','!=', True),('is_company','=', True), ('customer_rank', '>', 0)]"/>
+                                <field name="ad_agency_id" string="Agency" domain="[('is_ad_agency','=', True),(('customer_rank', '>', 0)), ('is_company','=', True)]"
                                        attrs="{'invisible': [('published_customer','=',False)]}"/>
                                 <label for="street" string="Invoice Address Payer"/>
                                 <div class="o_address_format">
@@ -110,14 +110,14 @@
                                 </div>
 
                                 <field name="partner_contact_id" string="Contact Person" context="{'default_parent_id': partner_id}"
-                                       domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"
+                                       domain="[('is_company', '=', False), ('customer_rank', '>', 0),('parent_id', '=', partner_id),('type', '=', 'contact')]"
                                        attrs="{'invisible': [('published_customer','=',False)]}"/>
 
                                 <field name="email_from" widget="email"/>
                                 <field name="function"/>
                                 <field name="phone" widget="phone"/>
                                 <field name="mobile"/>
-                                <field name="fax"/>
+                                <!--<field name="fax"/>-->
                             </group>
                             <group>
                                 <field name="user_id" domain="[('share', '=', False)]"
@@ -138,7 +138,7 @@
                             <page name="extra" string="Extra Info">
                                 <group>
                                     <group string="Email">
-                                        <field name="opt_out"/>
+                                        <!--<field name="opt_out"/>-->
                                         <field name="message_bounce" readonly="1" groups="base.group_no_one"/>
                                     </group>
                                     <group string="Tracking" groups="base.group_multi_company,base.group_no_one" name="categorization">
@@ -153,7 +153,7 @@
                                     <group string="Analysis" groups="base.group_no_one">
                                         <field name="date_open"/>
                                         <field name="date_closed"/>
-                                        <field name="probability"/>
+                                        <!--<field name="probability"/>-->
                                     </group>
                                 </group>
                             </page>
@@ -187,15 +187,14 @@
 
                         <button name="action_set_won" string="Mark Won"
                                 type="object" class="oe_highlight o_wow"
-                                attrs="{'invisible': ['|', ('active','=',False), ('probability', '=', 100)]}"
+                                attrs="{'invisible': [('active','=',False)]}"
                                 invisible="True"/>
 
                         <button name="%(crm.crm_lead_lost_action)d" string="Mark Lost"
                                 type="action" class="oe_highlight"
                                 context="{'default_lead_id': active_id}"
-                                attrs="{'invisible': [('active', '=', False),('probability', '&lt;', 100)]}"/>
-                        <button name="%(crm.crm_activity_log_action)d" string="Log Activity" type="action" class="btn-link"
-                            attrs="{'invisible': [('active', '=', False)]}"/>
+                                attrs="{'invisible': [('active', '=', False)]}"/>
+
                         <field name="stage_id" widget="statusbar" clickable="True"
                             options="{'fold_field': 'fold'}"
                             domain="['|', ('team_id', '=', team_id), ('team_id', '=', False)]" />
@@ -203,7 +202,7 @@
                     <sheet>
                         <div class="oe_button_box" name="button_box">
                             <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive"
-                                    attrs="{'invisible': [('active', '=', True), ('probability', '&lt;', 100)]}">
+                                    attrs="{'invisible': [('active', '=', True)]}">
                                 <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
                             </button>
                             <button class="oe_stat_button" type="object"
@@ -240,9 +239,9 @@
                                 </div>
                             </button>
                         </div>
-                        <div class="label label-danger pull-right" attrs="{'invisible': ['|', ('probability', '&gt;', 0), ('active', '=', True)]}">Lost</div>
-                        <div class="label label-success pull-right" attrs="{'invisible': [('probability', '&lt;', 100)]}">Won</div>
-                        <div class="oe_title">
+                        <div class="label label-danger pull-right" attrs="{'invisible': [('active', '=', True)]}">Lost</div>
+                        <div class="label label-success pull-right" >Won</div>
+                        <!--<div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1><field name="name" placeholder="e.g. Product Pricing"/></h1>
                             <h2 class="o_row">
@@ -262,39 +261,39 @@
                                     </div>
                                 </div>
                             </h2>
-                        </div>
+                        </div>-->
                         <group>
                             <group>
                                 <field name="partner_name" string="Advertiser Name"
                                        attrs="{'invisible': [('published_customer','!=',False)]}"/>
                                 <field name="partner_id"
                                     invisible="True"
-                                    string="Customer" domain="[('customer', '=', True)]"
+                                    string="Customer" domain="[(('customer_rank', '>', 0))]"
                                     context="{'search_default_customer': 1,
                                         'default_name': partner_name, 'default_street': street,
                                         'default_street2': street2, 'default_city': city,
                                         'default_state_id': state_id, 'default_zip': zip,
                                         'default_country_id': country_id, 'default_function': function,
                                         'default_phone': phone, 'default_mobile': mobile,
-                                        'default_fax': fax, 'default_email': email_from,
+                                        'default_email': email_from,
                                         'default_user_id': user_id, 'default_team_id': team_id}"/>
 
                                 <field name="partner_invoice_id" string="Payer Invoice Address" invisible="True"
-                                       domain="[('is_company','!=', True),('customer','=', True),('type', '=', 'invoice')]"/>
-                                <field name="published_customer" string="Advertiser" domain="[('is_ad_agency','!=', True),('is_company','=', True),('customer','=', True)]"
-                                       />
-                                <field name="ad_agency_id" string="Agency" domain="[('is_ad_agency','=', True),('customer','=',True), ('is_company','=', True)]"
+                                       domain="[('is_company','!=', True),('customer_rank','>', 0),('type', '=', 'invoice')]"/>
+                                <field name="published_customer" string="Advertiser" domain="[('is_ad_agency','!=', True),('is_company','=', True)]"
+                                       context="{'res_partner_search_mode': 'customer'}"/>
+                                <field name="ad_agency_id" string="Agency" domain="[('is_ad_agency','=', True),(('customer_rank', '>', 0)), ('is_company','=', True)]"
                                        attrs="{'invisible': [('published_customer','=',False)]}"
                                         />
                                 <field name="partner_contact_id" string="Contact Person" context="{'default_parent_id': partner_id}"
-                                                           domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"
+                                                           domain="[('is_company', '=', False), (('customer_rank', '>', 0)),('parent_id', '=', partner_id),('type', '=', 'contact')]"
                                                            attrs="{'invisible': [('published_customer','=',False)]}"/>
                                 <field name="email_from" string="Email" widget="email"/>
                                 <field name="phone" widget="phone"/>
                             </group>
 
                             <group>
-                                <label for="next_activity_id"/>
+                                <!--<label for="next_activity_id"/>
                                 <div>
                                     <div class="o_row mr16">
                                         <field name="is_activity" invisible="1"/>
@@ -310,7 +309,7 @@
                                         <field name="title_action" placeholder="e.g. Discuss proposal"
                                            attrs="{'invisible': [('next_activity_id', '=', False)]}"/>
                                     </div>
-                                </div>
+                                </div>-->
                                 <field name="date_deadline"/>
                             </group>
 
@@ -356,8 +355,8 @@
                                     </div>
                                     <field name="function"/>
                                     <field name="mobile"/>
-                                    <field name="fax"/>
-                                    <field name="opt_out"/>
+                                    <!--<field name="fax"/>-->
+                                    <!--<field name="opt_out"/>-->
                                 </group>
                                 <group string="Marketing">
                                     <field name="campaign_id" />
@@ -391,19 +390,21 @@
                 <button name="action_set_won" position="attributes" >
                     <attribute name="invisible" >False</attribute>
                 </button>
-                <xpath expr="//field[@name='probability']" position="attributes">
+                <!--<xpath expr="//field[@name='probability']" position="attributes">
                     <attribute name="readonly" >False</attribute>
-                </xpath>
+                </xpath>-->
             </field>
 		 </record>
 
-        <record id="action_your_pipeline_advertising" model="ir.actions.server">
+
+        <!--need to check w.r.t V14-->
+        <!--<record id="action_your_pipeline_advertising" model="ir.actions.server">
             <field name="name">My Pipeline</field>
             <field name="model_id" ref="crm.model_crm_team"/>
             <field name="state">code</field>
             <field name="code">action = model.action_your_pipeline()</field>
             <field eval="True" name="condition"/>
-        </record>
+        </record>-->
 
 
 
@@ -450,7 +451,7 @@
         <record id="crm_lead_all_leads_advertising_form" model="ir.actions.act_window.view">
             <field eval="5" name="sequence"/>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="crm.crm_case_form_view_leads"/>
+            <field name="view_id" ref="crm.crm_lead_view_form"/>
             <field name="act_window_id" ref="crm_lead_all_leads_advertising"/>
         </record>
 
@@ -464,14 +465,14 @@
         <record id="crm_lead_all_leads_advertising_graph" model="ir.actions.act_window.view">
             <field eval="2" name="sequence"/>
             <field name="view_mode">graph</field>
-            <field name="view_id" ref="crm.crm_case_graph_view_leads"/>
+            <field name="view_id" ref="crm.crm_lead_view_graph"/>
             <field name="act_window_id" ref="crm_lead_all_leads_advertising"/>
         </record>
 
         <record id="crm_lead_all_leads_advertising_pivot" model="ir.actions.act_window.view">
             <field eval="3" name="sequence"/>
             <field name="view_mode">pivot</field>
-            <field name="view_id" ref="crm.crm_case_pivot_view_leads"/>
+            <field name="view_id" ref="crm.crm_lead_view_pivot"/>
             <field name="act_window_id" ref="crm_lead_all_leads_advertising"/>
         </record>
 
@@ -485,11 +486,13 @@
 
 
         <!--Regular Sales Leads-->
-        <record model="ir.ui.menu" id="crm.menu_crm_leads">
+        <record model="ir.ui.menu" id="crm.crm_menu_sales">
             <field name="groups_id" eval="[(6,0,[ref('group_regular_sales_crm_menus')])]"/>
         </record>
 
-        <!-- CRM Next Activities Menu advertising set to false-->
+        <!--check with w.r.t v14-->
+       <!--
+        &lt;!&ndash; CRM Next Activities Menu advertising set to false&ndash;&gt;
         <record id="crm.crm_lead_action_activities" model="ir.actions.act_window">
             <field name="name">Next Activities</field>
             <field name="type">ir.actions.act_window</field>
@@ -500,7 +503,7 @@
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('crm.crm_case_form_view_oppor')}),
                           (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
-            <field name="domain">[('type','=','opportunity'), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False)]</field>
+            <field name="domain">[('type','=','opportunity'), ('is_activity', '=', True)]</field>
             <field name="context">{
                     'default_type': 'opportunity',
                     'default_user_id': uid,
@@ -516,7 +519,7 @@
             </field>
         </record>
 
-        <!-- Advertising Next Activities Menu (currently not used?)-->
+        &lt;!&ndash; Advertising Next Activities Menu (currently not used?)&ndash;&gt;
         <record id="crm_lead_action_activities_advertising" model="ir.actions.act_window">
             <field name="name">Next Activities</field>
             <field name="type">ir.actions.act_window</field>
@@ -527,7 +530,7 @@
                    eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('sale_advertising_order.crm_case_form_view_oppor_advertising')}),
                           (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
-            <field name="domain">[('type','=','opportunity'), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False)]</field>
+            <field name="domain">[('type','=','opportunity'), ('is_activity', '=', True)]</field>
             <field name="context">{
                     'default_type': 'opportunity',
                     'default_user_id': uid,
@@ -541,10 +544,10 @@
                    To set a next activity, go on an opportunity and add one. It will then appear in this list.
                 </p>
             </field>
-        </record>
+        </record>-->
 
         <!--Regular Sales Next Activities-->
-        <record model="ir.ui.menu" id="crm.crm_lead_menu_activities">
+        <record model="ir.ui.menu" id="crm.crm_lead_menu_my_activities">
             <field name="groups_id" eval="[(6,0,[ref('sale_advertising_order.group_next_activities_menu')])]"/>
         </record>
 
@@ -554,8 +557,8 @@
             <field name="res_model">crm.lead</field>
             <field name="view_mode">kanban,tree,graph,pivot,form,calendar</field>
             <field name="view_ids"
-                   eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_tree_activity')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('crm.crm_case_form_view_oppor')}),
+                   eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('crm.crm_lead_view_list_activities')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('crm.crm_lead_view_form')}),
                           (0, 0, {'view_mode': 'kanban'}), (0, 0, {'view_mode': 'calendar'}), (0, 0, {'view_mode': 'pivot'}), (0, 0, {'view_mode': 'graph'})]"/>
             <field name="domain">[('type','=','opportunity'),('is_activity', '!=', True)]</field>
             <field name="context">{
@@ -576,7 +579,7 @@
             </field>
         </record>
 
-        <record model="ir.ui.view" id="crm_case_form_view_oppor_sector">
+       <!-- <record model="ir.ui.view" id="crm_case_form_view_oppor_sector">
             <field name="name">Add sector field, different place</field>
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm_sector.crm_case_form_view_oppor"/>
@@ -584,43 +587,43 @@
                 <field name="sector_id" position="replace"/>
                 <field name="secondary_sector_ids" position="replace" />
             </field>
-        </record>
+        </record>-->
 
         <record id="crm_case_form_view_oppor" model="ir.ui.view">
             <field name="name">crm.lead.form.opportunity.sao</field>
             <field name="model">crm.lead</field>
-            <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+            <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
             <field name="arch" type="xml">
                 <xpath expr="//page[@name='lead']/group/group/field[@name='partner_name']" position="replace" >
                 </xpath>
                 <xpath expr="//sheet/group/group/field[@name='partner_id']" position="after" >
                     <field name="partner_name"/>
                     <field name="partner_contact_id" string="Contact Person" context="{'default_parent_id': partner_id}"
-                           domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"/>
+                           domain="[('is_company', '=', False), (('customer_rank', '>', 0)),('parent_id', '=', partner_id),('type', '=', 'contact')]"/>
                     <label for="contact_name"/>
                     <div class="o_row">
                         <field name="contact_name"/>
                         <field name="title" placeholder="Title" domain="[]" options='{"no_open": True}'/>
                     </div>
                 </xpath>
-                <xpath expr="//page[@name='lead']/group[1]/group[2]/label[@for='contact_name']" position="replace" />
-                <xpath expr="//page[@name='lead']/group[1]/group[2]/div[1]" position="replace" />
+                <!--<xpath expr="//group[@name='lead_info']/group[1]/group[2]/label[@for='contact_name']" position="replace" />
+                <xpath expr="//page[@name='lead']/group[1]/group[2]/div[1]" position="replace" />-->
                 <xpath expr="//field[@name='partner_id']" position="attributes">
-                    <attribute name="domain">[('customer', '=', True), ('parent_id', '=', False)]</attribute>
+                    <attribute name="domain">[(('customer_rank', '>', 0)), ('parent_id', '=', False)]</attribute>
                 </xpath>
-                <xpath expr="//sheet/group/group[2]/label[@for='next_activity_id']" position="before">
+                <!--<xpath expr="//sheet/group/group[2]/label[@for='next_activity_id']" position="before">
                     <field name="is_activity" readonly="True" />
-                </xpath>
-                <xpath expr="//sheet/group/group[2]/div/div/field[@name='next_activity_id']" position="attributes" >
+                </xpath>-->
+                <!--<xpath expr="//sheet/group/group[2]/div/div/field[@name='next_activity_id']" position="attributes" >
                     <attribute name="attrs" >{'required':[('is_activity', '=', True)]}</attribute>
                 </xpath>
                 <xpath expr="//sheet/group/group[2]/div/div/field[@name='date_action']" position="attributes" >
                     <attribute name="attrs" >{'invisible':[('next_activity_id', '=', False)],'required':[('next_activity_id', '!=', False)]}</attribute>
-                </xpath>
+                </xpath>-->
                 <xpath expr="//sheet/notebook/page[@name='lead']/group/group[1]/div" position="after" >
-                    <field name="sector_id" placeholder="Sector"
+                    <field name="industry_id" placeholder="Sector"
                            options='{"no_open": True}'/>
-                    <field name="secondary_sector_ids" widget="many2many_tags"/>
+                    <field name="secondary_industry_ids" widget="many2many_tags"/>
                 </xpath>
                 <xpath expr="//sheet/notebook/page[1]" position="replace"></xpath>
                 <xpath expr="//sheet/notebook/page[@name='lead']" position="after">
@@ -641,7 +644,7 @@
         <record id="crm_case_form_view_leads_inherited" model="ir.ui.view">
             <field name="name">crm.lead.form.lead</field>
             <field name="model">crm.lead</field>
-            <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
+            <field name="inherit_id" ref="crm.crm_lead_view_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='user_id']" position="after">
                     <field name="name_salesperson"/>
@@ -650,10 +653,11 @@
         </record>
 
 
-        <record model="ir.ui.view" id="crm_case_form_view_leads">
+        <!--view not found in crm_industry-->
+        <!--<record model="ir.ui.view" id="crm_case_form_view_leads">
             <field name="name">Add sector field different place</field>
             <field name="model">crm.lead</field>
-            <field name="inherit_id" ref="crm_sector.crm_case_form_view_leads"/>
+            <field name="inherit_id" ref="industry.crm_case_form_view_leads"/>
             <field name="arch" type="xml">
                 <field name="sector_id" position="replace"/>
                 <field name="secondary_sector_ids" position="replace" />
@@ -663,24 +667,23 @@
                     <field name="secondary_sector_ids" widget="many2many_tags"/>
                 </field>
                 <xpath expr="//field[@name='partner_id']" position="attributes">
-                    <attribute name="domain">[('customer', '=', True), ('parent_id', '=', False)]</attribute>
+                    <attribute name="domain">[(('customer_rank', '>', 0)), ('parent_id', '=', False)]</attribute>
                 </xpath>
                 <xpath expr="//label[@for='contact_name']" position="attributes">
                     <attribute name="string">Contact Person</attribute>
                 </xpath>
                 <xpath expr="//label[@for='contact_name']" position="before" >
                     <field name="partner_contact_id" string="Contact Name" context="{'default_parent_id': partner_id}"
-                           domain="[('is_company', '=', False), ('customer', '=', True),('parent_id', '=', partner_id),('type', '=', 'contact')]"/>
+                           domain="[('is_company', '=', False), (('customer_rank', '>', 0)),('parent_id', '=', partner_id),('type', '=', 'contact')]"/>
                 </xpath>
             </field>
-        </record>
+        </record>-->
 
         <!-- open activities related to given opportunity -->
         <record id="crm_activity_report_action_tree2" model="ir.actions.act_window">
             <field name="name">Activities</field>
             <field name="res_model">crm.activity.report</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree</field>
+            <field name="view_mode">form,tree</field>
             <field name="context">{}</field>
             <field name="domain">[('lead_id', '=', active_id)]</field>
         </record>
@@ -690,7 +693,7 @@
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='%(sale_crm.sale_action_quotations_new)d']" position="attributes">
+                <xpath expr="//button[@name='%(crm.action_crm_lead2opportunity_partner)d']" position="attributes">
                     <attribute name="name">%(sale_advertising_order.action_sale_order_type_wizard)d</attribute>
                     <attribute name="context">{'search_default_partner_id': partner_id,
                                                 'default_partner_id': partner_id,
@@ -703,17 +706,17 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='sale_amount_total']" position="replace"/>
-                <xpath expr="//div[@name='button_box']/button[4]" position="attributes">
+               <!-- <xpath expr="//div[@name='button_box']/button[4]" position="attributes">
                     <attribute name="invisible">1</attribute>
-                </xpath>
+                </xpath>-->
                 <xpath expr="//button[@name='action_schedule_meeting']" position="after">
                     <button class="oe_stat_button" type="action"
-                        name="%(crm_activity_report_action_tree2)d"
+                        name="%(sale_advertising_order.crm_activity_report_action_tree2)d"
                         icon="fa-clock-o" context="{'search_default_activities': 1}" >
                         <field string="Activities Log" name="activities_count" widget="statinfo"/>
                     </button>
                     <button class="oe_stat_button" type="action"
-                            name="%(act_crm_lead_2_quotation)d" icon="fa-pencil-square-o"
+                            name="%(sale_advertising_order.act_crm_lead_2_quotation)d" icon="fa-pencil-square-o"
                             context="{'default_partner_id': partner_id, 'search_default_quotations': 1}">
                         <div class="o_stat_info">
                             <field name="quotations_count" class="o_stat_value"/>
@@ -721,7 +724,7 @@
                         </div>
                     </button>
                     <button class="oe_stat_button" type="action"
-                            name="%(act_crm_lead_2_quotation_adv)d" icon="fa-pencil-square-o" groups="sale_advertising_order.group_advertising_sales_user"
+                            name="%(sale_advertising_order.act_crm_lead_2_quotation_adv)d" icon="fa-pencil-square-o" groups="sale_advertising_order.group_advertising_sales_user"
                             context="{'default_partner_id': partner_id, 'default_published_customer': partner_id, 'default_customer_contact': partner_contact_id, 'search_default_quotations': 1}">
                         <div class="o_stat_info">
                             <field name="adv_quotations_count" class="o_stat_value"/>
@@ -729,7 +732,7 @@
                         </div>
                     </button>
                     <button class="oe_stat_button" type="action" attrs="{'invisible': [('sale_amount_total', '=', 0)]}"
-                            name="%(act_crm_lead_2_sale_orders)d" icon="fa-usd"
+                            name="%(sale_advertising_order.act_crm_lead_2_sale_orders)d" icon="fa-usd"
                             context="{'default_partner_id': partner_id}">
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_value"><field name="sale_amount_total" widget="monetary" options="{'currency_field': 'company_currency'}"/></span>
@@ -737,7 +740,7 @@
                         </div>
                     </button>
                     <button class="oe_stat_button" type="action" attrs="{'invisible': [('adv_sale_amount_total', '=', 0)]}"
-                            name="%(act_crm_lead_2_sale_orders_adv)d" icon="fa-usd" groups="sale_advertising_order.group_advertising_sales_user"
+                            name="%(sale_advertising_order.act_crm_lead_2_sale_orders_adv)d" icon="fa-usd" groups="sale_advertising_order.group_advertising_sales_user"
                             context="{'default_partner_id': partner_id, 'default_published_customer': partner_id, 'default_customer_contact': partner_contact_id}">
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_value"><field name="adv_sale_amount_total" widget="monetary" options="{'currency_field': 'company_currency'}"/></span>
@@ -748,8 +751,9 @@
             </field>
         </record>
 
+        <!--need to check w.r.t V14-->
          <!-- Add contextual button on partner form view -->
-        <record id="view_partners_form_crm1_advertising" model="ir.ui.view">
+       <!-- <record id="view_partners_form_crm1_advertising" model="ir.ui.view">
             <field name="name">view.res.partner.form.crm.inherited1</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="crm.view_partners_form_crm1"/>
@@ -758,10 +762,11 @@
                     <attribute name="name">%(crm_lead_opportunities_advertising)d</attribute>
                  </xpath>
             </field>
-        </record>
+        </record>-->
 
+        <!--object not avilable for V14-->
         <!--Schedule Next Activity Wizard inherited for Advertising-->
-        <record id="crm_activity_log_view_form_schedule_advertising" model="ir.ui.view">
+        <!--<record id="crm_activity_log_view_form_schedule_advertising" model="ir.ui.view">
             <field name="name">Schedule next Activity</field>
             <field name="model">crm.activity.log</field>
             <field name="inherit_id" ref="crm.crm_activity_log_view_form_schedule" />
@@ -773,7 +778,7 @@
                     <attribute name="required">True</attribute>
                 </xpath>
             </field>
-        </record>
+        </record>-->
 
         <record id="crm_team_salesteams_view_form" model="ir.ui.view">
             <field name="name">crm.team.form</field>
@@ -783,12 +788,12 @@
                 <xpath expr="//field[@name='invoiced_target']" position="attributes">
                     <attribute name="string">Revenue Target</attribute>
                 </xpath>
-                <xpath expr="//page[@name='more_info']/group[3]" position="attributes">
+                <!--<xpath expr="//page[@name='more_info']/group[3]" position="attributes">
                     <attribute name="string">Revenue/Progression Ratio</attribute>
-                </xpath>
-                <xpath expr="//field[@name='invoiced']" position="attributes">
+                </xpath>-->
+                <!--<xpath expr="//field[@name='invoiced']" position="attributes">
                     <attribute name="string">Revenue This Month</attribute>
-                </xpath>
+                </xpath>-->
             </field>
         </record>
 
@@ -810,11 +815,12 @@
             <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
             <field name="arch" type="xml">
                 <xpath expr="//group[1]/filter[1]" position="after">
-                   <filter string="Name Salesperson" context="{'group_by':'name_salesperson'}"/>
+                   <filter string="Name Salesperson" name="name_salesperson" context="{'group_by':'name_salesperson'}"/>
                 </xpath>
-                <xpath expr="//filter[@name='today']" position="attributes">
+                <!--need to check w.r.t v14-->
+               <!-- <xpath expr="//filter[@name='today']" position="attributes">
                     <attribute name="domain">[('date_action', '&gt;', (context_today()-datetime.timedelta(days=1)).strftime('%Y-%m-%d')),('date_action', '&lt;', (context_today()+datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]</attribute>
-                </xpath>
+                </xpath>-->
             </field>
         </record>
 
@@ -825,7 +831,7 @@
             <field name="inherit_id" ref="crm.view_crm_case_leads_filter"/>
             <field name="arch" type="xml">
                 <xpath expr="//group[1]/filter[1]" position="after">
-                   <filter string="Name Salesperson" context="{'group_by':'name_salesperson'}"/>
+                   <filter string="Name Salesperson" name="name_salesperson" context="{'group_by':'name_salesperson'}"/>
                 </xpath>
             </field>
         </record>

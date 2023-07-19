@@ -62,11 +62,18 @@ class SaleOrder(models.Model):
             if order.company_id.verify_order_setting != -1.00 and order.company_id.verify_order_setting < amount_untaxed \
                                                                   or order.company_id.verify_discount_setting < max_cdiscount:
                 ver_tr_exc = True
+            if order.pricelist_id.currency_id:
+                order.update({
+                    'amount_untaxed': order.pricelist_id.currency_id.round(
+                        amount_untaxed),
+                    'amount_tax': order.pricelist_id.currency_id.round(amount_tax),
+                    'amount_total': amount_untaxed + amount_tax,
+                })
 
             order.update({
-                'amount_untaxed': order.pricelist_id.currency_id.round(amount_untaxed),
-                'amount_tax': order.pricelist_id.currency_id.round(amount_tax),
-                'amount_total': amount_untaxed + amount_tax,
+                # 'amount_untaxed': order.pricelist_id.currency_id and order.pricelist_id.currency_id.round(amount_untaxed) or 0.0,
+                # 'amount_tax': order.pricelist_id.currency_id.round(amount_tax),
+                # 'amount_total': amount_untaxed + amount_tax,
                 'ver_tr_exc': ver_tr_exc,
                 'max_discount': max_cdiscount,
             })
@@ -95,7 +102,7 @@ class SaleOrder(models.Model):
                 order['invoice_status'] = invoice_status
 
     @api.depends('agency_is_publish')
-    @api.multi
+    
     def _compute_pub_cust_domain(self):
         """
         Compute the domain for the published_customer domain.
@@ -103,11 +110,11 @@ class SaleOrder(models.Model):
         for rec in self:
             if rec.agency_is_publish:
                 rec.pub_cust_domain = json.dumps(
-                    [('is_ad_agency', '=', True), ('parent_id', '=', False), ('customer', '=', True)]
+                    [('is_ad_agency', '=', True), ('parent_id', '=', False), ('customer_rank', '>', 0)]
                 )
             else:
                 rec.pub_cust_domain = json.dumps(
-                    [('is_ad_agency', '!=', True),('parent_id', '=', False), ('customer', '=', True)]
+                    [('is_ad_agency', '!=', True),('parent_id', '=', False), ('customer_rank', '>', 0)]
                 )
 
     state = fields.Selection(selection=[
@@ -123,12 +130,12 @@ class SaleOrder(models.Model):
     invoice_status = fields.Selection(selection_add=[
         ('not invoiced', 'Nothing Invoiced Yet')
         ])
-    published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer','=',True)])
-    advertising_agency = fields.Many2one('res.partner', 'Advertising Agency', domain=[('customer','=',True)])
+    published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer_rank', '>', 0)])
+    advertising_agency = fields.Many2one('res.partner', 'Advertising Agency', domain=[('customer_rank', '>', 0)])
     nett_nett = fields.Boolean('Netto Netto Deal', default=False)
     pub_cust_domain = fields.Char(compute=_compute_pub_cust_domain, readonly=True, store=False, )
     agency_is_publish = fields.Boolean('Agency is Publishing Customer', default=False)
-    customer_contact = fields.Many2one('res.partner', 'Payer Contact Person', domain=[('customer','=',True)])
+    customer_contact = fields.Many2one('res.partner', 'Payer Contact Person', domain=[(('customer_rank', '>', 0))])
     traffic_employee = fields.Many2one('res.users', 'Traffic Employee',)
     traffic_comments = fields.Text('Traffic Comments')
     traffic_appr_date = fields.Date('Traffic Confirmation Date', index=True, help="Date on which sales order is confirmed bij Traffic.")
@@ -157,7 +164,7 @@ class SaleOrder(models.Model):
 
 
     # overridden:
-    @api.multi
+    
     @api.onchange('partner_id', 'published_customer', 'advertising_agency', 'agency_is_publish')
     def onchange_partner_id(self):
         """
@@ -207,7 +214,7 @@ class SaleOrder(models.Model):
             return {'warning': warning}
 
 
-    @api.multi
+    
     def action_submit(self):
         orders = self.filtered(lambda s: s.state in ['draft'])
         for o in orders:
@@ -216,13 +223,13 @@ class SaleOrder(models.Model):
         return self.write({'state': 'submitted'})
 
     # --added deep
-    @api.multi
+    
     def action_approve1(self):
         orders = self.filtered(lambda s: s.state in ['submitted'])
         orders.write({'state':'approved1'})
         return True
 
-    @api.multi
+    
     def action_approve2(self):
         orders = self.filtered(lambda s: s.state in ['approved1', 'submitted'])
         orders.write({'state': 'approved2',
@@ -230,14 +237,14 @@ class SaleOrder(models.Model):
         return True
 
     # --added deep
-    @api.multi
+    
     def action_refuse(self):
         orders = self.filtered(lambda s: s.state in ['submitted', 'sale', 'sent', 'approved1', 'approved2'])
         orders.write({'state':'draft'})
         return True
 
     # overridden: -- added deep
-    @api.multi
+    
     def print_quotation(self):
         orders = self.filtered(lambda s: s.advertising and s.state in ['draft','approved1', 'submitted', 'approved2'])
         for order in orders:
@@ -251,7 +258,7 @@ class SaleOrder(models.Model):
         orders.write({'state': 'sent'})
         return super(SaleOrder, self).print_quotation()
 
-    @api.multi
+    
     def action_quotation_send(self):
         '''
         This function opens a window to compose an email, with the edi sale template message loaded by default
@@ -301,14 +308,14 @@ class SaleOrder(models.Model):
         }
 
 
-    @api.multi
+    
     def action_cancel(self):
         for order in self.filtered(lambda s: s.state == 'sale' and s.advertising):
             for line in order.order_line:
                 line.page_qty_check_unlink()
         return super(SaleOrder, self).action_cancel()
 
-    @api.multi
+    
     def action_confirm(self):
         for order in self.filtered('advertising'):
             olines = []
@@ -339,7 +346,7 @@ class SaleOrder(models.Model):
         result = super(SaleOrder, self).create(vals)
         return result
 
-    @api.multi
+    
     def write(self, vals):
         result = super(SaleOrder, self).write(vals)
         orders = self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks'))
@@ -367,7 +374,7 @@ class SaleOrder(models.Model):
 
         return result
 
-    @api.multi
+    
     def _prepare_invoice(self):
         """
         Prepare the dict of values to create the new invoice for a sales order. This method may be
@@ -386,7 +393,7 @@ class SaleOrderLine(models.Model):
 
     @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'nett_nett', 'subtotal_before_agency_disc',
                  'price_unit', 'tax_id')
-    @api.multi
+    
     def _compute_amount(self):
         """
         Compute the amounts of the SO line.
@@ -462,7 +469,7 @@ class SaleOrderLine(models.Model):
 
 
     @api.depends('issue_product_ids.price')
-    @api.multi
+    
     def _multi_price(self):
         """
         Compute the combined price in the multi_line.
@@ -480,7 +487,7 @@ class SaleOrderLine(models.Model):
                 })
 
     @api.depends('adv_issue', 'ad_class')
-    @api.multi
+    
     def _compute_deadline(self):
         """
         Compute the deadline for this placement.
@@ -502,7 +509,7 @@ class SaleOrderLine(models.Model):
 
 
     @api.depends('ad_class')
-    @api.multi
+    
     def _compute_tags_domain(self):
         """
         Compute the domain for the Pageclass domain.
@@ -513,13 +520,13 @@ class SaleOrderLine(models.Model):
             )
 
     @api.depends('title', 'product_template_id')
-    @api.multi
     def _compute_price_edit(self):
         """
         Compute if price_unit should be editable.
         """
         for line in self.filtered('advertising'):
-            if line.product_template_id.price_edit or line.title.price_edit:
+            line.price_edit = False
+            if line.product_template_id and line.product_template_id.price_edit or line.title.price_edit:
                 line.price_edit = True
 
     mig_remark = fields.Text('Migration Remark')
@@ -603,7 +610,7 @@ class SaleOrderLine(models.Model):
                 vals['ad_class'] = child_id[0]
             else:
                 vals['ad_class'] = False
-                data = {'ad_class': [('id', 'child_of', self.medium.id), ('type', '!=', 'view')]}
+                data = {'ad_class': [('id', 'child_of', self.medium.id)]}
             titles = self.env['sale.advertising.issue'].search([('parent_id','=', False),('medium', '=', self.medium.id)]).ids
             if titles and len(titles) == 1:
                 vals['title'] = titles[0]
@@ -629,7 +636,7 @@ class SaleOrderLine(models.Model):
             product_ids = self.env['product.product']
             for title in titles:
                 if title.product_attribute_value_id:
-                    ids = product_ids.search([('attribute_value_ids', '=', [title.product_attribute_value_id.id])])
+                    ids = product_ids.search([('product_template_attribute_value_ids', '=', [title.product_attribute_value_id.id])])
                     product_ids += ids
             product_tmpl_ids = product_ids.mapped('product_tmpl_id').ids
             domain = [('id', 'in', product_tmpl_ids)]
@@ -736,7 +743,7 @@ class SaleOrderLine(models.Model):
                     else:
                         pav = adv_issue.parent_id.product_attribute_value_id.id
                     product_id = self.env['product.product'].search(
-                        [('product_tmpl_id', '=', self.product_template_id.id), ('attribute_value_ids', '=', pav)])
+                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids', '=', pav)])
                     if product_id:
                         product = product_id.with_context(
                             lang=self.order_id.partner_id.lang,
@@ -780,7 +787,7 @@ class SaleOrderLine(models.Model):
                     else:
                         pav = adv_issue.parent_id.product_attribute_value_id.id
                     product_id = self.env['product.product'].search(
-                        [('product_tmpl_id', '=', self.product_template_id.id), ('attribute_value_ids', '=', pav)])
+                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids', '=', pav)])
                     if product_id:
                         product = product_id.with_context(
                             lang=self.order_id.partner_id.lang,
@@ -817,7 +824,7 @@ class SaleOrderLine(models.Model):
                     else:
                         pav = self.adv_issue.parent_id.product_attribute_value_id.id
                     product_id = self.env['product.product'].search(
-                        [('product_tmpl_id', '=', self.product_template_id.id), ('attribute_value_ids', '=', pav)])
+                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids', '=', pav)])
                     if product_id:
                         self.update({
                             'adv_issue_ids': [(6, 0, [])],
@@ -827,7 +834,7 @@ class SaleOrderLine(models.Model):
                             'multi_line': False,
                         })
 
-    @api.multi
+    
     @api.onchange('product_id')
     def product_id_change(self):
         result = super(SaleOrderLine, self).product_id_change()
@@ -1010,7 +1017,7 @@ class SaleOrderLine(models.Model):
                 self.to_date = max(arr_to_dates)
 
 
-    @api.multi
+    
     def _prepare_invoice_line(self, qty):
         res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
         if self.advertising:
@@ -1040,7 +1047,7 @@ class SaleOrderLine(models.Model):
             return
         return result
 
-    @api.multi
+    
     def write(self, vals):
         result = super(SaleOrderLine, self).write(vals)
         user = self.env['res.users'].browse(self.env.uid)
@@ -1058,14 +1065,14 @@ class SaleOrderLine(models.Model):
                     line.page_qty_check_update()
         return result
 
-    @api.multi
+    
     def unlink(self):
         res = self.filtered(lambda x: x.env.context.get('multi'))
         if len(res) > 0:
             models.Model.unlink(res)
         return super(SaleOrderLine, self - res).unlink()
 
-    @api.multi
+    
     def deadline_check(self):
         self.ensure_one()
         user = self.env['res.users'].browse(self.env.uid)
@@ -1077,7 +1084,7 @@ class SaleOrderLine(models.Model):
         return True
 
 
-    @api.multi
+    
     def page_qty_check_create(self):
         self.ensure_one()
         if not self.product_template_id.page_id:
@@ -1100,7 +1107,7 @@ class SaleOrderLine(models.Model):
             }
             self.env['sale.advertising.available'].create(vals)
 
-    @api.multi
+    
     def page_qty_check_update(self):
         self.ensure_one()
         if not self.product_template_id.page_id:
@@ -1108,7 +1115,7 @@ class SaleOrderLine(models.Model):
         self.page_qty_check_unlink()
         self.page_qty_check_create()
 
-    @api.multi
+    
     def page_qty_check_unlink(self):
         self.ensure_one()
         if not self.product_template_id.page_id:
@@ -1127,16 +1134,16 @@ class OrderLineAdvIssuesProducts(models.Model):
 
 
     @api.depends('price_unit', 'qty')
-    @api.multi
+    
     def _compute_price(self):
         for line in self:
             line.price = line.price_unit * line.qty
 
     @api.depends('adv_issue_id', 'order_line_id.price_edit')
-    @api.multi
     def _compute_price_edit(self):
         for line in self:
-            if line.order_line_id.price_edit:
+            line.price_edit = False
+            if line.order_line_id and line.order_line_id.price_edit:
                 line.price_edit = True
                 continue
             if line.adv_issue_id.parent_id.price_edit:
@@ -1207,7 +1214,7 @@ class DiscountReason(models.Model):
 class MailComposeMessage(models.TransientModel):
     _inherit = 'mail.compose.message'
 
-    @api.multi
+    
     def send_mail(self, auto_commit=False):
         if self._context.get('default_model') == 'sale.order' and self._context.get('default_res_id') and self._context.get('mark_so_as_sent'):
             order = self.env['sale.order'].browse([self._context['default_res_id']])

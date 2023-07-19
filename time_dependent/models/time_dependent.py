@@ -37,7 +37,7 @@ class TimeDependentThread(models.AbstractModel):
             warning = {'title': _('Warning'),'message':msg}
         return {'value': vals,  'warning': warning}
 
-    @api.multi
+
     def _can_track(self, values):
         canTrack = True
         config, filter_field, filter_value = self.env['time.dependent.config'].check_dependent_config(self._name)
@@ -59,7 +59,7 @@ class TimeDependentThread(models.AbstractModel):
                     canTrack = False
         return canTrack, config, mapFields, values
 
-    @api.multi
+
     def _prepare_record_lines(self, dependentObj, values, mapFields):
         dependentRecord = self.env['time.dependent.record']
         RecordObj = dependentRecord.search([('dependent_id', '=', dependentObj.id)])
@@ -85,7 +85,7 @@ class TimeDependentThread(models.AbstractModel):
                 Reclines.append([0,0,{'field_id': field.id, 'name': value, 'dependent_id': dependentObj.id}])
         return Reclines
 
-    @api.multi
+
     def post_values(self, values):
         canTrack, config, mapFields, values = self._can_track(values)
         timeDependent = self.env['time.dependent']
@@ -122,7 +122,7 @@ class TimeDependentThread(models.AbstractModel):
         res_id.with_context({'timeFaceCronUpdate': True}).post_values(values)
         return res_id
 
-    @api.multi
+
     def write(self, values):
         config = self.env['time.dependent.config'].search([('model_id.model', '=', self._name)])
         if 'timeFaceCronUpdate' in self.env.context or not config:
@@ -133,7 +133,7 @@ class TimeDependentThread(models.AbstractModel):
         ctx.update({'timeFaceCronUpdate': True})
         return super(TimeDependentThread, self).with_context(ctx).write(values)
 
-    @api.multi
+
     def unlink(self):
         for rec in self:
             dependentObj = rec.env['time.dependent'].search([('model', '=', rec._name),('res_id', '=', rec.id)])
@@ -161,7 +161,7 @@ class TimeDependentConfig(models.Model):
         if self.search_count([('model_id', '=', self.model_id.id)]) > 1:
             raise ValidationError(_("Model already exists in time dependent."))
 
-    @api.multi
+
     def unlink(self):
         for rec in self:
             dependentObj = rec.env['time.dependent'].search([('model', '=', rec.model_id.model)])

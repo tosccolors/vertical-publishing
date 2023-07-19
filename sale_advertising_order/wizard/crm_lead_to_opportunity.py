@@ -83,7 +83,7 @@ class Lead2OpportunityPartner(models.TransientModel):
 
     @api.model
     def default_get(self, fields):
-        """ Default get for name, opportunity_ids.
+        """ Default get for name, duplicated_lead_ids.
             If there is an exisitng partner link to the lead, find all existing
             opportunities links with this partner to merge all information together
         """
@@ -110,8 +110,8 @@ class Lead2OpportunityPartner(models.TransientModel):
                 result.update({'agent': partnerDict.get('advertiser', False)})
             if 'name' in fields:
                 result['name'] = 'merge' if len(tomerge) >= 2 else 'convert'
-            if 'opportunity_ids' in fields and len(tomerge) >= 2:
-                result['opportunity_ids'] = list(tomerge)
+            if 'duplicated_lead_ids' in fields and len(tomerge) >= 2:
+                result['duplicated_lead_ids'] = list(tomerge)
             if lead.user_id:
                 result['user_id'] = lead.user_id.id
             if lead.team_id:

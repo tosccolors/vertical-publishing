@@ -31,14 +31,14 @@ class AnalyticAccount(models.Model):
 
 class Invoice(models.Model):
     """ Inherits invoice and adds revbil boolean to invoice to flag revbil-invoices"""
-    _inherit = 'account.invoice'
+    _inherit = 'account.move'
 
 
     revbil = fields.Boolean('Reverse Billing', help="It indicates that the invoice is a Reverse Billing Invoice.", default=False)
 
 
 
-    @api.multi
+
     def invoice_print(self):
         """ Print the invoice and mark it as sent, so that we can see more
             easily the next step of the workflow
@@ -52,7 +52,7 @@ class Invoice(models.Model):
         return super(Invoice, self).invoice_print()
 
 
-    @api.multi
+
     def action_invoice_sent(self):
         """ Open a window to compose an email, with the edi invoice template
             message loaded by default
@@ -69,7 +69,7 @@ class Invoice(models.Model):
         compose_form = self.env.ref('mail.email_compose_message_wizard_form', False)
 
         ctx = dict(
-            default_model='account.invoice',
+            default_model='account.move',
             default_res_id=self.id,
             default_use_template=bool(template),
             default_template_id=template and template.id or False,
@@ -92,6 +92,6 @@ class Invoice(models.Model):
 
 class InvoiceLine(models.Model):
     """ Inherits invoice.line and adds activity from analytic_secondaxis to invoice """
-    _inherit = 'account.invoice.line'
+    _inherit = 'account.move.line'
 
     revbil_sow_id = fields.Many2one('revbil.statement.of.work', 'Reverse Billing Statement of Work')

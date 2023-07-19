@@ -16,7 +16,7 @@
 
         <report id="account_invoices_hon"
             string="HON Invoices"
-            model="account.invoice"
+            model="account.move"
             report_type="qweb-pdf"
             file="freelancer_self_billing.report_invoice_hon"
             name="freelancer_self_billing.report_invoice_hon"

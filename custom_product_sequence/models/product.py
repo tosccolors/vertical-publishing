@@ -48,7 +48,7 @@ class productTemplate(models.Model):
             vals['default_code'] = vals['sequence_code']
         return super(productTemplate, self).create(vals)
 
-    @api.multi
+    
     def write(self, vals):
         sequence = self.env.ref('custom_product_sequence.seq_product_auto_adver')
         for template in self:
@@ -74,7 +74,7 @@ class ProductProduct(models.Model):
             vals['default_code'] = sequence.next_by_id()
         return super(ProductProduct, self).create(vals)
 
-    @api.multi
+    
     def write(self, vals):
         for product in self:
             if product.default_code in [False, '/']:
@@ -84,6 +84,6 @@ class ProductProduct(models.Model):
         return True
 
     #pass context{'variantCopy':True} for template add sequence on create from variant duplicate
-    @api.multi
+    
     def copy(self, default=None):
         return super(ProductProduct, self.with_context({'variantCopy':True})).copy(default)

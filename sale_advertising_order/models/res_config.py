@@ -36,7 +36,7 @@ class Partner(models.Model):
     quotation_count = fields.Integer(compute='_compute_quotation_count', string='# of Quotations')
     adv_quotation_count = fields.Integer(compute='_compute_adv_quotation_count', string='# of Advertising Quotations')
 
-    @api.multi
+    
     def _compute_activities_count(self):
         activity_data = self.env['crm.activity.report'].read_group([('partner_id', 'in', self.ids),('subtype_id','not in', ('Lead Created','Stage Changed','Opportunity Won','Discussions','Note','Lead aangemaakt','Fase gewijzigd','Prospect gewonnen','Discussies','Notitie')), ('subtype_id','!=',False)], ['partner_id'], ['partner_id'])
         mapped_data = {act['partner_id'][0]: act['partner_id_count'] for act in activity_data}
@@ -48,30 +48,30 @@ class Partner(models.Model):
             operator = 'child_of' if partner.is_company else '='  # the adv sales order count should counts the adv sales order of this company and all its contacts
             partner.adv_sale_order_count = self.env['sale.order'].search_count(['|', ('published_customer', operator, partner.id), ('partner_id', operator, partner.id), ('state','in',('sale','done')), ('advertising','=',True)])
 
-    @api.multi
+    
     def _compute_total_sales_order(self):
         for partner in self:
             partner.total_sales_order = partner.sale_order_count + partner.adv_sale_order_count
 
-    @api.multi
+    
     def _compute_adv_opportunity_count(self):
         for partner in self:
             operator = 'child_of' if partner.is_company else '='  # the opportunity count should counts the opportunities of this company and all its contacts
             partner.adv_opportunity_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('type', '=', 'opportunity'), ('partner_id', operator, partner.id), ('is_activity', '=', False), ('stage_id.name','not in',('Won','Logged','Lost'))])
 
-    @api.multi
+    
     def _compute_next_activities_count(self):
         for partner in self:
             operator = 'child_of' if partner.is_company else '='  # the activity count should counts the activities of this company and all its contacts
-            partner.next_activities_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False), ('stage_id.name','!=','Logged')])
+            partner.next_activities_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('is_activity', '=', True), ('stage_id.name','!=','Logged')])
 
-    @api.multi
+    
     def _compute_activities_report_count(self):
         for partner in self:
             operator = 'child_of' if partner.is_company else '='  # the activity count should counts the activities of this company and all its contacts
-            partner.activities_report_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), '|', ('is_activity', '=', True), ('next_activity_id', '!=', False), ('stage_id.name','!=','Qualified'), ('stage_id.name','!=','Proposition')])
+            partner.activities_report_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('is_activity', '=', True), ('stage_id.name','!=','Qualified'), ('stage_id.name','!=','Proposition')])
 
-    @api.multi
+    
     def _compute_opportunity_count(self):
         for partner in self:
             partner.opportunity_count = partner.adv_opportunity_count + partner.next_activities_count + partner.activities_report_count
@@ -84,7 +84,7 @@ class Partner(models.Model):
         mapped_data = dict([(m['partner_id'][0], m['partner_id_count']) for m in sale_data])
         for partner in self:
             # let's obtain the partner id and all its child ids from the read up there
-            partner_ids = filter(lambda r: r['id'] == partner.id, partner_child_ids)[0]
+            partner_ids = list(filter(lambda r: r['id'] == partner.id, partner_child_ids))[0]
             partner_ids = [partner_ids.get('id')] + partner_ids.get('child_ids')
             # then we can sum for all the partner's child
             partner.quotation_count = sum(mapped_data.get(child, 0) for child in partner_ids)
@@ -102,7 +102,7 @@ class Partner(models.Model):
         mapped_data = dict([(m['partner_id'][0], m['partner_id_count']) for m in sale_data])
         for partner in self:
             # let's obtain the partner id and all its child ids from the read up there
-            partner_ids = filter(lambda r: r['id'] == partner.id, partner_child_ids)[0]
+            partner_ids = list(filter(lambda r: r['id'] == partner.id, partner_child_ids))[0]
             partner_ids = [partner_ids.get('id')] + partner_ids.get('child_ids')
             # then we can sum for all the partner's child
             partner.sale_order_count = sum(mapped_data.get(child, 0) for child in partner_ids)
@@ -173,7 +173,7 @@ class Company(models.Model):
     verify_discount_setting = fields.Float('Discount (%) bigger than', digits=(16, 2))
 
 
-    @api.multi
+    
     def write(self, vals):
         res = super(Company, self).write(vals)
 
@@ -221,34 +221,35 @@ class Company(models.Model):
 
 
         return res
-
-class ActivityLog(models.TransientModel):
-    _inherit = "crm.activity.log"
-
-    @api.multi
-    def action_log(self):
-        stage_logged = self.env.ref("sale_advertising_order.stage_logged")
-        for log in self:
-            body_html = "<div><b>%(title)s</b>: %(next_activity)s</div>%(description)s%(note)s" % {
-                'title': _('Activity Done'),
-                'next_activity': log.next_activity_id.name,
-                'description': log.title_action and '<p><em>%s</em></p>' % log.title_action or '',
-                'note': log.note or '',
-            }
-            summary = ""
-            if log.title_action: summary = log.title_action
-            if log.note != '<p><br></p>':
-                note = BeautifulSoup(log.note, 'lxml')
-                summary = summary+" ("+note.get_text()+")"
-
-            log.lead_id.message_post(body_html, subject=summary, subtype_id=log.next_activity_id.subtype_id.id)
-            log.lead_id.write({
-                'date_deadline': log.date_deadline,
-                'planned_revenue': log.planned_revenue,
-                'title_action': False,
-            })
-            if log.lead_id.is_activity: log.lead_id.write({'stage_id': stage_logged.id})
-        return True
+    
+# NOT FOUND IN V14
+# class ActivityLog(models.TransientModel):
+#     _inherit = "crm.activity.log"
+# 
+#     
+#     def action_log(self):
+#         stage_logged = self.env.ref("sale_advertising_order.stage_logged")
+#         for log in self:
+#             body_html = "<div><b>%(title)s</b>: %(next_activity)s</div>%(description)s%(note)s" % {
+#                 'title': _('Activity Done'),
+#                 'next_activity': log.next_activity_id.name,
+#                 'description': log.title_action and '<p><em>%s</em></p>' % log.title_action or '',
+#                 'note': log.note or '',
+#             }
+#             summary = ""
+#             if log.title_action: summary = log.title_action
+#             if log.note != '<p><br></p>':
+#                 note = BeautifulSoup(log.note, 'lxml')
+#                 summary = summary+" ("+note.get_text()+")"
+# 
+#             log.lead_id.message_post(body_html, subject=summary, subtype_id=log.next_activity_id.subtype_id.id)
+#             log.lead_id.write({
+#                 'date_deadline': log.date_deadline,
+#                 'planned_revenue': log.planned_revenue,
+#                 'title_action': False,
+#             })
+#             if log.lead_id.is_activity: log.lead_id.write({'stage_id': stage_logged.id})
+#         return True
 
 
 

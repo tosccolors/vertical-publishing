@@ -2,12 +2,22 @@
 <odoo>
     <record id="view_sale_config_settings" model="ir.ui.view">
         <field name="name">payer onchange settings</field>
-        <field name="model">sale.config.settings</field>
-        <field name="inherit_id" ref="sale.view_sales_config"/>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="sale.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <field name="group_warning_sale" position="after">
-                <field name="call_onchange_for_payers_advertisers"/>
-            </field>
+            <xpath expr="//div[@id='order_warnings']" position="after">
+                <div class="col-12 col-lg-6 o_setting_box" id="onchange_payers_advertiser">
+                    <div class="o_setting_left_pane">
+                        <field name="call_onchange_for_payers_advertisers"/>
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <label for="call_onchange_for_payers_advertisers" string="Call onchange for Payers &amp; Advertisers"/>
+                        <div class="text-muted">
+                            Call onchange for Payers &amp; Advertisers
+                        </div>
+                    </div>
+                </div>
+            </xpath>
         </field>
     </record>
 </odoo>

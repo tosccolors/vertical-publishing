@@ -1,2 +1,2 @@
 # -*- encoding: utf-8 -*-
-import time_dependent
+from . import time_dependent

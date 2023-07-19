@@ -30,13 +30,13 @@ class SaleOrderLine(models.Model):
     adv_class_issue_ids = fields.Many2many('sale.advertising.issue', compute='_compute_class_issue_matrix',
                                             string='Advertising Class Issue Link')
 
-    @api.multi
+
     @api.depends('ad_class')
     def _compute_digital(self):
         for ol in self:
             ol.ad_class_digital = ol.ad_class and ol.ad_class.digital or False
 
-    @api.multi
+
     @api.depends('ad_class', 'title', 'title_ids')
     def _compute_class_issue_matrix(self):
         for ol in self:

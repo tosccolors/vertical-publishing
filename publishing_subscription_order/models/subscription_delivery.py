@@ -17,7 +17,7 @@ class SubscriptionTitleDelivery(models.Model):
 
     _sql_constraints = [('uniq_title', 'unique(title_id)', 'The Title must be unique')]
 
-    @api.multi
+    
     def generate_delivery_title(self):
         """
          Creates delivery title for all subscription title
@@ -57,7 +57,7 @@ class SubscriptionTitleDelivery(models.Model):
 
         self.env.cr.execute(list_query, title_where_clause_params)
 
-    @api.multi
+    
     def generate_delivery_list(self):
         """
             Creates delivery List for current delivery title
@@ -142,7 +142,7 @@ class SubscriptionDeliveryList(models.Model):
     _rec_name = 'delivery_date'
     _order = 'issue_date, delivery_date'
 
-    @api.multi
+    
     @api.depends('issue_date')
     def _compute_weekday(self):
         weekdays = self.env['week.days']
@@ -179,7 +179,7 @@ class SubscriptionDeliveryList(models.Model):
         result = super(SubscriptionDeliveryList, self).create(vals)
         return result
 
-    @api.multi
+    
     def generate_all_delivery_list(self):
         """
             Creates delivery List for all delivery title
@@ -254,7 +254,7 @@ class SubscriptionDeliveryList(models.Model):
         list_ids.write({'name':'New'})
 
 
-    @api.multi
+    
     def update_sequence_number(self):
         self.ensure_one()
         if self.name == 'New':
@@ -266,7 +266,7 @@ class SubscriptionDeliveryList(models.Model):
             self.name = name
         return self.name
 
-    @api.multi
+    
     def generate_delivery_lines(self):
         """
          Crates delivery line for all delivery order
@@ -384,23 +384,23 @@ class SubscriptionDeliveryList(models.Model):
         self.env.cr.execute(list_query, sol_where_clause_params)
         self.env['subscription.delivery.line'].update_delivered_issues()
 
-    @api.multi
+    
     def action_done(self):
         return self.write({'state': 'done'})
 
-    @api.multi
+    
     def action_progress(self):
         self.update_sequence_number()
         return self.write({'state': 'progress'})
 
-    @api.multi
+    
     def action_cancel(self):
         result = self.write({'state': 'cancel'})
         lines = self.env['subscription.delivery.line'].search([('delivery_list_id', 'in', tuple(self.ids))])
         lines.update_delivered_issues()
         return result
 
-    @api.multi
+    
     def print_xls_report(self):
         return self.env['report'].get_action(self, 'report_subscription_delivery.xlsx')
 

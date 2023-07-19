@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.addons.queue_job.job import job, related_action
+# from odoo.addons.queue_job.job import job, related_action
 from odoo.addons.queue_job.exception import FailedJobError
 from odoo.exceptions import UserError, ValidationError
 
@@ -15,8 +15,8 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         key = tuple(key)
         return key, keydict
 
-    @job
-    @api.multi
+    # @job
+    
     def make_invoices_job_queue(self, inv_date, post_date, chunk):
         """"Filter out lines with invoicing properties pay in terms or invoice as package deal"""
         ctx = self._context

@@ -27,13 +27,13 @@ from odoo.tools import email_re, email_split
 from datetime import datetime, timedelta, date
 from dateutil.relativedelta import relativedelta
 from lxml import etree
-from odoo.osv.orm import setup_modifiers
+# from odoo.osv.orm import setup_modifiers
 
 
 class Lead(models.Model):
     _inherit = ["crm.lead"]
 
-    published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer', '=', True)], ondelete='set null',
+    published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer_rank', '>', 0)], ondelete='set null',
                                         track_visibility='onchange', index=True,
                                         help="Linked Advertiser (optional). ")
     partner_id = fields.Many2one('res.partner', 'Payer', ondelete='set null', track_visibility='onchange',
@@ -56,7 +56,7 @@ class Lead(models.Model):
     name_salesperson = fields.Char('Name Salesperson')
     adv_sale_amount_total= fields.Monetary(compute='_compute_sale_amount_total', string="Sum of Adv. Orders", currency_field='company_currency')
 
-    @api.multi
+    
     def _compute_quotations_count(self):
         for lead in self:
             lead.quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',['sale','done','cancel']), ('advertising', '=', False)])
@@ -77,12 +77,12 @@ class Lead(models.Model):
                         adv_total += order.currency_id.compute(order.amount_untaxed, company_currency)
             lead.sale_amount_total, lead.adv_sale_amount_total, lead.sale_number = total, adv_total, nbr
 
-    @api.multi
+    
     def _compute_adv_quotations_count(self):
         for lead in self:
             lead.adv_quotations_count = self.env['sale.order'].search_count([('opportunity_id', '=', lead.id), ('state','not in',('sale','done','cancel')), ('advertising', '=', True)])
 
-    @api.multi
+    
     def _compute_activities_count(self):
         for lead in self:
             lead.activities_count = self.env['crm.activity.report'].search_count([('lead_id', '=', lead.id), ('subtype_id','not in', ('Lead Created','Stage Changed','Opportunity Won','Discussions','Note','Lead aangemaakt','Fase gewijzigd','Prospect gewonnen','Discussies','Notitie')), ('subtype_id','!=',False)])
@@ -91,7 +91,7 @@ class Lead(models.Model):
     def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
         ctx = self.env.context
         if 'params' in ctx and 'action' in ctx['params']:
-            if ctx['params']['action'] == self.env.ref("crm.crm_lead_opportunities_tree_view").id:
+            if ctx['params']['action'] == self.env.ref("crm.crm_case_tree_view_oppor").id:
                 if groupby and groupby[0] == "stage_id":
                     stage_logged = self.env.ref("sale_advertising_order.stage_logged")
                     states_read = self.env['crm.stage'].search_read([('id', '!=', stage_logged.id)], ['name'])
@@ -165,8 +165,8 @@ class Lead(models.Model):
 
         values = self._onchange_partner_id_values(part.id)
         values.update({
-            'sector_id': part.sector_id,
-            'secondary_sector_ids': [(6, 0, part.secondary_sector_ids.ids)],
+            'industry_id': part.industry_id,
+            'secondary_industry_ids': [(6, 0, part.secondary_industry_ids.ids)],
             'opt_out': part.opt_out,
             'partner_name': part.name,
             'partner_contact_id': contact_id,
@@ -200,7 +200,7 @@ class Lead(models.Model):
         return {'value' : values}
 
 
-    @api.multi
+    
     def _convert_opportunity_data(self, customer, team_id=False):
         crm_stage = self.pool.get('crm.case.stage')
 
@@ -252,7 +252,7 @@ class Lead(models.Model):
                 val['probability'] = stage.probability
         return val
 
-    @api.multi
+    
     def handle_partner_assignation(self,  action='create', partner_id=False):
         """ Handle partner assignation during a lead conversion.
             if action is 'create', create new partner with contact and assign lead to new partner_id.
@@ -277,7 +277,7 @@ class Lead(models.Model):
             partner_ids[lead.id] = partner_id
         return partner_ids
 
-    @api.multi
+    
     def handle_partner_assignation(self,  action='create', partner_id=False):
         """ Handle partner assignation during a lead conversion.
             if action is 'create', create new partner with contact and assign lead to new partner_id.
@@ -312,7 +312,7 @@ class Lead(models.Model):
         Search for opportunities that have   the same partner and that arent done or cancelled
         """
 
-        print "partner_id", partner_id, self
+        # print "partner_id", partner_id, self
         partnerDict = self._get_partnerDetails(partner_id)
 
 
@@ -421,7 +421,7 @@ class Lead(models.Model):
             ctx = self.env.context
             if 'params' in ctx and 'action' in ctx['params']:
                 doc = etree.XML(res['arch'])
-                if ctx['params']['action'] == self.env.ref("crm.crm_lead_opportunities_tree_view").id and doc.xpath("//field[@name='stage_id']"):
+                if ctx['params']['action'] == self.env.ref("crm.crm_case_tree_view_oppor").id and doc.xpath("//field[@name='stage_id']"):
                     stage = doc.xpath("//field[@name='stage_id']")[0]
                     stage_logged = self.env.ref("sale_advertising_order.stage_logged")
                     stage.set('domain', "['|', ('team_id', '=', team_id), ('team_id', '=', False), ('id', '!=', %d)]" %(stage_logged.id))
@@ -429,7 +429,7 @@ class Lead(models.Model):
                 res['arch'] = etree.tostring(doc)
         return res
 
-    @api.multi
+    
     def action_set_lost(self):
         lead = super(Lead, self).action_set_lost()
         for rec in self:
@@ -437,7 +437,7 @@ class Lead(models.Model):
             rec.write({'stage_id': stage_lost.id, 'active': True})
         return lead
 
-#    @api.multi
+#    
 #    def redirect_opportunity_view(self):
 #        adv_opportunity_view = super(Lead, self).redirect_opportunity_view()
 #        form_view = self.env.ref('sale_advertising_order.crm_case_form_view_oppor_advertising')
@@ -449,7 +449,7 @@ class Team(models.Model):
     _inherit = ['crm.team']
 
 
-    @api.multi
+    
     def _compute_invoiced(self):
         for team in self:
             confirmed_sales = self.env['sale.order'].search([
@@ -462,48 +462,90 @@ class Team(models.Model):
 
     @api.model
     def action_your_pipeline(self):
-        action = self.env.ref('crm.crm_lead_opportunities_tree_view').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id("crm.crm_lead_action_pipeline")
         user_team_id = self.env.user.sale_team_id.id
-        if not user_team_id:
+        if user_team_id:
+            # To ensure that the team is readable in multi company
+            user_team_id = self.search([('id', '=', user_team_id)], limit=1).id
+        else:
             user_team_id = self.search([], limit=1).id
-            action['help'] = """<p class='oe_view_nocontent_create'>Click here to add new opportunities</p><p>
-    Looks like you are not a member of a sales team. You should add yourself
-    as a member of one of the sales teams.
-</p>"""
+            action['help'] = _("""<p class='o_view_nocontent_smiling_face'>Add new opportunities</p><p>
+    Looks like you are not a member of a Sales Team. You should add yourself
+    as a member of one of the Sales Team.
+</p>""")
             if user_team_id:
-                action['help'] += "<p>As you don't belong to any sales team, Odoo opens the first one by default.</p>"
+                action['help'] += _(
+                    "<p>As you don't belong to any Sales Team, Odoo opens the first one by default.</p>")
 
         action_context = safe_eval(action['context'], {'uid': self.env.uid})
         if user_team_id:
             action_context['default_team_id'] = user_team_id
 
-        action_domain = safe_eval(action['domain'])
-
-        tree_view_id = self.env.ref('crm.crm_case_tree_view_oppor').id
-        form_view_id = self.env.ref('crm.crm_case_form_view_oppor').id
-        kanb_view_id = self.env.ref('crm.crm_case_kanban_view_leads').id
-
         # Load Views for Advertising:
         if self._context.get('advertising', False):
             form_view_id = self.env.ref('crm.crm_case_form_view_oppor_advertising').id
             action_context['default_advertising'] = True
-            action_domain.append(('is_activity','=', False))
+            # action_domain.append(('is_activity', '=', False))
 
         if self._context.get('search_default_partner_id', False):
             action_context['search_default_partner_id'] = self._context['active_id']
 
-        action['views'] = [
-                [kanb_view_id, 'kanban'],
-                [tree_view_id, 'tree'],
-                [form_view_id, 'form'],
-                [False, 'graph'],
-                [False, 'calendar'],
-                [False, 'pivot']
-            ]
+        # action['views'] = [
+        #     [kanb_view_id, 'kanban'],
+        #     [tree_view_id, 'tree'],
+        #     [form_view_id, 'form'],
+        #     [False, 'graph'],
+        #     [False, 'calendar'],
+        #     [False, 'pivot']
+        # ]
+        print ('------action--------',action)
         action['context'] = action_context
-        action['domain'] = action_domain
-
         return action
+
+#     @api.model
+#     def action_your_pipeline(self):
+#         action = self.env.ref('crm.crm_case_tree_view_oppor').read()[0]
+#         user_team_id = self.env.user.sale_team_id.id
+#         if not user_team_id:
+#             user_team_id = self.search([], limit=1).id
+#             action['help'] = """<p class='oe_view_nocontent_create'>Click here to add new opportunities</p><p>
+#     Looks like you are not a member of a sales team. You should add yourself
+#     as a member of one of the sales teams.
+# </p>"""
+#             if user_team_id:
+#                 action['help'] += "<p>As you don't belong to any sales team, Odoo opens the first one by default.</p>"
+#
+#         action_context = safe_eval(action['context'], {'uid': self.env.uid})
+#         if user_team_id:
+#             action_context['default_team_id'] = user_team_id
+#
+#         action_domain = safe_eval(action['domain'])
+#
+#         tree_view_id = self.env.ref('crm.crm_case_tree_view_oppor').id
+#         form_view_id = self.env.ref('crm.crm_case_form_view_oppor').id
+#         kanb_view_id = self.env.ref('crm.crm_case_kanban_view_leads').id
+#
+#         # Load Views for Advertising:
+#         if self._context.get('advertising', False):
+#             form_view_id = self.env.ref('crm.crm_case_form_view_oppor_advertising').id
+#             action_context['default_advertising'] = True
+#             action_domain.append(('is_activity','=', False))
+#
+#         if self._context.get('search_default_partner_id', False):
+#             action_context['search_default_partner_id'] = self._context['active_id']
+#
+#         action['views'] = [
+#                 [kanb_view_id, 'kanban'],
+#                 [tree_view_id, 'tree'],
+#                 [form_view_id, 'form'],
+#                 [False, 'graph'],
+#                 [False, 'calendar'],
+#                 [False, 'pivot']
+#             ]
+#         action['context'] = action_context
+#         action['domain'] = action_domain
+#
+#         return action
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

@@ -20,7 +20,7 @@ class AccountConfigSettings(models.TransientModel):
             self.subscription_revenue_account_id = revenue_account_id if revenue_account_id else False
         return res
 
-    @api.multi
+    
     def set_product_susbcription_account(self):
         """ Set the product susbcription accounts if they have changed """
         ir_values_obj = self.env['ir.values']

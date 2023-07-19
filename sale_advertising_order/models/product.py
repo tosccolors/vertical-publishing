@@ -26,7 +26,7 @@ class productCategory(models.Model):
     _inherit = "product.category"
 
 
-    @api.multi
+    
     @api.depends('name', 'parent_id')
     def name_get(self):
         result = []
@@ -37,13 +37,14 @@ class productCategory(models.Model):
             result.append((record.id, name))
         return result
 
-    @api.one
+    
     @api.depends('name', 'parent_id')
     def _name_get_fnc(self):
-        name = self.name
-        if self.parent_id:
-            name = self.parent_id.name_get()[0][1] + ' / '+name
-        self.complete_name = name
+        for rec in self:
+            name = rec.name
+            if rec.parent_id:
+                name = rec.parent_id.name_get()[0][1] + ' / '+name
+            rec.complete_name = name
 
     def _get_topmost_parent(self):
         adv_parent = False

@@ -9,7 +9,7 @@
 
 
         <!--CRM-->
-        <menuitem id="menu_crm_advertising" name="CRM" parent="sales_team.menu_base_partner"
+        <menuitem id="menu_crm_advertising" name="CRM" parent="sale.sale_menu_root"
                   groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"
                   sequence="2"/>
 
@@ -17,24 +17,27 @@
         <menuitem id="menu_partner_form1" parent="menu_crm_advertising"
                   action="action_partner_form_crm" sequence="2"/>
 
-        <menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_advsales"
-                  action="crm.crm_lead_action_activities" sequence="5" />
+            <!--need to check w.r.t v14-->
+        <!--<menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_advsales"-->
+                  <!--action="crm.crm_lead_action_activities" sequence="5" />-->
 
+            <!--action is commented need to check w.r.t v14-->
             <!--CRM: My Pipeline-->
-        <menuitem id="menu_crm_opportunities2" parent="menu_crm_advertising"
+        <!--<menuitem id="menu_crm_opportunities2" parent="menu_crm_advertising"
                   action="action_your_pipeline_advertising" sequence="4"/>
-
+-->
             <!--CRM: Leads-->
         <menuitem id="menu_crm_leads_adv" name="Leads" parent="menu_crm_advertising"
                   action="crm.crm_lead_all_leads" sequence="1" groups="crm.group_use_lead"/>
 
+             <!--need to check w.r.t v14-->
             <!--CRM: Next Activities-->
-        <menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_crm_advertising"
+        <!--<menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_crm_advertising"
                   groups="sale_advertising_order.group_next_activities_menu"
                   action="crm.crm_lead_action_activities" sequence="5" />
-
+-->
         <!--Regular Sales Customers-->
-        <menuitem id="sales_team.menu_partner_form" parent="sales_team.menu_sales"
+        <menuitem id="sales_team.menu_partner_form" parent="crm.crm_menu_sales"
                   action="base.action_partner_form" sequence="3" groups="group_regular_sales_crm_menus"/>
 
         <menuitem id="menu_product_template_action2" parent="menu_advsales"
@@ -69,7 +72,7 @@
             Menus: Inherited:
         -->
 
-        <menuitem id="sales_team.menu_sales" name="Sales" parent="sales_team.menu_base_partner" groups="sale_advertising_order.group_regular_sales_user"
+        <menuitem id="crm.crm_menu_sales" name="Sales" parent="sale.sale_menu_root" groups="sale_advertising_order.group_regular_sales_user"
                   sequence="5"/>
         <menuitem id="sale.menu_sale_order_invoice" action="sale.action_orders_to_invoice" parent="sale.menu_sale_invoicing"
                   groups="sale_advertising_order.group_regular_sales_user" sequence="2"/>

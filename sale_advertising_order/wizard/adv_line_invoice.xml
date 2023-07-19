@@ -56,7 +56,7 @@
             <field name="name">Make Invoices</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ad.order.line.make.invoice</field>
-            <field name="view_type">form</field>
+            <!--<field name="view_type">form</field>-->
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_ad_order_line_make_invoice"/>
             <field name="target">new</field>
@@ -66,29 +66,34 @@
             <field name="name">Make Invoices</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ad.order.make.invoice</field>
-            <field name="view_type">form</field>
+            <!--<field name="view_type">form</field>-->
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_ad_order_make_invoice"/>
             <field name="target">new</field>
             <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
         </record>
 
-        <record model="ir.values" id="ad_order_line_make_invoice">
-            <field name="model_id" ref="model_sale_order_line" />
+
+        <record id="ad_order_line_make_invoice" model="ir.actions.act_window">
             <field name="name">Make Invoices</field>
-            <field name="key2">client_action_multi</field>
-            <field name="value" eval="'ir.actions.act_window,' + str(ref('action_view_ad_order_line_make_invoice'))" />
-            <field name="key">action</field>
-            <field name="model">sale.order.line</field>
+            <field name="res_model">ad.order.make.invoice</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sale_advertising_order.view_ad_order_line_make_invoice"/>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+            <field name="binding_model_id" ref="sale.model_sale_order_line"/>
+            <field name="binding_view_types">list</field>
         </record>
 
-        <record model="ir.values" id="ad_order_make_invoice">
-            <field name="model_id" ref="model_sale_order" />
+
+        <record id="ad_order_make_invoice" model="ir.actions.act_window">
             <field name="name">Make Invoices</field>
-            <field name="key2">client_action_multi</field>
-            <field name="value" eval="'ir.actions.act_window,' + str(ref('action_view_ad_order_make_invoice'))" />
-            <field name="key">action</field>
-            <field name="model">sale.order</field>
+            <field name="res_model">ad.order.make.invoice</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="sale.model_sale_order"/>
+            <field name="binding_view_types">list</field>
+            <field name="view_id" ref="sale_advertising_order.view_ad_order_line_make_invoice"/>
         </record>
     </data>
 </odoo>

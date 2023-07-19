@@ -27,7 +27,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 					sale_order_line.invoice_lines = [(4, invoice_line.id)]
 		return invoice
 
-	@api.multi
+	
 	def _prepare_invoice_line(self, line):
 		res = super(AdOrderLineMakeInvoice, self)._prepare_invoice_line(line)
 		if line.qty_invoiced:

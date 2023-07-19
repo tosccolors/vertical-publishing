@@ -21,7 +21,7 @@ class AdvertisingIssue(models.Model):
         return [('attribute_id', '=', id)]
 
     @api.depends('parent_id')
-    @api.multi
+    
     def _compute_medium_domain(self):
         """
         Compute the domain for the Medium domain.
@@ -46,7 +46,7 @@ class AdvertisingIssue(models.Model):
                                     [('parent_id', '=', ads)]
                 )
 
-    @api.one
+    
     @api.depends('issue_date')
     def _week_number(self):
         """
@@ -61,7 +61,7 @@ class AdvertisingIssue(models.Model):
                 })
 
     @api.depends('available_ids.available_qty')
-    @api.multi
+    
     def _availability(self):
         self.ensure_one()
         qty = 0
@@ -69,7 +69,7 @@ class AdvertisingIssue(models.Model):
             qty += line.available_qty
         self.amount_total = qty
 
-    @api.multi
+    
     def calc_page_space(self, page_id):
         self.ensure_one()
         av_space = 0
@@ -129,7 +129,7 @@ class AdvertisingIssueAvailability(models.Model):
     page_id = fields.Many2one('sale.advertising.page', required=True, string='Advertising Page')
     order_line_id = fields.Many2one('sale.order.line', string='Ad Placement', readonly=False)
 
-    @api.multi
+    
     @api.constrains('order_line_id')
     def _check_unique_orderline(self):
         for rec in self:

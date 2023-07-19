@@ -19,7 +19,7 @@ from odoo import models, fields, api
     #     return data
 
 class AccountInvoiceLine(models.Model):
-    _inherit = "account.invoice.line"
+    _inherit = "account.move.line"
 
     @api.onchange('account_analytic_id')
     def onchange_account_analytic_id(self):

@@ -4,7 +4,7 @@
 
         <report auto="False"
             id="account_invoices_revbil"
-            model="account.invoice"
+            model="account.move"
             name="account.invoice.revbil"
             rml="reverse_billing/report/report_account_invoice_print.rml"
             string="Reverse Billing Invoices"

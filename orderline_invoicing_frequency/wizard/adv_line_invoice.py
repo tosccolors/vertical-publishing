@@ -10,7 +10,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     _inherit = "ad.order.line.make.invoice"
     _description = "Advertising Order Line Make_invoice"
 
-    @api.multi
+    
     def make_invoices_from_lines(self):
         """
              To make invoices.

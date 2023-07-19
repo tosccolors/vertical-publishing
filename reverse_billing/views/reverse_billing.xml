@@ -169,7 +169,7 @@
         <record id="action_sow_batch" model="ir.actions.act_window">
             <field name="name">Sow Batch</field>
             <field name="res_model">sow.batch</field>
-            <field name="view_type">form</field>
+            <!--<field name="view_type">form</field>-->
             <field name="view_mode">tree,form</field>
             <field eval="False" name="view_id"/>
             <field name="search_view_id" ref="view_sow_batch_filter"/>
@@ -178,7 +178,7 @@
         <record id="action_revbil_statement_of_work" model="ir.actions.act_window">
             <field name="name">Reverse Billing SOW</field>
             <field name="res_model">revbil.statement.of.work</field>
-            <field name="view_type">form</field>
+            <!--<field name="view_type">form</field>-->
             <field name="view_mode">tree,form</field>
             <field eval="False" name="view_id"/>
             <field name="search_view_id" ref="view_revbil_statement_of_work_filter"/>
@@ -219,8 +219,8 @@
 
         <record id="action_invoice_tree_revbil" model="ir.actions.act_window">
             <field name="name">Reverse Billing Invoices</field>
-            <field name="res_model">account.invoice</field>
-            <field name="view_type">form</field>
+            <field name="res_model">account.move</field>
+            <!--<field name="view_type">form</field>-->
             <field name="view_mode">tree,form,calendar,graph</field>
             <field eval="False" name="view_id"/>
             <field name="domain">[('type','=','in_invoice'),('revbil','=',True)]</field>
@@ -255,8 +255,8 @@
 
         <record id="account.action_invoice_tree2" model="ir.actions.act_window">
             <field name="name">Supplier Invoices</field>
-            <field name="res_model">account.invoice</field>
-            <field name="view_type">form</field>
+            <field name="res_model">account.move</field>
+            <!--<field name="view_type">form</field>-->
             <field name="view_mode">tree,form,calendar,graph</field>
             <field eval="False" name="view_id"/>
             <field name="domain">[('type','in',('in_invoice', 'in_refund')), ('state', '!=', 'portalcreate'),'|',('revbil','=',False),'&amp;',('state','not in',['draft','open']),('revbil','!=',False)]</field>

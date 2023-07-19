@@ -45,7 +45,7 @@ class account_invoice_hon(report_sxw.rml_parse):
 
 report_sxw.report_sxw(
     'report.account.invoice.hon',
-    'account.invoice',
+    'account.move',
     'addons/freelancer_self_billing/report/report_account_invoice_print.rml',
     parser=account_invoice_hon,
 )

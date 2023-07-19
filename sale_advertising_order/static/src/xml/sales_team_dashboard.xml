@@ -4,6 +4,7 @@
         This template is the ribbon at the top of the salesteam dashboard that adds
         some figures to it. We call this rubbon the "SalesDashboard".
     -->
+<!--
     <t t-extend="sales_team.SalesDashboard">
         <t t-jquery=".o_sales_dashboard" t-operation="replace">
             <div t-if="show_demo or values" class="o_sales_dashboard">
@@ -108,7 +109,7 @@
                         <tr>
                             <td></td>
                             <td></td>
-                            <!-- Hide overdue when there is none -->
+                            &lt;!&ndash; Hide overdue when there is none &ndash;&gt;
                             <td t-if="show_demo or (values and values['activity']['overdue'] != 0)" class="o_warning" title="To Activities">
                                 <a href="#" class="o_dashboard_action" name="crm.crm_lead_action_activities" data-extra="overdue">
                                     <t t-if="!show_demo">
@@ -280,5 +281,6 @@
             </div>
         </t>
     </t>
+-->
 
 </templates>
