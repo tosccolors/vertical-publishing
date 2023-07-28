@@ -477,13 +477,13 @@ msgid "Invalid Action!"
 msgstr "Ongeldige Handeling!"
 
 #. module: freelancer_self_billing
-#: model:ir.model,name:freelancer_self_billing.model_account_invoice
+#: model:ir.model,name:freelancer_self_billing.model_account_move
 #: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_invoice_id
 msgid "Invoice"
 msgstr "Factuur"
 
 #. module: freelancer_self_billing
-#: model:ir.model,name:freelancer_self_billing.model_account_invoice_line
+#: model:ir.model,name:freelancer_self_billing.model_account_move_line
 #: model:ir.model.fields,field_description:freelancer_self_billing.field_hon_issue_line_invoice_line_id
 msgid "Invoice Line"
 msgstr "Factuurregel"

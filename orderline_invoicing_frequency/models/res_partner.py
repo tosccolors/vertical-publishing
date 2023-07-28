@@ -6,5 +6,3 @@ class Partner(models.Model):
 
     invoice_frequency = fields.Selection([('weekly','Weekly'),('monthly','Monthly')], string = 'Invoicing Frequency')
     last_invoice_sent_date = fields.Date(string="Last Invoice Sent Date")
-
-Partner()

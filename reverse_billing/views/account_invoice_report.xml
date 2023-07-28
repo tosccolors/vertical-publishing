@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
+<odoo>
     <data>
 
-        <report auto="False"
+        <!--need to check w.r.t v14-->
+        <!--<report auto="False"
             id="account_invoices_revbil"
             model="account.move"
             name="account.invoice.revbil"
@@ -12,10 +13,11 @@
             attachment="(object.state in ('open','paid')) and ('RevBil'+(object.number or '').replace('/','')+'.pdf')"
             attachment_use="True"
             usage="default"
-            header="False"/>
+            header="False"/>-->
 
-
+ <!--need to check w.r.t v14-->
         <!--Email template -->
+<!--
         <record id="email_template_revbil_invoice" model="mail.template">
             <field name="name">Invoice - Send by Email</field>
             <field name="email_from">${(object.user_id.email or object.company_id.email or 'noreply@localhost')|safe}</field>
@@ -28,7 +30,8 @@
             <field name="lang">${object.partner_id.lang}</field>
             <field name="body_html"></field>
         </record>
+-->
 
 
     </data>
-</openerp>
+</odoo>

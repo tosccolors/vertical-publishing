@@ -53,16 +53,16 @@
         <menuitem name="All Advertising Sale Order Lines" id="menu_sale_advertising_order_lines" parent="sale.menu_sale_invoicing"
                   groups="sale_advertising_order.group_advertising_sales_user" action="all_advertising_order_lines_action"/>
 
-        <menuitem name="Advertising Issue" id="menu_sale_advertising_issue" parent="sales_team.menu_sale_config"
+        <menuitem name="Advertising Issue" id="menu_sale_advertising_issue" parent="sale.menu_sale_config"
                   action="action_sale_advertising_issue" groups="sale_advertising_order.group_advertising_sales_user"/>
 
-        <menuitem name="Advertising Pages" id="menu_sale_advertising_pages" parent="sales_team.menu_sale_config"
+        <menuitem name="Advertising Pages" id="menu_sale_advertising_pages" parent="sale.menu_sale_config"
                   action="action_sale_advertising_page" groups="sale_advertising_order.group_advertising_sales_user"/>
 
         <menuitem name="Advertising Page Availability" id="menu_sale_advertising_available" parent="sale_advertising_order.menu_advsales"
                   action="action_sale_advertising_available" groups="sale_advertising_order.group_advertising_sales_user"/>
 
-        <menuitem name="Discount Reasons" id="menu_discount_reason" parent="sales_team.menu_sale_config"
+        <menuitem name="Discount Reasons" id="menu_discount_reason" parent="sale.menu_sale_config"
                   action="action_discount_reason" groups="sale_advertising_order.group_advertising_sales_user"/>
 
         <menuitem name="Advertising Proof" id="menu_sale_advertising_proof"

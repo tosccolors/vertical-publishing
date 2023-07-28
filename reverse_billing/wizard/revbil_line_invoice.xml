@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
+<odoo>
     <data>
         <record id="view_revbil_statement_of_work_make_invoice" model="ir.ui.view">
             <field name="name">Reverse Billing Statement of Work Make Invoice</field>
@@ -58,7 +58,7 @@
             <field name="target">new</field>
             <field name="binding_model_id" ref="model_revbil_statement_of_work"/>
             <field name="binding_view_types">list</field>
-            <field name="view_id" ref="action_view_revbil_statement_of_work_make_invoice"/>
+            <field name="view_id" ref="view_revbil_statement_of_work_make_invoice"/>
         </record>
 
         <!--<record model="ir.values" id="revbil_statement_of_work_make_invoice">
@@ -84,10 +84,10 @@
             <field name="res_model">sow.batch</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
-            <field name="binding_model_id" ref="model_model_sow_batch"/>
+            <field name="binding_model_id" ref="model_sow_batch"/>
             <field name="binding_view_types">list</field>
-            <field name="view_id" ref="action_view_sow_batch_make_invoice"/>
+            <field name="view_id" ref="view_sow_batch_make_invoice"/>
         </record>
 
     </data>
-</openerp>
+</odoo>

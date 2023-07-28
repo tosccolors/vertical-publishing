@@ -34,7 +34,7 @@
 			<field name="view_id" ref="advertising_class_issue_matrix_tree"/>
       </record>
 
-      <menuitem name="Advertising Class Issue matrix" id="menu_advertising_class_issue_matrix" parent="sales_team.menu_sale_config"
+      <menuitem name="Advertising Class Issue matrix" id="menu_advertising_class_issue_matrix" parent="sale.menu_sale_config"
                   action="action_advertising_class_issue_matrix"/>
 
   </data>

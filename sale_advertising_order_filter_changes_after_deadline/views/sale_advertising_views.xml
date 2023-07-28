@@ -13,7 +13,8 @@
         </field>
       </record>
 
-      <record id="view_advertising_sales_order_line_filter_update_after_deadline" model="ir.ui.view">
+      <!--need to check w.r.t v14-->
+     <!-- <record id="view_advertising_sales_order_line_filter_update_after_deadline" model="ir.ui.view">
         <field name="name">adv.sale.order.line.select</field>
         <field name="model">sale.order.line</field>
         <field name="inherit_id" ref="sale_advertising_order.view_advertising_sales_order_line_filter"/>
@@ -23,7 +24,7 @@
                 <filter name="na_deadline" string="Na deadline" domain="[('changes_after_deadline','=', True)]" help="Order Lines with create/write date greater than deadline of advertising issue"/>
             </xpath>
         </field>
-      </record>
+      </record>-->
 
       <record id="view_order_form_advertising_update_after_deadline" model="ir.ui.view">
         <field name="name">sale.order.form.advertising</field>
@@ -36,19 +37,20 @@
         </field>
       </record>
 
-      <record id="advertising_order_view_search_inherit_sale_update_after_deadline" model="ir.ui.view">
-        <field name="name">advertising.sale.order.search.update.after.deadline</field>
-        <field name="model">sale.order</field>
-        <field name="inherit_id" ref="sale_advertising_order.advertising_order_view_search_inherit_sale"/>
-        <field name="arch" type="xml">
-            <xpath expr="//filter[@name='approved1']" position="after">
-                <seperator/>
-                <filter name="na_deadline" string="Na deadline" domain="[('changes_after_deadline','=', True)]" help="If atleast one order line with create/write date greater than deadline of advertising issue"/>
-            </xpath>
+      <!--need to check w.r.t v14-->
+     <!-- <record id="advertising_order_view_search_inherit_sale_update_after_deadline" model="ir.ui.view">
+            <field name="name">advertising.sale.order.search.update.after.deadline</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_advertising_order.advertising_order_view_search_inherit_sale"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='approved1']" position="after">
+                    <seperator/>
+                    <filter name="na_deadline" string="Na deadline" domain="[('changes_after_deadline','=', True)]" help="If atleast one order line with create/write date greater than deadline of advertising issue"/>
+                </xpath>
         </field>
-      </record>
-
-      <record id="advertising_order_view_search_inherit_quotation_update_after_deadline" model="ir.ui.view">
+      </record>-->
+        <!--need to check w.r.t v14-->
+      <!--<record id="advertising_order_view_search_inherit_quotation_update_after_deadline" model="ir.ui.view">
         <field name="name">advertising.sale.order.search.inherit.quotation</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale_advertising_order.advertising_order_view_search_inherit_quotation"/>
@@ -58,7 +60,7 @@
                 <filter name="na_deadline" string="Na deadline" domain="[('changes_after_deadline','=', True)]" help="If atleast one order line with create/write date greater than deadline of advertising issue"/>
             </xpath>
         </field>
-      </record>
+      </record>-->
 
   </data>
 </odoo>

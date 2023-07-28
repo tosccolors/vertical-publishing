@@ -154,7 +154,7 @@ class RevBilStatementOfWorkMakeInvoice(models.TransientModel):
     def open_invoices(self, invoice_ids):
         """ open a view on one of the given invoice_ids """
 
-        action = self.env.ref('account.action_invoice_tree2').read()[0]
+        action = self.env.ref('account.view_in_invoice_tree').read()[0]
         if len(invoice_ids) > 1:
             action['domain'] = [('id', 'in', invoice_ids)]
         elif len(invoice_ids) == 1:

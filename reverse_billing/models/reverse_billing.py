@@ -27,7 +27,7 @@ class SowBatch(models.Model):
     _name = "sow.batch"
     _order = "id desc"
 
-    @api.one
+
     @api.depends('invoiced', 'invoice_ids.state')
     def _invoiced_rate(self, cursor, user, ids, name, arg, context=None):
         rate = tot = 0.0
@@ -44,7 +44,7 @@ class SowBatch(models.Model):
 
         self.invoiced_rate = rate
 
-    @api.one
+
     @api.depends('invoice_ids')
     def _invoice_exists(self):
         flag = False
@@ -53,7 +53,7 @@ class SowBatch(models.Model):
 
         self.invoice_exists = flag
 
-    @api.one
+
     @api.depends('sow_batch_line.invoice_line_id', 'sow_batch_line.employee', 'sow_batch_line.gratis')
     def _invoiced(self):
         flag = True
@@ -145,7 +145,7 @@ class SowBatch(models.Model):
         It can either be a in a list or in a form view, if there is only one invoice to show.
         '''
         invoices = self.mapped('invoice_ids')
-        action = self.env.ref('account.action_invoice_tree2').read()[0]
+        action = self.env.ref('account.view_in_invoice_tree').read()[0]
         if len(invoices) > 1:
             action['domain'] = [('id', 'in', invoices.ids)]
         elif len(invoices) == 1:
@@ -208,7 +208,7 @@ class RevBilStatementOfWork(models.Model):
 
     _name = "revbil.statement.of.work"
 
-    @api.one
+
     @api.depends('invoice_line_id', 'employee', 'gratis')
     def _invoiced(self):
         for line in self:
@@ -246,7 +246,7 @@ class RevBilStatementOfWork(models.Model):
             return [('id', '=', 0)]
         return [('id', 'in', [x[0] for x in res])]
 
-    @api.one
+
     @api.depends('price_unit', 'quantity')
     def _amount_line(self):
         self.price_subtotal = self.price_unit * self.quantity
@@ -280,7 +280,7 @@ class RevBilStatementOfWork(models.Model):
                                   store=True)
     estimated_price = fields.Float('Estimate',)
     invoice_line_id = fields.Many2one('account.move.line', 'Invoice Line', readonly=True)
-    invoice_id = fields.Many2one(related='invoice_line_id.invoice_id', relation='account.move', string='Invoice',
+    invoice_id = fields.Many2one(related='invoice_line_id.move_id', relation='account.move', string='Invoice',
                                  readonly=True)
     invoiced = fields.Boolean(compute='_invoiced', string='Invoiced', store=True,
 #                              search='_invoiced_search',

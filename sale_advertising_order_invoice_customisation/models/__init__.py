@@ -20,8 +20,8 @@
 #
 ##############################################################################
 
-import account_invoice
-import adv_line_invoice
-import sale_order
+from . import account_invoice
+from . import adv_line_invoice
+from . import sale_order
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

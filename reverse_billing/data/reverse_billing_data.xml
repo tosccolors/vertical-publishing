@@ -10,8 +10,8 @@
             <field name="name">Reverse Billing Journal</field>
             <field name="code">IKBH</field>
             <field name="type">purchase</field>
-            <field name="sequence_id" ref="revbil_journal_sequence"/>
-            <field name="user_id" ref="base.user_root"/>
+            <field name="sequence" ref="revbil_journal_sequence"/>
+            <field name="sale_activity_user_id" ref="base.user_root"/>
         </record>
     </data>
 </odoo>

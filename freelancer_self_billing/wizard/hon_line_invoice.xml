@@ -67,7 +67,7 @@
             <field name="target">new</field>
             <field name="binding_model_id" ref="model_hon_issue_line"/>
             <field name="binding_view_types">list</field>
-            <field name="view_id" ref="action_view_hon_issue_line_make_invoice"/>
+            <field name="view_id" ref="view_hon_issue_line_make_invoice"/>
         </record>
 
         <!--<record model="ir.values" id="hon_issue_make_invoice">
@@ -86,7 +86,7 @@
             <field name="target">new</field>
             <field name="binding_model_id" ref="model_hon_issue"/>
             <field name="binding_view_types">list</field>
-            <field name="view_id" ref="action_view_hon_issue_make_invoice"/>
+            <field name="view_id" ref="view_hon_issue_make_invoice"/>
         </record>
     </data>
 </openerp>

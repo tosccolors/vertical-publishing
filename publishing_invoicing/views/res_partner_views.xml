@@ -7,7 +7,9 @@
         <field name="type">form</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//page[@name='sales_purchases']/group[@name='container_row_2']" position="inside">
+            <xpath expr="//page[@name='sales_purchases']/group[last()]" position="after">
+                <field name ="customer_rank" invisible="1"/>
+                <field name ="is_ad_agency" invisible="1"/>
                 <group name="invoicing_properties" string="Invoicing Properties" attrs="{'invisible': [('customer_rank', '>', 0),('is_ad_agency','=', False)]}">
                 	<field name="invoicing_property_id" options="{'no_create': True}"/>
                 </group>

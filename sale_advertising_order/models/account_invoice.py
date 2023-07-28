@@ -51,7 +51,7 @@ class InvoiceLine(models.Model):
                     line.subtotal_before_agency_disc = price_unit * qty
             else:
                 line.subtotal_before_agency_disc = 0.0
-        super(InvoiceLine, self)._compute_price()
+        # super(InvoiceLine, self)._compute_price()
 
 
     date_publish = fields.Date('Publishing Date')

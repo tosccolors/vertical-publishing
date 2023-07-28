@@ -27,7 +27,6 @@ class HonIssue(models.Model):
     _name = "hon.issue"
     _order = "id desc"
 
-    @api.one
     @api.depends('invoiced', 'invoice_ids.state')
     def _invoiced_rate(self, cursor, user, ids, name, arg, context=None):
         rate = tot = 0.0
@@ -44,7 +43,6 @@ class HonIssue(models.Model):
 
         self.invoiced_rate = rate
 
-    @api.one
     @api.depends('invoice_ids')
     def _invoice_exists(self):
         flag = False
@@ -53,7 +51,6 @@ class HonIssue(models.Model):
 
         self.invoice_exists = flag
 
-    @api.one
     @api.depends(
         'hon_issue_line.invoice_line_id',
         'hon_issue_line.employee',
@@ -304,7 +301,6 @@ class HonIssueLine(models.Model):
 
     _name = "hon.issue.line"
 
-    @api.one
     @api.depends('price_unit', 'quantity')
     def _amount_line(self):
         self.price_subtotal = self.price_unit * self.quantity
@@ -338,7 +334,7 @@ class HonIssueLine(models.Model):
        digits = dp.get_precision('Account'), store=True)
     estimated_price = fields.Float('Estimate',)
     invoice_line_id = fields.Many2one('account.move.line', 'Invoice Line', readonly=True)
-    invoice_id = fields.Many2one(related='invoice_line_id.invoice_id', relation='account.move', string='Invoice', readonly=True)
+    invoice_id = fields.Many2one(related='invoice_line_id.move_id', relation='account.move', string='Invoice', readonly=True)
     state = fields.Selection(
         [('cancel', 'Cancelled'),
          ('draft', 'Draft'),

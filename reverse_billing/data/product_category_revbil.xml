@@ -4,13 +4,13 @@
 
         <record model="product.category" id="revbil_categoryT">
             <field name="name">Tekst Reverse Billing</field>
-            <field name="type">normal</field>
+            <!--<field name="type">normal</field>-->
             <field name="revbil_type">letter_a</field>
         </record>
 
         <record model="product.category" id="revbil_categoryB">
             <field name="name">Beeld Reverse Billing</field>
-            <field name="type">normal</field>
+            <!--<field name="type">normal</field>-->
             <field name="revbil_type">letter_b</field>
         </record>
 

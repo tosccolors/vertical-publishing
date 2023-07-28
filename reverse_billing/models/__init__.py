@@ -27,9 +27,9 @@
 #
 ##############################################################################
 
-import res_company
-import reverse_billing
-import product
-import account_invoice
+from . import res_company
+from . import reverse_billing
+from . import product
+from . import account_invoice
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

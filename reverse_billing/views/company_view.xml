@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
+    <data>
 
     <record id="view_company_form_revbil" model="ir.ui.view">
         <field name="name">res.company.form</field>
@@ -19,5 +21,6 @@
             </data>
         </field>
     </record>
+    </data>
 
 </odoo>

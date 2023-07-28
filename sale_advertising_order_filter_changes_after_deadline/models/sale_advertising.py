@@ -8,7 +8,7 @@ from odoo import models, fields, api
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    @api.one
+    
     @api.depends('order_line','order_line.changes_after_deadline')
     def _compute_changes_after_deadline(self):
         if any([l.changes_after_deadline for l in self.order_line]):
@@ -21,7 +21,7 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    @api.one
+    
     @api.depends('write_date','adv_issue','adv_issue.deadline')
     def _compute_changes_after_deadline(self):
         if self.write_date and self.adv_issue.deadline:

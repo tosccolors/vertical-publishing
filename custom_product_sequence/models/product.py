@@ -35,7 +35,7 @@ class productTemplate(models.Model):
             template.default_code = template.sequence_code
 
     #Imp: override to avoid default_code set based on variants
-    @api.one
+    # @api.one
     def _set_default_code(self):
         pass
 
