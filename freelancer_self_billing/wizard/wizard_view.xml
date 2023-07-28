@@ -17,16 +17,16 @@
                 </form>
             </field>
         </record>
-
-        <act_window id="action_account_invoice_portalback"
-            multi="True"
-            key2="client_action_multi" name="Send Draft Invoices to Portal"
-            res_model="account.invoice.portalback" src_model="account.invoice"
-            view_mode="form" target="new" view_type="form"
-            view_id="account_invoice_portalback_view"
-            groups="freelancer_self_billing.group_module_hon_user"/>
-
         
+        <record id="action_account_invoice_portalback" model="ir.actions.act_window">
+            <field name="name">Send Draft Invoices to Portal</field>
+            <field name="res_model">account.invoice.portalback</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_invoice_portalback_view"/>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="groups_id" eval="[(4, ref('freelancer_self_billing.group_module_hon_user'))]" />
+        </record>
 
     </data>
 </openerp>

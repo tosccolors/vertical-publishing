@@ -10,7 +10,7 @@ class SaleOrderType(models.TransientModel):
 
     order_type = fields.Selection(selection_add=[('sub_order', 'Subscription Order')], string="Order Type")
 
-    @api.multi
+    
     def action_form_view(self):
         result = super(SaleOrderType, self).action_form_view()
         if self.order_type == 'sub_order':

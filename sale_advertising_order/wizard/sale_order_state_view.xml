@@ -19,12 +19,14 @@
             </field>
         </record>
 
-        <act_window id="action_sale_order_confirm"
-            multi="True"
-            key2="client_action_multi" name="Confirm Sale Orders"
-            res_model="sale.order.confirm" src_model="sale.order"
-            view_mode="form" target="new" view_type="form"
-            groups="sale_advertising_order.group_senior_sales"/>
+        <record id="action_sale_order_confirm" model="ir.actions.act_window">
+            <field name="name">Confirm Sale Orders</field>
+            <field name="res_model">sale.order.confirm</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="sale.model_sale_order" />
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_senior_sales'))]" />
+        </record>
 
         <!--record id="account_invoice_cancel_view" model="ir.ui.view">
             <field name="name">account.invoice.cancel.form</field>

@@ -22,6 +22,6 @@
 from odoo import api, fields, models, _
 
 class AccountInvoice(models.Model):
-    _inherit = "account.invoice"
+    _inherit = "account.move"
     
-    customer_contact = fields.Many2one('res.partner', 'Contact Person', domain=[('customer','=',True)])
+    customer_contact = fields.Many2one('res.partner', 'Contact Person', domain=[(('customer_rank', '>', 0))])

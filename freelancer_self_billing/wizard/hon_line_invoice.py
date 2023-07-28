@@ -27,7 +27,7 @@ class IssueMakeInvoice(models.TransientModel):
     _name = "hon.issue.make.invoice"
     _description = "Honorarium Issue Make_invoice"
 
-    @api.multi
+
     def make_invoices_from_issues(self):
         context = self._context
 
@@ -50,7 +50,7 @@ class IssueLineMakeInvoice(models.TransientModel):
     @api.model
     def _prepare_invoice(self, partner, issue, category, lines):
         issue_invoices = issue
-        invoices = self.env['account.invoice'].search([('id','in', [x.id for x in issue_invoices.invoice_ids]),('partner_id','=',partner.id)])
+        invoices = self.env['account.move'].search([('id','in', [x.id for x in issue_invoices.invoice_ids]),('partner_id','=',partner.id)])
         if len(invoices) >= 1:
             inv_count = len(invoices) + 1
         else:
@@ -72,7 +72,7 @@ class IssueLineMakeInvoice(models.TransientModel):
         return {
             'name': lines['name'] or '',
             'hon': True,
-            'origin': issue.account_analytic_id.name,
+            'invoice_origin': issue.account_analytic_id.name,
             'type': 'in_invoice',
             'reference': False,
             'date_publish': issue.date_publish,
@@ -97,7 +97,7 @@ class IssueLineMakeInvoice(models.TransientModel):
             # 'main_account_analytic_id': issue.account_analytic_id.parent_id.id
         }
 
-    @api.multi
+
     def make_invoices_from_lines(self):
         """
              To make invoices.
@@ -113,7 +113,7 @@ class IssueLineMakeInvoice(models.TransientModel):
 
         def make_invoice(partner, issue, category, lines):
             vals = self._prepare_invoice(partner, issue, category, lines)
-            invoice = self.env['account.invoice'].create(vals)
+            invoice = self.env['account.move'].create(vals)
             self._cr.execute('insert into hon_issue_invoice_rel (issue_id,invoice_id) values (%s,%s)', (issue.id, invoice.id))
             return invoice.id
 

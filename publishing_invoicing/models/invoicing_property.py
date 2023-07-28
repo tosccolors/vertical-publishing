@@ -60,7 +60,7 @@ class nsm_invoicing_property(models.Model):
 		, default='regular_layout'
 	)
 
-	@api.multi
+	
 	def write(self, vals):
 		""" Convert a radio button value to a list of booleans (zero based) """
 		fields_timing = {

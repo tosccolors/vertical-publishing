@@ -19,8 +19,8 @@
 #
 ##############################################################################
 
-import wizard
-import hon_line_invoice
+from . import wizard
+from . import hon_line_invoice
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

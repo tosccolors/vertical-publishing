@@ -27,7 +27,7 @@ class BatchMakeInvoice(models.TransientModel):
     _name = "sow.batch.make.invoice"
     _description = "Statement of Work Batch Make_invoice"
 
-    @api.multi
+
     def make_invoices_from_batches(self):
         context = self._context
 
@@ -50,7 +50,7 @@ class RevBilStatementOfWorkMakeInvoice(models.TransientModel):
     @api.model
     def _prepare_invoice(self, partner, ou, batch, lines):
         batch_invoices = batch
-        invoices = self.env['account.invoice'].search([('id','in', [x.id for x in batch_invoices.invoice_ids]),('partner_id','=',partner.id)])
+        invoices = self.env['account.move'].search([('id','in', [x.id for x in batch_invoices.invoice_ids]),('partner_id','=',partner.id)])
         if len(invoices) >= 1:
             inv_count = len(invoices) + 1
         else:
@@ -72,7 +72,7 @@ class RevBilStatementOfWorkMakeInvoice(models.TransientModel):
         return {
             'name': lines['name'] or '',
             'revbil': True,
-            'origin': batch.name,
+            'invoice_origin': batch.name,
             'type': 'in_invoice',
             'reference': False,
             'date_batch': batch.date_batch,
@@ -93,7 +93,7 @@ class RevBilStatementOfWorkMakeInvoice(models.TransientModel):
             'check_total': lines['subtotal'],
         }
 
-    @api.multi
+
     def make_invoices_from_lines(self):
         """
              To make invoices.
@@ -109,7 +109,7 @@ class RevBilStatementOfWorkMakeInvoice(models.TransientModel):
 
         def make_invoice(partner, ou, batch, lines):
             vals = self._prepare_invoice(partner, ou, batch, lines)
-            invoice = self.env['account.invoice'].create(vals)
+            invoice = self.env['account.move'].create(vals)
             self._cr.execute('insert into sow_batch_invoice_rel (batch_id,invoice_id) values (%s,%s)', (batch.id, invoice.id))
             return invoice.id
 
@@ -154,7 +154,7 @@ class RevBilStatementOfWorkMakeInvoice(models.TransientModel):
     def open_invoices(self, invoice_ids):
         """ open a view on one of the given invoice_ids """
 
-        action = self.env.ref('account.action_invoice_tree2').read()[0]
+        action = self.env.ref('account.view_in_invoice_tree').read()[0]
         if len(invoice_ids) > 1:
             action['domain'] = [('id', 'in', invoice_ids)]
         elif len(invoice_ids) == 1:

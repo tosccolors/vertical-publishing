@@ -26,18 +26,18 @@ from odoo import api, fields, models, _
 
 class Invoice(models.Model):
     """ Inherits invoice and adds ad boolean to invoice to flag Advertising-invoices"""
-    _inherit = 'account.invoice'
+    _inherit = 'account.move'
 
     ad = fields.Boolean(related='invoice_line_ids.ad', string='Ad', help="It indicates that the invoice is an Advertising Invoice.", store=True)
-    published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer', '=', True)])
+    published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer_rank', '>', 0)])
 
 
 class InvoiceLine(models.Model):
     """ Inherits invoice.line and adds advertising order line id and publishing date to invoice """
-    _inherit = 'account.invoice.line'
+    _inherit = 'account.move.line'
 
 
-    @api.multi
+    
     @api.depends('price_unit', 'quantity')
     def _compute_price(self):
         """
@@ -51,7 +51,7 @@ class InvoiceLine(models.Model):
                     line.subtotal_before_agency_disc = price_unit * qty
             else:
                 line.subtotal_before_agency_disc = 0.0
-        super(InvoiceLine, self)._compute_price()
+        # super(InvoiceLine, self)._compute_price()
 
 
     date_publish = fields.Date('Publishing Date')
@@ -64,13 +64,13 @@ class InvoiceLine(models.Model):
     ad = fields.Boolean(related='so_line_id.advertising', string='Ad', store=True,
                                 help="It indicates that the invoice line is from an Advertising Invoice.")
 
-    @api.multi
+    
     def open_sale_order(self):
         view_id = self.env.ref('sale_advertising_order.view_order_form_advertising').id if self.sale_order_id.advertising else self.env.ref('sale.view_order_form').id
         return {
             'type': 'ir.actions.act_window',
             'name': 'Sale Order',
-            'view_type': 'form',
+            # 'view_type': 'form',
             'view_mode': 'form',
             'view_id':view_id,
             'res_model': 'sale.order',

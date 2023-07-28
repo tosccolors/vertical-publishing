@@ -21,7 +21,7 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
-from odoo.addons.queue_job.job import job, related_action
+# from odoo.addons.queue_job.job import job, related_action
 from odoo.addons.queue_job.exception import FailedJobError
 from unidecode import unidecode
 
@@ -36,7 +36,7 @@ class AdOrderMakeInvoice(models.TransientModel):
     chunk_size = fields.Integer('Chunk Size Job Queue', default=50)
     execution_datetime = fields.Datetime('Job Execution not before', default=fields.Datetime.now())
 
-    @api.multi
+
     def make_invoices_from_ad_orders(self):
         context = self._context
 
@@ -73,7 +73,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         published_customer = keydict['published_customer']
         payment_mode = keydict['payment_mode_id']
         operating_unit = keydict['operating_unit_id']
-        journal_id = self.env['account.invoice'].default_get(['journal_id'])['journal_id']
+        journal_id = self.env['account.move'].default_get(['journal_id'])['journal_id']
         if not journal_id:
             raise UserError(_('Please define an accounting sale journal for this company.'))
         vals = {
@@ -85,7 +85,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'published_customer': published_customer.id,
             'invoice_line_ids': lines['lines'],
             'comment': lines['name'],
-            'payment_term_id': partner.property_payment_term_id.id or False,
+            'invoice_payment_term_id': partner.property_payment_term_id.id or False,
             'journal_id': journal_id,
             'fiscal_position_id': partner.property_account_position_id.id or False,
             'user_id': self.env.user.id,
@@ -99,7 +99,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         return vals
 
 
-    @api.multi
+
     def make_invoices_from_lines(self):
         """
              To make invoices.
@@ -152,8 +152,8 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             self.make_invoices_job_queue(inv_date, post_date, OrderLines)
             return "Lines dispatched."
 
-    @job
-    @api.multi
+    # @job
+
     def make_invoices_split_lines_jq(self, inv_date, post_date, olines, eta, size):
             partners = olines.mapped('order_id.partner_invoice_id')
             chunk = False
@@ -190,12 +190,12 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 
     def make_invoice(self, keydict, lines, inv_date, post_date):
         vals = self._prepare_invoice(keydict, lines, inv_date, post_date)
-        invoice = self.env['account.invoice'].create(vals)
+        invoice = self.env['account.move'].create(vals)
         invoice.compute_taxes()
         return invoice
 
-    @job
-    @api.multi
+    # @job
+
     def make_invoices_job_queue(self, inv_date, post_date, chunk):
         invoices = {}
         count = 0
@@ -232,7 +232,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         for key, il in invoices.items():
             try:
                 self.make_invoice(invoices[key]['keydict'], il, inv_date, post_date)
-            except Exception, e:
+            except Exception as e:
                 if self.job_queue:
                     raise FailedJobError(_("The details of the error:'%s' regarding '%s'") % (unicode(e), il['name'] ))
                 else:
@@ -256,7 +256,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         return action
 
 
-    @api.multi
+
     def _prepare_invoice_line(self, line):
         """
         Prepare the dict of values to create the new invoice line for a sales order line.
@@ -277,14 +277,14 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         res = {
             'name': line.title.name or "/",
             'sequence': line.sequence,
-            'origin': line.order_id.name,
+            'invoice_origin': line.order_id.name,
             'account_id': account.id,
             'price_unit': line.actual_unit_price,
             'quantity': line.product_uom_qty,
             'discount': line.discount,
             'uom_id': line.product_uom.id,
             'product_id': line.product_id and line.product_id.id or False,
-            'layout_category_id': line.layout_category_id and line.layout_category_id.id or False,
+            # 'layout_category_id': line.layout_category_id and line.layout_category_id.id or False,
             'invoice_line_tax_ids': [(6, 0, line.tax_id.ids or [])],
             'account_analytic_id': line.adv_issue.analytic_account_id and line.adv_issue.analytic_account_id.id or False,
             'analytic_tag_ids': [(6, 0, line.analytic_tag_ids.ids or [])],

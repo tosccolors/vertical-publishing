@@ -31,7 +31,7 @@ class Analytic(models.Model):
 
 class Invoice(models.Model):
     """ Inherits invoice and adds hon boolean to invoice to flag hon-invoices"""
-    _inherit = 'account.invoice'
+    _inherit = 'account.move'
 
 
     hon = fields.Boolean('HON', help="It indicates that the invoice is a Hon Invoice.", default=False)
@@ -42,7 +42,7 @@ class Invoice(models.Model):
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         res = super(Invoice, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        print "res", res
+        # print "res", res
 
         nsmModule = True if 'nsm_supplier_portal' in self.env['ir.module.module']._installed() else False
 
@@ -62,7 +62,7 @@ class Invoice(models.Model):
 
         return res
 
-    @api.multi
+    
     def invoice_print(self):
         """ Print the invoice and mark it as sent, so that we can see more
             easily the next step of the workflow
@@ -76,7 +76,7 @@ class Invoice(models.Model):
         return super(Invoice, self).invoice_print()
 
 
-    @api.multi
+    
     def action_invoice_sent(self):
         """ Open a window to compose an email, with the edi invoice template
             message loaded by default
@@ -93,7 +93,7 @@ class Invoice(models.Model):
         compose_form = self.env.ref('mail.email_compose_message_wizard_form', False)
 
         ctx = dict(
-            default_model='account.invoice',
+            default_model='account.move',
             default_res_id=self.id,
             default_use_template=bool(template),
             default_template_id=template and template.id or False,
@@ -116,7 +116,7 @@ class Invoice(models.Model):
 
 class InvoiceLine(models.Model):
     """ Inherits invoice.line and adds activity from analytic_secondaxis to invoice """
-    _inherit = 'account.invoice.line'
+    _inherit = 'account.move.line'
 
 
     hon_issue_line_id = fields.Many2one('hon.issue.line', 'Hon Issue Line')

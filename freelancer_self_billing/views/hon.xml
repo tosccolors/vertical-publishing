@@ -36,7 +36,7 @@
                     </header>
 
                     <h1>
-                        <label string="Honoraria Editie " />
+                        <label for="name" string="Honoraria Editie " />
                         <field name="name" class="oe_inline" readonly="1"/>
                     </h1>
                     <!--sheet string="Hon Issue"-->
@@ -178,16 +178,16 @@
         <record id="action_hon_issue" model="ir.actions.act_window">
             <field name="name">Hon Issues</field>
             <field name="res_model">hon.issue</field>
-            <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field eval="False" name="view_id"/>
+            <field name="view_id" ref="hon_issue_form"/>
+            <!--<field eval="False" name="view_id"/>-->
             <field name="search_view_id" ref="view_hon_issue_filter"/>
         </record>
 
         <record id="action_hon_issue_line" model="ir.actions.act_window">
             <field name="name">Hon Issue lines</field>
             <field name="res_model">hon.issue.line</field>
-            <field name="view_type">form</field>
+            <!--<field name="view_type">form</field>-->
             <field name="view_mode">tree,form</field>
             <field eval="False" name="view_id"/>
             <field name="search_view_id" ref="view_hon_issue_line_filter"/>
@@ -228,12 +228,12 @@
 
         <record id="action_invoice_tree_hon" model="ir.actions.act_window">
             <field name="name">HON Invoices</field>
-            <field name="res_model">account.invoice</field>
-            <field name="view_type">form</field>
+            <field name="res_model">account.move</field>
+            <!--<field name="view_type">form</field>-->
             <field name="view_mode">tree,form,calendar,graph</field>
-            <field eval="False" name="view_id"/>
-            <field name="domain">[('type','=','in_invoice'),('hon','=',True)]</field>
-            <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}</field>
+            <field ref="account.view_move_form" name="view_id"/>
+            <field name="domain">[('move_type','=','in_invoice'),('hon','=',True)]</field>
+            <field name="context">{'default_type': 'in_invoice', 'move_type': 'in_invoice', 'journal_type': 'purchase'}</field>
             <field name="search_view_id" ref="account.view_account_invoice_filter"/>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
@@ -262,14 +262,15 @@
                   groups="freelancer_self_billing.group_module_hon_user"
                   />
 
-        <record id="account.action_invoice_tree2" model="ir.actions.act_window">
+        <!--need to check w.r.t V14-->
+        <!--<record id="account.action_move_in_invoice_type" model="ir.actions.act_window">
             <field name="name">Supplier Invoices</field>
-            <field name="res_model">account.invoice</field>
-            <field name="view_type">form</field>
+            <field name="res_model">account.move</field>
+            &lt;!&ndash;<field name="view_type">form</field>&ndash;&gt;
             <field name="view_mode">tree,form,calendar,graph</field>
-            <field eval="False" name="view_id"/>
-            <field name="domain">[('type','=','in_invoice'), ('state', '!=', 'portalcreate'),'|',('hon','=',False),'&amp;',('state','not in',['draft','open']),('hon','!=',False)]</field>
-            <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase'}</field>
+            <field ref="account.view_move_form" name="view_id"/>
+            <field name="domain">[('move_type','=','in_invoice'), ('state', '!=', 'portalcreate'),'|',('hon','=',False),'&amp;',('state','not in',['draft','open']),('hon','!=',False)]</field>
+            <field name="context">{'default_type': 'in_invoice', 'move_type': 'in_invoice', 'journal_type': 'purchase'}</field>
             <field name="search_view_id" ref="account.view_account_invoice_filter"/>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
@@ -280,7 +281,7 @@
                 draft invoices automatically from purchase orders or receipts.
               </p>
             </field>
-        </record>
+        </record>-->
 
     </data>
 </openerp>

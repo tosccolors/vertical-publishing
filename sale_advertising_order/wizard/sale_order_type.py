@@ -11,7 +11,7 @@ class SaleOrderType(models.TransientModel):
 
     order_type = fields.Selection([('reg_order', 'Regular Order'), ('adv_order', 'Advertising Order')], string="Order Type")
 
-    @api.multi
+    
     def action_form_view(self):
         if not self.order_type:
             raise UserError(_("Please select order type."))
@@ -27,7 +27,7 @@ class SaleOrderType(models.TransientModel):
 
         return {
             'name':'Quotation',
-            'view_type':'form',
+            'view_mode':'form',
             'res_model':'sale.order',
             'views':[(form_view_id,'form')],
             'type':'ir.actions.act_window',

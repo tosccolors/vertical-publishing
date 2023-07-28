@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
-import res_partner
-import mail_compose_message
+from . import res_partner
+from . import mail_compose_message

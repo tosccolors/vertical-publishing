@@ -20,7 +20,7 @@
 ##############################################################################
 
 # import portal_back
-import revbil_line_invoice
+from . import revbil_line_invoice
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

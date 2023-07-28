@@ -43,7 +43,7 @@
         <field name="inherit_id" ref="sale_advertising_order.advertising_order_view_search_inherit_sale"/>
         <field name="arch" type="xml">
             <xpath expr="//filter[1]" position="after">
-                <filter string="Department" domain="[]" groups="operating_unit.group_multi_operating_unit" context="{'group_by':'operating_unit_id'}"/>
+                <filter name="department" string="Department" domain="[]" groups="operating_unit.group_multi_operating_unit" context="{'group_by':'operating_unit_id'}"/>
             </xpath>
             <field name="partner_id" position="after">
                 <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>

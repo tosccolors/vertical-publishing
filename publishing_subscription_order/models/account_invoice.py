@@ -26,7 +26,7 @@ from odoo import api, fields, models, _
 
 class Invoice(models.Model):
     """ Inherits invoice and adds ad boolean to invoice to flag Subscription-invoices"""
-    _inherit = 'account.invoice'
+    _inherit = 'account.move'
 
     subs = fields.Boolean(related='invoice_line_ids.subs', string='subs', help="It indicates that the invoice is an Subscription Invoice.", store=True)
 
@@ -34,7 +34,7 @@ class Invoice(models.Model):
 
 class InvoiceLine(models.Model):
     """ Inherits invoice.line and adds Subscription boolean to invoice """
-    _inherit = 'account.invoice.line'
+    _inherit = 'account.move.line'
 
 
     subs = fields.Boolean(related='so_line_id.subscription', string='Subs',

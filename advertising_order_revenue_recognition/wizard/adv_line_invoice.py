@@ -24,7 +24,7 @@ from odoo import api, fields, models, _
 class AdOrderLineMakeInvoice(models.TransientModel):
     _inherit = "ad.order.line.make.invoice"
 
-    @api.multi
+    
     def _prepare_invoice_line(self, line):
         """
         Prepare the dict of values to create the new invoice line for a sales order line.

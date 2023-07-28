@@ -31,12 +31,12 @@ class Portalback(models.TransientModel):
     _name = "account.invoice.portalback"
     _description = "Send the selected invoices to supplier portal"
 
-    @api.multi
+    
     def invoice_portalback(self):
         context = self._context
         if not context.get('active_ids'): return False
 
-        data_inv = self.env['account.invoice'].browse(context['active_ids'])
+        data_inv = self.env['account.move'].browse(context['active_ids'])
 
         CategId = self.env['ir.model.data'].get_object('freelancer_self_billing', 'hon_categoryT').id
 

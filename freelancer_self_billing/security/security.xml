@@ -36,7 +36,7 @@
 
 		<record model="ir.rule" id="domain_hon_rule">
             <field name="name">HON Invoice</field>
-            <field name="model_id" ref="model_account_invoice"/>
+            <field name="model_id" ref="model_account_move"/>
             <field name="domain_force">[('hon', '=', 1)]</field>
             <field name="global" eval="False"/>
             <field name="perm_read" eval="True"/>

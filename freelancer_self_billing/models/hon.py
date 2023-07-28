@@ -27,7 +27,6 @@ class HonIssue(models.Model):
     _name = "hon.issue"
     _order = "id desc"
 
-    @api.one
     @api.depends('invoiced', 'invoice_ids.state')
     def _invoiced_rate(self, cursor, user, ids, name, arg, context=None):
         rate = tot = 0.0
@@ -44,7 +43,6 @@ class HonIssue(models.Model):
 
         self.invoiced_rate = rate
 
-    @api.one
     @api.depends('invoice_ids')
     def _invoice_exists(self):
         flag = False
@@ -53,7 +51,6 @@ class HonIssue(models.Model):
 
         self.invoice_exists = flag
 
-    @api.one
     @api.depends(
         'hon_issue_line.invoice_line_id',
         'hon_issue_line.employee',
@@ -135,7 +132,7 @@ class HonIssue(models.Model):
         change_default=True,
         readonly=True, states={'draft':[('readonly',False)]},
         default=lambda self: self.env['res.company'].
-            _company_default_get('account.invoice'))
+            _company_default_get('account.move'))
 
     hon_issue_line = fields.One2many(
         'hon.issue.line',
@@ -166,7 +163,7 @@ class HonIssue(models.Model):
         'Additional Information'
     )
     invoice_ids = fields.Many2many(
-        'account.invoice',
+        'account.move',
         'hon_issue_invoice_rel',
         'issue_id',
         'invoice_id',
@@ -223,7 +220,7 @@ class HonIssue(models.Model):
                                  'de HONregel(s)'
         return {'value': res, 'warning': war}
 
-    @api.multi
+
     def action_invoice_create(self):
         '''
         create invoices for the given hon issues (ids), and open the form
@@ -236,7 +233,7 @@ class HonIssue(models.Model):
             with_context(ctx).make_invoices_from_lines()
 
 
-    @api.multi
+
     def action_view_invoice(self):
         '''
         This function returns an action that display existing invoices of given hon issue ids.
@@ -254,7 +251,7 @@ class HonIssue(models.Model):
         return action
 
 
-    @api.multi
+
     def action_issue_confirm(self):
         if not self.hon_issue_line:
             raise UserError(_('You cannot confirm a hon issue which has no line.'))
@@ -262,7 +259,7 @@ class HonIssue(models.Model):
         self.hon_issue_line.action_line_confirm()
 
 
-    @api.multi
+
     def action_back_draft(self):
         '''Method: action unwait'''
 
@@ -271,7 +268,7 @@ class HonIssue(models.Model):
         self.write({'state': 'draft', })
         self.hon_issue_line.action_line_unconfirm()
 
-    @api.multi
+
     def action_cancel(self):
         for inv in self.invoice_ids:
             if inv.state not in ('draft', 'cancel'):
@@ -283,17 +280,17 @@ class HonIssue(models.Model):
         self.hon_issue_line.write({'state': 'cancel','invoice_line_id': False})
         self.write({'state': 'cancel'})
 
-    @api.multi
+
     def action_cancel_draft(self):
         self.write({'state':'draft'})
 
-    @api.multi
+
     def action_done(self):
         if not self.invoiced:
             UserError(_('Cannot finalise this issue!, First invoice all hon_lines attached to this issue.'))
         self.write({'state': 'done'})
 
-    @api.multi
+
     def unlink(self):
         for case in self:
             if case.state not in ('draft', 'cancel'):
@@ -304,7 +301,6 @@ class HonIssueLine(models.Model):
 
     _name = "hon.issue.line"
 
-    @api.one
     @api.depends('price_unit', 'quantity')
     def _amount_line(self):
         self.price_subtotal = self.price_unit * self.quantity
@@ -337,8 +333,8 @@ class HonIssueLine(models.Model):
     price_subtotal = fields.Float(compute='_amount_line', string='Amount',
        digits = dp.get_precision('Account'), store=True)
     estimated_price = fields.Float('Estimate',)
-    invoice_line_id = fields.Many2one('account.invoice.line', 'Invoice Line', readonly=True)
-    invoice_id = fields.Many2one(related='invoice_line_id.invoice_id', relation='account.invoice', string='Invoice', readonly=True)
+    invoice_line_id = fields.Many2one('account.move.line', 'Invoice Line', readonly=True)
+    invoice_id = fields.Many2one(related='invoice_line_id.move_id', relation='account.move', string='Invoice', readonly=True)
     state = fields.Selection(
         [('cancel', 'Cancelled'),
          ('draft', 'Draft'),
@@ -354,27 +350,27 @@ class HonIssueLine(models.Model):
     gratis = fields.Boolean('Gratis',  help="It indicates that no letter/invoice is generated.")
 
     ## TODO: This method is not in use
-    @api.multi
+
     def button_cancel(self):
         if self.invoice_line_id:
             raise UserError(_('You cannot cancel a Hon line that has already been invoiced.'))
         self.write({'state': 'cancel'})
 
-    @api.multi
+
     def action_line_confirm(self):
         self.write({'state': 'confirmed'})
 
-    @api.multi
+
     def action_line_unconfirm(self):
         self.write({'state': 'draft'})
 
     # TODO: This method is not in use
-    @api.multi
+
     def action_line_done(self):
         self.write({'state': 'done'})
         self.issue_id.action_done()
 
-    @api.multi
+
     def unlink(self):
         """Allows to delete hon lines in draft,cancel states"""
         for rec in self:
@@ -466,7 +462,7 @@ class HonIssueLine(models.Model):
             }
         return res
 
-    @api.multi
+
     def invoice_line_create(self):
         create_ids = []
         # hon = set()
@@ -474,7 +470,7 @@ class HonIssueLine(models.Model):
         for line in self:
             vals = line._prepare_hon_issue_line_invoice_line(account_id=False)
             if vals:
-                invln = self.env['account.invoice.line'].create(vals)
+                invln = self.env['account.move.line'].create(vals)
                 line.write({'invoice_line_id': invln.id})
                 # hon.add(line.issue_id.id)
                 create_ids.append(invln.id)

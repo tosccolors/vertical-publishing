@@ -7,7 +7,7 @@ from odoo import api, fields, models, _
 class AdvertisingIssue(models.Model):
     _inherit = "sale.advertising.issue"
 
-    @api.multi
+    
     def write(self, vals):
         result = super(AdvertisingIssue, self).write(vals)
         issue_date = vals.get('issue_date', False)

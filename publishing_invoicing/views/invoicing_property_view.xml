@@ -51,7 +51,7 @@
         <record id="action_invoicing_property" model="ir.actions.act_window">
             <field name="name">Invoicing Properties</field>
             <field name="res_model">invoicing.property</field>
-            <field name="view_type">form</field>
+            <!--<field name="view_type">form</field>-->
             <field name="view_mode">tree,form</field>
         </record>
         <menuitem id="menu_invoicing_property" name="Invoicing Properties"

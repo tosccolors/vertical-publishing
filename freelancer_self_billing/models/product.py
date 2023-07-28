@@ -30,7 +30,7 @@ class PartnerProductPrice(models.Model):
     product_id = fields.Many2one('product.product', 'Product', )
     partner_id = fields.Many2one('res.partner', 'Vendor', required=True,)
     company_id = fields.Many2one('res.company', 'Company', required=True,
-                                 default=lambda self: self.env['res.company']._company_default_get('account.invoice'))
+                                 default=lambda self: self.env['res.company']._company_default_get('account.move'))
     price_unit = fields.Float('Unit Price', digits=dp.get_precision('Product Price'))
     comment = fields.Text('Additional Information')
 

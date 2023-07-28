@@ -2,12 +2,12 @@
 <odoo>
 	<data>
         <!-- add css / js -->
-        <template id="assets_backend" name="sales_advertising_dashboard assets" inherit_id="web.assets_backend">
+        <!--<template id="assets_backend" name="sales_advertising_dashboard assets" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
                 <script type="text/javascript" src="/sale_advertising_order/static/src/js/sales_team_dashboard.js"></script>
                 <script type="text/javascript" src="/sale_advertising_order/static/src/js/sale.js"></script>
             </xpath>
-        </template>
+        </template>-->
     </data>
 
     <record id="view_task_search_form_sale_advertising" model="ir.ui.view">
@@ -15,7 +15,7 @@
             <field name="model">project.task</field>
             <field name="inherit_id" ref="project.view_task_search_form"/>
             <field name="arch" type="xml">
-                <filter name="draft" position="after">
+                <filter name="unassigned" position="after">
                     <filter name="today" string="Today" domain="[('date_assign', '&gt;=', datetime.datetime.now().replace(hour=0, minute=0, second=0)),('date_assign', '&lt;=', datetime.datetime.now().replace(hour=23, minute=59, second=59))]" />
                 </filter>
                 <filter name="message_needaction" position="after">

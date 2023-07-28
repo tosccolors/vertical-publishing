@@ -27,7 +27,7 @@ class SubscriptionMultiWizard(models.TransientModel):
     _name = "subscription.multi.wizard"
     _description = "Create delivery list/delivery lines"
 
-    @api.multi
+    
     def confirm(self):
         context = dict(self._context or {})
         active_ids = context.get('active_ids', []) or []

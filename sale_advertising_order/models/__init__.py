@@ -21,14 +21,14 @@
 ##############################################################################
 
 
-import res_config
-import product
-import sale_advertising
-import crm_lead
-import advertising_issue
-import account_invoice
-import sale_config_settings
-import company
+from . import res_config
+from . import product
+from . import sale_advertising
+from . import crm_lead
+from . import advertising_issue
+from . import account_invoice
+from . import sale_config_settings
+from . import company
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

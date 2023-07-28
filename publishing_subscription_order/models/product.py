@@ -16,7 +16,7 @@ class ProductTemplate(models.Model):
     can_renew = fields.Boolean('Can Renewed?', default=False)
     renew_product_id = fields.Many2one('product.product','Renewal Product')
 
-    @api.multi
+    
     def _get_product_accounts(self):
         return {
             'income': self.delivery_obligation_account_id if self.subscription_product else self.property_account_income_id or self.categ_id.property_account_income_categ_id,
@@ -39,7 +39,7 @@ class ProductTemplate(models.Model):
             res.write({'renew_product_id':product.ids[0]})
         return res
 
-    @api.multi
+    
     def write(self, values):
         res = super(ProductTemplate, self).write(values)
         for tmpl in self:

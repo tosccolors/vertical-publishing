@@ -21,7 +21,7 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from odoo.addons.queue_job.job import job, related_action
+# from odoo.addons.queue_job.job import job, related_action
 from odoo.addons.queue_job.exception import FailedJobError
 from unidecode import unidecode
 
@@ -44,7 +44,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         keydict['customer_contact_id'] = line.order_id.customer_contact.id
         return key, keydict
 
-    @api.multi
+    
     def make_invoices_from_lines(self):
         """
              To make invoices.

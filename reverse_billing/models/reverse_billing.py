@@ -27,7 +27,7 @@ class SowBatch(models.Model):
     _name = "sow.batch"
     _order = "id desc"
 
-    @api.one
+
     @api.depends('invoiced', 'invoice_ids.state')
     def _invoiced_rate(self, cursor, user, ids, name, arg, context=None):
         rate = tot = 0.0
@@ -44,7 +44,7 @@ class SowBatch(models.Model):
 
         self.invoiced_rate = rate
 
-    @api.one
+
     @api.depends('invoice_ids')
     def _invoice_exists(self):
         flag = False
@@ -53,7 +53,7 @@ class SowBatch(models.Model):
 
         self.invoice_exists = flag
 
-    @api.one
+
     @api.depends('sow_batch_line.invoice_line_id', 'sow_batch_line.employee', 'sow_batch_line.gratis')
     def _invoiced(self):
         flag = True
@@ -99,7 +99,7 @@ class SowBatch(models.Model):
     name = fields.Char(string='Name')
     company_id = fields.Many2one('res.company', 'Company', required=True, change_default=True,
                                  readonly=True, states={'draft':[('readonly',False)]},
-                                 default=lambda self: self.env['res.company']._company_default_get('account.invoice'))
+                                 default=lambda self: self.env['res.company']._company_default_get('account.move'))
     sow_batch_line = fields.One2many('revbil.statement.of.work', 'batch_id', 'Batch Lines', readonly=False,
                                      states={'draft':[('readonly',False)]})
     state = fields.Selection([
@@ -112,7 +112,7 @@ class SowBatch(models.Model):
         \n* The \'Open\' status is used when user create invoice.\
         \n* The \'Cancelled\' status is used when user cancel Batch.')
     comment = fields.Text('Additional Information')
-    invoice_ids = fields.Many2many('account.invoice', 'sow_batch_invoice_rel', 'batch_id', 'invoice_id',
+    invoice_ids = fields.Many2many('account.move', 'sow_batch_invoice_rel', 'batch_id', 'invoice_id',
                                     'Invoices', readonly=True,
                                     help="This is the list of invoices that have been generated for this batch. "
                                          "The same batch may have been invoiced several times (by line for example).")
@@ -126,7 +126,7 @@ class SowBatch(models.Model):
 
 
 
-    @api.multi
+
     def action_invoice_create(self):
         '''
         create invoices for the given batches of sow (ids), and open the form
@@ -138,14 +138,14 @@ class SowBatch(models.Model):
         return self.env['revbil.statement.of.work.make.invoice'].with_context(ctx).make_invoices_from_lines()
 
 
-    @api.multi
+
     def action_view_invoice(self):
         '''
         This function returns an action that display existing invoices of given sow batch ids.
         It can either be a in a list or in a form view, if there is only one invoice to show.
         '''
         invoices = self.mapped('invoice_ids')
-        action = self.env.ref('account.action_invoice_tree2').read()[0]
+        action = self.env.ref('account.view_in_invoice_tree').read()[0]
         if len(invoices) > 1:
             action['domain'] = [('id', 'in', invoices.ids)]
         elif len(invoices) == 1:
@@ -156,7 +156,7 @@ class SowBatch(models.Model):
         return action
 
 
-    @api.multi
+
     def action_batch_confirm(self):
         if not self.sow_batch_line:
             raise UserError(_('You cannot confirm a sow batch which has no line.'))
@@ -164,14 +164,14 @@ class SowBatch(models.Model):
         self.sow_batch_line.button_confirm()
 
 
-    @api.multi
+
     def action_back_draft(self):
         '''Method: action unconfirm'''
 
         self.write({'state': 'draft', })
         self.sow_batch_line.button_unconfirm()
 
-    @api.multi
+
     def action_cancel(self):
 
         for inv in self.invoice_ids:
@@ -186,18 +186,18 @@ class SowBatch(models.Model):
         self.sow_batch_line.write({'state': 'cancel','invoice_line_id': False})
         self.write({'state': 'cancel'})
 
-    @api.multi
+
     def action_cancel_draft(self):
         self.write({'state':'draft'})
 
-    @api.multi
+
     def action_done(self):
         if not self.invoiced:
             UserError(_('Cannot finalise this batch!, First invoice all sow_lines attached to this batch.'))
 
         self.write({'state': 'done'})
 
-    @api.multi
+
     def unlink(self):
         for case in self:
             if case.state not in ('draft', 'cancel'):
@@ -208,7 +208,7 @@ class RevBilStatementOfWork(models.Model):
 
     _name = "revbil.statement.of.work"
 
-    @api.one
+
     @api.depends('invoice_line_id', 'employee', 'gratis')
     def _invoiced(self):
         for line in self:
@@ -246,7 +246,7 @@ class RevBilStatementOfWork(models.Model):
             return [('id', '=', 0)]
         return [('id', 'in', [x[0] for x in res])]
 
-    @api.one
+
     @api.depends('price_unit', 'quantity')
     def _amount_line(self):
         self.price_subtotal = self.price_unit * self.quantity
@@ -279,8 +279,8 @@ class RevBilStatementOfWork(models.Model):
     price_subtotal = fields.Float(compute='_amount_line', string='Amount',digits = dp.get_precision('Account'),
                                   store=True)
     estimated_price = fields.Float('Estimate',)
-    invoice_line_id = fields.Many2one('account.invoice.line', 'Invoice Line', readonly=True)
-    invoice_id = fields.Many2one(related='invoice_line_id.invoice_id', relation='account.invoice', string='Invoice',
+    invoice_line_id = fields.Many2one('account.move.line', 'Invoice Line', readonly=True)
+    invoice_id = fields.Many2one(related='invoice_line_id.move_id', relation='account.move', string='Invoice',
                                  readonly=True)
     invoiced = fields.Boolean(compute='_invoiced', string='Invoiced', store=True,
 #                              search='_invoiced_search',
@@ -348,41 +348,41 @@ class RevBilStatementOfWork(models.Model):
 
         return res
 
-    @api.multi
+
     def invoice_line_create(self):
         create_ids = []
 
         for line in self:
             vals = line._prepare_revbil_statement_of_work_invoice_line(account_id=False)
             if vals:
-                invln = self.env['account.invoice.line'].create(vals)
+                invln = self.env['account.move.line'].create(vals)
                 line.write({'invoice_line_id': invln.id})
                 create_ids.append(invln.id)
         return create_ids
 
     # TODO: This method is not in use
-    @api.multi
+
     def button_cancel(self):
         if self.invoice_line_id:
             raise UserError(_('You cannot cancel a Statement of Work that has already been invoiced.'))
         self.write({'state': 'cancel'})
 
-    @api.multi
+
     def button_confirm(self):
         self.write({'state': 'confirmed'})
 
-    @api.multi
+
     def button_unconfirm(self):
         self.write({'state': 'draft'})
 
     # TODO: This method is not in use
-    @api.multi
+
     def button_done(self):
         self.write({'state': 'done'})
         self.batch_id.action_done()
 
 
-    @api.multi
+
     def unlink(self):
         """Allows to delete Statement of Work lines in draft,cancel states"""
         for rec in self:

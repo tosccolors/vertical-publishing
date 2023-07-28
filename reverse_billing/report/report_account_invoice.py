@@ -22,6 +22,7 @@ import time
 from datetime import datetime
 from odoo.report import report_sxw
 
+# need to check w.r.t v14
 class account_invoice_hon(report_sxw.rml_parse):
 
     def __init__(self, cr, uid, name, context=None):
@@ -45,7 +46,7 @@ class account_invoice_hon(report_sxw.rml_parse):
 
 report_sxw.report_sxw(
     'report.account.invoice.hon',
-    'account.invoice',
+    'account.move',
     'addons/freelancer_self_billing/report/report_account_invoice_print.rml',
     parser=account_invoice_hon,
 )

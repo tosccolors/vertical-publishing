@@ -18,19 +18,21 @@
             </field>
         </record>
 
-        <act_window id="action_create_delivery_list"
-            multi="True"
-            key2="client_action_multi" name="Create Delivery Lists"
-            res_model="subscription.multi.wizard" src_model="subscription.title.delivery"
-            view_mode="form" target="new" view_type="form"
-            />
+        <record id="action_create_delivery_list" model="ir.actions.act_window">
+            <field name="name">Create Delivery Lists</field>
+            <field name="res_model">subscription.multi.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="publishing_subscription_order.model_subscription_title_delivery" />
+        </record>
 
-        <act_window id="action_create_delivery_lines"
-            multi="True"
-            key2="client_action_multi" name="Create Delivery Line"
-            res_model="subscription.multi.wizard" src_model="subscription.delivery.list"
-            view_mode="form" target="new" view_type="form"
-            />
+        <record id="action_create_delivery_lines" model="ir.actions.act_window">
+            <field name="name">Create Delivery Line</field>
+            <field name="res_model">subscription.multi.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="publishing_subscription_order.model_subscription_delivery_list" />
+        </record>
 
     </data>
 </odoo>

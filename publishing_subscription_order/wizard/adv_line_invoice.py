@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from odoo.addons.queue_job.job import job, related_action
+# from odoo.addons.queue_job.job import job, related_action
 from odoo.addons.queue_job.exception import FailedJobError
 from unidecode import unidecode
 
@@ -22,7 +22,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             posting_date=posting_date
         )
         if subs:
-            res['payment_term_id'] = \
+            res['invoice_payment_term_id'] = \
                 partner.property_subscription_payment_term_id.id or False
             pay_mode = partner.subscription_customer_payment_mode_id
             res['payment_mode_id'] = pay_mode.id or False
@@ -32,8 +32,8 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                         pay_mode.fixed_journal_id.bank_account_id.id
         return res
 
-    @job
-    @api.multi
+    # @job
+
     def make_invoices_split_lines_jq(self, inv_date, post_date, olines, eta,
                                      size):
         subscription_lines = olines.filtered('subscription')
@@ -67,8 +67,8 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                "- Other ("         + str(len(other_lines))        + ") : " + r3
 
 
-    @job
-    @api.multi
+    # @job
+
     def make_invoices_job_queue(self, inv_date, post_date, chunk):
         subs = False
         for line in chunk:
@@ -89,7 +89,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             vals = self._prepare_invoice_subs(partner, published_customer,
                                          payment_mode, operating_unit,
                                          lines, inv_date, post_date, subs)
-            invoice = self.env['account.invoice'].create(vals)
+            invoice = self.env['account.move'].create(vals)
             invoice.compute_taxes()
             return invoice.id
 
@@ -132,7 +132,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             try:
                 make_invoice(partner, published_customer, payment_mode,
                              operating_unit, il, inv_date, post_date)
-            except Exception, e:
+            except Exception as e:
                 if self.job_queue:
                     raise FailedJobError(
                         _("The details of the error:'%s' regarding '%s'") % (
@@ -143,7 +143,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                         unicode(e), il['name']))
         return True
 
-    @api.multi
+
     def _prepare_invoice_line(self, line):
         res = super(AdOrderLineMakeInvoice, self)._prepare_invoice_line(line)
         if line.filtered('subscription'):

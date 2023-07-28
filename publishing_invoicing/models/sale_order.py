@@ -13,7 +13,7 @@ class SaleOrder(models.Model):
 	terms_cond_bool = fields.Boolean(string="Set attribute to Terms & condition field", compute="_calculate_helper_booleans", store=True)
 	package = fields.Boolean(string='Package', index=True, copy=False, compute="_calculate_helper_booleans", store=True)
 
-	@api.multi
+
 	@api.onchange('published_customer', 'advertising_agency')
 	def onchange_customer_publishing_invoicing(self):
 		for line in self:
@@ -24,7 +24,7 @@ class SaleOrder(models.Model):
 				if line.published_customer.invoicing_property_id:
 					line.invoicing_property_id = line.published_customer.invoicing_property_id.id
 
-	# @api.multi
+	#
 	# @api.onchange('invoicing_property_id')
 	# def onchange_partner_packagedeal_payinterms(self):
 	# 		if self.invoicing_property_id.inv_package_deal and self.invoicing_property_id.pay_in_terms:
@@ -82,7 +82,7 @@ class SaleOrderLine(models.Model):
 	invoicing_property_id = fields.Many2one('invoicing.property', related='order_id.invoicing_property_id', string="Invoicing Property")
 	cutoff_date = fields.Date(string="Cutoff Date", compute='_calculate_cutoff_date', store=True, readonly=True)
 
-	@api.multi
+
 	@api.depends('order_id.invoicing_property_id', 'order_id.invoicing_date')
 	def _calculate_cutoff_date(self):
 		""""Calculates the date after which an order line can be invoiced"""
@@ -124,7 +124,7 @@ class SaleOrderLine(models.Model):
 			line.update({'cutoff_date': cutoff_date})
 		return True
 
-	@api.multi
+
 	def write(self, vals):
 		user = self.env['res.users'].browse(self.env.uid)
 		ctx = self.env.context.copy()

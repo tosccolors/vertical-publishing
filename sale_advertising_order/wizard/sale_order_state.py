@@ -11,7 +11,7 @@ class SaleOrderConfirm(models.TransientModel):
     _name = "sale.order.confirm"
     _description = "Confirm the selected sale orders"
 
-    @api.multi
+    
     def sale_order_confirm(self):
         context = dict(self._context or {})
         active_ids = context.get('active_ids', []) or []
@@ -32,7 +32,7 @@ class SaleOrderConfirm(models.TransientModel):
     _name = "account.invoice.cancel"
     _description = "Cancel the Selected Invoices"
 
-    @api.multi
+    
     def invoice_cancel(self):
         context = dict(self._context or {})
         active_ids = context.get('active_ids', []) or []

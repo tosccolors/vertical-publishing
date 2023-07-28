@@ -30,11 +30,11 @@
 			<field name="name">Advertising Class Issue matrix</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">advertising.class.issue.matrix</field>
-			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
 			<field name="view_id" ref="advertising_class_issue_matrix_tree"/>
       </record>
 
-      <menuitem name="Advertising Class Issue matrix" id="menu_advertising_class_issue_matrix" parent="sales_team.menu_sale_config"
+      <menuitem name="Advertising Class Issue matrix" id="menu_advertising_class_issue_matrix" parent="sale.menu_sale_config"
                   action="action_advertising_class_issue_matrix"/>
 
   </data>

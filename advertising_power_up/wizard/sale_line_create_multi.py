@@ -29,7 +29,7 @@ class sale_order_line_create_multi_lines(models.TransientModel):
 
 
 
-    @api.multi
+    
     def create_multi_from_order_lines(self, orderlines=[], orders= None):
         sol_obj = self.env['sale.order.line']
         olines = sol_obj.browse(orderlines)

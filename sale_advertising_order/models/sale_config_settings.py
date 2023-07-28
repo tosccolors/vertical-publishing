@@ -4,8 +4,8 @@
 from odoo import fields, models
 
 
-class SaleConfigSettings(models.TransientModel):
-    _inherit = 'sale.config.settings'
+class ResConfigSettings(models.TransientModel):
+    _inherit = 'res.config.settings'
 
     call_onchange_for_payers_advertisers = fields.Boolean(
         'Call onchange for Payers & Advertisers', related='company_id.call_onchange_for_payers_advertisers',
