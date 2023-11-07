@@ -75,7 +75,7 @@ class Lead(models.Model):
                         total += order.currency_id.compute(order.amount_total, company_currency)
                     if order.advertising:
                         adv_total += order.currency_id.compute(order.amount_untaxed, company_currency)
-            lead.sale_amount_total, lead.adv_sale_amount_total, lead.sale_number = total, adv_total, nbr
+            lead.sale_amount_total, lead.adv_sale_amount_total, lead.quotation_count = total, adv_total, nbr
 
     
     def _compute_adv_quotations_count(self):

@@ -57,7 +57,7 @@ class Lead(models.Model):
                         adv_total += order.currency_id.compute(order.amount_untaxed, company_currency)
                     if order.subscription:
                         subs_total += order.currency_id.compute(order.amount_untaxed, company_currency)
-            lead.sale_amount_total, lead.adv_sale_amount_total, lead.subs_sale_amount_total, lead.sale_number = total, adv_total, subs_total, nbr
+            lead.sale_amount_total, lead.adv_sale_amount_total, lead.subs_sale_amount_total, lead.quotation_count = total, adv_total, subs_total, nbr
 
     @api.model
     def retrieve_sales_dashboard(self):
