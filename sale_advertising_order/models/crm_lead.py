@@ -207,8 +207,8 @@ class Lead(models.Model):
         if not team_id:
             team_id = self.team_id.id if self.team_id else False
 
+            # 'planned_revenue': self.planned_revenue, FIXME: Check if needed.
         val = {
-            'planned_revenue': self.planned_revenue,
             'probability': self.probability,
             'name': self.name,
             'partner_name': self.partner_name,
