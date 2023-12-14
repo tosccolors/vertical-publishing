@@ -32,18 +32,20 @@ This module allows you to use both CRM and Sales Management to run your advertis
     'author': 'Magnus - Willem Hulshof',
     'website': 'http://www.magnus.nl',
     'depends': [
-                'sale_crm', 'sale_operating_unit',
+                'sale', 'sale_crm', 'sale_operating_unit',
                 'product_variant_template_categ_id','project',
                 'web_domain_field','account_payment_sale',
                 'web_tree_many2one_clickable', 'crm_industry',
-                # 'base_suspend_security'
                 ],
     'data': [
              "data/sale_advertising_data.xml",
              "data/crm_stage_data.xml",
              "data/mail_template_data.xml",
+
              "security/security.xml",
              "security/ir.model.access.csv",
+
+             # "views/menu_views.xml",
              "wizard/sale_line_create_multi_view.xml",
              "wizard/crm_lead_to_opportunity_view.xml",
              "wizard/adv_line_invoice.xml",

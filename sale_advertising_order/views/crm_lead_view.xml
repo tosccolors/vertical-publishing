@@ -123,11 +123,11 @@
                                 <field name="user_id" domain="[('share', '=', False)]"
                                     context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'sales_team.group_sale_salesman_all_leads'], 'team_id': team_id}"/>
                                 <field name="partner_acc_mgr" string="Account Manager" readonly="True"/>
-                                <field name="team_id" widget="selection" groups="base.groups_no_one" domain="[('use_leads','=',True)]"/>
+                                <field name="team_id" widget="selection" groups="base.group_no_one" domain="[('use_leads','=',True)]"/>
                                 <field name="type" invisible="1"/>
                             </group>
                             <group>
-                                <field name="priority" widget="priority" groups="base.groups_no_one"/>
+                                <field name="priority" widget="priority" groups="base.group_no_one"/>
                                 <field name="tag_ids" string="Sales Projects" widget="many2many_tags" options="{'no_create_edit': True}"/>
                             </group>
                         </group>
@@ -319,7 +319,7 @@
                                 <field name="team_id" widget="selection"/>
                             </group>
                             <group>
-                                <field name="priority" widget="priority" grousps="base.groups_no_one"/>
+                                <field name="priority" widget="priority" grousps="base.group_no_one"/>
                                 <field name="tag_ids" string='Sales Projects' widget="many2many_tags"
                                        options="{'no_create': True, 'no_create_edit': True}"/>
                                 <field name="lost_reason" attrs="{'invisible': [('active', '=', True)]}"/>

@@ -172,7 +172,7 @@
                                                        context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id,
                                                                     'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"
                                                        attrs="{'readonly': [('deadline_passed','=', True)]}"/>
-                                                <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"
+                                                <field name="product_uom" groups="uom.group_uom" class="oe_inline oe_no_button"
                                                        readonly="True"/>
                                             </div>
                                             <label for="qty_delivered" string="Delivered Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>
@@ -206,14 +206,14 @@
                                             <field name="color_surcharge" />
                                             <field name="color_surcharge_amount" attrs="{'invisible': [('color_surcharge','=', False)]}"/>
                                             <field name="actual_unit_price" attrs="{'invisible': [('multi_line','=', True)]}"/>
-                                            <label for="computed_discount" groups="sale.group_discount_per_so_line"/>
-                                                <div name="computed_discount" groups="sale.group_discount_per_so_line">
+                                            <label for="computed_discount" groups="product.group_discount_per_so_line"/>
+                                                <div name="computed_discount" groups="product.group_discount_per_so_line">
                                                     <field name="computed_discount" class="oe_inline"/> %%
                                                 </div>
                                             <field name="discount_reason_id" attrs="{'invisible': [('computed_discount','=', 0.0)],'required': [('computed_discount','!=', 0.0)]}"/>
                                             <field name="subtotal_before_agency_disc" readonly="False"/>
-                                            <label for="discount" string="Agency Commission" groups="sale.group_discount_per_so_line"/>
-                                                <div name="discount" groups="sale.group_discount_per_so_line">
+                                            <label for="discount" string="Agency Commission" groups="product.group_discount_per_so_line"/>
+                                                <div name="discount" groups="product.group_discount_per_so_line">
                                                     <field name="discount" invisible="1"/>
                                                     <field name="discount_dummy" class="oe_inline"/> %%
                                                 </div>
@@ -334,7 +334,7 @@
                                     <field name="product_uom"
                                             attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
                                             context="{'company_id': parent.company_id}"
-                                            groups="product.group_uom" options='{"no_open": True}'/>
+                                            groups="uom.group_uom" options='{"no_open": True}'/>
                                     <field name="actual_unit_price" widget="monetary"/>
                                     <field name="comb_list_price" widget="monetary"/>
                                     <field name="computed_discount" />
@@ -343,9 +343,9 @@
                                     <field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
                                             attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
                                             groups="account.group_account_invoice, sale_advertising_order.group_traffic_user"/>
-                                    <field name="discount" groups="sale.group_discount_per_so_line" invisible="1"/>
-                                    <field name="price_subtotal" widget="monetary" groups="sale.group_show_price_subtotal"/>
-                                    <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
+                                    <field name="discount" groups="product.group_discount_per_so_line" invisible="1"/>
+                                    <field name="price_subtotal" widget="monetary" groups="account.group_show_line_subtotals_tax_excluded"/>
+                                    <field name="price_total" widget="monetary" groups="account.group_show_line_subtotals_tax_included"/>
                                     <field name="qty_delivered_manual" invisible="1"/>
                                     <!--<field name="procurement_ids" invisible="1"/>-->
                                     <field name="state" invisible="1"/>
@@ -356,7 +356,7 @@
                                 <kanban class="o_kanban_mobile">
                                     <field name="product_id"/>
                                     <field name="product_uom_qty"/>
-                                    <field name="product_uom" groups="product.group_uom" invisible="1"/>
+                                    <field name="product_uom" groups="uom.group_uom" invisible="1"/>
                                     <field name="price_subtotal"/>
                                     <templates>
                                         <t t-name="kanban-box">
@@ -852,9 +852,9 @@
                         <field name="subtotal_before_agency_disc" />
                         <field name="discount_dummy" />
                         <field name="tax_id" />
-                        <field name="discount" groups="sale.group_discount_per_so_line" invisible="1"/>
-                        <field name="price_subtotal" widget="monetary" groups="sale.group_show_price_subtotal"/>
-                        <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
+                        <field name="discount" groups="product.group_discount_per_so_line" invisible="1"/>
+                        <field name="price_subtotal" widget="monetary" groups="account.group_show_line_subtotals_tax_excluded"/>
+                        <field name="price_total" widget="monetary" groups="account.group_show_line_subtotals_tax_included"/>
                         <field name="state" invisible="1"/>
                         <field name="invoice_status" invisible="0"/>
                 </tree>
@@ -946,7 +946,7 @@
                                            context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id,
                                                         'uom':product_uom, 'uom_qty_change':True, 'company_id': company_id}"
                                            attrs="{'readonly': [('deadline_passed','=', True)]}"/>
-                                    <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"
+                                    <field name="product_uom" groups="uom.group_uom" class="oe_inline oe_no_button"
                                            readonly="True"/>
                                 </div>
                                 <label for="qty_delivered" string="Delivered Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>
@@ -980,14 +980,14 @@
                                 <field name="color_surcharge" />
                                 <field name="color_surcharge_amount" attrs="{'invisible': [('color_surcharge','=', False)]}"/>
                                 <field name="actual_unit_price" attrs="{'invisible': [('multi_line','=', True)]}"/>
-                                <label for="computed_discount" groups="sale.group_discount_per_so_line"/>
-                                    <div name="computed_discount" groups="sale.group_discount_per_so_line">
+                                <label for="computed_discount" groups="product.group_discount_per_so_line"/>
+                                    <div name="computed_discount" groups="product.group_discount_per_so_line">
                                         <field name="computed_discount" class="oe_inline"/> %%
                                     </div>
                                 <field name="discount_reason_id" attrs="{'invisible': [('computed_discount','=', 0.0)],'required': [('computed_discount','!=', 0.0)]}"/>
                                 <field name="subtotal_before_agency_disc" readonly="False"/>
-                                <label for="discount" string="Agency Commission" groups="sale.group_discount_per_so_line"/>
-                                    <div name="discount" groups="sale.group_discount_per_so_line">
+                                <label for="discount" string="Agency Commission" groups="product.group_discount_per_so_line"/>
+                                    <div name="discount" groups="product.group_discount_per_so_line">
                                         <field name="discount" invisible="1"/>
                                         <field name="discount_dummy" class="oe_inline"/> %%
                                     </div>
@@ -1104,7 +1104,7 @@
                                     <field
                                         context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"
                                         name="product_uom_qty" class="oe_inline"/>
-                                    <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"
+                                    <field name="product_uom" groups="uom.group_uom" class="oe_inline oe_no_button"
                                         attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
                                         invisible="1"/>
                                 </div>
@@ -1133,13 +1133,13 @@
                                     attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
                                 <field name="price_unit" readonly="True" />
                                 <field name="actual_unit_price" />
-                                <label for="computed_discount" groups="sale.group_discount_per_so_line"/>
-                                    <div name="computed_discount" groups="sale.group_discount_per_so_line">
+                                <label for="computed_discount" groups="product.group_discount_per_so_line"/>
+                                    <div name="computed_discount" groups="product.group_discount_per_so_line">
                                         <field name="computed_discount" class="oe_inline"/> %%
                                     </div>
                                 <field name="subtotal_before_agency_disc" readonly="False"/>
-                                <label for="discount" string="Agency Commission" groups="sale.group_discount_per_so_line"/>
-                                    <div name="discount" groups="sale.group_discount_per_so_line">
+                                <label for="discount" string="Agency Commission" groups="product.group_discount_per_so_line"/>
+                                    <div name="discount" groups="product.group_discount_per_so_line">
                                         <field name="discount" invisible="1"/>
                                         <field name="discount_dummy" class="oe_inline"/> %%
                                     </div>
