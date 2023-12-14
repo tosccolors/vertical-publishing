@@ -20,7 +20,7 @@
 #
 ##############################################################################
 {
-    'name': 'sale_advertising_order',
+    'name': 'Sale Advertising Order',
     'version': '14.0.2.2',
     'category': 'Sale',
     'description': """
