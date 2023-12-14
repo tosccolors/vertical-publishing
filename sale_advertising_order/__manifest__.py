@@ -21,7 +21,7 @@
 ##############################################################################
 {
     'name': 'sale_advertising_order',
-    'version': '14.0.2.',
+    'version': '14.0.2.1',
     'category': 'Sale',
     'description': """
 This module allows you to use both CRM and Sales Management to run your advertising sales

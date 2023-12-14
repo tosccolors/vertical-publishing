@@ -557,7 +557,6 @@
         <record id="action_orders_advertising" model="ir.actions.act_window">
             <field name="name">Sales Orders</field>
             <field name="res_model">sale.order</field>
-            <!--<field name="view_type">form</field>-->
             <field name="view_mode">tree,form,calendar,pivot,graph</field>
             <field name="view_id" ref="view_order_form_advertising"/>
             <field name="search_view_id" ref="advertising_order_view_search_inherit_sale"/>
@@ -598,7 +597,6 @@
         <record id="action_orders_advertising_smart_button" model="ir.actions.act_window">
             <field name="name">Advertising Sales Orders</field>
             <field name="res_model">sale.order</field>
-            <!--<field name="view_type">form</field>-->
             <field name="view_mode">tree,form,calendar,graph</field>
             <field name="view_id" ref="view_order_form_advertising"/>
             <field name="search_view_id" ref="advertising_order_view_search_inherit_sale"/>
@@ -714,7 +712,6 @@
             <field name="name">Quotations </field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
-            <!--<field name="view_type">form</field>-->
             <field name="view_id" ref="view_quotation_advertising_tree"/>
             <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
             <field name="view_id" ref="view_order_form_advertising"/>
@@ -756,7 +753,6 @@
 			<field name="name">All Advertising Sale Orders</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">sale.order</field>
-			<!--<field name="view_type">form</field>-->
 			<field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_order_form_advertising"/>
 			<field name="domain">[('advertising','=',True),('published_customer','&lt;&gt;', False)]</field>
@@ -1247,7 +1243,6 @@
 			<field name="name">All Advertising Sale Order Lines</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">sale.order.line</field>
-			<!--<field name="view_type">form</field>-->
 			<field name="view_mode">tree,form,pivot</field>
             <field name="view_id" ref="view_adv_order_line_form"/>
             <field name="search_view_id" ref="view_advertising_sales_order_line_filter"/>
@@ -1414,7 +1409,7 @@
 			<field name="name">Advertising Issue</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">sale.advertising.issue</field>
-			<field name="view_mode">form</field>
+			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="sale_advertising_issue_tree"/>
 		</record>
 
@@ -1450,7 +1445,7 @@
 			<field name="name">Advertising Page</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">sale.advertising.page</field>
-			<field name="view_mode">form</field>
+			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="sale_advertising_page_tree"/>
 		</record>
 
@@ -1509,10 +1504,10 @@
 
 
 		<record model="ir.actions.act_window" id="action_sale_advertising_available">
-			<field name="name">Advertising Pages</field>
+			<field name="name">Advertising Page Availability</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">sale.advertising.available</field>
-			<field name="view_mode">form</field>
+			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="sale_advertising_available_tree"/>
 		</record>
 
@@ -1567,7 +1562,7 @@
 			<field name="name">Discount Reasons</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">discount.reason</field>
-			<field name="view_mode">form</field>
+			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="discount_reason_tree"/>
 		</record>
 
@@ -1607,7 +1602,7 @@
 			<field name="name">Advertising Proof</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">sale.advertising.proof</field>
-			<field name="view_mode">form</field>
+			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="sale_advertising_proof_tree"/>
 		</record>
 

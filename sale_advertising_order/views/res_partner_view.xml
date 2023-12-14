@@ -285,7 +285,6 @@
             <field name="name">Customers</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
-            <!--<field name="view_type">form</field>-->
             <field name="view_mode">form,tree,kanban</field>
             <field name="context">{"search_default_customer":1, "search_default_type_company":1, "search_default_my_partners":1,}</field>
             <field name="search_view_id" ref="view_res_partner_filter_crm"/>
@@ -303,7 +302,6 @@
             <field name="name">Suppliers</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
-            <!--<field name="view_type">form</field>-->
             <field name="domain">[]</field>
             <field name="view_mode">form,tree,kanban</field>
             <field name="context">{'search_default_supplier': 1,'default_customer': 0,'default_supplier': 1}</field>
@@ -341,7 +339,6 @@
         <record id="sale.act_res_partner_2_sale_order" model="ir.actions.act_window">
             <field name="name">Sales Orders</field>
             <field name="res_model">sale.order</field>
-            <!--<field name="view_type">form</field>-->
             <field name="domain">[('state','in',('sale','done')), ('advertising','=',False), ('partner_id','child_of',active_id)]</field>
             <field name="view_mode">tree,form,graph</field>
             <field name="context">{'default_partner_id': active_id}</field>
