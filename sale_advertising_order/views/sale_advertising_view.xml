@@ -1413,29 +1413,14 @@
 			<field name="view_id" ref="sale_advertising_issue_tree"/>
 		</record>
 
-        <!-- View for sale.advertising.page object -->
-
-		<record model="ir.ui.view" id="sale_advertising_page_form">
-			<field name="name">sale.advertising.page.form</field>
-			<field name="type">form</field>
-			<field name="model">sale.advertising.page</field>
-			<field name="arch" type="xml">
-				<form string="Advertising issue" >
-					<sheet>
-						<group >
-							<field name="name" string="Page Name"/>
-                        </group>
-					</sheet>
-				</form>
-			</field>
-		</record>
+        <!-- sale.advertising.page -->
 
 		<record id="sale_advertising_page_tree" model="ir.ui.view" >
 			<field name="name">sale.advertising.page.tree</field>
 			<field name="type">tree</field>
 			<field name="model">sale.advertising.page</field>
 			<field name="arch" type="xml">
-				<tree string="Advertising Pages">
+				<tree string="Advertising Pages" editable="top">
 						<field name="name" string="Page Name"/>
 				</tree>
 			</field>
@@ -1445,7 +1430,7 @@
 			<field name="name">Advertising Page</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">sale.advertising.page</field>
-			<field name="view_mode">tree,form</field>
+			<field name="view_mode">tree</field>
 			<field name="view_id" ref="sale_advertising_page_tree"/>
 		</record>
 
@@ -1456,7 +1441,7 @@
 			<field name="type">form</field>
 			<field name="model">sale.advertising.available</field>
 			<field name="arch" type="xml">
-				<form string="Page Availablity" >
+				<form string="Page Availability" >
 					<sheet>
 						<group >
                             <field name="adv_issue_id" string="Issue"/>
@@ -1476,7 +1461,7 @@
 			<field name="type">tree</field>
 			<field name="model">sale.advertising.available</field>
 			<field name="arch" type="xml">
-                <tree name="page_available" string="Page Availablity" create="false" delete="false">
+                <tree name="page_available" string="Page Availability" create="false" delete="false">
                     <field name="adv_issue_id" string="Issue" />
                     <field name="issue_date" />
                     <field name="name" string="Name" />
@@ -1530,30 +1515,15 @@
             </field>
         </record>
 
-        <!-- View for discount.reason object -->
-
-		<record model="ir.ui.view" id="discount_reason_form">
-			<field name="name">discount.reason.form</field>
-			<field name="type">form</field>
-			<field name="model">discount.reason</field>
-			<field name="arch" type="xml">
-				<form string="Discount Reason" >
-					<sheet>
-						<group >
-							<field name="name" string="Page Name"/>
-                        </group>
-					</sheet>
-				</form>
-			</field>
-		</record>
+        <!-- Discount.reason -->
 
 		<record id="discount_reason_tree" model="ir.ui.view" >
 			<field name="name">discount.reason.tree</field>
 			<field name="type">tree</field>
 			<field name="model">discount.reason</field>
 			<field name="arch" type="xml">
-				<tree string="Discount Reasons">
-						<field name="name" string="Page Name"/>
+				<tree string="Discount Reasons" editable="top">
+						<field name="name" string="Discount Reason"/>
 				</tree>
 			</field>
 		</record>
@@ -1562,7 +1532,7 @@
 			<field name="name">Discount Reasons</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">discount.reason</field>
-			<field name="view_mode">tree,form</field>
+			<field name="view_mode">tree</field>
 			<field name="view_id" ref="discount_reason_tree"/>
 		</record>
 
