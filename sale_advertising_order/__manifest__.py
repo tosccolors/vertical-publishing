@@ -21,7 +21,7 @@
 ##############################################################################
 {
     'name': 'sale_advertising_order',
-    'version': '14.0.1.1',
+    'version': '14.0.2',
     'category': 'Sale',
     'description': """
 This module allows you to use both CRM and Sales Management to run your advertising sales
@@ -29,7 +29,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
 
 
     """,
-    'author': 'Magnus - Willem Hulshof',
+    'author': 'Deepa, The Open Source Company (TOSC), Magnus - Willem Hulshof',
     'website': 'http://www.magnus.nl',
     'depends': [
                 'sale', 'sale_crm', 'sale_operating_unit',
@@ -45,7 +45,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
              "security/security.xml",
              "security/ir.model.access.csv",
 
-             # "views/menu_views.xml",
+             "views/menu_views.xml",
              "wizard/sale_line_create_multi_view.xml",
              "wizard/crm_lead_to_opportunity_view.xml",
              "wizard/adv_line_invoice.xml",
