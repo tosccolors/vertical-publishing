@@ -21,16 +21,16 @@
 ##############################################################################
 {
     'name': 'sale_advertising_order',
-    'version': '14.0.2',
+    'version': '14.0.2.',
     'category': 'Sale',
     'description': """
 This module allows you to use both CRM and Sales Management to run your advertising sales
-=========================================================================================
+============================================================================================
 
 
     """,
-    'author': 'Deepa, The Open Source Company (TOSC), Magnus - Willem Hulshof',
-    'website': 'http://www.magnus.nl',
+    'author': 'Deepa, Willem Hulshof, The Open Source Company (TOSC)',
+    'website': 'http://www.tosc.nl',
     'depends': [
                 'sale', 'sale_crm', 'sale_operating_unit',
                 'product_variant_template_categ_id','project',
