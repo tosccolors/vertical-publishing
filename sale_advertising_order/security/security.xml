@@ -58,12 +58,12 @@
         <record model="ir.ui.menu" id="sale.sale_menu_root">
             <field name="groups_id" eval="[(6,0,[ref('group_regular_sales_user'),ref('group_advertising_sales_user')])]"/>
         </record>
-        <record model="ir.ui.menu" id="menu_advsales">
-            <field name="name">Advertising Sales</field>
-            <field name="parent_id" eval="ref('sale.sale_menu_root')"/>
-            <field name="sequence">3</field>
-            <field name="groups_id" eval="[(6,0,[ref('group_advertising_sales_user')])]"/>
-        </record>
+<!--        <record model="ir.ui.menu" id="menu_advsales">-->
+<!--            <field name="name">Advertising Sales</field>-->
+<!--            <field name="parent_id" eval="ref('sale.sale_menu_root')"/>-->
+<!--            <field name="sequence">3</field>-->
+<!--            <field name="groups_id" eval="[(6,0,[ref('group_advertising_sales_user')])]"/>-->
+<!--        </record>-->
 
     </data>
 
