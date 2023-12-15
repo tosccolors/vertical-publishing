@@ -1709,5 +1709,53 @@
            <field name="domain">[]</field>
        </record>
 
+
+
+        <!--
+                Advertising Schedule (a.k.a Indeellijst)
+                ported from nsm_sale_advertising_module
+        -->
+        <record id="view_indeellijst_list_tree" model="ir.ui.view">
+            <field name="name">sale.order.line.indeellijst.tree</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <tree string="Schedules" create="false" edit="false" delete="false">
+                        <field name="order_id" widget="many2one_clickable"/>
+                        <field name="id"/>
+<!--                        <field name="material_id" /> TODO  Port?-->
+                        <field name="order_advertiser_id" />
+                        <field name="adv_issue" />
+                        <field name="issue_date"/>
+                        <field name="from_date" />
+                        <field name="to_date" />
+                        <field name="ad_class"/>
+                        <field name="product_template_id"/>
+                        <field name="product_uom_qty" />
+<!--                        <field name="product_width" TODO: Port ?/>-->
+<!--                        <field name="product_height" Todo: Port? />-->
+                        <field name="page_reference"/>
+                        <field name="layout_remark" />
+                        <field name="name" />
+                        <field name="analytic_tag_ids"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="ads_indeellijst_action">
+			<field name="name">Advertising Schedules</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">sale.order.line</field>
+			<field name="view_mode">tree,form,pivot</field>
+            <field name="search_view_id" ref="sale_advertising_order.view_advertising_sales_order_line_filter"/>
+			<field name="domain">[('advertising','=',True),('state','in',('sale','done'))]</field>
+		</record>
+
+         <record id="ads_indeellijst_action_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_indeellijst_list_tree"/>
+            <field name="act_window_id" ref="ads_indeellijst_action"/>
+        </record>
+
 	</data>
 </odoo>
