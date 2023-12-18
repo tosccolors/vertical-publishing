@@ -535,16 +535,16 @@
                     <filter string="To Invoice" name="to_invoice" domain="[('invoice_status','=','to_invoice')]"/>
 
                     <separator/>
-                    <filter string="Submitted" name="submitted" domain="[('state','in',('submitted'))]"/>
-                    <filter string="Sales Mgr Approved" name="approved1" domain="[('state','in',('approved1'))]"/>
-                    <!--filter string="Traffic Approved" name="approved2" domain="[('state','in',('approved2',))]"/-->
+                    <filter string="Submitted" name="submitted" domain="[('state','=','submitted')]"/>
+                    <filter string="Sales Mgr Approved" name="approved1" domain="[('state','=','approved1')]" groups="sale_advertising_order.group_senior_sales"/>
+                    <filter string="Traffic Approved" name="approved2" domain="[('state','=','approved2')]" groups="sale_advertising_order.group_traffic_user"/>
                 </xpath>
 
                 <field name="analytic_account_id" position="after">
                     <field name="date_from" string="Order Date From" filter_domain="[('date_order','&gt;=',self)]"/>
                     <field name="date_to" string="Order Date To" filter_domain="[('date_order','&lt;=',self)]"/>
-                    <!--field name="date_from" string="Traffic Date From" filter_domain="[('traffic_appr_date','&gt;=',self)]"/>
-                    <field name="date_to" string="Traffic Date To" filter_domain="[('traffic_appr_date','&lt;=',self)]"/-->
+                    <field name="date_from" string="Traffic Date From" filter_domain="[('traffic_appr_date','&gt;=',self)]" groups="sale_advertising_order.group_traffic_user"/>
+                    <field name="date_to" string="Traffic Date To" filter_domain="[('traffic_appr_date','&lt;=',self)]" groups="sale_advertising_order.group_traffic_user"/>
                 </field>
                 <xpath expr="." position="inside">
                     <filter string="Account Manager" name="acc_manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
@@ -559,7 +559,7 @@
             <field name="view_mode">tree,form,calendar,pivot,graph</field>
             <field name="view_id" ref="view_order_form_advertising"/>
             <field name="search_view_id" ref="advertising_order_view_search_inherit_sale"/>
-            <field name="domain">[('advertising','=',True),('state','in',('sale','done'))]</field>
+            <field name="domain">[('advertising','=',True)]</field>
             <field name="context">{'default_advertising':True}</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
