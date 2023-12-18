@@ -20,28 +20,28 @@
 #
 ##############################################################################
 {
-    'name': 'sale_advertising_order',
-    'version': '14.0.1.1',
+    'name': 'Sale Advertising Order',
+    'version': '14.0.2.5',
     'category': 'Sale',
     'description': """
 This module allows you to use both CRM and Sales Management to run your advertising sales
-=========================================================================================
+============================================================================================
 
 
     """,
-    'author': 'Magnus - Willem Hulshof',
-    'website': 'http://www.magnus.nl',
+    'author': 'Deepa, Willem Hulshof, The Open Source Company (TOSC)',
+    'website': 'http://www.tosc.nl',
     'depends': [
-                'sale_crm', 'sale_operating_unit',
+                'sale', 'sale_crm', 'sale_operating_unit',
                 'product_variant_template_categ_id','project',
                 'web_domain_field','account_payment_sale',
                 'web_tree_many2one_clickable', 'crm_industry',
-                # 'base_suspend_security'
                 ],
     'data': [
              "data/sale_advertising_data.xml",
              "data/crm_stage_data.xml",
              "data/mail_template_data.xml",
+
              "security/security.xml",
              "security/ir.model.access.csv",
              "wizard/sale_line_create_multi_view.xml",
@@ -55,9 +55,11 @@ This module allows you to use both CRM and Sales Management to run your advertis
              "views/crm_menu_view.xml",
              "views/sale_dashboard_view.xml",
              "views/sale_advertising_view.xml",
+             "views/proof_delivery_list_view.xml",
              "views/crm_lead_view.xml",
              "views/res_partner_view.xml",
-             "views/menuitems.xml",
+             # "views/menuitems.xml", -- deprecated
+             "views/menu_views.xml",
              "views/sale_config_settings.xml"
              ],
     'qweb': [

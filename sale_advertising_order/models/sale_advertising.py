@@ -599,6 +599,12 @@ class SaleOrderLine(models.Model):
     proof_number_payer = fields.Boolean('Proof Number Payer', default=False)
     booklet_surface_area = fields.Float(related='product_template_id.booklet_surface_area', readonly=True, string='Booklet Surface Area',digits=dp.get_precision('Product Unit of Measure'))
 
+
+    # Brought from nsm_sale_advertising_order
+    proof_number_payer_id = fields.Many2one('res.partner', 'Proof Number Payer ID')
+    proof_number_adv_customer = fields.Many2many('res.partner', 'partner_line_proof_rel', 'line_id', 'partner_id',
+                                                 string='Proof Number Advertising Customer')
+
     @api.onchange('medium')
     def onchange_medium(self):
         vals, data, result = {}, {}, {}

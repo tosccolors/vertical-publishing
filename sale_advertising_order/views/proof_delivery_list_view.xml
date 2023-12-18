@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+        <record id="view_proof_number_delivery_list_tree" model="ir.ui.view">
+            <field name="name">proof.number.delivery.list.tree</field>
+            <field name="model">proof.number.delivery.list</field>
+            <field name="arch" type="xml">
+                <tree string="Proof Delivery Lists" create="false" edit="false" delete="false">
+                        <field name="line_id" invisible="1"/>
+                        <field name="title" />
+                        <field name="adv_issue" />
+                        <field name="issue_date" />
+                        <field name="proof_number_payer" invisible="1"/>
+                        <field name="proof_parent_name" />
+                        <field name="proof_initials" />
+                        <field name="proof_infix" />
+                        <field name="proof_lastname"/>
+                        <field name="proof_country_code"/>
+                        <field name="proof_zip"/>
+                        <field name="proof_street_number"/>
+                        <field name="proof_street_name"/>
+                        <field name="proof_city" />
+                        <field name="proof_number_amt"/>
+                        <field name="proof_partner_name"/>
+                        <field name="proof_email"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_proof_number_delivery_list_form" model="ir.ui.view">
+            <field name="name">proof.number.delivery.list.form</field>
+            <field name="model">proof.number.delivery.list</field>
+            <field name="arch" type="xml">
+                <form string="Proof Delivery Lists" create="false" edit="false" delete="false">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <field name="line_id" invisible="1"/>
+                            <button class="oe_stat_button" name="action_view_order_line"
+                                type="object" icon="fa-usd" String="Order Line" attrs="{'invisible': [('line_id', '=', False)]}">
+                            </button>
+                        </div>
+                        <group col="4" colspan="4">
+                                <field name="proof_number_payer"/>
+                                <field name="title" />
+                                <field name="adv_issue" />
+                                <field name="issue_date" />
+                                <field name="proof_parent_name" />
+                                <field name="proof_initials" />
+                                <field name="proof_infix" />
+                                <field name="proof_lastname"/>
+                                <field name="proof_country_code"/>
+                                <field name="proof_zip"/>
+                                <field name="proof_street_number"/>
+                                <field name="proof_street_name"/>
+                                <field name="proof_city" />
+                                <field name="proof_number_amt"/>
+                                <field name="proof_email"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_proof_number_delivery_list_filter" model="ir.ui.view">
+            <field name="name">proof.number.delivery.list.select</field>
+            <field name="model">proof.number.delivery.list</field>
+            <field name="arch" type="xml">
+                <search string="Search Proof Number Delivery List">
+                    <field name="title"/>
+                    <field name="adv_issue"/>
+                    <field name="issue_date"/>
+                    <field name="proof_parent_name"/>
+                    <group expand="0" string="Group By">
+                        <filter name="title" string="Title" domain="[]" context="{'group_by':'title'}"/>
+                        <filter name="issue_date" string="Issue Date" icon="terp-personal" domain="[]" context="{'group_by':'issue_date'}"/>
+                        <filter name="order_line" string="Order Line" domain="[]" context="{'group_by':'line_id'}"/>
+                        <filter name="partner" string="Partner" domain="[]" context="{'group_by':'proof_number_payer'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="nsm_proof_delivery_list_action">
+			<field name="name">Proof Number Delivery List</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">proof.number.delivery.list</field>
+			<field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_proof_number_delivery_list_filter"/>
+		</record>
+
+         <record id="nsm_proof_number_delivery_list_action_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_proof_number_delivery_list_tree"/>
+            <field name="act_window_id" ref="nsm_proof_delivery_list_action"/>
+        </record>
+    </data>
+</odoo>

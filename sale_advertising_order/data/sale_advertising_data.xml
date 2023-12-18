@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <odoo>
-	<data noupdate="1">
+	<data noupdate="0">
 
 	<!-- Parameter that determines the end of discount-price iteration in order line-->
 		<record id="ir_config_parameter_fraction" model="ir.config_parameter">
@@ -9,34 +9,30 @@
     	</record>
 
 
-	<!-- Products Data -->
+		<!-- Products Data -->
 		<record id="attribute_title" model="product.attribute">
 			<field name="name">title</field>
 			<field name="sequence">1</field>
 		</record>
 		<record id="advertising_category" model="product.category">
 			<field name="name">Ads</field>
-            <!--<field name="type">view</field>-->
 			<field name="date_type">date</field>
 			<field name="adv_parent">True</field>
 		</record>
 
 		<record id="newspaper_advertising_category" model="product.category">
 			<field name="name">Newspapers/Specials</field>
-            <!--<field name="type">view</field>-->
 			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
 			<field name="date_type">date</field>
 		</record>
 
 		<record id="magazine_advertising_category" model="product.category">
 			<field name="name">Magazines</field>
-            <!--<field name="type">view</field>-->
 			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
 			<field name="date_type">date</field>
 		</record>
 		<record id="magazine_online_advertising_category" model="product.category">
 			<field name="name">Magazines Online</field>
-            <!--<field name="type">view</field>-->
 			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
 			<field name="date_type">validity</field>
 		</record>
@@ -49,8 +45,7 @@
 		</record>
 
 		<record id="title_pricelist_category" model="product.category">
-			<field name="name">Title Pricelist</field>
-            <!--<field name="type">view</field>-->
+			<field name="name">Interface to Portal</field>
 		</record>
 
 	</data>
