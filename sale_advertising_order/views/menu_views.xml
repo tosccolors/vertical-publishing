@@ -25,13 +25,14 @@
             <menuitem id="menu_sale_order3" name="Orders"
                       parent="menu_advertising_order" action="action_orders_advertising" sequence="2"/>
 
-
             <menuitem id="menu_ads_schedule" name="Schedules"
                       parent="menu_advertising_order" action="ads_indeellijst_action" sequence="3"/>
 
+            <menuitem id="menu_proof_delivery_list_action" name="Proof Number Delivery List"
+                      parent="menu_advertising_order" action="nsm_proof_delivery_list_action" sequence="4"/>
 
             <menuitem id="menu_partners3"  name="Customers"
-                      parent="menu_advertising_order" action="base.action_partner_form" sequence="4"/>
+                      parent="menu_advertising_order" action="base.action_partner_form" sequence="5"/>
 
 
 
@@ -105,13 +106,6 @@
 
                 <menuitem id="menu_product_category_action_form" name="Attributes"
                       parent="menu_products_subconfig" action="product.attribute_action" sequence="2"/>
-
-
-
-
-
-
-
 
     </data>
 </openerp>
