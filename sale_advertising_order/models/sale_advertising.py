@@ -24,8 +24,11 @@ import json
 from odoo import api, fields, models, _
 import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
-from odoo.tools import float_is_zero, float_compare, DEFAULT_SERVER_DATETIME_FORMAT
 from datetime import datetime, timedelta
+
+import logging
+_logger = logging.getLogger(__name__)
+
 
 
 class SaleOrder(models.Model):
@@ -349,6 +352,9 @@ class SaleOrder(models.Model):
     
     def write(self, vals):
         result = super(SaleOrder, self).write(vals)
+        # import pdb; pdb.set_trace()
+
+        _logger.info("GET I COME HERE SO WRITE ")
         orders = self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks'))
         for order in orders:
             user = self.env['res.users'].browse(self.env.uid)
@@ -735,9 +741,11 @@ class SaleOrderLine(models.Model):
             return {'value': vals}
         volume_discount = self.product_template_id.volume_discount
         if self.product_template_id and self.adv_issue_ids and len(self.adv_issue_ids) > 1:
+            _logger.info("Did i come here? - Multiple Edition ")
             self.product_uom = self.product_template_id.uom_id
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', self.adv_issue_ids.ids)])
             values = []
+            self.issue_product_ids = []  # reset
             product_id = False
             price = 0
             issues_count = len(adv_issues)
@@ -746,10 +754,14 @@ class SaleOrderLine(models.Model):
                     value = {}
                     if adv_issue.product_attribute_value_id:
                         pav = adv_issue.product_attribute_value_id.id
+                        _logger.info("IF > pav %s" % pav)
                     else:
                         pav = adv_issue.parent_id.product_attribute_value_id.id
+                        _logger.info("ELSE > pav %s" % pav)
+                    _logger.info("Found ? pav %s" % pav)
                     product_id = self.env['product.product'].search(
-                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids', '=', pav)])
+                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids.product_attribute_value_id', '=', pav)])
+                    _logger.info("found pp %s \n PT %s" % (product_id, self.product_template_id))
                     if product_id:
                         product = product_id.with_context(
                             lang=self.order_id.partner_id.lang,
@@ -767,7 +779,8 @@ class SaleOrderLine(models.Model):
                                 self.company_id)
 
                             price += value['price_unit'] * self.product_uom_qty
-                            values.append(value)
+                            _logger.info("Values %s"%value)
+                            values.append((0,0, value))
             if product_id:
                 self.update({
                     'adv_issue_ids': [(6, 0, [])],
@@ -778,10 +791,13 @@ class SaleOrderLine(models.Model):
                 })
             self.comb_list_price = price
             self.subtotal_before_agency_disc = price
+
         elif self.product_template_id and self.issue_product_ids and len(self.issue_product_ids) > 1:
+            _logger.info("Did i come here? - Single Issue Product ")
             self.product_uom = self.product_template_id.uom_id
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', [x.adv_issue_id.id for x in self.issue_product_ids])])
             values = []
+            self.issue_product_ids = [] # reset
             product_id = False
             price = 0
             issues_count = len(adv_issues)
@@ -793,7 +809,7 @@ class SaleOrderLine(models.Model):
                     else:
                         pav = adv_issue.parent_id.product_attribute_value_id.id
                     product_id = self.env['product.product'].search(
-                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids', '=', pav)])
+                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids.product_attribute_value_id', '=', pav)])
                     if product_id:
                         product = product_id.with_context(
                             lang=self.order_id.partner_id.lang,
@@ -811,7 +827,8 @@ class SaleOrderLine(models.Model):
                                 self.company_id)
 
                             price += value['price_unit'] * self.product_uom_qty
-                            values.append(value)
+                            _logger.info("Values %s" % value)
+                            values.append((0,0, value))
             if product_id:
                 self.update({
                     'issue_product_ids': values,
@@ -821,16 +838,22 @@ class SaleOrderLine(models.Model):
                 })
             self.comb_list_price = price
             self.subtotal_before_agency_disc = price
+
         elif self.product_template_id and (self.adv_issue or len(self.adv_issue_ids) == 1):
+                _logger.info("Did i come here? - Single Edition ")
                 if self.adv_issue_ids and len(self.adv_issue_ids) == 1:
                     self.adv_issue = self.adv_issue_ids.id
                 if self.adv_issue.parent_id.id == self.title.id:
                     if self.adv_issue.product_attribute_value_id:
                         pav = self.adv_issue.product_attribute_value_id.id
+                        _logger.info("IF > pav %s" % pav)
                     else:
                         pav = self.adv_issue.parent_id.product_attribute_value_id.id
+                        _logger.info("ELSE pav %s" % pav)
+                    _logger.info("whats pav %s"%pav)
                     product_id = self.env['product.product'].search(
-                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids', '=', pav)])
+                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids.product_attribute_value_id', '=', pav)])
+                    _logger.info("found pp %s \n PT %s" %(product_id, self.product_template_id))
                     if product_id:
                         self.update({
                             'adv_issue_ids': [(6, 0, [])],
@@ -1044,6 +1067,7 @@ class SaleOrderLine(models.Model):
             return result
         self = self.with_context(LoopBreaker=True)
         if result.state == 'sale' and result.advertising and result.multi_line:
+            _logger.info("GET I COME HERE create_multi_from_order_lines ")
             newlines = self.env['sale.order.line.create.multi.lines'].\
                 create_multi_from_order_lines(orderlines=[result.id], orders=None)
             lines = self.env['sale.order.line'].browse(newlines)
