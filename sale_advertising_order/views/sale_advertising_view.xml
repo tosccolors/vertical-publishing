@@ -43,7 +43,7 @@
                     <button name="action_draft" states="cancel" type="object" string="Set to Quotation"/>
                     <button name="action_done" type="object" string="Lock" states="sale" groups="sale_advertising_order.group_traffic_user"/>
                             help="If the sale is locked, you can not modify it anymore. However, you will still be able to invoice or deliver."/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved1,sent,sale,done"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,submitted,approved1,sale,done"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -505,7 +505,7 @@
                     <field name="message_needaction" invisible="1"/>
                     <field name="name" string="Order Number"/>
                     <field name="date_order"/>
-                    <field name="opportunity_subject"/>
+                    <field name="opportunity_subject" string="Subject"/>
                     <field name="published_customer"/>
                     <field name="advertising_agency"/>
                     <field name="partner_acc_mgr"/>
