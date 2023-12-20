@@ -169,7 +169,7 @@ class Partner(models.Model):
 class Company(models.Model):
     _inherit = 'res.company'
 
-    verify_order_setting = fields.Float('Order Amount bigger than', digits=dp.get_precision('Account'))
+    verify_order_setting = fields.Float('Order Amount bigger than', digits='Account')
     verify_discount_setting = fields.Float('Discount (%) bigger than', digits=(16, 2))
 
 

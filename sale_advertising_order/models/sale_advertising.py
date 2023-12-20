@@ -588,22 +588,22 @@ class SaleOrderLine(models.Model):
                                  string='Company', store=True, readonly=True, index=True)
     discount_dummy = fields.Float(related='discount', string='Agency Commission (%)', readonly=True )
     price_unit_dummy = fields.Float(related='price_unit', string='Unit Price', readonly=True)
-    actual_unit_price = fields.Float(compute='_compute_amount', string='Actual Unit Price', digits=dp.get_precision('Product Price'),
+    actual_unit_price = fields.Float(compute='_compute_amount', string='Actual Unit Price', digits='Product Price',
                                         default=0.0, readonly=True)
     comb_list_price = fields.Monetary(compute='_multi_price', string='Combined_List Price', default=0.0, store=True,
-                                digits=dp.get_precision('Account'))
-    computed_discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Discount'), default=0.0)
-    subtotal_before_agency_disc = fields.Monetary(string='Subtotal before Commission', digits=dp.get_precision('Account'))
+                                digits='Account')
+    computed_discount = fields.Float(string='Discount (%)', digits='Discount', default=0.0)
+    subtotal_before_agency_disc = fields.Monetary(string='Subtotal before Commission', digits='Account')
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
     multi_line = fields.Boolean(string='Multi Line')
     color_surcharge = fields.Boolean(string='Color Surcharge')
     price_edit = fields.Boolean(compute='_compute_price_edit', string='Price Editable')
-    color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Product Price'))
+    color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits='Product Price')
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
     nett_nett = fields.Boolean(string='Netto Netto Line')
     proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False)
     proof_number_payer = fields.Boolean('Proof Number Payer', default=False)
-    booklet_surface_area = fields.Float(related='product_template_id.booklet_surface_area', readonly=True, string='Booklet Surface Area',digits=dp.get_precision('Product Unit of Measure'))
+    booklet_surface_area = fields.Float(related='product_template_id.booklet_surface_area', readonly=True, string='Booklet Surface Area',digits='Product Unit of Measure')
 
 
     # Brought from nsm_sale_advertising_order
@@ -1185,10 +1185,10 @@ class OrderLineAdvIssuesProducts(models.Model):
     product_attribute_value_id = fields.Many2one(related='adv_issue_id.parent_id.product_attribute_value_id', relation='sale.advertising.issue',
                                       string='Title', readonly=True)
     product_id = fields.Many2one('product.product', 'Product', ondelete='cascade', index=True, readonly=True)
-    price_unit = fields.Float('Unit Price', required=True, digits=dp.get_precision('Product Price'), default=0.0, readonly=True)
+    price_unit = fields.Float('Unit Price', required=True, digits='Product Price', default=0.0, readonly=True)
     price_edit = fields.Boolean(compute=_compute_price_edit, readonly=True)
     qty = fields.Float(related='order_line_id.product_uom_qty', readonly=True)
-    price = fields.Float(compute='_compute_price', string='Price', readonly=True, required=True, digits=dp.get_precision('Product Price'), default=0.0)
+    price = fields.Float(compute='_compute_price', string='Price', readonly=True, required=True, digits='Product Price', default=0.0)
     page_reference = fields.Char('Reference of the Page', size=64)
     ad_number = fields.Char('External Reference', size=32)
     url_to_material = fields.Char('URL Material', size=64)
