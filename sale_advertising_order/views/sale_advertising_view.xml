@@ -134,7 +134,7 @@
                                             <field name="deadline_offset" invisible="1" />
                                             <field name="deadline_passed" invisible="1" />
                                             <field name="deadline" invisible="0" />
-                                            <field name="adv_issue_ids" string="Advertising Issues[1]" readonly="0"
+                                            <field name="adv_issue_ids" string="Advertising Issues" readonly="0"
                                                    attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
                                                    domain="[('parent_id','!=', False),
                                                             '|',('parent_id','in', title_ids),('parent_id','=', title),
@@ -142,11 +142,6 @@
                                                                     ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
-
-<!--                                                   domain="[('parent_id','!=', False),-->
-<!--                                                            '|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),-->
-<!--                                                            '|','|',('deadline','&gt;=', deadline_offset),('deadline','=', False),-->
-<!--                                                                    ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"-->
                                                 <tree create="true" edit="false" delete="true" copy="false">
                                                     <field name="name" string="Name" readonly="1"/>
                                                 </tree>
@@ -266,14 +261,14 @@
                                                attrs="{'invisible':[('issue_product_ids','=',[])]}"
                                                options="{'no_create': True, 'no_create_edit': True}" readonly="0">
                                             <tree string="Issues Products Prices" editable="bottom">
-                                                <field name="adv_issue_id" string="Issue" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
-                                                <field name="product_attribute_value_id" invisible="True" />
-                                                <field name="product_id" string="Product" domain="[('product_tmpl_id','=', parent.product_template_id), ('product_template_attribute_value_ids','in', product_attribute_value_id)]"/>
-                                                <field name="price_edit" string="Price editable" invisible="1"/>
-                                                <field name="price_unit" string="Unit Price"
+                                                <field name="adv_issue_id" string="Issue" force_save="1" domain="[('parent_id','in', parent.title_ids)]"/>
+                                                <field name="product_attribute_value_id" force_save="1"  invisible="True" />
+                                                <field name="product_id" force_save="1"  string="Product" domain="[('product_tmpl_id','=', parent.product_template_id), ('product_template_attribute_value_ids','in', product_attribute_value_id)]"/>
+                                                <field name="price_edit" force_save="1"  string="Price editable" invisible="1"/>
+                                                <field name="price_unit" force_save="1"  string="Unit Price"
                                                        attrs="{'readonly': [('price_edit','!=', True)]}"/>
-                                                <field name="qty" string="Qty"/>
-                                                <field name="price" string="Price"/>
+                                                <field name="qty" force_save="1"  string="Qty"/>
+                                                <field name="price" force_save="1"  string="Price"/>
                                                 <field name="page_reference" string="Page Pref." />
                                                 <field name="ad_number" string="External Ref." />
                                                 <field name="url_to_material" string="URL Ad Material" />
@@ -459,7 +454,6 @@
                 <field name="adv_issue_ids" position="attributes">
                      <attribute name="string">Advertising Issue[NDL]</attribute>
                      <attribute name="domain" >[('parent_id','!=', False),'|',('parent_id','in', title_ids),('parent_id','=', title)]</attribute>
-<!--                    <attribute name="domain" >[('parent_id','!=', False),'|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title)]</attribute>-->
                 </field>
                 <field name="product_template_id" position="attributes">
                      <attribute name="attrs" >{'readonly': [('qty_invoiced', '&gt;', 0)]}</attribute>
@@ -904,7 +898,7 @@
                                 <field name="deadline_offset" invisible="1" groups="base.group_no_one"/>
                                 <field name="deadline_passed" invisible="1" />
                                 <field name="deadline" invisible="0" />
-                                <field name="adv_issue_ids" string="Advertising Issues [2]" readonly="0"
+                                <field name="adv_issue_ids" string="Advertising Issues" readonly="0"
                                        attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
                                        domain="[('parent_id','!=', False),
                                                 '|',('parent_id','in', title_ids),('parent_id','=', title),
@@ -912,11 +906,6 @@
                                                         ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
                                        options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                        context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
-
-<!--                                       domain="[('parent_id','!=', False),-->
-<!--                                                '|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),-->
-<!--                                                '|','|',('deadline','&gt;=', deadline_offset),('deadline','=', False),-->
-<!--                                                        ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"-->
                                     <tree create="true" edit="false" delete="true" copy="false">
                                         <field name="name" string="Name" readonly="1"/>
                                     </tree>
@@ -1039,12 +1028,12 @@
                                    attrs="{'invisible':['|',('issue_product_ids','=',[]),('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
                                    options="{'no_create': True, 'no_create_edit': True}" readonly="0">
                                 <tree string="Issues Products Prices" editable="bottom">
-                                    <field name="adv_issue_id" string="Issue" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
-                                    <field name="product_attribute_value_id" invisible="True" />
-                                    <field name="product_id" string="Product" domain="[('product_tmpl_id','=', parent.product_template_id), ('product_template_attribute_value_ids','in', product_attribute_value_id)]"/>
-                                    <field name="price_unit" string="Unit Price"/>
-                                    <field name="qty" string="Qty"/>
-                                    <field name="price" string="Price"/>
+                                    <field name="adv_issue_id" string="Issue" force_save="1" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
+                                    <field name="product_attribute_value_id" force_save="1" invisible="True" />
+                                    <field name="product_id" string="Product" force_save="1" domain="[('product_tmpl_id','=', parent.product_template_id), ('product_template_attribute_value_ids','in', product_attribute_value_id)]"/>
+                                    <field name="price_unit" force_save="1" string="Unit Price"/>
+                                    <field name="qty" force_save="1" string="Qty"/>
+                                    <field name="price" force_save="1" string="Price"/>
                                     <field name="page_reference" string="Ref" />
                                     <field name="ad_number" string="Ad No." />
                                     <field name="url_to_material" string="URL Ad Material" />

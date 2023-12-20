@@ -26,13 +26,10 @@
                 <field name="adv_class_issue_ids" invisible="1" widget="many2many_tags"/>
             </field>
             <field name="adv_issue" position="attributes">
-<!--                <attribute name="domain">['&amp;', ('parent_id','!=', False), '&amp;', ('parent_id','=', title),('digital','=', ad_class_digital), '|','|',('deadline','&gt;=', deadline_offset), ('deadline','=', False), ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')), ('id', 'in', adv_class_issue_ids and adv_class_issue_ids[0][2])]</attribute>-->
                 <attribute name="domain">['&amp;', ('parent_id','!=', False), '&amp;', ('parent_id','=', title),('digital','=', ad_class_digital), '|','|',('deadline','&gt;=', deadline_offset), ('deadline','=', False), ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')), ('id', 'in', adv_class_issue_ids)]</attribute>
             </field>
             <field name="adv_issue_ids" position="attributes">
-                <attribute name="string">Advertising Issue[DD]</attribute>
                 <attribute name="domain">[('parent_id','!=', False),'|',('parent_id','in', title_ids),('parent_id','=', title),('digital','=', ad_class_digital), '|','|',('deadline','&gt;=', deadline_offset), ('deadline','=', False), ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')), ('id', 'in', adv_class_issue_ids)]</attribute>
-<!--                <attribute name="domain">[('parent_id','!=', False),'|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),('digital','=', ad_class_digital), '|','|',('deadline','&gt;=', deadline_offset), ('deadline','=', False), ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')), ('id', 'in', adv_class_issue_ids and adv_class_issue_ids[0][2])]</attribute>-->
             </field>
         </field>
     </record>
@@ -47,12 +44,9 @@
         <field name="arch" type="xml">
             <field name="adv_issue" position="attributes">
                 <attribute name="domain">['&amp;', ('parent_id','!=', False), '&amp;', ('parent_id','=', title),('digital','=', ad_class_digital),  ('id', 'in', adv_class_issue_ids)]</attribute>
-<!--                <attribute name="domain">['&amp;', ('parent_id','!=', False), '&amp;', ('parent_id','=', title),('digital','=', ad_class_digital),  ('id', 'in', adv_class_issue_ids and adv_class_issue_ids[0][2])]</attribute>-->
             </field>
             <field name="adv_issue_ids" position="attributes">
-                <attribute name="string">Advertising Issue[DD-NDL]</attribute>
                 <attribute name="domain">[('parent_id','!=', False),'|',('parent_id','in', title_ids),('parent_id','=', title),('digital','=', ad_class_digital), ('id', 'in', adv_class_issue_ids)]</attribute>
-<!--                <attribute name="domain">[('parent_id','!=', False),'|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),('digital','=', ad_class_digital), ('id', 'in', adv_class_issue_ids and adv_class_issue_ids[0][2])]</attribute>-->
             </field>
         </field>
     </record>
