@@ -43,7 +43,7 @@
                     <button name="action_draft" states="cancel" type="object" string="Set to Quotation"/>
                     <button name="action_done" type="object" string="Lock" states="sale" groups="sale_advertising_order.group_traffic_user"/>
                             help="If the sale is locked, you can not modify it anymore. However, you will still be able to invoice or deliver."/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved1,sent,sale,done"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,submitted,approved1,sale,done"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -84,7 +84,7 @@
                             <field name="advertising_agency"
                                    domain="[('is_ad_agency','=', True),(('customer_rank', '>', 0)), ('is_company','=', True)]"
                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}" />
-                            <field name="nett_nett"/>
+
                             <field name="agency_is_publish" />
                             <field name="opportunity_subject" required="True" string="Subject"/>
                         </group>
@@ -134,13 +134,12 @@
                                             <field name="deadline_offset" invisible="1" />
                                             <field name="deadline_passed" invisible="1" />
                                             <field name="deadline" invisible="0" />
-                                            <field name="adv_issue_ids" string="Advertising Issues[1]" readonly="0"
+                                            <field name="adv_issue_ids" string="Advertising Issues" readonly="0"
                                                    attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
                                                    domain="[('parent_id','!=', False),
-                                                            '|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
+                                                            '|',('parent_id','in', title_ids),('parent_id','=', title),
                                                             '|','|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
                                                                     ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
-
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
                                                 <tree create="true" edit="false" delete="true" copy="false">
@@ -262,14 +261,14 @@
                                                attrs="{'invisible':[('issue_product_ids','=',[])]}"
                                                options="{'no_create': True, 'no_create_edit': True}" readonly="0">
                                             <tree string="Issues Products Prices" editable="bottom">
-                                                <field name="adv_issue_id" string="Issue" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
-                                                <field name="product_attribute_value_id" invisible="True" />
-                                                <field name="product_id" string="Product" domain="[('product_tmpl_id','=', parent.product_template_id), ('product_template_attribute_value_ids','in', product_attribute_value_id)]"/>
-                                                <field name="price_edit" string="Price editable" invisible="1"/>
-                                                <field name="price_unit" string="Unit Price"
+                                                <field name="adv_issue_id" string="Issue" force_save="1" domain="[('parent_id','in', parent.title_ids)]"/>
+                                                <field name="product_attribute_value_id" force_save="1"  invisible="True" />
+                                                <field name="product_id" force_save="1"  string="Product" domain="[('product_tmpl_id','=', parent.product_template_id), ('product_template_attribute_value_ids','in', product_attribute_value_id)]"/>
+                                                <field name="price_edit" force_save="1"  string="Price editable" invisible="1"/>
+                                                <field name="price_unit" force_save="1"  string="Unit Price"
                                                        attrs="{'readonly': [('price_edit','!=', True)]}"/>
-                                                <field name="qty" string="Qty"/>
-                                                <field name="price" string="Price"/>
+                                                <field name="qty" force_save="1"  string="Qty"/>
+                                                <field name="price" force_save="1"  string="Price"/>
                                                 <field name="page_reference" string="Page Pref." />
                                                 <field name="ad_number" string="External Ref." />
                                                 <field name="url_to_material" string="URL Ad Material" />
@@ -405,6 +404,8 @@
                                     <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
                                     <field name="analytic_account_id" attrs="{'invisible':[('state','=','sale'),('published_customer','!=', False)]}"
                                            context="{'default_partner_id':partner_invoice_id, 'default_name':name}" groups="analytic.group_analytic_accounting"/>
+                                    <field name="nett_nett"/>
+
                                 </group>
                                 <group name="sale_pay" string="Invoicing">
                                     <field name="fiscal_position_id" options="{'no_create': True}"/>
@@ -451,7 +452,8 @@
             <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_no_deadline_check'))]"/>
             <field name="arch" type="xml">
                 <field name="adv_issue_ids" position="attributes">
-                     <attribute name="domain" >[('parent_id','!=', False),'|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title)]</attribute>
+                     <attribute name="string">Advertising Issue[NDL]</attribute>
+                     <attribute name="domain" >[('parent_id','!=', False),'|',('parent_id','in', title_ids),('parent_id','=', title)]</attribute>
                 </field>
                 <field name="product_template_id" position="attributes">
                      <attribute name="attrs" >{'readonly': [('qty_invoiced', '&gt;', 0)]}</attribute>
@@ -499,19 +501,24 @@
             <field name="model">sale.order</field>
             <field name="priority">20</field>
             <field name="arch" type="xml">
-                <tree string="Sales Orders" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'">
+                <tree string="Sales Orders" multi_edit="1" sample="1">
                     <field name="message_needaction" invisible="1"/>
-                    <field name="name" string="Order Number"/>
-                    <field name="date_order"/>
-                    <field name="opportunity_subject"/>
+                    <field name="name" string="Order Number" decoration-bf="1"/>
+                    <field name="date_order" widget="date" optional="show"/>
+                    <field name="opportunity_subject" string="Subject"/>
                     <field name="published_customer"/>
                     <field name="advertising_agency"/>
                     <field name="partner_acc_mgr"/>
-                    <field name="user_id"/>
-                    <field name="amount_untaxed" sum="Total Amount Untaxed" widget="monetary"/>
+                    <field name="user_id" optional="show" widget="many2one_avatar_user"/>
+                    <field name="activity_ids" widget="list_activity" optional="show"/>
+                    <field name="team_id" optional="hide"/>
+                    <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>
+                    <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>
+                    <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1" optional="show"/>
                     <field name="traffic_appr_date" string="Traffic Date" invisible="1"/>
                     <field name="currency_id" invisible="1"/>
-                    <field name="invoice_status"/>
+                    <field name="invoice_status" decoration-success="invoice_status == 'invoiced'" decoration-info="invoice_status == 'to invoice'" decoration-warning="invoice_status == 'upselling'" widget="badge" optional="show"/>
+                    <field name="tag_ids" optional="hide" widget="many2many_tags" options="{'color_field': 'color'}"/>
                     <field name="state" invisible="1"/>
                 </tree>
             </field>
@@ -559,7 +566,7 @@
             <field name="view_mode">tree,form,calendar,pivot,graph</field>
             <field name="view_id" ref="view_order_form_advertising"/>
             <field name="search_view_id" ref="advertising_order_view_search_inherit_sale"/>
-            <field name="domain">[('advertising','=',True)]</field>
+            <field name="domain">[('advertising','=',True), ('state','not in',('draft','sent','cancel'))]</field>
             <field name="context">{'default_advertising':True}</field>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
@@ -627,19 +634,26 @@
             <field name="model">sale.order</field>
             <field name="priority">40</field>
             <field name="arch" type="xml">
-                <tree string="Quotation" class="o_sale_order" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'">
+                <tree string="Quotation" class="o_sale_order" multi_edit="1" sample="1">
                     <field name="message_needaction" invisible="1"/>
-                    <field name="name" string="Quotation Number"/>
+                    <field name="name" string="Quotation Number" readonly="1" decoration-bf="1"/>
+                    <field name="create_date" string="Creation Date" widget="date" optional="show"/>
                     <field name="date_order"/>
-                    <field name="opportunity_subject"/>
+                    <field name="opportunity_subject" string="Subject"/>
                     <field name="published_customer"/>
                     <field name="advertising_agency"/>
-                    <field name="partner_acc_mgr"/>
-                    <field name="user_id"/>
-                    <field name="amount_untaxed" sum="Total Amount Untaxed" widget="monetary"/>
-                    <field name="traffic_appr_date" string="Traffic Date"/>
+                    <field name="partner_acc_mgr" optional="show"/>
+                    <field name="user_id" widget="many2one_avatar_user" optional="show"/>
+                    <field name="activity_ids" widget="list_activity" optional="show"/>
+                    <field name="team_id" optional="hide"/>
+                    <field name="tag_ids" optional="hide" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                    <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>
+                    <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>
+                    <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1" optional="show"/>
+                    <field name="traffic_appr_date" string="Traffic Date" optional="show"/>
                     <field name="currency_id" invisible="1"/>
-                    <field name="state"/>
+                    <field name="state" decoration-success="state == 'sale' or state == 'done'" decoration-info="state == 'draft' or state == 'sent'" widget="badge" optional="show"/>
+                    <field name="invoice_status" optional="hide"/>
                 </tree>
             </field>
         </record>
@@ -899,7 +913,7 @@
                                 <field name="adv_issue_ids" string="Advertising Issues" readonly="0"
                                        attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
                                        domain="[('parent_id','!=', False),
-                                                '|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
+                                                '|',('parent_id','in', title_ids),('parent_id','=', title),
                                                 '|','|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
                                                         ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
                                        options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
@@ -1026,12 +1040,12 @@
                                    attrs="{'invisible':['|',('issue_product_ids','=',[]),('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
                                    options="{'no_create': True, 'no_create_edit': True}" readonly="0">
                                 <tree string="Issues Products Prices" editable="bottom">
-                                    <field name="adv_issue_id" string="Issue" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
-                                    <field name="product_attribute_value_id" invisible="True" />
-                                    <field name="product_id" string="Product" domain="[('product_tmpl_id','=', parent.product_template_id), ('product_template_attribute_value_ids','in', product_attribute_value_id)]"/>
-                                    <field name="price_unit" string="Unit Price"/>
-                                    <field name="qty" string="Qty"/>
-                                    <field name="price" string="Price"/>
+                                    <field name="adv_issue_id" string="Issue" force_save="1" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
+                                    <field name="product_attribute_value_id" force_save="1" invisible="True" />
+                                    <field name="product_id" string="Product" force_save="1" domain="[('product_tmpl_id','=', parent.product_template_id), ('product_template_attribute_value_ids','in', product_attribute_value_id)]"/>
+                                    <field name="price_unit" force_save="1" string="Unit Price"/>
+                                    <field name="qty" force_save="1" string="Qty"/>
+                                    <field name="price" force_save="1" string="Price"/>
                                     <field name="page_reference" string="Ref" />
                                     <field name="ad_number" string="Ad No." />
                                     <field name="url_to_material" string="URL Ad Material" />

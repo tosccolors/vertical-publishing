@@ -24,8 +24,11 @@ import json
 from odoo import api, fields, models, _
 import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
-from odoo.tools import float_is_zero, float_compare, DEFAULT_SERVER_DATETIME_FORMAT
 from datetime import datetime, timedelta
+
+import logging
+_logger = logging.getLogger(__name__)
+
 
 
 class SaleOrder(models.Model):
@@ -349,6 +352,9 @@ class SaleOrder(models.Model):
     
     def write(self, vals):
         result = super(SaleOrder, self).write(vals)
+        # import pdb; pdb.set_trace()
+
+        _logger.info("GET I COME HERE SO WRITE ")
         orders = self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks'))
         for order in orders:
             user = self.env['res.users'].browse(self.env.uid)
@@ -582,22 +588,22 @@ class SaleOrderLine(models.Model):
                                  string='Company', store=True, readonly=True, index=True)
     discount_dummy = fields.Float(related='discount', string='Agency Commission (%)', readonly=True )
     price_unit_dummy = fields.Float(related='price_unit', string='Unit Price', readonly=True)
-    actual_unit_price = fields.Float(compute='_compute_amount', string='Actual Unit Price', digits=dp.get_precision('Product Price'),
+    actual_unit_price = fields.Float(compute='_compute_amount', string='Actual Unit Price', digits='Product Price',
                                         default=0.0, readonly=True)
     comb_list_price = fields.Monetary(compute='_multi_price', string='Combined_List Price', default=0.0, store=True,
-                                digits=dp.get_precision('Account'))
-    computed_discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Discount'), default=0.0)
-    subtotal_before_agency_disc = fields.Monetary(string='Subtotal before Commission', digits=dp.get_precision('Account'))
+                                digits='Account')
+    computed_discount = fields.Float(string='Discount (%)', digits='Discount', default=0.0)
+    subtotal_before_agency_disc = fields.Monetary(string='Subtotal before Commission', digits='Account')
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
     multi_line = fields.Boolean(string='Multi Line')
     color_surcharge = fields.Boolean(string='Color Surcharge')
     price_edit = fields.Boolean(compute='_compute_price_edit', string='Price Editable')
-    color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Product Price'))
+    color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits='Product Price')
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
     nett_nett = fields.Boolean(string='Netto Netto Line')
     proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False)
     proof_number_payer = fields.Boolean('Proof Number Payer', default=False)
-    booklet_surface_area = fields.Float(related='product_template_id.booklet_surface_area', readonly=True, string='Booklet Surface Area',digits=dp.get_precision('Product Unit of Measure'))
+    booklet_surface_area = fields.Float(related='product_template_id.booklet_surface_area', readonly=True, string='Booklet Surface Area',digits='Product Unit of Measure')
 
 
     # Brought from nsm_sale_advertising_order
@@ -735,9 +741,11 @@ class SaleOrderLine(models.Model):
             return {'value': vals}
         volume_discount = self.product_template_id.volume_discount
         if self.product_template_id and self.adv_issue_ids and len(self.adv_issue_ids) > 1:
+            _logger.info("Did i come here? - Multiple Edition ")
             self.product_uom = self.product_template_id.uom_id
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', self.adv_issue_ids.ids)])
             values = []
+            self.issue_product_ids = []  # reset
             product_id = False
             price = 0
             issues_count = len(adv_issues)
@@ -746,10 +754,14 @@ class SaleOrderLine(models.Model):
                     value = {}
                     if adv_issue.product_attribute_value_id:
                         pav = adv_issue.product_attribute_value_id.id
+                        _logger.info("IF > pav %s" % pav)
                     else:
                         pav = adv_issue.parent_id.product_attribute_value_id.id
+                        _logger.info("ELSE > pav %s" % pav)
+                    _logger.info("Found ? pav %s" % pav)
                     product_id = self.env['product.product'].search(
-                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids', '=', pav)])
+                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids.product_attribute_value_id', '=', pav)])
+                    _logger.info("found pp %s \n PT %s" % (product_id, self.product_template_id))
                     if product_id:
                         product = product_id.with_context(
                             lang=self.order_id.partner_id.lang,
@@ -767,7 +779,8 @@ class SaleOrderLine(models.Model):
                                 self.company_id)
 
                             price += value['price_unit'] * self.product_uom_qty
-                            values.append(value)
+                            _logger.info("Values %s"%value)
+                            values.append((0,0, value))
             if product_id:
                 self.update({
                     'adv_issue_ids': [(6, 0, [])],
@@ -778,10 +791,13 @@ class SaleOrderLine(models.Model):
                 })
             self.comb_list_price = price
             self.subtotal_before_agency_disc = price
+
         elif self.product_template_id and self.issue_product_ids and len(self.issue_product_ids) > 1:
+            _logger.info("Did i come here? - Single Issue Product ")
             self.product_uom = self.product_template_id.uom_id
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', [x.adv_issue_id.id for x in self.issue_product_ids])])
             values = []
+            self.issue_product_ids = [] # reset
             product_id = False
             price = 0
             issues_count = len(adv_issues)
@@ -793,7 +809,7 @@ class SaleOrderLine(models.Model):
                     else:
                         pav = adv_issue.parent_id.product_attribute_value_id.id
                     product_id = self.env['product.product'].search(
-                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids', '=', pav)])
+                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids.product_attribute_value_id', '=', pav)])
                     if product_id:
                         product = product_id.with_context(
                             lang=self.order_id.partner_id.lang,
@@ -811,7 +827,8 @@ class SaleOrderLine(models.Model):
                                 self.company_id)
 
                             price += value['price_unit'] * self.product_uom_qty
-                            values.append(value)
+                            _logger.info("Values %s" % value)
+                            values.append((0,0, value))
             if product_id:
                 self.update({
                     'issue_product_ids': values,
@@ -821,16 +838,22 @@ class SaleOrderLine(models.Model):
                 })
             self.comb_list_price = price
             self.subtotal_before_agency_disc = price
+
         elif self.product_template_id and (self.adv_issue or len(self.adv_issue_ids) == 1):
+                _logger.info("Did i come here? - Single Edition ")
                 if self.adv_issue_ids and len(self.adv_issue_ids) == 1:
                     self.adv_issue = self.adv_issue_ids.id
                 if self.adv_issue.parent_id.id == self.title.id:
                     if self.adv_issue.product_attribute_value_id:
                         pav = self.adv_issue.product_attribute_value_id.id
+                        _logger.info("IF > pav %s" % pav)
                     else:
                         pav = self.adv_issue.parent_id.product_attribute_value_id.id
+                        _logger.info("ELSE pav %s" % pav)
+                    _logger.info("whats pav %s"%pav)
                     product_id = self.env['product.product'].search(
-                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids', '=', pav)])
+                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids.product_attribute_value_id', '=', pav)])
+                    _logger.info("found pp %s \n PT %s" %(product_id, self.product_template_id))
                     if product_id:
                         self.update({
                             'adv_issue_ids': [(6, 0, [])],
@@ -1044,6 +1067,7 @@ class SaleOrderLine(models.Model):
             return result
         self = self.with_context(LoopBreaker=True)
         if result.state == 'sale' and result.advertising and result.multi_line:
+            _logger.info("GET I COME HERE create_multi_from_order_lines ")
             newlines = self.env['sale.order.line.create.multi.lines'].\
                 create_multi_from_order_lines(orderlines=[result.id], orders=None)
             lines = self.env['sale.order.line'].browse(newlines)
@@ -1161,10 +1185,10 @@ class OrderLineAdvIssuesProducts(models.Model):
     product_attribute_value_id = fields.Many2one(related='adv_issue_id.parent_id.product_attribute_value_id', relation='sale.advertising.issue',
                                       string='Title', readonly=True)
     product_id = fields.Many2one('product.product', 'Product', ondelete='cascade', index=True, readonly=True)
-    price_unit = fields.Float('Unit Price', required=True, digits=dp.get_precision('Product Price'), default=0.0, readonly=True)
+    price_unit = fields.Float('Unit Price', required=True, digits='Product Price', default=0.0, readonly=True)
     price_edit = fields.Boolean(compute=_compute_price_edit, readonly=True)
     qty = fields.Float(related='order_line_id.product_uom_qty', readonly=True)
-    price = fields.Float(compute='_compute_price', string='Price', readonly=True, required=True, digits=dp.get_precision('Product Price'), default=0.0)
+    price = fields.Float(compute='_compute_price', string='Price', readonly=True, required=True, digits='Product Price', default=0.0)
     page_reference = fields.Char('Reference of the Page', size=64)
     ad_number = fields.Char('External Reference', size=32)
     url_to_material = fields.Char('URL Material', size=64)

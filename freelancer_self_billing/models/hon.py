@@ -308,7 +308,7 @@ class HonIssueLine(models.Model):
     sequence = fields.Integer('Sequence', default=10, help="Gives the sequence of this line when displaying the honorarium issue.")
     name = fields.Char('Description', required=True, size=64)
     page_number = fields.Char('Pgnr', size=32)
-    nr_of_columns = fields.Float('#Cols', digits=dp.get_precision('Number of Columns'), required=True)
+    nr_of_columns = fields.Float('#Cols', digits='Number of Columns', required=True)
     issue_id = fields.Many2one('hon.issue', 'Issue Reference', ondelete='cascade', index=True)
     partner_id = fields.Many2one('res.partner', 'Partner', required=True)
     employee = fields.Boolean('Employee',  help="It indicates that the partner is an employee.",
@@ -320,8 +320,8 @@ class HonIssueLine(models.Model):
                                  domain=[('internal_type','<>','view')],
                                  help="The income or expense account related to the selected product.")
     # uos_id = fields.Many2one('product.uom', 'Unit of Measure', ondelete='set null', index=True)
-    price_unit = fields.Float('Unit Price', required=True, digits= dp.get_precision('Product Price'), default=0.0)
-    quantity = fields.Float('Quantity', digits= dp.get_precision('Product Unit of Measure'),
+    price_unit = fields.Float('Unit Price', required=True, digits='Product Price', default=0.0)
+    quantity = fields.Float('Quantity', digits='Product Unit of Measure',
                             required=True, default=1)
     account_analytic_id = fields.Many2one(related='issue_id.account_analytic_id', relation='account.analytic.account',
                                           string='Issue',store=True, readonly=True )
@@ -331,7 +331,7 @@ class HonIssueLine(models.Model):
     tag_id = fields.Many2one('account.analytic.tag', 'Page Type', ondelete='set null', index=True)
     company_id = fields.Many2one(related='issue_id.company_id', relation='res.company',string='Company', store=True, readonly=True)
     price_subtotal = fields.Float(compute='_amount_line', string='Amount',
-       digits = dp.get_precision('Account'), store=True)
+       digits ='Account', store=True)
     estimated_price = fields.Float('Estimate',)
     invoice_line_id = fields.Many2one('account.move.line', 'Invoice Line', readonly=True)
     invoice_id = fields.Many2one(related='invoice_line_id.move_id', relation='account.move', string='Invoice', readonly=True)
