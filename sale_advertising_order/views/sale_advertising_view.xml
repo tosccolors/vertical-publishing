@@ -311,7 +311,7 @@
                                 <tree string="Sales Order Lines"  decoration-info="invoice_status=='to invoice'" default_order='issue_date'>
                                     <field name="sequence" widget="handle"/>
                                     <field name="product_uom_category_id" invisible="1"/>
-                                    <field name="id"/>
+                                    <field name="id" optional="hide"/>
                                     <field name="title" />
                                     <field name="issue_date" />
                                     <field name="ad_class" groups="base.group_no_one"/>
@@ -321,24 +321,25 @@
                                        />
                                     <!--field name="layout_category_id" groups="sale.group_sale_layout,base.group_no_one" /-->
                                     <!--<field name="layout_category_id" groups="base.group_no_one" />-->
-                                    <field name="name" groups="base.group_no_one"/>
-                                    <field name="ad_number"/>
-						            <field name="page_reference"/>
+                                    <field name="name" groups="base.group_no_one" optional="hide"/>
+                                    <field name="ad_number" optional="hide"/>
+						            <field name="page_reference" optional="hide"/>
                                     <field name="qty_invoiced"
-                                            invisible="context.get('hide_sale')" groups="base.group_no_one"/>
+                                            invisible="context.get('hide_sale')" groups="base.group_no_one" optional="hide"/>
                                     <field name="qty_to_invoice" invisible="1"/>
-                                    <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" string="Page Category" invisible="0" widget="many2many_tags"/>
+                                    <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting"
+                                           string="Page Category" invisible="0" widget="many2many_tags" optional="hide"/>
 									<field name="price_unit" readonly="1"/>
                                     <field name="product_uom_qty"/>
                                     <field name="product_uom"
                                             attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
                                             context="{'company_id': parent.company_id}"
                                             groups="uom.group_uom" options='{"no_open": True}'/>
-                                    <field name="actual_unit_price" widget="monetary"/>
-                                    <field name="comb_list_price" widget="monetary"/>
-                                    <field name="computed_discount" />
-                                    <field name="subtotal_before_agency_disc" widget="monetary"/>
-                                    <field name="discount_dummy" />
+                                    <field name="actual_unit_price" widget="monetary" optional="hide"/>
+                                    <field name="comb_list_price" widget="monetary" optional="hide"/>
+                                    <field name="computed_discount" optional="hide"/>
+                                    <field name="subtotal_before_agency_disc" widget="monetary" optional="hide"/>
+                                    <field name="discount_dummy" optional="hide"/>
                                     <field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
                                             attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
                                             groups="account.group_account_invoice, sale_advertising_order.group_traffic_user"/>
@@ -1286,14 +1287,28 @@
 			<field name="model">sale.advertising.issue</field>
 			<field name="arch" type="xml">
 				<form string="Advertising issue" >
+                    <header>
+                        <field name="state" widget="statusbar" statusbar_visible="open,close" clickable="True"/>
+                    </header>
+
 					<sheet>
                         <div class="oe_button_box" name="button_box">
+                            <button name="action_open_issue" type="object" class="oe_stat_button" icon="fa-tasks"
+                                    attrs="{'invisible' : [('parent_id', '!=', False)]}" context="{'default_parent_id': active_id}" >
+                                <field string="Issue(s)" name="issue_count" widget="statinfo"/>
+                            </button>
                             <button name="toggle_active" type="object" groups="base.group_user" class="oe_stat_button" icon="fa-archive">
-                                <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                                <field name="active" invisible="1" widget="boolean_button" options='{"terminology": "archive"}'/>
                             </button>
                         </div>
+                        <widget name="web_ribbon" title="Closed"
+                            bg_color="bg-danger" attrs="{'invisible': [('state', '!=', 'close')]}" />
+
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Title / Issue"/>
+                            <h1><field name="name" placeholder="Describe the name of Title / Issue..."/></h1>
+                        </div>
 						<group col="4" colspan="4" >
-							<field name="name" string="Name"/>
                             <field name="code" string="Code"/>
                             <field name="medium_domain" invisible="1"/>
 							<field name="parent_id" string="Title" domain="[('parent_id','=', False)]"/>
@@ -1310,7 +1325,8 @@
                             <field name="issue_week_number" string="Week Number"/>
                             <field name="deadline" string="Deadline"/>
 							<field name="default_note" string="Default Note" />
-							<field name="state" string="State" />
+<!--							<field name="state" string="State" />-->
+                            <field name="active" widget="boolean_toggle"/>
                         </group>
                             <field name="available_ids" string="Availability" >
                                  <tree string="Availability">
@@ -1333,19 +1349,19 @@
 			<field name="type">tree</field>
 			<field name="model">sale.advertising.issue</field>
 			<field name="arch" type="xml">
-				<tree string="Advertising issue">
-                    <field name="name" string="Name"/>
+				<tree string="Advertising issue" decoration-info="not parent_id" >
+                    <field name="name" string="Name" decoration-bf="not parent_id"/>
                     <field name="code" string="Code"/>
-                    <field name="parent_id" string="Title"/>
-                    <field name="product_attribute_value_id" string="Variant Title"/>
-                    <field name="analytic_account_id" string="Related Analytic Account"/>
+                    <field name="parent_id" string="Title" />
+                    <field name="product_attribute_value_id" string="Variant Title" optional="hide"/>
+                    <field name="analytic_account_id" string="Related Analytic Account" optional="hide"/>
                     <field name="issue_date" string="Issue Date"/>
-                    <field name="issue_week_number" string="Week Number"/>
-                    <field name="week_number_even" invisible="False"/>
-                    <field name="deadline" string="Deadline"/>
-                    <field name="medium" string="Medium"/>
-                    <field name="default_note" string="Default Note" />
-                    <field name="state" string="State" />
+                    <field name="issue_week_number" string="Week Number" optional="hide"/>
+                    <field name="week_number_even" optional="hide"/>
+                    <field name="deadline" string="Deadline" optional="hide"/>
+                    <field name="medium" string="Medium" />
+                    <field name="default_note" string="Default Note"/>
+                    <field name="state" string="Status" decoration-success="state == 'open'" decoration-muted="state == 'cancel'" widget="badge"/>
 				</tree>
 			</field>
 		</record>
@@ -1363,7 +1379,7 @@
                     <field name="analytic_account_id" string="Related Analytic Account"/>
                     <field name="medium" string="Medium"/>
                     <field name="default_note" string="Default Note" />
-                    <field name="state" string="State" />
+                    <field name="state" string="Status" decoration-success="state == 'open'" decoration-muted="state == 'cancel'" widget="badge"/>
 				</tree>
 			</field>
 		</record>
@@ -1385,7 +1401,7 @@
                     <field name="deadline" string="Deadline"/>
                     <field name="medium" string="Medium"/>
                     <field name="default_note" string="Default Note" />
-                    <field name="state" string="State" />
+                    <field name="state" string="Status" decoration-success="state == 'open'" decoration-muted="state == 'cancel'" widget="badge"/>
 				</tree>
 			</field>
 		</record>
@@ -1421,6 +1437,23 @@
 			<field name="view_id" ref="sale_advertising_issue_tree"/>
 		</record>
 
+
+        <!--
+                Advertising Issue (Title)
+        -->
+		<record model="ir.actions.act_window" id="action_sale_advertising_issue_title">
+			<field name="name">Advertising Title</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">sale.advertising.issue</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="advertising_issue_titles_tree"/>
+			<field name="domain">[('parent_id','=', False)]</field>
+
+		</record>
+
+
+
+
         <!-- sale.advertising.page -->
 
 		<record id="sale_advertising_page_tree" model="ir.ui.view" >
@@ -1441,6 +1474,7 @@
 			<field name="view_mode">tree</field>
 			<field name="view_id" ref="sale_advertising_page_tree"/>
 		</record>
+
 
         <!-- View for sale.advertising.available object -->
 

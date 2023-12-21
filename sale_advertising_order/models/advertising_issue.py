@@ -13,7 +13,7 @@ class AdvertisingIssue(models.Model):
     _inherits = {
         'account.analytic.account': 'analytic_account_id',
     }
-    _description="Sale Advertising Issue"
+    _description = "Sale Advertising Issue"
 
     @api.model
     def _get_attribute_domain(self):
@@ -61,7 +61,6 @@ class AdvertisingIssue(models.Model):
                 })
 
     @api.depends('available_ids.available_qty')
-    
     def _availability(self):
         self.ensure_one()
         qty = 0
@@ -99,6 +98,14 @@ class AdvertisingIssue(models.Model):
     price_edit = fields.Boolean('Price Editable')
     active = fields.Boolean('Active', default=True)
 
+    issue_count = fields.Integer("Issue count", compute='_compute_issue_count')
+
+    @api.depends('child_ids')
+    def _compute_issue_count(self):
+        for rec in self:
+            rec.issue_count = len(rec.child_ids)
+
+
 
     @api.onchange('parent_id')
     def onchange_parent_id(self):
@@ -117,6 +124,15 @@ class AdvertisingIssue(models.Model):
             ads = self.env.ref('sale_advertising_order.advertising_category').id
             domain['medium'] = [('parent_id', '=', ads)]
         return {'domain': domain }
+
+
+    def action_open_issue(self):
+        action = self.env["ir.actions.actions"]._for_xml_id("sale_advertising_order.action_sale_advertising_issue_title")
+
+        # display all issue(s) of current title
+        action['domain'] = [('id', 'child_of', self.id), ('id', '!=', self.id)]
+        return action
+
 
 class AdvertisingIssueAvailability(models.Model):
     _name = "sale.advertising.available"
