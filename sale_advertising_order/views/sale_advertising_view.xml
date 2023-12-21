@@ -1286,12 +1286,18 @@
 			<field name="model">sale.advertising.issue</field>
 			<field name="arch" type="xml">
 				<form string="Advertising issue" >
+                    <header>
+                        <field name="state" widget="statusbar" statusbar_visible="open,close" clickable="True"/>
+                    </header>
+
 					<sheet>
                         <div class="oe_button_box" name="button_box">
                             <button name="toggle_active" type="object" groups="base.group_user" class="oe_stat_button" icon="fa-archive">
-                                <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                                <field name="active" invisible="1" widget="boolean_button" options='{"terminology": "archive"}'/>
                             </button>
                         </div>
+                        <widget name="web_ribbon" title="Closed"
+                            bg_color="bg-danger" attrs="{'invisible': [('state', '!=', 'close')]}" />
 						<group col="4" colspan="4" >
 							<field name="name" string="Name"/>
                             <field name="code" string="Code"/>
@@ -1310,7 +1316,8 @@
                             <field name="issue_week_number" string="Week Number"/>
                             <field name="deadline" string="Deadline"/>
 							<field name="default_note" string="Default Note" />
-							<field name="state" string="State" />
+<!--							<field name="state" string="State" />-->
+                            <field name="active" widget="boolean_toggle"/>
                         </group>
                             <field name="available_ids" string="Availability" >
                                  <tree string="Availability">
@@ -1333,19 +1340,19 @@
 			<field name="type">tree</field>
 			<field name="model">sale.advertising.issue</field>
 			<field name="arch" type="xml">
-				<tree string="Advertising issue">
-                    <field name="name" string="Name"/>
+				<tree string="Advertising issue" decoration-info="not parent_id" >
+                    <field name="name" string="Name" decoration-bf="not parent_id"/>
                     <field name="code" string="Code"/>
-                    <field name="parent_id" string="Title"/>
-                    <field name="product_attribute_value_id" string="Variant Title"/>
-                    <field name="analytic_account_id" string="Related Analytic Account"/>
+                    <field name="parent_id" string="Title" />
+                    <field name="product_attribute_value_id" string="Variant Title" optional="hide"/>
+                    <field name="analytic_account_id" string="Related Analytic Account" optional="hide"/>
                     <field name="issue_date" string="Issue Date"/>
                     <field name="issue_week_number" string="Week Number"/>
-                    <field name="week_number_even" invisible="False"/>
-                    <field name="deadline" string="Deadline"/>
-                    <field name="medium" string="Medium"/>
-                    <field name="default_note" string="Default Note" />
-                    <field name="state" string="State" />
+                    <field name="week_number_even" optional="hide"/>
+                    <field name="deadline" string="Deadline" optional="hide"/>
+                    <field name="medium" string="Medium" />
+                    <field name="default_note" string="Default Note" optional="hide"/>
+                    <field name="state" string="Status" decoration-success="state == 'open'" decoration-muted="state == 'cancel'" widget="badge"/>
 				</tree>
 			</field>
 		</record>
