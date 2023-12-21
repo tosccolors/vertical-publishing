@@ -1293,14 +1293,22 @@
 
 					<sheet>
                         <div class="oe_button_box" name="button_box">
+                            <button name="action_open_issue" type="object" class="oe_stat_button" icon="fa-tasks"
+                                    attrs="{'invisible' : [('parent_id', '!=', False)]}" context="{'default_parent_id': active_id}" >
+                                <field string="Issue(s)" name="issue_count" widget="statinfo"/>
+                            </button>
                             <button name="toggle_active" type="object" groups="base.group_user" class="oe_stat_button" icon="fa-archive">
                                 <field name="active" invisible="1" widget="boolean_button" options='{"terminology": "archive"}'/>
                             </button>
                         </div>
                         <widget name="web_ribbon" title="Closed"
                             bg_color="bg-danger" attrs="{'invisible': [('state', '!=', 'close')]}" />
+
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Title / Issue"/>
+                            <h1><field name="name" placeholder="Describe the name of Title / Issue..."/></h1>
+                        </div>
 						<group col="4" colspan="4" >
-							<field name="name" string="Name"/>
                             <field name="code" string="Code"/>
                             <field name="medium_domain" invisible="1"/>
 							<field name="parent_id" string="Title" domain="[('parent_id','=', False)]"/>
@@ -1348,11 +1356,11 @@
                     <field name="product_attribute_value_id" string="Variant Title" optional="hide"/>
                     <field name="analytic_account_id" string="Related Analytic Account" optional="hide"/>
                     <field name="issue_date" string="Issue Date"/>
-                    <field name="issue_week_number" string="Week Number"/>
+                    <field name="issue_week_number" string="Week Number" optional="hide"/>
                     <field name="week_number_even" optional="hide"/>
                     <field name="deadline" string="Deadline" optional="hide"/>
                     <field name="medium" string="Medium" />
-                    <field name="default_note" string="Default Note" optional="hide"/>
+                    <field name="default_note" string="Default Note"/>
                     <field name="state" string="Status" decoration-success="state == 'open'" decoration-muted="state == 'cancel'" widget="badge"/>
 				</tree>
 			</field>
@@ -1371,7 +1379,7 @@
                     <field name="analytic_account_id" string="Related Analytic Account"/>
                     <field name="medium" string="Medium"/>
                     <field name="default_note" string="Default Note" />
-                    <field name="state" string="State" />
+                    <field name="state" string="Status" decoration-success="state == 'open'" decoration-muted="state == 'cancel'" widget="badge"/>
 				</tree>
 			</field>
 		</record>
@@ -1393,7 +1401,7 @@
                     <field name="deadline" string="Deadline"/>
                     <field name="medium" string="Medium"/>
                     <field name="default_note" string="Default Note" />
-                    <field name="state" string="State" />
+                    <field name="state" string="Status" decoration-success="state == 'open'" decoration-muted="state == 'cancel'" widget="badge"/>
 				</tree>
 			</field>
 		</record>
@@ -1429,6 +1437,23 @@
 			<field name="view_id" ref="sale_advertising_issue_tree"/>
 		</record>
 
+
+        <!--
+                Advertising Issue (Title)
+        -->
+		<record model="ir.actions.act_window" id="action_sale_advertising_issue_title">
+			<field name="name">Advertising Title</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">sale.advertising.issue</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="advertising_issue_titles_tree"/>
+			<field name="domain">[('parent_id','=', False)]</field>
+
+		</record>
+
+
+
+
         <!-- sale.advertising.page -->
 
 		<record id="sale_advertising_page_tree" model="ir.ui.view" >
@@ -1449,6 +1474,7 @@
 			<field name="view_mode">tree</field>
 			<field name="view_id" ref="sale_advertising_page_tree"/>
 		</record>
+
 
         <!-- View for sale.advertising.available object -->
 
