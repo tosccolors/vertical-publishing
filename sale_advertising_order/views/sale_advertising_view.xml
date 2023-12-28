@@ -1435,6 +1435,7 @@
 			<field name="res_model">sale.advertising.issue</field>
 			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="sale_advertising_issue_tree"/>
+			<field name="domain">[('parent_id','!=', False)]</field>
 		</record>
 
 
