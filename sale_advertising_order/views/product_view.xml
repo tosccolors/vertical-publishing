@@ -10,6 +10,7 @@
 			 	<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
 				<field name="arch" type="xml">
 					<field name="display_name" position="replace">
+						<field name="display_name" invisible="1"/>
 						<field name="complete_name" />
 						<field name="date_type" />
 						<field name="deadline_offset" />
