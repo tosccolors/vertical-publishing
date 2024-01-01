@@ -601,7 +601,7 @@ class SaleOrderLine(models.Model):
     color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits='Product Price')
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
     nett_nett = fields.Boolean(string='Netto Netto Line')
-    proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False)
+    # proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False) #deep: has been overridden to M2M as below
     proof_number_payer = fields.Boolean('Proof Number Payer', default=False)
     booklet_surface_area = fields.Float(related='product_template_id.booklet_surface_area', readonly=True, string='Booklet Surface Area',digits='Product Unit of Measure')
 
@@ -610,6 +610,7 @@ class SaleOrderLine(models.Model):
     proof_number_payer_id = fields.Many2one('res.partner', 'Proof Number Payer ID')
     proof_number_adv_customer = fields.Many2many('res.partner', 'partner_line_proof_rel', 'line_id', 'partner_id',
                                                  string='Proof Number Advertising Customer')
+    proof_number_amt_adv_customer = fields.Integer('Proof Number Amount Advertising', default=1)
 
     @api.onchange('medium')
     def onchange_medium(self):
@@ -1152,6 +1153,39 @@ class SaleOrderLine(models.Model):
         res = self.env['sale.advertising.available'].search([('order_line_id', '=', self.id)])
         if res and len(res) > 0:
             res.unlink()
+
+    @api.model
+    def default_get(self, fields_list):
+        'Migration: from nsm_sale_advertising_order'
+        result = super(SaleOrderLine, self).default_get(fields_list)
+        if 'customer_contact' in self.env.context:
+            result.update({'proof_number_payer_id': self.env.context['customer_contact']})
+            result.update({'proof_number_amt_payer': 1})
+
+        result.update({'proof_number_adv_customer': False})
+        result.update({'proof_number_amt_adv_customer': 0})
+        return result
+
+
+    @api.onchange('proof_number_adv_customer')
+    def onchange_proof_number_adv_customer(self):
+        'Migration: from nsm_sale_advertising_order'
+        self.proof_number_amt_adv_customer = 1 if self.proof_number_adv_customer else 0
+
+    @api.onchange('proof_number_amt_adv_customer')
+    def onchange_proof_number_amt_adv_customer(self):
+        'Migration: from nsm_sale_advertising_order'
+        if self.proof_number_amt_adv_customer <= 0: self.proof_number_adv_customer = False
+
+    @api.onchange('proof_number_amt_payer')
+    def onchange_proof_number_amt_payer(self):
+        'Migration: from nsm_sale_advertising_order'
+        if self.proof_number_amt_payer < 1: self.proof_number_payer_id = False
+
+    @api.onchange('proof_number_payer_id')
+    def onchange_proof_number_payer_id(self):
+        'Migration: from nsm_sale_advertising_order'
+        self.proof_number_amt_payer = 1 if self.proof_number_payer_id else 0
 
 
 

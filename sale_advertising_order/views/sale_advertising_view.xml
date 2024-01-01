@@ -3,8 +3,6 @@
 	<data>
 
 
-
-
         <record id="view_order_form_advertising" model="ir.ui.view">
             <field name="name">sale.order.form.advertising</field>
             <field name="model">sale.order</field>
@@ -106,7 +104,8 @@
                     <notebook>
                         <page string="Order Lines" name="order_line">
                             <field name="order_line" mode="tree,kanban"
-                                   attrs="{'readonly': ['|',('state', 'in', ['done','cancel']),('state', 'in', ['approved1','sent']),('ver_tr_exc','=',True)]}">
+                                   attrs="{'readonly': ['|',('state', 'in', ['done','cancel']),('state', 'in', ['approved1','sent']),('ver_tr_exc','=',True)]}"
+                                   context="{'customer_contact': customer_contact}">
                                 <form string="Sales Order Lines">
                                     <group>
                                         <group>
@@ -231,7 +230,9 @@
                                                        domain="page_class_domain"
                                                        attrs="{'readonly': [('deadline_passed','=', True)]}"/>
                                             </div>
-                                            <field name="proof_number_adv_customer" />
+<!--                                            <field name="proof_number_adv_customer" /> deprecated -->
+                                            <field name="proof_number_adv_customer" string="Proof Number Advertising Customer" domain="[('customer_rank', '>', 0)]" context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
+                                            <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
                                             <field name="proof_number_payer" />
                                         </group>
                                     </group>
@@ -1011,7 +1012,9 @@
                                            domain="page_class_domain"
                                            attrs="{'readonly': [('deadline_passed','=', True)]}"/>
                                 </div>
-                                <field name="proof_number_adv_customer" />
+<!--                                <field name="proof_number_adv_customer" /> deprecated -->
+                                <field name="proof_number_adv_customer" string="Proof Number Advertising Customer" domain="[('customer_rank', '>', 0)]" context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
+                                <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
                                 <field name="proof_number_payer" />
                             </group>
                         </group>
