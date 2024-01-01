@@ -1317,7 +1317,7 @@
 							<field name="parent_id" string="Title" domain="[('parent_id','=', False)]"/>
                             <field name="price_edit" string="Price Editable"
                                    attrs="{'invisible':[('parent_id','=',True)]}"/>
-                            <field name="medium" string="Medium" domain="medium_domain"
+                            <field name="medium" string="Medium" widget="many2many_tags"
                                    options="{'no_create': True, 'no_create_edit': True}"/>
                             <field name="product_attribute_value_id" string="Variant Title"
                                    attrs="{'required':[('parent_id','=',False),
