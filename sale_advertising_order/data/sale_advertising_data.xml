@@ -17,7 +17,7 @@
 		<record id="advertising_category" model="product.category">
 			<field name="name">Ads</field>
 			<field name="date_type">date</field>
-			<field name="adv_parent">True</field>
+<!--			<field name="adv_parent">True</field>-->
 		</record>
 
 		<record id="newspaper_advertising_category" model="product.category">
