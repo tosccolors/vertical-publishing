@@ -283,9 +283,9 @@
                                         </group>
                                         <group attrs="{'invisible':[('date_type','!=','validity')]}">
                                             <field name="from_date"
-                                                   attrs="{'invisible':[('date_type','!=','validity')]}"/>
+                                                   attrs="{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')]}"/>
                                             <field name="to_date"
-                                                   attrs="{'invisible':[('date_type','!=','validity')]}"/>
+                                                   attrs="{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')]}"/>
                                         </group>
                                     </group>
                                     <group>
@@ -1063,9 +1063,9 @@
                             </group>
                             <group attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')]}">
                                 <field name="from_date"
-                                       attrs="{'invisible':['|',('multi_line','!=', False),('date_type','!=','validity')]}"/>
+                                       attrs="{'invisible':['|',('multi_line','!=', False),('date_type','!=','validity')], 'required': [('date_type','=','validity')]}"/>
                                 <field name="to_date"
-                                       attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')]}"/>
+                                       attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')], 'required': [('date_type','=','validity')]}"/>
                             </group>
                         </group>
                         <group>
