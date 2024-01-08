@@ -535,6 +535,13 @@ class SaleOrderLine(models.Model):
             if line.product_template_id and line.product_template_id.price_edit or line.title.price_edit:
                 line.price_edit = True
 
+    @api.model
+    def _get_adClass_domain(self):
+        if not self.medium:
+            return [('id','child_of', self.env.ref('sale_advertising_order.advertising_category', raise_if_not_found=False).id)]
+
+        return [('id','child_of', self.medium.id), ('id', '!=', self.medium.id)]
+
     mig_remark = fields.Text('Migration Remark')
     layout_remark = fields.Text('Material Remark')
     title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)])
@@ -555,7 +562,7 @@ class SaleOrderLine(models.Model):
     adv_issue = fields.Many2one('sale.advertising.issue','Advertising Issue')
     issue_date = fields.Date(related='adv_issue.issue_date', string='Issue Date', store=True)
     medium = fields.Many2one('product.category', string='Medium')
-    ad_class = fields.Many2one('product.category', 'Advertising Class')
+    ad_class = fields.Many2one('product.category', 'Advertising Class', domain=_get_adClass_domain)
     deadline_passed = fields.Boolean(compute='_compute_deadline', string='Deadline Passed')
     deadline = fields.Datetime(compute='_compute_deadline', string='Deadline', store=False)
     deadline_offset = fields.Datetime(compute='_compute_deadline')
@@ -618,12 +625,13 @@ class SaleOrderLine(models.Model):
         if not self.advertising:
             return {'value': vals }
         if self.medium:
-            child_id = [x.id for x in self.medium.child_id]
+            child_id = [(x.id != self.medium.id) and x.id for x in self.medium.child_id]
+
             if len(child_id) == 1:
                 vals['ad_class'] = child_id[0]
             else:
                 vals['ad_class'] = False
-                data = {'ad_class': [('id', 'child_of', self.medium.id)]}
+                data = {'ad_class': [('id', 'child_of', self.medium.id), ('id', '!=', self.medium.id)]}
             titles = self.env['sale.advertising.issue'].search([('parent_id','=', False),('medium', '=', self.medium.id)]).ids
             if titles and len(titles) == 1:
                 vals['title'] = titles[0]

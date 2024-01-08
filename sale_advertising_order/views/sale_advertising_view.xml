@@ -114,7 +114,6 @@
                                                    domain="[('parent_id','=', %(sale_advertising_order.advertising_category)d)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                                             <field name="ad_class" required="True"
-                                                   domain="[('id','child_of', medium)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                                             <field name="title" string="Title"
                                                    domain="[('child_ids','!=', False),('medium','child_of', medium)]"
