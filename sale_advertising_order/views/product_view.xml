@@ -41,8 +41,7 @@
 			<field name="arch" type="xml">
 				<field name="parent_id" position="after">
 					<separator/>
-												<!-- FIXME: to use predefined categ ['Ads' & 'Interface to Portal'] -->
-                    <filter string="Ads Categories" name="ads_category" domain="[('id','child_of', [6, 11])]"/>
+                    <filter string="Ads Categories" name="ads_category" domain="[('id','child_of', [%(sale_advertising_order.advertising_category)d, %(sale_advertising_order.title_pricelist_category)d])]"/>
 				</field>
 			</field>
 		</record>
