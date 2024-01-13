@@ -224,11 +224,11 @@ class Lead(models.Model):
             'function': self.function,
             'phone': self.phone,
             'mobile': self.mobile,
-            'fax': self.fax,
+            # 'fax': self.fax,
             'tag_ids': [(6, 0, [tag_id.id for tag_id in self.tag_ids])],
             'user_id': (self.user_id and self.user_id.id),
             'type': 'opportunity',
-            'date_action': fields.datetime.now(),
+            # 'date_action': fields.datetime.now(),
             'date_open': fields.datetime.now(),
 
         }
