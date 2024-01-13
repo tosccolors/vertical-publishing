@@ -535,6 +535,13 @@ class SaleOrderLine(models.Model):
             if line.product_template_id and line.product_template_id.price_edit or line.title.price_edit:
                 line.price_edit = True
 
+    @api.model
+    def _get_adClass_domain(self):
+        if not self.medium:
+            return [('id','child_of', self.env.ref('sale_advertising_order.advertising_category', raise_if_not_found=False).id)]
+
+        return [('id','child_of', self.medium.id), ('id', '!=', self.medium.id)]
+
     mig_remark = fields.Text('Migration Remark')
     layout_remark = fields.Text('Material Remark')
     title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)])
@@ -555,7 +562,7 @@ class SaleOrderLine(models.Model):
     adv_issue = fields.Many2one('sale.advertising.issue','Advertising Issue')
     issue_date = fields.Date(related='adv_issue.issue_date', string='Issue Date', store=True)
     medium = fields.Many2one('product.category', string='Medium')
-    ad_class = fields.Many2one('product.category', 'Advertising Class')
+    ad_class = fields.Many2one('product.category', 'Advertising Class', domain=_get_adClass_domain)
     deadline_passed = fields.Boolean(compute='_compute_deadline', string='Deadline Passed')
     deadline = fields.Datetime(compute='_compute_deadline', string='Deadline', store=False)
     deadline_offset = fields.Datetime(compute='_compute_deadline')
@@ -601,7 +608,7 @@ class SaleOrderLine(models.Model):
     color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits='Product Price')
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
     nett_nett = fields.Boolean(string='Netto Netto Line')
-    proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False)
+    # proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False) #deep: has been overridden to M2M as below
     proof_number_payer = fields.Boolean('Proof Number Payer', default=False)
     booklet_surface_area = fields.Float(related='product_template_id.booklet_surface_area', readonly=True, string='Booklet Surface Area',digits='Product Unit of Measure')
 
@@ -610,6 +617,7 @@ class SaleOrderLine(models.Model):
     proof_number_payer_id = fields.Many2one('res.partner', 'Proof Number Payer ID')
     proof_number_adv_customer = fields.Many2many('res.partner', 'partner_line_proof_rel', 'line_id', 'partner_id',
                                                  string='Proof Number Advertising Customer')
+    proof_number_amt_adv_customer = fields.Integer('Proof Number Amount Advertising', default=1)
 
     @api.onchange('medium')
     def onchange_medium(self):
@@ -617,12 +625,13 @@ class SaleOrderLine(models.Model):
         if not self.advertising:
             return {'value': vals }
         if self.medium:
-            child_id = [x.id for x in self.medium.child_id]
+            child_id = [(x.id != self.medium.id) and x.id for x in self.medium.child_id]
+
             if len(child_id) == 1:
                 vals['ad_class'] = child_id[0]
             else:
                 vals['ad_class'] = False
-                data = {'ad_class': [('id', 'child_of', self.medium.id)]}
+                data = {'ad_class': [('id', 'child_of', self.medium.id), ('id', '!=', self.medium.id)]}
             titles = self.env['sale.advertising.issue'].search([('parent_id','=', False),('medium', '=', self.medium.id)]).ids
             if titles and len(titles) == 1:
                 vals['title'] = titles[0]
@@ -1152,6 +1161,39 @@ class SaleOrderLine(models.Model):
         res = self.env['sale.advertising.available'].search([('order_line_id', '=', self.id)])
         if res and len(res) > 0:
             res.unlink()
+
+    @api.model
+    def default_get(self, fields_list):
+        'Migration: from nsm_sale_advertising_order'
+        result = super(SaleOrderLine, self).default_get(fields_list)
+        if 'customer_contact' in self.env.context:
+            result.update({'proof_number_payer_id': self.env.context['customer_contact']})
+            result.update({'proof_number_amt_payer': 1})
+
+        result.update({'proof_number_adv_customer': False})
+        result.update({'proof_number_amt_adv_customer': 0})
+        return result
+
+
+    @api.onchange('proof_number_adv_customer')
+    def onchange_proof_number_adv_customer(self):
+        'Migration: from nsm_sale_advertising_order'
+        self.proof_number_amt_adv_customer = 1 if self.proof_number_adv_customer else 0
+
+    @api.onchange('proof_number_amt_adv_customer')
+    def onchange_proof_number_amt_adv_customer(self):
+        'Migration: from nsm_sale_advertising_order'
+        if self.proof_number_amt_adv_customer <= 0: self.proof_number_adv_customer = False
+
+    @api.onchange('proof_number_amt_payer')
+    def onchange_proof_number_amt_payer(self):
+        'Migration: from nsm_sale_advertising_order'
+        if self.proof_number_amt_payer < 1: self.proof_number_payer_id = False
+
+    @api.onchange('proof_number_payer_id')
+    def onchange_proof_number_payer_id(self):
+        'Migration: from nsm_sale_advertising_order'
+        self.proof_number_amt_payer = 1 if self.proof_number_payer_id else 0
 
 
 

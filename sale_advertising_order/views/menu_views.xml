@@ -8,7 +8,7 @@
 
         <menuitem id="advertising_sale_menu_root"
             name="Advertising Sales"
-            web_icon="sale_advertising_order,static/description/web_icon.png"
+            web_icon="sale_advertising_order,static/description/adsale_icon.png"
             active="True"
             sequence="6"/>
 

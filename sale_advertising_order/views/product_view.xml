@@ -10,6 +10,7 @@
 			 	<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
 				<field name="arch" type="xml">
 					<field name="display_name" position="replace">
+						<field name="display_name" invisible="1"/>
 						<field name="complete_name" />
 						<field name="date_type" />
 						<field name="deadline_offset" />
@@ -24,8 +25,9 @@
 			 	<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
 				<field name="arch" type="xml">
 					<field name="parent_id" position="after">
-						<field name="adv_parent" attrs="{'invisible':[('parent_id', '!=', False)]}"/>
-						<field name="date_type" attrs="{'required':[('adv_parent', '=', True)]}"/>
+<!--						<field name="adv_parent" attrs="{'invisible':[('parent_id', '!=', False)]}"/>-->
+<!--						<field name="date_type" attrs="{'required':[('adv_parent', '=', True)]}"/>-->
+						<field name="date_type"/>
 						<field name="deadline_offset" required="1"/>
 						<field name="tag_ids" widget="many2many"/>
 					</field>
@@ -39,8 +41,7 @@
 			<field name="arch" type="xml">
 				<field name="parent_id" position="after">
 					<separator/>
-												<!-- FIXME: to use predefined categ ['Ads' & 'Interface to Portal'] -->
-                    <filter string="Ads Categories" name="ads_category" domain="[('id','child_of', [6, 11])]"/>
+                    <filter string="Ads Categories" name="ads_category" domain="[('id','child_of', [%(sale_advertising_order.advertising_category)d, %(sale_advertising_order.title_pricelist_category)d])]"/>
 				</field>
 			</field>
 		</record>
