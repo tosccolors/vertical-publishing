@@ -625,6 +625,7 @@ class SaleOrderLine(models.Model):
         if not self.advertising:
             return {'value': vals }
         if self.medium:
+            import pdb; pdb.set_trace()
             child_id = [(x.id != self.medium.id) and x.id for x in self.medium.child_id]
 
             if len(child_id) == 1:
@@ -632,7 +633,7 @@ class SaleOrderLine(models.Model):
             else:
                 vals['ad_class'] = False
                 data = {'ad_class': [('id', 'child_of', self.medium.id), ('id', '!=', self.medium.id)]}
-            titles = self.env['sale.advertising.issue'].search([('parent_id','=', False),('medium', '=', self.medium.id)]).ids
+            titles = self.env['sale.advertising.issue'].search([('parent_id','=', False),('medium', 'child_of', self.medium.id)]).ids
             if titles and len(titles) == 1:
                 vals['title'] = titles[0]
                 vals['title_ids'] = [(6, 0, [])]
