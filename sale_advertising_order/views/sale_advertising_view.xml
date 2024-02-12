@@ -395,14 +395,16 @@
                         </page>
                         <page string="Other Information">
                             <group>
-								<group string="Shipping Information" name="sale_shipping" groups="base.group_no_one">
-								</group>
                                 <group string="Sales Information" name="sales_person">
                                     <field name="user_id"/>
                                     <field name="team_id" options="{'no_create': True}"/>
-                                    <field name="partner_acc_mgr"/>
 									<field name="tag_ids" widget="many2many_tags"/>
                                     <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+
+                                </group>
+                                <group string="..." name="sales_person">
+                                    <field name="type_id" required="1"/>
+                                    <field name="partner_acc_mgr"/>
                                     <field name="analytic_account_id" attrs="{'invisible':[('state','=','sale'),('published_customer','!=', False)]}"
                                            context="{'default_partner_id':partner_invoice_id, 'default_name':name}" groups="analytic.group_analytic_accounting"/>
                                     <field name="nett_nett"/>
@@ -421,6 +423,8 @@
 									<field name="source_id" />
 									<field name="opportunity_id" help="Log in the chatter from which opportunity the order originates" />
                                 </group>
+								<group string="Shipping Information" name="sale_shipping" groups="base.group_no_one">
+								</group>
 
                             </group>
                         </page>
@@ -567,8 +571,12 @@
             <field name="view_mode">tree,form,calendar,pivot,graph</field>
             <field name="view_id" ref="view_order_form_advertising"/>
             <field name="search_view_id" ref="advertising_order_view_search_inherit_sale"/>
-            <field name="domain">[('advertising','=',True), ('state','not in',('draft','sent','cancel'))]</field>
-            <field name="context">{'default_advertising':True}</field>
+            <field name="domain"
+                   eval="[('type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True), ('state','not in',('draft','sent','cancel'))]"
+            />
+            <field name="context"
+                eval="{'default_advertising': 1, 'default_type_id': ref('sale_advertising_order.ads_sale_type')}"
+            />
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
                 Create a Quotation, the first step of a new sale.
@@ -595,6 +603,12 @@
         </record>
 
 
+<!--            <field name="domain"-->
+<!--                   eval="[('type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True),-->
+<!--                            ('state','in',('sale','done')),'|',('published_customer','=',active_id),-->
+<!--                                ('advertising_agency','=',active_id)]"-->
+<!--            />-->
+
         <!--Action for Advertising Sales smart button in Customers-->
         <record id="action_orders_advertising_smart_button" model="ir.actions.act_window">
             <field name="name">Advertising Sales Orders</field>
@@ -602,9 +616,8 @@
             <field name="view_mode">tree,form,calendar,graph</field>
             <field name="view_id" ref="view_order_form_advertising"/>
             <field name="search_view_id" ref="advertising_order_view_search_inherit_sale"/>
-            <field name="domain">[('advertising','=',True),('state','in',('sale','done')),'|',('published_customer','=',active_id),
-                                    ('advertising_agency','=',active_id)]</field>
-            <field name="context">{'default_advertising':True,'default_published_customer': active_id}</field>
+            <field name="context" model='sale.order' eval="obj()._ctx_4_action_orders_advertising_smart_button()"/>
+            <field name="domain" model='sale.order' eval="obj()._domain_4_action_orders_advertising_smart_button()"/>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
                 Create a Quotation, the first step of a new sale.
@@ -725,8 +738,12 @@
             <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
             <field name="view_id" ref="view_order_form_advertising"/>
             <field name="search_view_id" ref="advertising_order_view_search_inherit_quotation"/>
-            <field name="context">{'hide_sale': True, 'default_advertising':True}</field>
-            <field name="domain">[('advertising','=',True),('state','not in',('sale','done'))]</field>
+            <field name="domain"
+                   eval="[('type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True),('state','not in',('sale','done'))]"
+            />
+            <field name="context"
+                eval="{'default_advertising': 1, 'default_type_id': ref('sale_advertising_order.ads_sale_type'), 'hide_sale': 1}"
+            />
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
                 Create a Quotation, the first step of a new sale.
@@ -764,8 +781,12 @@
 			<field name="res_model">sale.order</field>
 			<field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_order_form_advertising"/>
-			<field name="domain">[('advertising','=',True),('published_customer','&lt;&gt;', False)]</field>
-            <field name="context">{'default_advertising' : True}</field>
+            <field name="domain"
+                   eval="[('type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True),('published_customer','&lt;&gt;', False)]"
+            />
+            <field name="context"
+                eval="{'default_advertising': 1, 'default_type_id': ref('sale_advertising_order.ads_sale_type')}"
+            />
 		</record>
 
         <record id="all_advertising_orders_action_form" model="ir.actions.act_window.view">
@@ -786,9 +807,8 @@
             <field name="name">Quotation</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">form,tree,graph</field>
-            <field name="domain">[('opportunity_id', '=', active_id), ('advertising','=',True)]</field>
-            <field name="context">{'search_default_opportunity_id': active_id,
-                'default_opportunity_id': active_id, 'default_advertising':True}</field>
+            <field name="domain" model='sale.order' eval="obj()._domain_4_sale_action_quotations_new_adv()"/>
+            <field name="context" model='sale.order' eval="obj()._ctx_4_sale_action_quotations_new_adv()"/>
         </record>
 
         <record id="sale_action_quotations_new_adv_form" model="ir.actions.act_window.view">
@@ -808,9 +828,8 @@
         <record id="sale_action_quotations_adv" model="ir.actions.act_window">
             <field name="name">Quotations</field>
             <field name="res_model">sale.order</field>
-            <field name="domain">[('opportunity_id', '=', active_id), ('advertising','=',True)]</field>
-            <field name="context">{'search_default_opportunity_id': [active_id],
-                'default_opportunity_id': active_id, 'default_advertising':True}</field>
+            <field name="domain" model='sale.order' eval="obj()._domain_4_sale_action_quotations_adv()"/>
+            <field name="context" model='sale.order' eval="obj()._ctx_4_sale_action_quotations_adv()"/>
         </record>
 
         <record id="sale_action_quotations_adv_form" model="ir.actions.act_window.view">
@@ -1257,7 +1276,9 @@
 			<field name="view_mode">tree,form,pivot</field>
             <field name="view_id" ref="view_adv_order_line_form"/>
             <field name="search_view_id" ref="view_advertising_sales_order_line_filter"/>
-			<field name="domain">[('advertising','=',True),('state','in',('sale','done'))]</field>
+            <field name="domain"
+                   eval="[('order_id.type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True),('state','in',('sale','done'))]"
+            />
 		</record>
 
         <record id="all_advertising_order_lines_action_tree" model="ir.actions.act_window.view">
@@ -1453,8 +1474,6 @@
 			<field name="domain">[('parent_id','=', False)]</field>
 
 		</record>
-
-
 
 
         <!-- sale.advertising.page -->
@@ -1676,8 +1695,12 @@
             <field name="view_ids"
                eval="[(5, 0, 0), (0, 0, {'view_mode': 'pivot', 'view_id': ref('sale_advertising_order.view_sale_order_pivot2')}),
                       (0, 0, {'view_mode': 'graph', 'view_id': ref('sale_advertising_order.view_sale_order_graph2')})]"/>
-            <field name="context">{'search_default_sales':1, 'search_default_my_sale_orders_filter':1}</field>
-            <field name="domain">[('advertising', '=', True)]</field>
+            <field name="domain"
+                   eval="[('type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True)]"
+            />
+            <field name="context"
+                eval="{'default_type_id': ref('sale_advertising_order.ads_sale_type'), 'search_default_sales':1, 'search_default_my_sale_orders_filter':1}"
+            />
             <field name="search_view_id" ref="sale_advertising_order.advertising_order_view_search_inherit_sale"/>
             <field name="help">From this report, you can have an overview of the sale confirmed with your customers. The search tool can also be used to personalise your Sales reports and so, match this analysis to your needs.</field>
         </record>
@@ -1798,7 +1821,9 @@
 			<field name="res_model">sale.order.line</field>
 			<field name="view_mode">tree,form,pivot</field>
             <field name="search_view_id" ref="sale_advertising_order.view_advertising_sales_order_line_filter"/>
-			<field name="domain">[('advertising','=',True),('state','in',('sale','done'))]</field>
+            <field name="domain"
+                   eval="[('order_id.type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True),('state','in',('sale','done'))]"
+            />
 		</record>
 
          <record id="ads_indeellijst_action_tree" model="ir.actions.act_window.view">

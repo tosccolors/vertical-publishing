@@ -25,6 +25,7 @@ from odoo import api, fields, models, _
 import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
 from datetime import datetime, timedelta
+from odoo.tools.translate import unquote
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -164,6 +165,58 @@ class SaleOrder(models.Model):
             result.update({'campaign_id': lead.campaign_id.id, 'source_id': lead.source_id.id, 'medium_id': lead.medium_id.id, 'tag_ids': [[6, False, lead.tag_ids.ids]]})
         return result
 
+    def _ctx_4_action_orders_advertising_smart_button(self):
+        " Context to use both active & ref"
+        ref = self.env.ref
+        active_id = unquote("active_id")
+
+        return {
+            'type_id': ref('sale_advertising_order.ads_sale_type').id,
+            'default_advertising': True,
+            'default_published_customer': active_id
+        }
+
+    def _domain_4_action_orders_advertising_smart_button(self):
+        " Domain to use both active & ref"
+        ref = self.env.ref
+        active_id = unquote("active_id")
+
+        return [('type_id','=', ref('sale_advertising_order.ads_sale_type').id), ('advertising','=',True),
+                            ('state','in',('sale','done')),'|',('published_customer','=',active_id),
+                            ('advertising_agency','=',active_id)]
+
+
+    def _ctx_4_sale_action_quotations_new_adv(self):
+        " Context to use both active & ref"
+        ref = self.env.ref
+        active_id = unquote("active_id")
+
+        return {'default_advertising': 1, 'default_type_id': ref('sale_advertising_order.ads_sale_type').id,
+                'search_default_opportunity_id': active_id,
+                'default_opportunity_id': active_id}
+
+    def _domain_4_sale_action_quotations_new_adv(self):
+        " Domain to use both active & ref"
+        ref = self.env.ref
+        active_id = unquote("active_id")
+
+        return [('type_id','=', ref('sale_advertising_order.ads_sale_type').id), ('opportunity_id', '=', active_id), ('advertising','=',True)]
+
+
+    def _ctx_4_sale_action_quotations_adv(self):
+        " Context to use both active & ref"
+        ref = self.env.ref
+        active_id = unquote("active_id")
+
+        return {'default_advertising': 1, 'default_type_id': ref('sale_advertising_order.ads_sale_type').id, 'search_default_opportunity_id': [active_id],
+                'default_opportunity_id': active_id}
+
+    def _domain_4_sale_action_quotations_adv(self):
+        " Domain to use both active & ref"
+        ref = self.env.ref
+        active_id = unquote("active_id")
+
+        return [('type_id','=', ref('sale_advertising_order.ads_sale_type').id), ('opportunity_id', '=', active_id), ('advertising','=',True)]
 
 
     # overridden:
@@ -625,6 +678,7 @@ class SaleOrderLine(models.Model):
         if not self.advertising:
             return {'value': vals }
         if self.medium:
+            import pdb; pdb.set_trace()
             child_id = [(x.id != self.medium.id) and x.id for x in self.medium.child_id]
 
             if len(child_id) == 1:
@@ -632,7 +686,7 @@ class SaleOrderLine(models.Model):
             else:
                 vals['ad_class'] = False
                 data = {'ad_class': [('id', 'child_of', self.medium.id), ('id', '!=', self.medium.id)]}
-            titles = self.env['sale.advertising.issue'].search([('parent_id','=', False),('medium', '=', self.medium.id)]).ids
+            titles = self.env['sale.advertising.issue'].search([('parent_id','=', False),('medium', 'child_of', self.medium.id)]).ids
             if titles and len(titles) == 1:
                 vals['title'] = titles[0]
                 vals['title_ids'] = [(6, 0, [])]

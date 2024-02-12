@@ -176,13 +176,6 @@
             <field name="arch" type="xml">
                 <form string="Opportunities" class="o_opportunity_form">
                     <header>
-                        <button string="New Quotation" name="%(sale_advertising_order.action_sale_order_type_wizard)d" type="action" class="oe_highlight" attrs="{'invisible': [('active', '=', False)]}"
-                        context="{'search_default_partner_id': partner_id,
-                                      'default_partner_id': partner_id,
-                                      'default_team_id': team_id,
-							'default_published_customer': published_customer,
-							'default_advertising_agency': ad_agency_id,
-							'default_advertising': True}"/>
 
                         <button name="action_set_won" string="Mark Won"
                                 type="object" class="oe_highlight o_wow"
@@ -692,15 +685,6 @@
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='%(crm.action_crm_lead2opportunity_partner)d']" position="attributes">
-                    <attribute name="name">%(sale_advertising_order.action_sale_order_type_wizard)d</attribute>
-                    <attribute name="context">{'search_default_partner_id': partner_id,
-                                                'default_partner_id': partner_id,
-                                                'default_published_customer': partner_id,
-                                                'default_customer_contact': partner_contact_id,
-                                                'default_team_id': team_id,
-                                               }</attribute>
-                </xpath>
                 <xpath expr="//div[@name='button_box']/button[3]" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>

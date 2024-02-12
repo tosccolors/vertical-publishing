@@ -111,8 +111,8 @@
 			<field name="arch" type="xml">
 				<xpath expr="//filter[last()]" position="after">
 					<separator/>
-												<!-- FIXME: to use predefined categ ['Ads' & 'Interface to Portal'] -->
-					<filter string="Ads products" name="filter_ads_products" domain="[('categ_id','child_of', [6, 11])]"/>
+					<filter string="Ads products" name="filter_ads_products"
+							domain="[('categ_id','child_of', [%(sale_advertising_order.advertising_category)d, %(sale_advertising_order.title_pricelist_category)d])]"/>
 				</xpath>
 			</field>
 		</record>
