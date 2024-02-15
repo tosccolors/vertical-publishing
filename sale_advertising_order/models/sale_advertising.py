@@ -678,7 +678,7 @@ class SaleOrderLine(models.Model):
         if not self.advertising:
             return {'value': vals }
         if self.medium:
-            import pdb; pdb.set_trace()
+            # import pdb; pdb.set_trace()
             child_id = [(x.id != self.medium.id) and x.id for x in self.medium.child_id]
 
             if len(child_id) == 1:

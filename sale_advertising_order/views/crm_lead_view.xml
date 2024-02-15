@@ -192,45 +192,46 @@
                             domain="['|', ('team_id', '=', team_id), ('team_id', '=', False)]" />
                     </header>
                     <sheet>
+<!--                            Deepa: Not needed for the moment-->
                         <div class="oe_button_box" name="button_box">
                             <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive"
                                     attrs="{'invisible': [('active', '=', True)]}">
                                 <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
                             </button>
-                            <button class="oe_stat_button" type="object"
-                                context="{'partner_id': partner_id}"
-                                name="action_schedule_meeting" icon="fa-calendar">
-                                <div class="o_stat_info">
-                                    <field name="meeting_count" class="o_stat_value"/>
-                                    <span class="o_stat_text" attrs="{'invisible': [('meeting_count', '&lt;', 2)]}"> Meetings</span>
-                                    <span class="o_stat_text" attrs="{'invisible': [('meeting_count', '&gt;', 1)]}"> Meeting</span>
-                                </div>
-                            </button>
-                            <button class="oe_stat_button" type="action"
-                                    name="%(sale_advertising_order.act_crm_lead_2_quotation)d" icon="fa-pencil-square-o"
-                                    context="{'default_partner_id':published_customer}">
-                                <div class="o_stat_info">
-                                    <field name="quotations_count" class="o_stat_value"/>
-                                    <span class="o_stat_text">Quote(s)</span>
-                                </div>
-                            </button>
-                            <button class="oe_stat_button" type="action"
-                                    name="%(sale_advertising_order.act_crm_lead_2_quotation_adv)d" icon="fa-pencil-square-o"
-                                    context="{'default_published_customer':published_customer}" groups="sale_advertising_order.group_advertising_sales_user">
-                                <div class="o_stat_info">
-                                    <field name="adv_quotations_count" class="o_stat_value"/>
-                                    <span class="o_stat_text">Adv. Quote(s)</span>
-                                </div>
-                            </button>
-                            <button class="oe_stat_button" type="action" attrs="{'invisible': [('sale_amount_total', '=', 0)]}"
-                                    name="%(sale_advertising_order.sale_action_quotations_adv)d" icon="fa-usd"
-                                    context="{'search_default_partner_id': partner_id, 'default_partner_id': partner_id, 'search_default_sales': 1}">
-                                <div class="o_form_field o_stat_info">
-                                    <span class="o_stat_value"><field name="sale_amount_total" widget="monetary" options="{'currency_field': 'company_currency'}"/></span>
-                                    <span class="o_stat_text"> Orders</span>
-                                </div>
-                            </button>
-                        </div>
+<!--                            <button class="oe_stat_button" type="object"-->
+<!--                                context="{'partner_id': partner_id}"-->
+<!--                                name="action_schedule_meeting" icon="fa-calendar">-->
+<!--                                <div class="o_stat_info">-->
+<!--                                    <field name="meeting_count" class="o_stat_value"/>-->
+<!--                                    <span class="o_stat_text" attrs="{'invisible': [('meeting_count', '&lt;', 2)]}"> Meetings</span>-->
+<!--                                    <span class="o_stat_text" attrs="{'invisible': [('meeting_count', '&gt;', 1)]}"> Meeting</span>-->
+<!--                                </div>-->
+<!--                            </button>-->
+<!--                            <button class="oe_stat_button" type="action"-->
+<!--                                    name="%(sale_advertising_order.act_crm_lead_2_quotation)d" icon="fa-pencil-square-o"-->
+<!--                                    context="{'default_partner_id':published_customer}">-->
+<!--                                <div class="o_stat_info">-->
+<!--                                    <field name="quotations_count" class="o_stat_value"/>-->
+<!--                                    <span class="o_stat_text">Quote(s)</span>-->
+<!--                                </div>-->
+<!--                            </button>-->
+<!--                            <button class="oe_stat_button" type="action"-->
+<!--                                    name="%(sale_advertising_order.act_crm_lead_2_quotation_adv)d" icon="fa-pencil-square-o"-->
+<!--                                    context="{'default_published_customer':published_customer}" groups="sale_advertising_order.group_advertising_sales_user">-->
+<!--                                <div class="o_stat_info">-->
+<!--                                    <field name="adv_quotations_count" class="o_stat_value"/>-->
+<!--                                    <span class="o_stat_text">Adv. Quote(s)</span>-->
+<!--                                </div>-->
+<!--                            </button>-->
+<!--                            <button class="oe_stat_button" type="action" attrs="{'invisible': [('sale_amount_total', '=', 0)]}"-->
+<!--                                    name="%(sale_advertising_order.sale_action_quotations_adv)d" icon="fa-usd"-->
+<!--                                    context="{'search_default_partner_id': partner_id, 'default_partner_id': partner_id, 'search_default_sales': 1}">-->
+<!--                                <div class="o_form_field o_stat_info">-->
+<!--                                    <span class="o_stat_value"><field name="sale_amount_total" widget="monetary" options="{'currency_field': 'company_currency'}"/></span>-->
+<!--                                    <span class="o_stat_text"> Orders</span>-->
+<!--                                </div>-->
+<!--                            </button>-->
+<!--                        </div>-->
                         <div class="label label-danger pull-right" attrs="{'invisible': [('active', '=', True)]}">Lost</div>
                         <div class="label label-success pull-right" >Won</div>
                         <!--<div class="oe_title">
@@ -252,8 +253,8 @@
                                         <span>%%</span>
                                     </div>
                                 </div>
-                            </h2>
-                        </div>-->
+                            </h2> -->
+                        </div>
                         <group>
                             <group>
                                 <field name="partner_name" string="Advertiser Name"
@@ -581,28 +582,29 @@
             </field>
         </record>-->
 
+<!--        Deprecated Views | deepa-->
         <record id="crm_case_form_view_oppor" model="ir.ui.view">
             <field name="name">crm.lead.form.opportunity.sao</field>
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
             <field name="arch" type="xml">
-                <xpath expr="//page[@name='lead']/group/group/field[@name='partner_name']" position="replace" >
-                </xpath>
-                <xpath expr="//sheet/group/group/field[@name='partner_id']" position="after" >
-                    <field name="partner_name"/>
-                    <field name="partner_contact_id" string="Contact Person" context="{'default_parent_id': partner_id}"
-                           domain="[('is_company', '=', False), (('customer_rank', '>', 0)),('parent_id', '=', partner_id),('type', '=', 'contact')]"/>
-                    <label for="contact_name"/>
-                    <div class="o_row">
-                        <field name="contact_name"/>
-                        <field name="title" placeholder="Title" domain="[]" options='{"no_open": True}'/>
-                    </div>
-                </xpath>
+<!--                <xpath expr="//page[@name='lead']/group/group/field[@name='partner_name']" position="replace" >-->
+<!--                </xpath>-->
+<!--                <xpath expr="//sheet/group/group/field[@name='partner_id']" position="after" >-->
+<!--                    <field name="partner_name"/>-->
+<!--                    <field name="partner_contact_id" string="Contact Person" context="{'default_parent_id': partner_id}"-->
+<!--                           domain="[('is_company', '=', False), (('customer_rank', '>', 0)),('parent_id', '=', partner_id),('type', '=', 'contact')]"/>-->
+<!--                    <label for="contact_name"/>-->
+<!--                    <div class="o_row">-->
+<!--                        <field name="contact_name"/>-->
+<!--                        <field name="title" placeholder="Title" domain="[]" options='{"no_open": True}'/>-->
+<!--                    </div>-->
+<!--                </xpath>-->
                 <!--<xpath expr="//group[@name='lead_info']/group[1]/group[2]/label[@for='contact_name']" position="replace" />
                 <xpath expr="//page[@name='lead']/group[1]/group[2]/div[1]" position="replace" />-->
-                <xpath expr="//field[@name='partner_id']" position="attributes">
-                    <attribute name="domain">[(('customer_rank', '>', 0)), ('parent_id', '=', False)]</attribute>
-                </xpath>
+<!--                <xpath expr="//field[@name='partner_id']" position="attributes">-->
+<!--                    <attribute name="domain">[(('customer_rank', '>', 0)), ('parent_id', '=', False)]</attribute>-->
+<!--                </xpath>-->
                 <!--<xpath expr="//sheet/group/group[2]/label[@for='next_activity_id']" position="before">
                     <field name="is_activity" readonly="True" />
                 </xpath>-->
@@ -612,37 +614,39 @@
                 <xpath expr="//sheet/group/group[2]/div/div/field[@name='date_action']" position="attributes" >
                     <attribute name="attrs" >{'invisible':[('next_activity_id', '=', False)],'required':[('next_activity_id', '!=', False)]}</attribute>
                 </xpath>-->
-                <xpath expr="//sheet/notebook/page[@name='lead']/group/group[1]/div" position="after" >
-                    <field name="industry_id" placeholder="Sector"
-                           options='{"no_open": True}'/>
-                    <field name="secondary_industry_ids" widget="many2many_tags"/>
-                </xpath>
-                <xpath expr="//sheet/notebook/page[1]" position="replace"></xpath>
-                <xpath expr="//sheet/notebook/page[@name='lead']" position="after">
-                    <page string="Internal Notes">
-                        <field name="description"/>
-                    </page>
-                </xpath>
-                <xpath expr="//field[@name='mobile']" position="replace"/>
-                <xpath expr="//field[@name='phone']" position="after">
-                    <field name="mobile"/>
-                </xpath>
-                <xpath expr="//field[@name='user_id']" position="after">
-                    <field name="name_salesperson"/>
-                </xpath>
+<!--                <xpath expr="//sheet/notebook/page[@name='lead']/group/group[1]/div" position="after" >-->
+<!--                    <field name="industry_id" placeholder="Sector"-->
+<!--                           options='{"no_open": True}'/>-->
+<!--                    <field name="secondary_industry_ids" widget="many2many_tags"/>-->
+<!--                </xpath>-->
+<!--                <xpath expr="//sheet/notebook/page[1]" position="replace"></xpath>-->
+<!--                <xpath expr="//sheet/notebook/page[@name='lead']" position="after">-->
+<!--                    <page string="Internal Notes">-->
+<!--                        <field name="description"/>-->
+<!--                    </page>-->
+<!--                </xpath>-->
+<!--                <xpath expr="//field[@name='mobile']" position="replace"/>-->
+<!--                <xpath expr="//field[@name='phone']" position="after">-->
+<!--                    <field name="mobile"/>-->
+<!--                </xpath>-->
+<!--                Deprecated | deepa -->
+<!--                <xpath expr="//field[@name='user_id']" position="after">-->
+<!--                    <field name="name_salesperson"/>-->
+<!--                </xpath>-->
             </field>
         </record>
 
-        <record id="crm_case_form_view_leads_inherited" model="ir.ui.view">
-            <field name="name">crm.lead.form.lead</field>
-            <field name="model">crm.lead</field>
-            <field name="inherit_id" ref="crm.crm_lead_view_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='user_id']" position="after">
-                    <field name="name_salesperson"/>
-                </xpath>
-            </field>
-        </record>
+<!--        NOT NEEDED FOR NOW &#45;&#45; deepa-->
+<!--        <record id="crm_case_form_view_leads_inherited" model="ir.ui.view">-->
+<!--            <field name="name">crm.lead.form.lead</field>-->
+<!--            <field name="model">crm.lead</field>-->
+<!--            <field name="inherit_id" ref="crm.crm_lead_view_form"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <xpath expr="//field[@name='user_id']" position="after">-->
+<!--                    <field name="name_salesperson"/>-->
+<!--                </xpath>-->
+<!--            </field>-->
+<!--        </record>-->
 
 
         <!--view not found in crm_industry-->
@@ -680,57 +684,59 @@
             <field name="domain">[('lead_id', '=', active_id)]</field>
         </record>
 
+        <!-- DEPERCATED FOR NOW | deepa               -->
         <record id="crm_case_form_view_oppor_button" model="ir.ui.view">
             <field name="name">crm.lead.oppor.inherited.crm.button</field>
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
             <field name="arch" type="xml">
-                <xpath expr="//div[@name='button_box']/button[3]" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='sale_amount_total']" position="replace"/>
+<!--                <xpath expr="//div[@name='button_box']/button[3]" position="attributes">-->
+<!--                    <attribute name="invisible">1</attribute>-->
+<!--                </xpath>-->
+<!--                <xpath expr="//field[@name='sale_amount_total']" position="replace"/>-->
                <!-- <xpath expr="//div[@name='button_box']/button[4]" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>-->
-                <xpath expr="//button[@name='action_schedule_meeting']" position="after">
-                    <button class="oe_stat_button" type="action"
-                        name="%(sale_advertising_order.crm_activity_report_action_tree2)d"
-                        icon="fa-clock-o" context="{'search_default_activities': 1}" >
-                        <field string="Activities Log" name="activities_count" widget="statinfo"/>
-                    </button>
-                    <button class="oe_stat_button" type="action"
-                            name="%(sale_advertising_order.act_crm_lead_2_quotation)d" icon="fa-pencil-square-o"
-                            context="{'default_partner_id': partner_id, 'search_default_quotations': 1}">
-                        <div class="o_stat_info">
-                            <field name="quotations_count" class="o_stat_value"/>
-                            <span class="o_stat_text"> Quote(s) </span>
-                        </div>
-                    </button>
-                    <button class="oe_stat_button" type="action"
-                            name="%(sale_advertising_order.act_crm_lead_2_quotation_adv)d" icon="fa-pencil-square-o" groups="sale_advertising_order.group_advertising_sales_user"
-                            context="{'default_partner_id': partner_id, 'default_published_customer': partner_id, 'default_customer_contact': partner_contact_id, 'search_default_quotations': 1}">
-                        <div class="o_stat_info">
-                            <field name="adv_quotations_count" class="o_stat_value"/>
-                            <span class="o_stat_text"> Adv. Quote(s) </span>
-                        </div>
-                    </button>
-                    <button class="oe_stat_button" type="action" attrs="{'invisible': [('sale_amount_total', '=', 0)]}"
-                            name="%(sale_advertising_order.act_crm_lead_2_sale_orders)d" icon="fa-usd"
-                            context="{'default_partner_id': partner_id}">
-                        <div class="o_form_field o_stat_info">
-                            <span class="o_stat_value"><field name="sale_amount_total" widget="monetary" options="{'currency_field': 'company_currency'}"/></span>
-                            <span class="o_stat_text"> Orders</span>
-                        </div>
-                    </button>
-                    <button class="oe_stat_button" type="action" attrs="{'invisible': [('adv_sale_amount_total', '=', 0)]}"
-                            name="%(sale_advertising_order.act_crm_lead_2_sale_orders_adv)d" icon="fa-usd" groups="sale_advertising_order.group_advertising_sales_user"
-                            context="{'default_partner_id': partner_id, 'default_published_customer': partner_id, 'default_customer_contact': partner_contact_id}">
-                        <div class="o_form_field o_stat_info">
-                            <span class="o_stat_value"><field name="adv_sale_amount_total" widget="monetary" options="{'currency_field': 'company_currency'}"/></span>
-                            <span class="o_stat_text"> Adv. Orders</span>
-                        </div>
-                    </button>
-                </xpath>
+                    <!-- NOTE NEEDED FOR NOW | deepa               -->
+<!--                <xpath expr="//button[@name='action_schedule_meeting']" position="after">-->
+<!--                    <button class="oe_stat_button" type="action"-->
+<!--                        name="%(sale_advertising_order.crm_activity_report_action_tree2)d"-->
+<!--                        icon="fa-clock-o" context="{'search_default_activities': 1}" >-->
+<!--                        <field string="Activities Log" name="activities_count" widget="statinfo"/>-->
+<!--                    </button>-->
+<!--                    <button class="oe_stat_button" type="action"-->
+<!--                            name="%(sale_advertising_order.act_crm_lead_2_quotation)d" icon="fa-pencil-square-o"-->
+<!--                            context="{'default_partner_id': partner_id, 'search_default_quotations': 1}">-->
+<!--                        <div class="o_stat_info">-->
+<!--                            <field name="quotations_count" class="o_stat_value"/>-->
+<!--                            <span class="o_stat_text"> Quote(s) </span>-->
+<!--                        </div>-->
+<!--                    </button>-->
+<!--                    <button class="oe_stat_button" type="action"-->
+<!--                            name="%(sale_advertising_order.act_crm_lead_2_quotation_adv)d" icon="fa-pencil-square-o" groups="sale_advertising_order.group_advertising_sales_user"-->
+<!--                            context="{'default_partner_id': partner_id, 'default_published_customer': partner_id, 'default_customer_contact': partner_contact_id, 'search_default_quotations': 1}">-->
+<!--                        <div class="o_stat_info">-->
+<!--                            <field name="adv_quotations_count" class="o_stat_value"/>-->
+<!--                            <span class="o_stat_text"> Adv. Quote(s) </span>-->
+<!--                        </div>-->
+<!--                    </button>-->
+<!--                    <button class="oe_stat_button" type="action" attrs="{'invisible': [('sale_amount_total', '=', 0)]}"-->
+<!--                            name="%(sale_advertising_order.act_crm_lead_2_sale_orders)d" icon="fa-usd"-->
+<!--                            context="{'default_partner_id': partner_id}">-->
+<!--                        <div class="o_form_field o_stat_info">-->
+<!--                            <span class="o_stat_value"><field name="sale_amount_total" widget="monetary" options="{'currency_field': 'company_currency'}"/></span>-->
+<!--                            <span class="o_stat_text"> Orders</span>-->
+<!--                        </div>-->
+<!--                    </button>-->
+<!--                    <button class="oe_stat_button" type="action" attrs="{'invisible': [('adv_sale_amount_total', '=', 0)]}"-->
+<!--                            name="%(sale_advertising_order.act_crm_lead_2_sale_orders_adv)d" icon="fa-usd" groups="sale_advertising_order.group_advertising_sales_user"-->
+<!--                            context="{'default_partner_id': partner_id, 'default_published_customer': partner_id, 'default_customer_contact': partner_contact_id}">-->
+<!--                        <div class="o_form_field o_stat_info">-->
+<!--                            <span class="o_stat_value"><field name="adv_sale_amount_total" widget="monetary" options="{'currency_field': 'company_currency'}"/></span>-->
+<!--                            <span class="o_stat_text"> Adv. Orders</span>-->
+<!--                        </div>-->
+<!--                    </button>-->
+<!--                </xpath>-->
             </field>
         </record>
 
