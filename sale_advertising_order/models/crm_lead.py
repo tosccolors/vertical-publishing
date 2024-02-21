@@ -207,8 +207,8 @@ class Lead(models.Model):
         if not team_id:
             team_id = self.team_id.id if self.team_id else False
 
+            # 'planned_revenue': self.planned_revenue, FIXME: Check if needed.
         val = {
-            'planned_revenue': self.planned_revenue,
             'probability': self.probability,
             'name': self.name,
             'partner_name': self.partner_name,
@@ -224,11 +224,11 @@ class Lead(models.Model):
             'function': self.function,
             'phone': self.phone,
             'mobile': self.mobile,
-            'fax': self.fax,
+            # 'fax': self.fax,
             'tag_ids': [(6, 0, [tag_id.id for tag_id in self.tag_ids])],
             'user_id': (self.user_id and self.user_id.id),
             'type': 'opportunity',
-            'date_action': fields.datetime.now(),
+            # 'date_action': fields.datetime.now(),
             'date_open': fields.datetime.now(),
 
         }

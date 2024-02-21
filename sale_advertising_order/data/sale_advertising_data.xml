@@ -9,48 +9,42 @@
     	</record>
 
 
-	<!-- Products Data -->
+		<!-- Products Data -->
 		<record id="attribute_title" model="product.attribute">
 			<field name="name">title</field>
 			<field name="sequence">1</field>
 		</record>
 		<record id="advertising_category" model="product.category">
 			<field name="name">Ads</field>
-            <!--<field name="type">view</field>-->
 			<field name="date_type">date</field>
-			<field name="adv_parent">True</field>
+<!--			<field name="adv_parent">True</field>-->
 		</record>
 
 		<record id="newspaper_advertising_category" model="product.category">
 			<field name="name">Newspapers/Specials</field>
-            <!--<field name="type">view</field>-->
 			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
 			<field name="date_type">date</field>
 		</record>
 
 		<record id="magazine_advertising_category" model="product.category">
 			<field name="name">Magazines</field>
-            <!--<field name="type">view</field>-->
 			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
 			<field name="date_type">date</field>
 		</record>
 		<record id="magazine_online_advertising_category" model="product.category">
-			<field name="name">Magazines Online</field>
-            <!--<field name="type">view</field>-->
+			<field name="name">Digital</field>
 			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
 			<field name="date_type">validity</field>
 		</record>
 
 		<record id="online_advertising_category" model="product.category">
-			<field name="name">Online</field>
-            <!--<field name="type">view</field>-->
+			<field name="name">Other</field>
 			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
-			<field name="date_type">validity</field>
+			<field name="date_type">date</field>
 		</record>
 
 		<record id="title_pricelist_category" model="product.category">
-			<field name="name">Title Pricelist</field>
-            <!--<field name="type">view</field>-->
+			<field name="name">Interface to Portal</field>
 		</record>
 
 	</data>

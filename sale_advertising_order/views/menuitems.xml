@@ -9,13 +9,13 @@
 
 
         <!--CRM-->
-        <menuitem id="menu_crm_advertising" name="CRM" parent="sale.sale_menu_root"
-                  groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"
-                  sequence="2"/>
+<!--        <menuitem id="menu_crm_advertising" name="CRM" parent="sale.sale_menu_root"-->
+<!--                  groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"-->
+<!--                  sequence="2"/>-->
 
-        <!--CRM: Customers-->
-        <menuitem id="menu_partner_form1" parent="menu_crm_advertising"
-                  action="action_partner_form_crm" sequence="2"/>
+<!--        &lt;!&ndash;CRM: Customers&ndash;&gt;-->
+<!--        <menuitem id="menu_partner_form1" parent="menu_crm_advertising"-->
+<!--                  action="action_partner_form_crm" sequence="2"/>-->
 
             <!--need to check w.r.t v14-->
         <!--<menuitem id="crm_lead_menu_activities2" name="Next Activities" parent="menu_advsales"-->
@@ -27,8 +27,8 @@
                   action="action_your_pipeline_advertising" sequence="4"/>
 -->
             <!--CRM: Leads-->
-        <menuitem id="menu_crm_leads_adv" name="Leads" parent="menu_crm_advertising"
-                  action="crm.crm_lead_all_leads" sequence="1" groups="crm.group_use_lead"/>
+<!--        <menuitem id="menu_crm_leads_adv" name="Leads" parent="menu_crm_advertising"-->
+<!--                  action="crm.crm_lead_all_leads" sequence="1" groups="crm.group_use_lead"/>-->
 
              <!--need to check w.r.t v14-->
             <!--CRM: Next Activities-->
@@ -37,53 +37,53 @@
                   action="crm.crm_lead_action_activities" sequence="5" />
 -->
         <!--Regular Sales Customers-->
-        <menuitem id="sales_team.menu_partner_form" parent="crm.crm_menu_sales"
-                  action="base.action_partner_form" sequence="3" groups="group_regular_sales_crm_menus"/>
+<!--        <menuitem id="sales_team.menu_partner_form" parent="crm.crm_menu_sales"-->
+<!--                  action="base.action_partner_form" sequence="3" groups="group_regular_sales_crm_menus"/>-->
 
-        <menuitem id="menu_product_template_action2" parent="menu_advsales"
-                  action="product.product_template_action" sequence="13" />
+<!--        <menuitem id="menu_product_template_action2" parent="menu_advsales"-->
+<!--                  action="product.product_template_action" sequence="13" />-->
 
-        <menuitem id="menu_sale_order2" name="Advertising Sales Orders" parent="menu_advsales"
-                  action="action_orders_advertising"
-                  groups="sale_advertising_order.group_advertising_sales_user" sequence="12" />
+<!--        <menuitem id="menu_sale_order2" name="Advertising Sales Orders" parent="menu_advsales"-->
+<!--                  action="action_orders_advertising"-->
+<!--                  groups="sale_advertising_order.group_advertising_sales_user" sequence="12" />-->
 
-        <menuitem id="menu_sale_quotations2" parent="menu_advsales"
-                  action="action_quotations_advertising" sequence="11"/>
+<!--        <menuitem id="menu_sale_quotations2" parent="menu_advsales"-->
+<!--                  action="action_quotations_advertising" sequence="11"/>-->
 
-        <menuitem name="All Advertising Sale Order Lines" id="menu_sale_advertising_order_lines" parent="sale.menu_sale_invoicing"
-                  groups="sale_advertising_order.group_advertising_sales_user" action="all_advertising_order_lines_action"/>
+<!--        <menuitem name="All Advertising Sale Order Lines" id="menu_sale_advertising_order_lines" parent="sale.menu_sale_invoicing"-->
+<!--                  groups="sale_advertising_order.group_advertising_sales_user" action="all_advertising_order_lines_action"/>-->
 
-        <menuitem name="Advertising Issue" id="menu_sale_advertising_issue" parent="sale.menu_sale_config"
-                  action="action_sale_advertising_issue" groups="sale_advertising_order.group_advertising_sales_user"/>
+<!--        <menuitem name="Advertising Issue" id="menu_sale_advertising_issue" parent="sale.menu_sale_config"-->
+<!--                  action="action_sale_advertising_issue" groups="sale_advertising_order.group_advertising_sales_user"/>-->
 
-        <menuitem name="Advertising Pages" id="menu_sale_advertising_pages" parent="sale.menu_sale_config"
-                  action="action_sale_advertising_page" groups="sale_advertising_order.group_advertising_sales_user"/>
+<!--        <menuitem name="Advertising Pages" id="menu_sale_advertising_pages" parent="sale.menu_sale_config"-->
+<!--                  action="action_sale_advertising_page" groups="sale_advertising_order.group_advertising_sales_user"/>-->
 
-        <menuitem name="Advertising Page Availability" id="menu_sale_advertising_available" parent="sale_advertising_order.menu_advsales"
-                  action="action_sale_advertising_available" groups="sale_advertising_order.group_advertising_sales_user"/>
+<!--        <menuitem name="Advertising Page Availability" id="menu_sale_advertising_available" parent="sale_advertising_order.menu_advsales"-->
+<!--                  action="action_sale_advertising_available" groups="sale_advertising_order.group_advertising_sales_user"/>-->
 
-        <menuitem name="Discount Reasons" id="menu_discount_reason" parent="sale.menu_sale_config"
-                  action="action_discount_reason" groups="sale_advertising_order.group_advertising_sales_user"/>
+<!--        <menuitem name="Discount Reasons" id="menu_discount_reason" parent="sale.menu_sale_config"-->
+<!--                  action="action_discount_reason" groups="sale_advertising_order.group_advertising_sales_user"/>-->
 
-        <menuitem name="Advertising Proof" id="menu_sale_advertising_proof"
-				  parent="menu_advsales" action="action_sale_advertising_proof" groups="base.group_no_one"/>
+<!--        <menuitem name="Advertising Proof" id="menu_sale_advertising_proof"-->
+<!--				  parent="menu_advsales" action="action_sale_advertising_proof" groups="base.group_no_one"/>-->
 
         <!--
             Menus: Inherited:
         -->
 
-        <menuitem id="crm.crm_menu_sales" name="Sales" parent="sale.sale_menu_root" groups="sale_advertising_order.group_regular_sales_user"
-                  sequence="5"/>
-        <menuitem id="sale.menu_sale_order_invoice" action="sale.action_orders_to_invoice" parent="sale.menu_sale_invoicing"
-                  groups="sale_advertising_order.group_regular_sales_user" sequence="2"/>
-        <menuitem id="sale.menu_sale_order_upselling" action="sale.action_orders_upselling" parent="sale.menu_sale_invoicing"
-                  groups="sale_advertising_order.group_regular_sales_user" sequence="5"/>
-        <menuitem id="menu_products_adv" action="product.product_normal_action_sell" parent="menu_advsales" groups="product.group_product_variant" sequence="99"/>
+<!--        <menuitem id="crm.crm_menu_sales" name="Sales" parent="sale.sale_menu_root" groups="sale_advertising_order.group_regular_sales_user"-->
+<!--                  sequence="5"/>-->
+<!--        <menuitem id="sale.menu_sale_order_invoice" action="sale.action_orders_to_invoice" parent="sale.menu_sale_invoicing"-->
+<!--                  groups="sale_advertising_order.group_regular_sales_user" sequence="2"/>-->
+<!--        <menuitem id="sale.menu_sale_order_upselling" action="sale.action_orders_upselling" parent="sale.menu_sale_invoicing"-->
+<!--                  groups="sale_advertising_order.group_regular_sales_user" sequence="5"/>-->
+<!--        <menuitem id="menu_products_adv" action="product.product_normal_action_sell" parent="menu_advsales" groups="product.group_product_variant" sequence="99"/>-->
 
 
         <!--CRM: Activities Log-->
-        <menuitem id="menu_activities_log" name="Activities Log" parent="menu_crm_advertising" groups="sales_team.group_sale_salesman"
-                  action="crm_activity_report_action_tree" sequence="6"/>
+<!--        <menuitem id="menu_activities_log" name="Activities Log" parent="menu_crm_advertising" groups="sales_team.group_sale_salesman"-->
+<!--                  action="crm_activity_report_action_tree" sequence="6"/>-->
 
 	</data>
 </odoo>

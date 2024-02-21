@@ -10,6 +10,7 @@
 			 	<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
 				<field name="arch" type="xml">
 					<field name="display_name" position="replace">
+						<field name="display_name" invisible="1"/>
 						<field name="complete_name" />
 						<field name="date_type" />
 						<field name="deadline_offset" />
@@ -24,17 +25,38 @@
 			 	<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
 				<field name="arch" type="xml">
 					<field name="parent_id" position="after">
-						<field name="adv_parent" attrs="{'invisible':[('parent_id', '!=', False)]}"/>
-						<field name="date_type" attrs="{'required':[('adv_parent', '=', True)]}"/>
+<!--						<field name="adv_parent" attrs="{'invisible':[('parent_id', '!=', False)]}"/>-->
+<!--						<field name="date_type" attrs="{'required':[('adv_parent', '=', True)]}"/>-->
+						<field name="date_type"/>
 						<field name="deadline_offset" required="1"/>
 						<field name="tag_ids" widget="many2many"/>
 					</field>
 				</field>
 		 </record>
 
+		<record model="ir.ui.view" id="product_category_search_view">
+			<field name="name">product.category.search.advertising</field>
+			<field name="model">product.category</field>
+			<field name="inherit_id" ref="product.product_category_search_view" />
+			<field name="arch" type="xml">
+				<field name="parent_id" position="after">
+					<separator/>
+                    <filter string="Ads Categories" name="ads_category" domain="[('id','child_of', [%(sale_advertising_order.advertising_category)d, %(sale_advertising_order.title_pricelist_category)d])]"/>
+				</field>
+			</field>
+		</record>
+
+        <record id="product_category_action_form_ads" model="ir.actions.act_window">
+            <field name="name">Product Categories</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.category</field>
+			<field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="product.product_category_search_view"/>
+            <field name="view_id" ref="product_category_tree_view_inh"/>
+            <field name="context">{'search_default_ads_category':1}</field>
+        </record>
+
 		<!-- Product.template Views -->
-
-
 		<record id="product_template_tree_view_advertising" model="ir.ui.view">
 		   	<field name="name">product.template.product.tree</field>
 		   	<field name="model">product.template</field>
@@ -82,6 +104,62 @@
 				</page>
 			</field>
 		 </record>
+
+		<record id="product_template_search_view_inherit" model="ir.ui.view">
+			<field name="model">product.template</field>
+			<field name="inherit_id" ref="product.product_template_search_view" />
+			<field name="arch" type="xml">
+				<xpath expr="//filter[last()]" position="after">
+					<separator/>
+					<filter string="Ads products" name="filter_ads_products"
+							domain="[('categ_id','child_of', [%(sale_advertising_order.advertising_category)d, %(sale_advertising_order.title_pricelist_category)d])]"/>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="product_template_action_ads" model="ir.actions.act_window">
+			<field name="name">Products</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">product.template</field>
+			<field name="view_mode">kanban,tree,form</field>
+			<field name="view_id" ref="product.product_template_kanban_view"/>
+			<field name="search_view_id" ref="product.product_template_search_view"/>
+			<field name="context">{"search_default_filter_to_sell":1, "search_default_filter_ads_products":1}</field>
+			<field name="help" type="html">
+				<p class="o_view_nocontent_smiling_face">
+					Create a new product
+				</p><p>
+					You must define a product for everything you sell or purchase,
+					whether it's a storable product, a consumable or a service.
+				</p>
+			</field>
+		</record>
+
+
+
+		<!--
+			Product Variant:
+		-->
+
+        <record id="product_normal_action_sell_ads" model="ir.actions.act_window">
+            <field name="name">Product Variants</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.product</field>
+            <field name="view_mode">kanban,tree,form,activity</field>
+            <field name="context">{"search_default_filter_to_sell":1, "search_default_filter_ads_products":1}</field>
+            <field name="view_id" ref="product.product_product_tree_view"/>
+            <field name="search_view_id" ref="product.product_search_form_view"/>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new product variant
+              </p><p>
+                You must define a product for everything you sell, whether it's a physical product,
+                a consumable or a service you offer to customers.
+                The product form contains information to simplify the sale process:
+                price, notes in the quotation, accounting data, procurement methods, etc.
+              </p>
+            </field>
+        </record>
 
 	</data>
 </odoo>

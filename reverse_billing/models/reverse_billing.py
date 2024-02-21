@@ -255,7 +255,7 @@ class RevBilStatementOfWork(models.Model):
                               help="Gives the sequence of this line when displaying the statement of work.")
     name = fields.Char('Description', required=True, size=64)
     page_number = fields.Char('Pgnr', size=32)
-    nr_of_columns = fields.Float('#Cols', digits=dp.get_precision('Number of Columns'), required=True)
+    nr_of_columns = fields.Float('#Cols', digits='Number of Columns', required=True)
     batch_id = fields.Many2one('sow.batch', 'Batch Reference', index=True)
     issue_id = fields.Many2one('sale.advertising.issue', 'Issue Reference', index=True, required=True)
     partner_id = fields.Many2one('res.partner', 'Freelancer', required=True)
@@ -268,15 +268,15 @@ class RevBilStatementOfWork(models.Model):
                                  domain=[('internal_type','<>','view')],
                                  help="The income or expense account related to the selected product.")
     # uos_id = fields.Many2one('product.uom', 'Unit of Measure', ondelete='set null', index=True)
-    price_unit = fields.Float('Unit Price', required=True, digits= dp.get_precision('Product Price'), default=0.0)
-    quantity = fields.Float('Quantity', digits= dp.get_precision('Product Unit of Measure'),
+    price_unit = fields.Float('Unit Price', required=True, digits='Product Price', default=0.0)
+    quantity = fields.Float('Quantity', digits='Product Unit of Measure',
                             required=True, default=1)
     analytic_account_id = fields.Many2one(related='issue_id.analytic_account_id', relation='account.analytic.account',
                                           string='Analytic Account', store=True, readonly=True )
     date_publish = fields.Date(related='issue_id.issue_date', readonly=True, string='Publishing Date', store=True,)
     company_id = fields.Many2one(related='batch_id.company_id', relation='res.company',string='Company', store=True,
                                  readonly=True)
-    price_subtotal = fields.Float(compute='_amount_line', string='Amount',digits = dp.get_precision('Account'),
+    price_subtotal = fields.Float(compute='_amount_line', string='Amount',digits='Account',
                                   store=True)
     estimated_price = fields.Float('Estimate',)
     invoice_line_id = fields.Many2one('account.move.line', 'Invoice Line', readonly=True)

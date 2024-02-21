@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!--
+            Menu: Advertising Sales (Root)
+        -->
+
+        <menuitem id="advertising_sale_menu_root"
+            name="Advertising Sales"
+            web_icon="sale_advertising_order,static/description/adsale_icon.png"
+            active="True"
+            sequence="6"/>
+
+        <!--
+                Orders
+        -->
+
+        <menuitem id="menu_advertising_order" name="Orders" parent="advertising_sale_menu_root"
+                  groups="group_advertising_sales_user" sequence="1"/>
+
+            <menuitem id="menu_sale_quotations3" name="Quotations"
+                      parent="menu_advertising_order" action="action_quotations_advertising" sequence="1"/>
+
+            <menuitem id="menu_sale_order3" name="Orders"
+                      parent="menu_advertising_order" action="action_orders_advertising" sequence="2"/>
+
+            <menuitem id="menu_ads_schedule" name="Schedules"
+                      parent="menu_advertising_order" action="ads_indeellijst_action" sequence="3"/>
+
+            <menuitem id="menu_proof_delivery_list_action" name="Proof Number Delivery List"
+                      parent="menu_advertising_order" action="nsm_proof_delivery_list_action" sequence="4"/>
+
+            <menuitem id="menu_partners3"  name="Customers"
+                      parent="menu_advertising_order" action="base.action_partner_form" sequence="5"/>
+
+
+
+
+        <!--
+                  To Invoice
+        -->
+        <menuitem id="menu_advertising_toinvoice"  name="To Invoice"  parent="advertising_sale_menu_root"
+                groups="group_advertising_sales_user"  sequence="2"/>
+
+            <menuitem id="menu_sale_advertising_order_lines2" name="Order Lines to Invoice"
+                  parent="menu_advertising_toinvoice" action="all_advertising_order_lines_action"  sequence="1"/>
+
+        <!--
+                 Product
+        -->
+        <menuitem id="menu_advertising_product" name="Products" parent="advertising_sale_menu_root"
+                groups="group_advertising_sales_user"  sequence="3"/>
+
+            <menuitem id="menu_product_template_action" name="Products"
+                  parent="menu_advertising_product" action="product_template_action_ads"  sequence="1"/>
+
+            <menuitem id="menu_product_normal_action_sell" name="Product Variants"
+                  parent="menu_advertising_product" action="product_normal_action_sell_ads"  groups="product.group_product_variant" sequence="2"/>
+
+            <menuitem id="menu_product_pricelist_action2" name="Pricelists"
+                  parent="menu_advertising_product" action="product.product_pricelist_action2"  groups="product.group_product_pricelist" sequence="3"/>
+
+
+        <!--
+                 Reporting
+        -->
+        <menuitem id="menu_advertising_report" name="Reporting" parent="advertising_sale_menu_root"
+                groups="group_advertising_sales_user"  sequence="4"/>
+
+            <menuitem id="menu_action_sale_order_report_all" name="Order Analysis"
+                  parent="menu_advertising_report" action="action_sale_order_report_all"  sequence="1"/>
+
+        <!--
+                Configuration
+        -->
+        <menuitem id="menu_advertising_config" name="Configuration" parent="advertising_sale_menu_root"
+                groups="group_traffic_user"  sequence="10"/>
+
+            <menuitem id="sales_team_config3"  name="Sales Teams"
+                      parent="menu_advertising_config" action="sales_team.sales_team_config_action" sequence="1"/>
+
+            <menuitem id="menu_adverstising_subconfig" name="Advertising"
+                  parent="menu_advertising_config" sequence="2"/>
+
+                <menuitem id="menu_sale_advertising_title" name="Title"
+                      parent="menu_adverstising_subconfig" action="action_sale_advertising_issue_title" sequence="1"/>
+
+                <menuitem id="menu_sale_advertising_issue2" name="Issue"
+                      parent="menu_adverstising_subconfig" action="action_sale_advertising_issue" sequence="2"/>
+
+                <menuitem id="menu_sale_advertising_pages2" name="Pages"
+                      parent="menu_adverstising_subconfig" action="action_sale_advertising_page" sequence="3"/>
+
+                <menuitem id="menu_sale_advertising_available2" name="Page Availability"
+                      parent="menu_adverstising_subconfig" action="action_sale_advertising_available" sequence="4"/>
+
+                <menuitem id="menu_discount_reason2" name="Discount Reasons"
+                      parent="menu_adverstising_subconfig" action="action_discount_reason" sequence="5"/>
+
+<!--                <menuitem id="menu_sale_advertising_proof2" name="Proof"-->
+<!--                      parent="menu_adverstising_subconfig" action="action_sale_advertising_proof" groups="base.group_no_one" sequence="6"/>-->
+
+            <menuitem id="menu_products_subconfig" name="Products"
+                  parent="menu_advertising_config" sequence="3"/>
+
+                <menuitem id="menu_attribute_action" name="Product Categories"
+                      parent="menu_products_subconfig" action="product_category_action_form_ads" sequence="1"/>
+
+                <menuitem id="menu_product_category_action_form" name="Attributes"
+                      parent="menu_products_subconfig" action="product.attribute_action" sequence="2"/>
+
+    </data>
+</openerp>

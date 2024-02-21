@@ -24,8 +24,12 @@ import json
 from odoo import api, fields, models, _
 import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
-from odoo.tools import float_is_zero, float_compare, DEFAULT_SERVER_DATETIME_FORMAT
 from datetime import datetime, timedelta
+from odoo.tools.translate import unquote
+
+import logging
+_logger = logging.getLogger(__name__)
+
 
 
 class SaleOrder(models.Model):
@@ -161,6 +165,58 @@ class SaleOrder(models.Model):
             result.update({'campaign_id': lead.campaign_id.id, 'source_id': lead.source_id.id, 'medium_id': lead.medium_id.id, 'tag_ids': [[6, False, lead.tag_ids.ids]]})
         return result
 
+    def _ctx_4_action_orders_advertising_smart_button(self):
+        " Context to use both active & ref"
+        ref = self.env.ref
+        active_id = unquote("active_id")
+
+        return {
+            'type_id': ref('sale_advertising_order.ads_sale_type').id,
+            'default_advertising': True,
+            'default_published_customer': active_id
+        }
+
+    def _domain_4_action_orders_advertising_smart_button(self):
+        " Domain to use both active & ref"
+        ref = self.env.ref
+        active_id = unquote("active_id")
+
+        return [('type_id','=', ref('sale_advertising_order.ads_sale_type').id), ('advertising','=',True),
+                            ('state','in',('sale','done')),'|',('published_customer','=',active_id),
+                            ('advertising_agency','=',active_id)]
+
+
+    def _ctx_4_sale_action_quotations_new_adv(self):
+        " Context to use both active & ref"
+        ref = self.env.ref
+        active_id = unquote("active_id")
+
+        return {'default_advertising': 1, 'default_type_id': ref('sale_advertising_order.ads_sale_type').id,
+                'search_default_opportunity_id': active_id,
+                'default_opportunity_id': active_id}
+
+    def _domain_4_sale_action_quotations_new_adv(self):
+        " Domain to use both active & ref"
+        ref = self.env.ref
+        active_id = unquote("active_id")
+
+        return [('type_id','=', ref('sale_advertising_order.ads_sale_type').id), ('opportunity_id', '=', active_id), ('advertising','=',True)]
+
+
+    def _ctx_4_sale_action_quotations_adv(self):
+        " Context to use both active & ref"
+        ref = self.env.ref
+        active_id = unquote("active_id")
+
+        return {'default_advertising': 1, 'default_type_id': ref('sale_advertising_order.ads_sale_type').id, 'search_default_opportunity_id': [active_id],
+                'default_opportunity_id': active_id}
+
+    def _domain_4_sale_action_quotations_adv(self):
+        " Domain to use both active & ref"
+        ref = self.env.ref
+        active_id = unquote("active_id")
+
+        return [('type_id','=', ref('sale_advertising_order.ads_sale_type').id), ('opportunity_id', '=', active_id), ('advertising','=',True)]
 
 
     # overridden:
@@ -349,6 +405,9 @@ class SaleOrder(models.Model):
     
     def write(self, vals):
         result = super(SaleOrder, self).write(vals)
+        # import pdb; pdb.set_trace()
+
+        _logger.info("GET I COME HERE SO WRITE ")
         orders = self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks'))
         for order in orders:
             user = self.env['res.users'].browse(self.env.uid)
@@ -529,6 +588,13 @@ class SaleOrderLine(models.Model):
             if line.product_template_id and line.product_template_id.price_edit or line.title.price_edit:
                 line.price_edit = True
 
+    @api.model
+    def _get_adClass_domain(self):
+        if not self.medium:
+            return [('id','child_of', self.env.ref('sale_advertising_order.advertising_category', raise_if_not_found=False).id)]
+
+        return [('id','child_of', self.medium.id), ('id', '!=', self.medium.id)]
+
     mig_remark = fields.Text('Migration Remark')
     layout_remark = fields.Text('Material Remark')
     title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)])
@@ -549,7 +615,7 @@ class SaleOrderLine(models.Model):
     adv_issue = fields.Many2one('sale.advertising.issue','Advertising Issue')
     issue_date = fields.Date(related='adv_issue.issue_date', string='Issue Date', store=True)
     medium = fields.Many2one('product.category', string='Medium')
-    ad_class = fields.Many2one('product.category', 'Advertising Class')
+    ad_class = fields.Many2one('product.category', 'Advertising Class', domain=_get_adClass_domain)
     deadline_passed = fields.Boolean(compute='_compute_deadline', string='Deadline Passed')
     deadline = fields.Datetime(compute='_compute_deadline', string='Deadline', store=False)
     deadline_offset = fields.Datetime(compute='_compute_deadline')
@@ -582,22 +648,29 @@ class SaleOrderLine(models.Model):
                                  string='Company', store=True, readonly=True, index=True)
     discount_dummy = fields.Float(related='discount', string='Agency Commission (%)', readonly=True )
     price_unit_dummy = fields.Float(related='price_unit', string='Unit Price', readonly=True)
-    actual_unit_price = fields.Float(compute='_compute_amount', string='Actual Unit Price', digits=dp.get_precision('Product Price'),
+    actual_unit_price = fields.Float(compute='_compute_amount', string='Actual Unit Price', digits='Product Price',
                                         default=0.0, readonly=True)
     comb_list_price = fields.Monetary(compute='_multi_price', string='Combined_List Price', default=0.0, store=True,
-                                digits=dp.get_precision('Account'))
-    computed_discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Discount'), default=0.0)
-    subtotal_before_agency_disc = fields.Monetary(string='Subtotal before Commission', digits=dp.get_precision('Account'))
+                                digits='Account')
+    computed_discount = fields.Float(string='Discount (%)', digits='Discount', default=0.0)
+    subtotal_before_agency_disc = fields.Monetary(string='Subtotal before Commission', digits='Account')
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
     multi_line = fields.Boolean(string='Multi Line')
     color_surcharge = fields.Boolean(string='Color Surcharge')
     price_edit = fields.Boolean(compute='_compute_price_edit', string='Price Editable')
-    color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits=dp.get_precision('Product Price'))
+    color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits='Product Price')
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
     nett_nett = fields.Boolean(string='Netto Netto Line')
-    proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False)
+    # proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False) #deep: has been overridden to M2M as below
     proof_number_payer = fields.Boolean('Proof Number Payer', default=False)
-    booklet_surface_area = fields.Float(related='product_template_id.booklet_surface_area', readonly=True, string='Booklet Surface Area',digits=dp.get_precision('Product Unit of Measure'))
+    booklet_surface_area = fields.Float(related='product_template_id.booklet_surface_area', readonly=True, string='Booklet Surface Area',digits='Product Unit of Measure')
+
+
+    # Brought from nsm_sale_advertising_order
+    proof_number_payer_id = fields.Many2one('res.partner', 'Proof Number Payer ID')
+    proof_number_adv_customer = fields.Many2many('res.partner', 'partner_line_proof_rel', 'line_id', 'partner_id',
+                                                 string='Proof Number Advertising Customer')
+    proof_number_amt_adv_customer = fields.Integer('Proof Number Amount Advertising', default=1)
 
     @api.onchange('medium')
     def onchange_medium(self):
@@ -605,13 +678,15 @@ class SaleOrderLine(models.Model):
         if not self.advertising:
             return {'value': vals }
         if self.medium:
-            child_id = [x.id for x in self.medium.child_id]
+            # import pdb; pdb.set_trace()
+            child_id = [(x.id != self.medium.id) and x.id for x in self.medium.child_id]
+
             if len(child_id) == 1:
                 vals['ad_class'] = child_id[0]
             else:
                 vals['ad_class'] = False
-                data = {'ad_class': [('id', 'child_of', self.medium.id)]}
-            titles = self.env['sale.advertising.issue'].search([('parent_id','=', False),('medium', '=', self.medium.id)]).ids
+                data = {'ad_class': [('id', 'child_of', self.medium.id), ('id', '!=', self.medium.id)]}
+            titles = self.env['sale.advertising.issue'].search([('parent_id','=', False),('medium', 'child_of', self.medium.id)]).ids
             if titles and len(titles) == 1:
                 vals['title'] = titles[0]
                 vals['title_ids'] = [(6, 0, [])]
@@ -729,9 +804,11 @@ class SaleOrderLine(models.Model):
             return {'value': vals}
         volume_discount = self.product_template_id.volume_discount
         if self.product_template_id and self.adv_issue_ids and len(self.adv_issue_ids) > 1:
+            _logger.info("Did i come here? - Multiple Edition ")
             self.product_uom = self.product_template_id.uom_id
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', self.adv_issue_ids.ids)])
             values = []
+            self.issue_product_ids = []  # reset
             product_id = False
             price = 0
             issues_count = len(adv_issues)
@@ -740,10 +817,14 @@ class SaleOrderLine(models.Model):
                     value = {}
                     if adv_issue.product_attribute_value_id:
                         pav = adv_issue.product_attribute_value_id.id
+                        _logger.info("IF > pav %s" % pav)
                     else:
                         pav = adv_issue.parent_id.product_attribute_value_id.id
+                        _logger.info("ELSE > pav %s" % pav)
+                    _logger.info("Found ? pav %s" % pav)
                     product_id = self.env['product.product'].search(
-                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids', '=', pav)])
+                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids.product_attribute_value_id', '=', pav)])
+                    _logger.info("found pp %s \n PT %s" % (product_id, self.product_template_id))
                     if product_id:
                         product = product_id.with_context(
                             lang=self.order_id.partner_id.lang,
@@ -761,7 +842,8 @@ class SaleOrderLine(models.Model):
                                 self.company_id)
 
                             price += value['price_unit'] * self.product_uom_qty
-                            values.append(value)
+                            _logger.info("Values %s"%value)
+                            values.append((0,0, value))
             if product_id:
                 self.update({
                     'adv_issue_ids': [(6, 0, [])],
@@ -772,10 +854,13 @@ class SaleOrderLine(models.Model):
                 })
             self.comb_list_price = price
             self.subtotal_before_agency_disc = price
+
         elif self.product_template_id and self.issue_product_ids and len(self.issue_product_ids) > 1:
+            _logger.info("Did i come here? - Single Issue Product ")
             self.product_uom = self.product_template_id.uom_id
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', [x.adv_issue_id.id for x in self.issue_product_ids])])
             values = []
+            self.issue_product_ids = [] # reset
             product_id = False
             price = 0
             issues_count = len(adv_issues)
@@ -787,7 +872,7 @@ class SaleOrderLine(models.Model):
                     else:
                         pav = adv_issue.parent_id.product_attribute_value_id.id
                     product_id = self.env['product.product'].search(
-                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids', '=', pav)])
+                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids.product_attribute_value_id', '=', pav)])
                     if product_id:
                         product = product_id.with_context(
                             lang=self.order_id.partner_id.lang,
@@ -805,7 +890,8 @@ class SaleOrderLine(models.Model):
                                 self.company_id)
 
                             price += value['price_unit'] * self.product_uom_qty
-                            values.append(value)
+                            _logger.info("Values %s" % value)
+                            values.append((0,0, value))
             if product_id:
                 self.update({
                     'issue_product_ids': values,
@@ -815,16 +901,22 @@ class SaleOrderLine(models.Model):
                 })
             self.comb_list_price = price
             self.subtotal_before_agency_disc = price
+
         elif self.product_template_id and (self.adv_issue or len(self.adv_issue_ids) == 1):
+                _logger.info("Did i come here? - Single Edition ")
                 if self.adv_issue_ids and len(self.adv_issue_ids) == 1:
                     self.adv_issue = self.adv_issue_ids.id
                 if self.adv_issue.parent_id.id == self.title.id:
                     if self.adv_issue.product_attribute_value_id:
                         pav = self.adv_issue.product_attribute_value_id.id
+                        _logger.info("IF > pav %s" % pav)
                     else:
                         pav = self.adv_issue.parent_id.product_attribute_value_id.id
+                        _logger.info("ELSE pav %s" % pav)
+                    _logger.info("whats pav %s"%pav)
                     product_id = self.env['product.product'].search(
-                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids', '=', pav)])
+                        [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids.product_attribute_value_id', '=', pav)])
+                    _logger.info("found pp %s \n PT %s" %(product_id, self.product_template_id))
                     if product_id:
                         self.update({
                             'adv_issue_ids': [(6, 0, [])],
@@ -1016,10 +1108,9 @@ class SaleOrderLine(models.Model):
                 self.from_date = min(arr_frm_dates)
                 self.to_date = max(arr_to_dates)
 
-
-    
-    def _prepare_invoice_line(self, qty):
-        res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
+    # FIXME: deep | param is not compatible with 14.0
+    def _prepare_invoice_line(self, **optional_values):
+        res = super(SaleOrderLine, self)._prepare_invoice_line(**optional_values)
         if self.advertising:
             res['account_analytic_id'] = self.adv_issue.analytic_account_id.id
             res['so_line_id'] = self.id
@@ -1039,6 +1130,7 @@ class SaleOrderLine(models.Model):
             return result
         self = self.with_context(LoopBreaker=True)
         if result.state == 'sale' and result.advertising and result.multi_line:
+            _logger.info("GET I COME HERE create_multi_from_order_lines ")
             newlines = self.env['sale.order.line.create.multi.lines'].\
                 create_multi_from_order_lines(orderlines=[result.id], orders=None)
             lines = self.env['sale.order.line'].browse(newlines)
@@ -1124,6 +1216,39 @@ class SaleOrderLine(models.Model):
         if res and len(res) > 0:
             res.unlink()
 
+    @api.model
+    def default_get(self, fields_list):
+        'Migration: from nsm_sale_advertising_order'
+        result = super(SaleOrderLine, self).default_get(fields_list)
+        if 'customer_contact' in self.env.context:
+            result.update({'proof_number_payer_id': self.env.context['customer_contact']})
+            result.update({'proof_number_amt_payer': 1})
+
+        result.update({'proof_number_adv_customer': False})
+        result.update({'proof_number_amt_adv_customer': 0})
+        return result
+
+
+    @api.onchange('proof_number_adv_customer')
+    def onchange_proof_number_adv_customer(self):
+        'Migration: from nsm_sale_advertising_order'
+        self.proof_number_amt_adv_customer = 1 if self.proof_number_adv_customer else 0
+
+    @api.onchange('proof_number_amt_adv_customer')
+    def onchange_proof_number_amt_adv_customer(self):
+        'Migration: from nsm_sale_advertising_order'
+        if self.proof_number_amt_adv_customer <= 0: self.proof_number_adv_customer = False
+
+    @api.onchange('proof_number_amt_payer')
+    def onchange_proof_number_amt_payer(self):
+        'Migration: from nsm_sale_advertising_order'
+        if self.proof_number_amt_payer < 1: self.proof_number_payer_id = False
+
+    @api.onchange('proof_number_payer_id')
+    def onchange_proof_number_payer_id(self):
+        'Migration: from nsm_sale_advertising_order'
+        self.proof_number_amt_payer = 1 if self.proof_number_payer_id else 0
+
 
 
 class OrderLineAdvIssuesProducts(models.Model):
@@ -1156,10 +1281,10 @@ class OrderLineAdvIssuesProducts(models.Model):
     product_attribute_value_id = fields.Many2one(related='adv_issue_id.parent_id.product_attribute_value_id', relation='sale.advertising.issue',
                                       string='Title', readonly=True)
     product_id = fields.Many2one('product.product', 'Product', ondelete='cascade', index=True, readonly=True)
-    price_unit = fields.Float('Unit Price', required=True, digits=dp.get_precision('Product Price'), default=0.0, readonly=True)
+    price_unit = fields.Float('Unit Price', required=True, digits='Product Price', default=0.0, readonly=True)
     price_edit = fields.Boolean(compute=_compute_price_edit, readonly=True)
     qty = fields.Float(related='order_line_id.product_uom_qty', readonly=True)
-    price = fields.Float(compute='_compute_price', string='Price', readonly=True, required=True, digits=dp.get_precision('Product Price'), default=0.0)
+    price = fields.Float(compute='_compute_price', string='Price', readonly=True, required=True, digits='Product Price', default=0.0)
     page_reference = fields.Char('Reference of the Page', size=64)
     ad_number = fields.Char('External Reference', size=32)
     url_to_material = fields.Char('URL Material', size=64)

@@ -3,8 +3,6 @@
 	<data>
 
 
-
-
         <record id="view_order_form_advertising" model="ir.ui.view">
             <field name="name">sale.order.form.advertising</field>
             <field name="model">sale.order</field>
@@ -43,7 +41,7 @@
                     <button name="action_draft" states="cancel" type="object" string="Set to Quotation"/>
                     <button name="action_done" type="object" string="Lock" states="sale" groups="sale_advertising_order.group_traffic_user"/>
                             help="If the sale is locked, you can not modify it anymore. However, you will still be able to invoice or deliver."/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved1,sent,sale,done"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,submitted,approved1,sale,done"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -84,7 +82,7 @@
                             <field name="advertising_agency"
                                    domain="[('is_ad_agency','=', True),(('customer_rank', '>', 0)), ('is_company','=', True)]"
                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}" />
-                            <field name="nett_nett"/>
+
                             <field name="agency_is_publish" />
                             <field name="opportunity_subject" required="True" string="Subject"/>
                         </group>
@@ -106,7 +104,8 @@
                     <notebook>
                         <page string="Order Lines" name="order_line">
                             <field name="order_line" mode="tree,kanban"
-                                   attrs="{'readonly': ['|',('state', 'in', ['done','cancel']),('state', 'in', ['approved1','sent']),('ver_tr_exc','=',True)]}">
+                                   attrs="{'readonly': ['|',('state', 'in', ['done','cancel']),('state', 'in', ['approved1','sent']),('ver_tr_exc','=',True)]}"
+                                   context="{'customer_contact': customer_contact}">
                                 <form string="Sales Order Lines">
                                     <group>
                                         <group>
@@ -115,7 +114,6 @@
                                                    domain="[('parent_id','=', %(sale_advertising_order.advertising_category)d)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                                             <field name="ad_class" required="True"
-                                                   domain="[('id','child_of', medium)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
                                             <field name="title" string="Title"
                                                    domain="[('child_ids','!=', False),('medium','child_of', medium)]"
@@ -137,10 +135,9 @@
                                             <field name="adv_issue_ids" string="Advertising Issues" readonly="0"
                                                    attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
                                                    domain="[('parent_id','!=', False),
-                                                            '|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
+                                                            '|',('parent_id','in', title_ids),('parent_id','=', title),
                                                             '|','|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
                                                                     ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
-
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
                                                 <tree create="true" edit="false" delete="true" copy="false">
@@ -172,7 +169,7 @@
                                                        context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id,
                                                                     'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"
                                                        attrs="{'readonly': [('deadline_passed','=', True)]}"/>
-                                                <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"
+                                                <field name="product_uom" groups="uom.group_uom" class="oe_inline oe_no_button"
                                                        readonly="True"/>
                                             </div>
                                             <label for="qty_delivered" string="Delivered Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>
@@ -206,14 +203,14 @@
                                             <field name="color_surcharge" />
                                             <field name="color_surcharge_amount" attrs="{'invisible': [('color_surcharge','=', False)]}"/>
                                             <field name="actual_unit_price" attrs="{'invisible': [('multi_line','=', True)]}"/>
-                                            <label for="computed_discount" groups="sale.group_discount_per_so_line"/>
-                                                <div name="computed_discount" groups="sale.group_discount_per_so_line">
+                                            <label for="computed_discount" groups="product.group_discount_per_so_line"/>
+                                                <div name="computed_discount" groups="product.group_discount_per_so_line">
                                                     <field name="computed_discount" class="oe_inline"/> %%
                                                 </div>
                                             <field name="discount_reason_id" attrs="{'invisible': [('computed_discount','=', 0.0)],'required': [('computed_discount','!=', 0.0)]}"/>
                                             <field name="subtotal_before_agency_disc" readonly="False"/>
-                                            <label for="discount" string="Agency Commission" groups="sale.group_discount_per_so_line"/>
-                                                <div name="discount" groups="sale.group_discount_per_so_line">
+                                            <label for="discount" string="Agency Commission" groups="product.group_discount_per_so_line"/>
+                                                <div name="discount" groups="product.group_discount_per_so_line">
                                                     <field name="discount" invisible="1"/>
                                                     <field name="discount_dummy" class="oe_inline"/> %%
                                                 </div>
@@ -232,7 +229,9 @@
                                                        domain="page_class_domain"
                                                        attrs="{'readonly': [('deadline_passed','=', True)]}"/>
                                             </div>
-                                            <field name="proof_number_adv_customer" />
+<!--                                            <field name="proof_number_adv_customer" /> deprecated -->
+                                            <field name="proof_number_adv_customer" string="Proof Number Advertising Customer" domain="[('customer_rank', '>', 0)]" context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
+                                            <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
                                             <field name="proof_number_payer" />
                                         </group>
                                     </group>
@@ -262,14 +261,14 @@
                                                attrs="{'invisible':[('issue_product_ids','=',[])]}"
                                                options="{'no_create': True, 'no_create_edit': True}" readonly="0">
                                             <tree string="Issues Products Prices" editable="bottom">
-                                                <field name="adv_issue_id" string="Issue" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
-                                                <field name="product_attribute_value_id" invisible="True" />
-                                                <field name="product_id" string="Product" domain="[('product_tmpl_id','=', parent.product_template_id), ('product_template_attribute_value_ids','in', product_attribute_value_id)]"/>
-                                                <field name="price_edit" string="Price editable" invisible="1"/>
-                                                <field name="price_unit" string="Unit Price"
+                                                <field name="adv_issue_id" string="Issue" force_save="1" domain="[('parent_id','in', parent.title_ids)]"/>
+                                                <field name="product_attribute_value_id" force_save="1"  invisible="True" />
+                                                <field name="product_id" force_save="1"  string="Product" domain="[('product_tmpl_id','=', parent.product_template_id), ('product_template_attribute_value_ids','in', product_attribute_value_id)]"/>
+                                                <field name="price_edit" force_save="1"  string="Price editable" invisible="1"/>
+                                                <field name="price_unit" force_save="1"  string="Unit Price"
                                                        attrs="{'readonly': [('price_edit','!=', True)]}"/>
-                                                <field name="qty" string="Qty"/>
-                                                <field name="price" string="Price"/>
+                                                <field name="qty" force_save="1"  string="Qty"/>
+                                                <field name="price" force_save="1"  string="Price"/>
                                                 <field name="page_reference" string="Page Pref." />
                                                 <field name="ad_number" string="External Ref." />
                                                 <field name="url_to_material" string="URL Ad Material" />
@@ -283,9 +282,9 @@
                                         </group>
                                         <group attrs="{'invisible':[('date_type','!=','validity')]}">
                                             <field name="from_date"
-                                                   attrs="{'invisible':[('date_type','!=','validity')]}"/>
+                                                   attrs="{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')]}"/>
                                             <field name="to_date"
-                                                   attrs="{'invisible':[('date_type','!=','validity')]}"/>
+                                                   attrs="{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')]}"/>
                                         </group>
                                     </group>
                                     <group>
@@ -312,7 +311,7 @@
                                 <tree string="Sales Order Lines"  decoration-info="invoice_status=='to invoice'" default_order='issue_date'>
                                     <field name="sequence" widget="handle"/>
                                     <field name="product_uom_category_id" invisible="1"/>
-                                    <field name="id"/>
+                                    <field name="id" optional="hide"/>
                                     <field name="title" />
                                     <field name="issue_date" />
                                     <field name="ad_class" groups="base.group_no_one"/>
@@ -322,30 +321,31 @@
                                        />
                                     <!--field name="layout_category_id" groups="sale.group_sale_layout,base.group_no_one" /-->
                                     <!--<field name="layout_category_id" groups="base.group_no_one" />-->
-                                    <field name="name" groups="base.group_no_one"/>
-                                    <field name="ad_number"/>
-						            <field name="page_reference"/>
+                                    <field name="name" groups="base.group_no_one" optional="hide"/>
+                                    <field name="ad_number" optional="hide"/>
+						            <field name="page_reference" optional="hide"/>
                                     <field name="qty_invoiced"
-                                            invisible="context.get('hide_sale')" groups="base.group_no_one"/>
+                                            invisible="context.get('hide_sale')" groups="base.group_no_one" optional="hide"/>
                                     <field name="qty_to_invoice" invisible="1"/>
-                                    <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" string="Page Category" invisible="0" widget="many2many_tags"/>
+                                    <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting"
+                                           string="Page Category" invisible="0" widget="many2many_tags" optional="hide"/>
 									<field name="price_unit" readonly="1"/>
                                     <field name="product_uom_qty"/>
                                     <field name="product_uom"
                                             attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
                                             context="{'company_id': parent.company_id}"
-                                            groups="product.group_uom" options='{"no_open": True}'/>
-                                    <field name="actual_unit_price" widget="monetary"/>
-                                    <field name="comb_list_price" widget="monetary"/>
-                                    <field name="computed_discount" />
-                                    <field name="subtotal_before_agency_disc" widget="monetary"/>
-                                    <field name="discount_dummy" />
+                                            groups="uom.group_uom" options='{"no_open": True}'/>
+                                    <field name="actual_unit_price" widget="monetary" optional="hide"/>
+                                    <field name="comb_list_price" widget="monetary" optional="hide"/>
+                                    <field name="computed_discount" optional="hide"/>
+                                    <field name="subtotal_before_agency_disc" widget="monetary" optional="hide"/>
+                                    <field name="discount_dummy" optional="hide"/>
                                     <field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
                                             attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
                                             groups="account.group_account_invoice, sale_advertising_order.group_traffic_user"/>
-                                    <field name="discount" groups="sale.group_discount_per_so_line" invisible="1"/>
-                                    <field name="price_subtotal" widget="monetary" groups="sale.group_show_price_subtotal"/>
-                                    <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
+                                    <field name="discount" groups="product.group_discount_per_so_line" invisible="1"/>
+                                    <field name="price_subtotal" widget="monetary" groups="account.group_show_line_subtotals_tax_excluded"/>
+                                    <field name="price_total" widget="monetary" groups="account.group_show_line_subtotals_tax_included"/>
                                     <field name="qty_delivered_manual" invisible="1"/>
                                     <!--<field name="procurement_ids" invisible="1"/>-->
                                     <field name="state" invisible="1"/>
@@ -356,7 +356,7 @@
                                 <kanban class="o_kanban_mobile">
                                     <field name="product_id"/>
                                     <field name="product_uom_qty"/>
-                                    <field name="product_uom" groups="product.group_uom" invisible="1"/>
+                                    <field name="product_uom" groups="uom.group_uom" invisible="1"/>
                                     <field name="price_subtotal"/>
                                     <templates>
                                         <t t-name="kanban-box">
@@ -395,16 +395,20 @@
                         </page>
                         <page string="Other Information">
                             <group>
-								<group string="Shipping Information" name="sale_shipping" groups="base.group_no_one">
-								</group>
                                 <group string="Sales Information" name="sales_person">
                                     <field name="user_id"/>
                                     <field name="team_id" options="{'no_create': True}"/>
-                                    <field name="partner_acc_mgr"/>
 									<field name="tag_ids" widget="many2many_tags"/>
                                     <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+
+                                </group>
+                                <group string="..." name="sales_person">
+                                    <field name="type_id" required="1"/>
+                                    <field name="partner_acc_mgr"/>
                                     <field name="analytic_account_id" attrs="{'invisible':[('state','=','sale'),('published_customer','!=', False)]}"
                                            context="{'default_partner_id':partner_invoice_id, 'default_name':name}" groups="analytic.group_analytic_accounting"/>
+                                    <field name="nett_nett"/>
+
                                 </group>
                                 <group name="sale_pay" string="Invoicing">
                                     <field name="fiscal_position_id" options="{'no_create': True}"/>
@@ -419,6 +423,8 @@
 									<field name="source_id" />
 									<field name="opportunity_id" help="Log in the chatter from which opportunity the order originates" />
                                 </group>
+								<group string="Shipping Information" name="sale_shipping" groups="base.group_no_one">
+								</group>
 
                             </group>
                         </page>
@@ -451,7 +457,8 @@
             <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_no_deadline_check'))]"/>
             <field name="arch" type="xml">
                 <field name="adv_issue_ids" position="attributes">
-                     <attribute name="domain" >[('parent_id','!=', False),'|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title)]</attribute>
+                     <attribute name="string">Advertising Issue[NDL]</attribute>
+                     <attribute name="domain" >[('parent_id','!=', False),'|',('parent_id','in', title_ids),('parent_id','=', title)]</attribute>
                 </field>
                 <field name="product_template_id" position="attributes">
                      <attribute name="attrs" >{'readonly': [('qty_invoiced', '&gt;', 0)]}</attribute>
@@ -499,19 +506,24 @@
             <field name="model">sale.order</field>
             <field name="priority">20</field>
             <field name="arch" type="xml">
-                <tree string="Sales Orders" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'">
+                <tree string="Sales Orders" multi_edit="1" sample="1">
                     <field name="message_needaction" invisible="1"/>
-                    <field name="name" string="Order Number"/>
-                    <field name="date_order"/>
-                    <field name="opportunity_subject"/>
+                    <field name="name" string="Order Number" decoration-bf="1"/>
+                    <field name="date_order" widget="date" optional="show"/>
+                    <field name="opportunity_subject" string="Subject"/>
                     <field name="published_customer"/>
                     <field name="advertising_agency"/>
                     <field name="partner_acc_mgr"/>
-                    <field name="user_id"/>
-                    <field name="amount_untaxed" sum="Total Amount Untaxed" widget="monetary"/>
+                    <field name="user_id" optional="show" widget="many2one_avatar_user"/>
+                    <field name="activity_ids" widget="list_activity" optional="show"/>
+                    <field name="team_id" optional="hide"/>
+                    <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>
+                    <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>
+                    <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1" optional="show"/>
                     <field name="traffic_appr_date" string="Traffic Date" invisible="1"/>
                     <field name="currency_id" invisible="1"/>
-                    <field name="invoice_status"/>
+                    <field name="invoice_status" decoration-success="invoice_status == 'invoiced'" decoration-info="invoice_status == 'to invoice'" decoration-warning="invoice_status == 'upselling'" widget="badge" optional="show"/>
+                    <field name="tag_ids" optional="hide" widget="many2many_tags" options="{'color_field': 'color'}"/>
                     <field name="state" invisible="1"/>
                 </tree>
             </field>
@@ -527,25 +539,24 @@
                     <separator/>
                     <filter string="Sales" name="sales" domain="[('state','in',('sale','done'))]"/>
                     <filter name="accmgr_sale_orders_filter" string="My Sales Orders (Account Manager)"
-                            domain="[('partner_acc_mgr','=',uid)]" help="My Sales Orders as Account manager"/>
+                            domain="[('partner_acc_mgr','=',uid)]" help="My Advertising Sales Orders as Account manager"/>
                     <field name="partner_acc_mgr"/>
                     <field name="published_customer"/>
                     <field name="advertising_agency"/>
                     <separator/>
                     <filter string="To Invoice" name="to_invoice" domain="[('invoice_status','=','to_invoice')]"/>
-                    <!--filter string="Upselling" domain="[('invoice_status','=','upselling')]" /-->
 
                     <separator/>
-                    <filter string="Submitted" name="submitted" domain="[('state','in',('submitted'))]"/>
-                    <filter string="Sales Mgr Approved" name="approved1" domain="[('state','in',('approved1'))]"/>
-                    <!--filter string="Traffic Approved" name="approved2" domain="[('state','in',('approved2',))]"/-->
+                    <filter string="Submitted" name="submitted" domain="[('state','=','submitted')]"/>
+                    <filter string="Sales Mgr Approved" name="approved1" domain="[('state','=','approved1')]" groups="sale_advertising_order.group_senior_sales"/>
+                    <filter string="Traffic Approved" name="approved2" domain="[('state','=','approved2')]" groups="sale_advertising_order.group_traffic_user"/>
                 </xpath>
 
                 <field name="analytic_account_id" position="after">
                     <field name="date_from" string="Order Date From" filter_domain="[('date_order','&gt;=',self)]"/>
                     <field name="date_to" string="Order Date To" filter_domain="[('date_order','&lt;=',self)]"/>
-                    <!--field name="date_from" string="Traffic Date From" filter_domain="[('traffic_appr_date','&gt;=',self)]"/>
-                    <field name="date_to" string="Traffic Date To" filter_domain="[('traffic_appr_date','&lt;=',self)]"/-->
+                    <field name="date_from" string="Traffic Date From" filter_domain="[('traffic_appr_date','&gt;=',self)]" groups="sale_advertising_order.group_traffic_user"/>
+                    <field name="date_to" string="Traffic Date To" filter_domain="[('traffic_appr_date','&lt;=',self)]" groups="sale_advertising_order.group_traffic_user"/>
                 </field>
                 <xpath expr="." position="inside">
                     <filter string="Account Manager" name="acc_manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
@@ -557,24 +568,22 @@
         <record id="action_orders_advertising" model="ir.actions.act_window">
             <field name="name">Sales Orders</field>
             <field name="res_model">sale.order</field>
-            <!--<field name="view_type">form</field>-->
             <field name="view_mode">tree,form,calendar,pivot,graph</field>
             <field name="view_id" ref="view_order_form_advertising"/>
             <field name="search_view_id" ref="advertising_order_view_search_inherit_sale"/>
-            <field name="domain">[('advertising','=',True),('state','in',('sale','done'))]</field>
-            <field name="context">{'default_advertising':True}</field>
-            <!--<field name="context">{-->
-                    <!--'search_default_team_id': [active_id],-->
-                    <!--'default_team_id': active_id,-->
-                <!--}-->
-            <!--</field>-->
+            <field name="domain"
+                   eval="[('type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True), ('state','not in',('draft','sent','cancel'))]"
+            />
+            <field name="context"
+                eval="{'default_advertising': 1, 'default_type_id': ref('sale_advertising_order.ads_sale_type')}"
+            />
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
                 Create a Quotation, the first step of a new sale.
               </p><p>
-                Your next actions should flow efficiently: confirm the Quotation to a Sale Order, then create the Invoice and collect the Payment.
+                Your next actions should flow efficiently: confirm the Quotation to an Advertising Order, then create the Invoice and collect the Payment.
               </p><p>
-                Note that once a Quotation becomes a Sale Order, it will be moved from the Quotations list to the Sales Order list.
+                Note that once a Quotation becomes a Order, it will be moved from the Quotations list to the Order list.
               </p>
             </field>
         </record>
@@ -594,17 +603,21 @@
         </record>
 
 
+<!--            <field name="domain"-->
+<!--                   eval="[('type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True),-->
+<!--                            ('state','in',('sale','done')),'|',('published_customer','=',active_id),-->
+<!--                                ('advertising_agency','=',active_id)]"-->
+<!--            />-->
+
         <!--Action for Advertising Sales smart button in Customers-->
         <record id="action_orders_advertising_smart_button" model="ir.actions.act_window">
             <field name="name">Advertising Sales Orders</field>
             <field name="res_model">sale.order</field>
-            <!--<field name="view_type">form</field>-->
             <field name="view_mode">tree,form,calendar,graph</field>
             <field name="view_id" ref="view_order_form_advertising"/>
             <field name="search_view_id" ref="advertising_order_view_search_inherit_sale"/>
-            <field name="domain">[('advertising','=',True),('state','in',('sale','done')),'|',('published_customer','=',active_id),
-                                    ('advertising_agency','=',active_id)]</field>
-            <field name="context">{'default_advertising':True,'default_published_customer': active_id}</field>
+            <field name="context" model='sale.order' eval="obj()._ctx_4_action_orders_advertising_smart_button()"/>
+            <field name="domain" model='sale.order' eval="obj()._domain_4_action_orders_advertising_smart_button()"/>
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
                 Create a Quotation, the first step of a new sale.
@@ -635,19 +648,26 @@
             <field name="model">sale.order</field>
             <field name="priority">40</field>
             <field name="arch" type="xml">
-                <tree string="Quotation" class="o_sale_order" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'">
+                <tree string="Quotation" class="o_sale_order" multi_edit="1" sample="1">
                     <field name="message_needaction" invisible="1"/>
-                    <field name="name" string="Quotation Number"/>
+                    <field name="name" string="Quotation Number" readonly="1" decoration-bf="1"/>
+                    <field name="create_date" string="Creation Date" widget="date" optional="show"/>
                     <field name="date_order"/>
-                    <field name="opportunity_subject"/>
+                    <field name="opportunity_subject" string="Subject"/>
                     <field name="published_customer"/>
                     <field name="advertising_agency"/>
-                    <field name="partner_acc_mgr"/>
-                    <field name="user_id"/>
-                    <field name="amount_untaxed" sum="Total Amount Untaxed" widget="monetary"/>
-                    <field name="traffic_appr_date" string="Traffic Date"/>
+                    <field name="partner_acc_mgr" optional="show"/>
+                    <field name="user_id" widget="many2one_avatar_user" optional="show"/>
+                    <field name="activity_ids" widget="list_activity" optional="show"/>
+                    <field name="team_id" optional="hide"/>
+                    <field name="tag_ids" optional="hide" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                    <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>
+                    <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>
+                    <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1" optional="show"/>
+                    <field name="traffic_appr_date" string="Traffic Date" optional="show"/>
                     <field name="currency_id" invisible="1"/>
-                    <field name="state"/>
+                    <field name="state" decoration-success="state == 'sale' or state == 'done'" decoration-info="state == 'draft' or state == 'sent'" widget="badge" optional="show"/>
+                    <field name="invoice_status" optional="hide"/>
                 </tree>
             </field>
         </record>
@@ -714,22 +734,25 @@
             <field name="name">Quotations </field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
-            <!--<field name="view_type">form</field>-->
             <field name="view_id" ref="view_quotation_advertising_tree"/>
             <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
             <field name="view_id" ref="view_order_form_advertising"/>
             <field name="search_view_id" ref="advertising_order_view_search_inherit_quotation"/>
-            <field name="context">{'hide_sale': True, 'default_advertising':True}</field>
-            <field name="domain">[('advertising','=',True),('state','not in',('sale','done'))]</field>
+            <field name="domain"
+                   eval="[('type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True),('state','not in',('sale','done'))]"
+            />
+            <field name="context"
+                eval="{'default_advertising': 1, 'default_type_id': ref('sale_advertising_order.ads_sale_type'), 'hide_sale': 1}"
+            />
             <field name="help" type="html">
               <p class="oe_view_nocontent_create">
                 Create a Quotation, the first step of a new sale.
               </p><p>
                 Your next actions should flow efficiently: confirm the Quotation
-                to a Sale Order, then create the Invoice and collect the Payment.
+                to an Advertising Order, then create the Invoice and collect the Payment.
               </p><p>
-                Note that once a Quotation becomes a Sale Order, it will be moved
-                from the Quotations list to the Sales Order list.
+                Note that once a Quotation becomes an Order, it will be moved
+                from the Quotations list to the Order list.
               </p>
             </field>
         </record>
@@ -756,11 +779,14 @@
 			<field name="name">All Advertising Sale Orders</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">sale.order</field>
-			<!--<field name="view_type">form</field>-->
 			<field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_order_form_advertising"/>
-			<field name="domain">[('advertising','=',True),('published_customer','&lt;&gt;', False)]</field>
-            <field name="context">{'default_advertising' : True}</field>
+            <field name="domain"
+                   eval="[('type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True),('published_customer','&lt;&gt;', False)]"
+            />
+            <field name="context"
+                eval="{'default_advertising': 1, 'default_type_id': ref('sale_advertising_order.ads_sale_type')}"
+            />
 		</record>
 
         <record id="all_advertising_orders_action_form" model="ir.actions.act_window.view">
@@ -781,9 +807,8 @@
             <field name="name">Quotation</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">form,tree,graph</field>
-            <field name="domain">[('opportunity_id', '=', active_id), ('advertising','=',True)]</field>
-            <field name="context">{'search_default_opportunity_id': active_id,
-                'default_opportunity_id': active_id, 'default_advertising':True}</field>
+            <field name="domain" model='sale.order' eval="obj()._domain_4_sale_action_quotations_new_adv()"/>
+            <field name="context" model='sale.order' eval="obj()._ctx_4_sale_action_quotations_new_adv()"/>
         </record>
 
         <record id="sale_action_quotations_new_adv_form" model="ir.actions.act_window.view">
@@ -803,9 +828,8 @@
         <record id="sale_action_quotations_adv" model="ir.actions.act_window">
             <field name="name">Quotations</field>
             <field name="res_model">sale.order</field>
-            <field name="domain">[('opportunity_id', '=', active_id), ('advertising','=',True)]</field>
-            <field name="context">{'search_default_opportunity_id': [active_id],
-                'default_opportunity_id': active_id, 'default_advertising':True}</field>
+            <field name="domain" model='sale.order' eval="obj()._domain_4_sale_action_quotations_adv()"/>
+            <field name="context" model='sale.order' eval="obj()._ctx_4_sale_action_quotations_adv()"/>
         </record>
 
         <record id="sale_action_quotations_adv_form" model="ir.actions.act_window.view">
@@ -852,9 +876,9 @@
                         <field name="subtotal_before_agency_disc" />
                         <field name="discount_dummy" />
                         <field name="tax_id" />
-                        <field name="discount" groups="sale.group_discount_per_so_line" invisible="1"/>
-                        <field name="price_subtotal" widget="monetary" groups="sale.group_show_price_subtotal"/>
-                        <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
+                        <field name="discount" groups="product.group_discount_per_so_line" invisible="1"/>
+                        <field name="price_subtotal" widget="monetary" groups="account.group_show_line_subtotals_tax_excluded"/>
+                        <field name="price_total" widget="monetary" groups="account.group_show_line_subtotals_tax_included"/>
                         <field name="state" invisible="1"/>
                         <field name="invoice_status" invisible="0"/>
                 </tree>
@@ -909,7 +933,7 @@
                                 <field name="adv_issue_ids" string="Advertising Issues" readonly="0"
                                        attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
                                        domain="[('parent_id','!=', False),
-                                                '|',('parent_id','in', title_ids and title_ids[0][2]),('parent_id','=', title),
+                                                '|',('parent_id','in', title_ids),('parent_id','=', title),
                                                 '|','|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
                                                         ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
                                        options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
@@ -946,7 +970,7 @@
                                            context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id,
                                                         'uom':product_uom, 'uom_qty_change':True, 'company_id': company_id}"
                                            attrs="{'readonly': [('deadline_passed','=', True)]}"/>
-                                    <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"
+                                    <field name="product_uom" groups="uom.group_uom" class="oe_inline oe_no_button"
                                            readonly="True"/>
                                 </div>
                                 <label for="qty_delivered" string="Delivered Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>
@@ -980,14 +1004,14 @@
                                 <field name="color_surcharge" />
                                 <field name="color_surcharge_amount" attrs="{'invisible': [('color_surcharge','=', False)]}"/>
                                 <field name="actual_unit_price" attrs="{'invisible': [('multi_line','=', True)]}"/>
-                                <label for="computed_discount" groups="sale.group_discount_per_so_line"/>
-                                    <div name="computed_discount" groups="sale.group_discount_per_so_line">
+                                <label for="computed_discount" groups="product.group_discount_per_so_line"/>
+                                    <div name="computed_discount" groups="product.group_discount_per_so_line">
                                         <field name="computed_discount" class="oe_inline"/> %%
                                     </div>
                                 <field name="discount_reason_id" attrs="{'invisible': [('computed_discount','=', 0.0)],'required': [('computed_discount','!=', 0.0)]}"/>
                                 <field name="subtotal_before_agency_disc" readonly="False"/>
-                                <label for="discount" string="Agency Commission" groups="sale.group_discount_per_so_line"/>
-                                    <div name="discount" groups="sale.group_discount_per_so_line">
+                                <label for="discount" string="Agency Commission" groups="product.group_discount_per_so_line"/>
+                                    <div name="discount" groups="product.group_discount_per_so_line">
                                         <field name="discount" invisible="1"/>
                                         <field name="discount_dummy" class="oe_inline"/> %%
                                     </div>
@@ -1006,7 +1030,9 @@
                                            domain="page_class_domain"
                                            attrs="{'readonly': [('deadline_passed','=', True)]}"/>
                                 </div>
-                                <field name="proof_number_adv_customer" />
+<!--                                <field name="proof_number_adv_customer" /> deprecated -->
+                                <field name="proof_number_adv_customer" string="Proof Number Advertising Customer" domain="[('customer_rank', '>', 0)]" context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
+                                <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
                                 <field name="proof_number_payer" />
                             </group>
                         </group>
@@ -1036,12 +1062,12 @@
                                    attrs="{'invisible':['|',('issue_product_ids','=',[]),('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
                                    options="{'no_create': True, 'no_create_edit': True}" readonly="0">
                                 <tree string="Issues Products Prices" editable="bottom">
-                                    <field name="adv_issue_id" string="Issue" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
-                                    <field name="product_attribute_value_id" invisible="True" />
-                                    <field name="product_id" string="Product" domain="[('product_tmpl_id','=', parent.product_template_id), ('product_template_attribute_value_ids','in', product_attribute_value_id)]"/>
-                                    <field name="price_unit" string="Unit Price"/>
-                                    <field name="qty" string="Qty"/>
-                                    <field name="price" string="Price"/>
+                                    <field name="adv_issue_id" string="Issue" force_save="1" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
+                                    <field name="product_attribute_value_id" force_save="1" invisible="True" />
+                                    <field name="product_id" string="Product" force_save="1" domain="[('product_tmpl_id','=', parent.product_template_id), ('product_template_attribute_value_ids','in', product_attribute_value_id)]"/>
+                                    <field name="price_unit" force_save="1" string="Unit Price"/>
+                                    <field name="qty" force_save="1" string="Qty"/>
+                                    <field name="price" force_save="1" string="Price"/>
                                     <field name="page_reference" string="Ref" />
                                     <field name="ad_number" string="Ad No." />
                                     <field name="url_to_material" string="URL Ad Material" />
@@ -1055,9 +1081,9 @@
                             </group>
                             <group attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')]}">
                                 <field name="from_date"
-                                       attrs="{'invisible':['|',('multi_line','!=', False),('date_type','!=','validity')]}"/>
+                                       attrs="{'invisible':['|',('multi_line','!=', False),('date_type','!=','validity')], 'required': [('date_type','=','validity')]}"/>
                                 <field name="to_date"
-                                       attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')]}"/>
+                                       attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')], 'required': [('date_type','=','validity')]}"/>
                             </group>
                         </group>
                         <group>
@@ -1104,7 +1130,7 @@
                                     <field
                                         context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"
                                         name="product_uom_qty" class="oe_inline"/>
-                                    <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"
+                                    <field name="product_uom" groups="uom.group_uom" class="oe_inline oe_no_button"
                                         attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
                                         invisible="1"/>
                                 </div>
@@ -1133,13 +1159,13 @@
                                     attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
                                 <field name="price_unit" readonly="True" />
                                 <field name="actual_unit_price" />
-                                <label for="computed_discount" groups="sale.group_discount_per_so_line"/>
-                                    <div name="computed_discount" groups="sale.group_discount_per_so_line">
+                                <label for="computed_discount" groups="product.group_discount_per_so_line"/>
+                                    <div name="computed_discount" groups="product.group_discount_per_so_line">
                                         <field name="computed_discount" class="oe_inline"/> %%
                                     </div>
                                 <field name="subtotal_before_agency_disc" readonly="False"/>
-                                <label for="discount" string="Agency Commission" groups="sale.group_discount_per_so_line"/>
-                                    <div name="discount" groups="sale.group_discount_per_so_line">
+                                <label for="discount" string="Agency Commission" groups="product.group_discount_per_so_line"/>
+                                    <div name="discount" groups="product.group_discount_per_so_line">
                                         <field name="discount" invisible="1"/>
                                         <field name="discount_dummy" class="oe_inline"/> %%
                                     </div>
@@ -1247,11 +1273,12 @@
 			<field name="name">All Advertising Sale Order Lines</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">sale.order.line</field>
-			<!--<field name="view_type">form</field>-->
 			<field name="view_mode">tree,form,pivot</field>
             <field name="view_id" ref="view_adv_order_line_form"/>
             <field name="search_view_id" ref="view_advertising_sales_order_line_filter"/>
-			<field name="domain">[('advertising','!=',False),('state','in',('sale','done'))]</field>
+            <field name="domain"
+                   eval="[('order_id.type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True),('state','in',('sale','done'))]"
+            />
 		</record>
 
         <record id="all_advertising_order_lines_action_tree" model="ir.actions.act_window.view">
@@ -1283,20 +1310,34 @@
 			<field name="model">sale.advertising.issue</field>
 			<field name="arch" type="xml">
 				<form string="Advertising issue" >
+                    <header>
+                        <field name="state" widget="statusbar" statusbar_visible="open,close" clickable="True"/>
+                    </header>
+
 					<sheet>
                         <div class="oe_button_box" name="button_box">
+                            <button name="action_open_issue" type="object" class="oe_stat_button" icon="fa-tasks"
+                                    attrs="{'invisible' : [('parent_id', '!=', False)]}" context="{'default_parent_id': active_id}" >
+                                <field string="Issue(s)" name="issue_count" widget="statinfo"/>
+                            </button>
                             <button name="toggle_active" type="object" groups="base.group_user" class="oe_stat_button" icon="fa-archive">
-                                <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                                <field name="active" invisible="1" widget="boolean_button" options='{"terminology": "archive"}'/>
                             </button>
                         </div>
+                        <widget name="web_ribbon" title="Closed"
+                            bg_color="bg-danger" attrs="{'invisible': [('state', '!=', 'close')]}" />
+
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Title / Issue"/>
+                            <h1><field name="name" placeholder="Describe the name of Title / Issue..."/></h1>
+                        </div>
 						<group col="4" colspan="4" >
-							<field name="name" string="Name"/>
                             <field name="code" string="Code"/>
                             <field name="medium_domain" invisible="1"/>
 							<field name="parent_id" string="Title" domain="[('parent_id','=', False)]"/>
                             <field name="price_edit" string="Price Editable"
                                    attrs="{'invisible':[('parent_id','=',True)]}"/>
-                            <field name="medium" string="Medium" domain="medium_domain"
+                            <field name="medium" string="Medium" widget="many2many_tags"
                                    options="{'no_create': True, 'no_create_edit': True}"/>
                             <field name="product_attribute_value_id" string="Variant Title"
                                    attrs="{'required':[('parent_id','=',False),
@@ -1307,7 +1348,8 @@
                             <field name="issue_week_number" string="Week Number"/>
                             <field name="deadline" string="Deadline"/>
 							<field name="default_note" string="Default Note" />
-							<field name="state" string="State" />
+<!--							<field name="state" string="State" />-->
+                            <field name="active" widget="boolean_toggle"/>
                         </group>
                             <field name="available_ids" string="Availability" >
                                  <tree string="Availability">
@@ -1330,19 +1372,19 @@
 			<field name="type">tree</field>
 			<field name="model">sale.advertising.issue</field>
 			<field name="arch" type="xml">
-				<tree string="Advertising issue">
-                    <field name="name" string="Name"/>
+				<tree string="Advertising issue" decoration-info="not parent_id" >
+                    <field name="name" string="Name" decoration-bf="not parent_id"/>
                     <field name="code" string="Code"/>
-                    <field name="parent_id" string="Title"/>
-                    <field name="product_attribute_value_id" string="Variant Title"/>
-                    <field name="analytic_account_id" string="Related Analytic Account"/>
+                    <field name="parent_id" string="Title" />
+                    <field name="product_attribute_value_id" string="Variant Title" optional="hide"/>
+                    <field name="analytic_account_id" string="Related Analytic Account" optional="hide"/>
                     <field name="issue_date" string="Issue Date"/>
-                    <field name="issue_week_number" string="Week Number"/>
-                    <field name="week_number_even" invisible="False"/>
-                    <field name="deadline" string="Deadline"/>
-                    <field name="medium" string="Medium"/>
-                    <field name="default_note" string="Default Note" />
-                    <field name="state" string="State" />
+                    <field name="issue_week_number" string="Week Number" optional="hide"/>
+                    <field name="week_number_even" optional="hide"/>
+                    <field name="deadline" string="Deadline" optional="hide"/>
+                    <field name="medium" string="Medium" />
+                    <field name="default_note" string="Default Note"/>
+                    <field name="state" string="Status" decoration-success="state == 'open'" decoration-muted="state == 'cancel'" widget="badge"/>
 				</tree>
 			</field>
 		</record>
@@ -1360,7 +1402,7 @@
                     <field name="analytic_account_id" string="Related Analytic Account"/>
                     <field name="medium" string="Medium"/>
                     <field name="default_note" string="Default Note" />
-                    <field name="state" string="State" />
+                    <field name="state" string="Status" decoration-success="state == 'open'" decoration-muted="state == 'cancel'" widget="badge"/>
 				</tree>
 			</field>
 		</record>
@@ -1382,7 +1424,7 @@
                     <field name="deadline" string="Deadline"/>
                     <field name="medium" string="Medium"/>
                     <field name="default_note" string="Default Note" />
-                    <field name="state" string="State" />
+                    <field name="state" string="Status" decoration-success="state == 'open'" decoration-muted="state == 'cancel'" widget="badge"/>
 				</tree>
 			</field>
 		</record>
@@ -1414,33 +1456,34 @@
 			<field name="name">Advertising Issue</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">sale.advertising.issue</field>
-			<field name="view_mode">form</field>
+			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="sale_advertising_issue_tree"/>
+			<field name="domain">[('parent_id','!=', False)]</field>
 		</record>
 
-        <!-- View for sale.advertising.page object -->
 
-		<record model="ir.ui.view" id="sale_advertising_page_form">
-			<field name="name">sale.advertising.page.form</field>
-			<field name="type">form</field>
-			<field name="model">sale.advertising.page</field>
-			<field name="arch" type="xml">
-				<form string="Advertising issue" >
-					<sheet>
-						<group >
-							<field name="name" string="Page Name"/>
-                        </group>
-					</sheet>
-				</form>
-			</field>
+        <!--
+                Advertising Issue (Title)
+        -->
+		<record model="ir.actions.act_window" id="action_sale_advertising_issue_title">
+			<field name="name">Advertising Title</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">sale.advertising.issue</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="advertising_issue_titles_tree"/>
+			<field name="domain">[('parent_id','=', False)]</field>
+
 		</record>
+
+
+        <!-- sale.advertising.page -->
 
 		<record id="sale_advertising_page_tree" model="ir.ui.view" >
 			<field name="name">sale.advertising.page.tree</field>
 			<field name="type">tree</field>
 			<field name="model">sale.advertising.page</field>
 			<field name="arch" type="xml">
-				<tree string="Advertising Pages">
+				<tree string="Advertising Pages" editable="top">
 						<field name="name" string="Page Name"/>
 				</tree>
 			</field>
@@ -1450,9 +1493,10 @@
 			<field name="name">Advertising Page</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">sale.advertising.page</field>
-			<field name="view_mode">form</field>
+			<field name="view_mode">tree</field>
 			<field name="view_id" ref="sale_advertising_page_tree"/>
 		</record>
+
 
         <!-- View for sale.advertising.available object -->
 
@@ -1461,7 +1505,7 @@
 			<field name="type">form</field>
 			<field name="model">sale.advertising.available</field>
 			<field name="arch" type="xml">
-				<form string="Page Availablity" >
+				<form string="Page Availability" >
 					<sheet>
 						<group >
                             <field name="adv_issue_id" string="Issue"/>
@@ -1481,7 +1525,7 @@
 			<field name="type">tree</field>
 			<field name="model">sale.advertising.available</field>
 			<field name="arch" type="xml">
-                <tree name="page_available" string="Page Availablity" create="false" delete="false">
+                <tree name="page_available" string="Page Availability" create="false" delete="false">
                     <field name="adv_issue_id" string="Issue" />
                     <field name="issue_date" />
                     <field name="name" string="Name" />
@@ -1509,10 +1553,10 @@
 
 
 		<record model="ir.actions.act_window" id="action_sale_advertising_available">
-			<field name="name">Advertising Pages</field>
+			<field name="name">Advertising Page Availability</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">sale.advertising.available</field>
-			<field name="view_mode">form</field>
+			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="sale_advertising_available_tree"/>
 		</record>
 
@@ -1535,30 +1579,15 @@
             </field>
         </record>
 
-        <!-- View for discount.reason object -->
-
-		<record model="ir.ui.view" id="discount_reason_form">
-			<field name="name">discount.reason.form</field>
-			<field name="type">form</field>
-			<field name="model">discount.reason</field>
-			<field name="arch" type="xml">
-				<form string="Discount Reason" >
-					<sheet>
-						<group >
-							<field name="name" string="Page Name"/>
-                        </group>
-					</sheet>
-				</form>
-			</field>
-		</record>
+        <!-- Discount.reason -->
 
 		<record id="discount_reason_tree" model="ir.ui.view" >
 			<field name="name">discount.reason.tree</field>
 			<field name="type">tree</field>
 			<field name="model">discount.reason</field>
 			<field name="arch" type="xml">
-				<tree string="Discount Reasons">
-						<field name="name" string="Page Name"/>
+				<tree string="Discount Reasons" editable="top">
+						<field name="name" string="Discount Reason"/>
 				</tree>
 			</field>
 		</record>
@@ -1567,7 +1596,7 @@
 			<field name="name">Discount Reasons</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">discount.reason</field>
-			<field name="view_mode">form</field>
+			<field name="view_mode">tree</field>
 			<field name="view_id" ref="discount_reason_tree"/>
 		</record>
 
@@ -1607,7 +1636,7 @@
 			<field name="name">Advertising Proof</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">sale.advertising.proof</field>
-			<field name="view_mode">form</field>
+			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="sale_advertising_proof_tree"/>
 		</record>
 
@@ -1666,7 +1695,12 @@
             <field name="view_ids"
                eval="[(5, 0, 0), (0, 0, {'view_mode': 'pivot', 'view_id': ref('sale_advertising_order.view_sale_order_pivot2')}),
                       (0, 0, {'view_mode': 'graph', 'view_id': ref('sale_advertising_order.view_sale_order_graph2')})]"/>
-            <field name="context">{'search_default_sales':1, 'search_default_my_sale_orders_filter':1}</field>
+            <field name="domain"
+                   eval="[('type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True)]"
+            />
+            <field name="context"
+                eval="{'default_type_id': ref('sale_advertising_order.ads_sale_type'), 'search_default_sales':1, 'search_default_my_sale_orders_filter':1}"
+            />
             <field name="search_view_id" ref="sale_advertising_order.advertising_order_view_search_inherit_sale"/>
             <field name="help">From this report, you can have an overview of the sale confirmed with your customers. The search tool can also be used to personalise your Sales reports and so, match this analysis to your needs.</field>
         </record>
@@ -1748,6 +1782,56 @@
            <field name="context">{'search_default_activities':1}</field>
            <field name="domain">[]</field>
        </record>
+
+
+
+        <!--
+                Advertising Schedule (a.k.a Indeellijst)
+                ported from nsm_sale_advertising_module
+        -->
+        <record id="view_indeellijst_list_tree" model="ir.ui.view">
+            <field name="name">sale.order.line.indeellijst.tree</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <tree string="Schedules" create="false" edit="false" delete="false">
+                        <field name="order_id" widget="many2one_clickable"/>
+                        <field name="id"/>
+<!--                        <field name="material_id" /> TODO  Port?-->
+                        <field name="order_advertiser_id" />
+                        <field name="adv_issue" />
+                        <field name="issue_date"/>
+                        <field name="from_date" />
+                        <field name="to_date" />
+                        <field name="ad_class"/>
+                        <field name="product_template_id"/>
+                        <field name="product_uom_qty" />
+<!--                        <field name="product_width" TODO: Port ?/>-->
+<!--                        <field name="product_height" Todo: Port? />-->
+                        <field name="page_reference"/>
+                        <field name="layout_remark" />
+                        <field name="name" />
+                        <field name="analytic_tag_ids"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="ads_indeellijst_action">
+			<field name="name">Advertising Schedules</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">sale.order.line</field>
+			<field name="view_mode">tree,form,pivot</field>
+            <field name="search_view_id" ref="sale_advertising_order.view_advertising_sales_order_line_filter"/>
+            <field name="domain"
+                   eval="[('order_id.type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True),('state','in',('sale','done'))]"
+            />
+		</record>
+
+         <record id="ads_indeellijst_action_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_indeellijst_list_tree"/>
+            <field name="act_window_id" ref="ads_indeellijst_action"/>
+        </record>
 
 	</data>
 </odoo>

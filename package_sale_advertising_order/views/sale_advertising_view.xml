@@ -7,10 +7,8 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='opportunity_subject']" position="after">
+                <xpath expr="//group[@name='sales_person']/field[@name='nett_nett']" position="after">
                     <field name="package"/>
-                </xpath>
-                <xpath expr="//field[@name='display_discount_to_customer']" position="after">
                     <field name="package_description" attrs="{'invisible':[('package', '=', False)],'required':[('package', '=', True)]}"/>
                 </xpath>
 
