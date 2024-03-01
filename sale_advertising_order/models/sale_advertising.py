@@ -632,7 +632,7 @@ class SaleOrderLine(models.Model):
     title_ids = fields.Many2many('sale.advertising.issue', 'sale_order_line_adv_issue_title_rel', 'order_line_id', 'adv_issue_id', 'Titles')
     adv_issue_ids = fields.Many2many('sale.advertising.issue','sale_order_line_adv_issue_rel', 'order_line_id', 'adv_issue_id',  'Advertising Issues')
     issue_product_ids = fields.One2many('sale.order.line.issues.products', 'order_line_id', 'Adv. Issues with Product Prices')
-    dates = fields.One2many('sale.order.line.date', 'order_line_id', 'Advertising Dates')
+    dates = fields.One2many('sale.order.line.date', 'order_line_id', 'Advertising Dates') # FIXME: deprecated
     dateperiods = fields.One2many('sale.order.line.dateperiod', 'order_line_id', 'Advertising Date Periods')
     date_type = fields.Selection(related='ad_class.date_type', type='selection',
                    selection=[
@@ -1073,12 +1073,12 @@ class SaleOrderLine(models.Model):
                     vals['adv_issue_ids'] = [(6,0,[])]
             elif self.date_type == 'validity':
                 if self.dates:
-                    vals['dates'] = [(6,0,[])]
+                    vals['dates'] = [(6,0,[])] # FIXME: deprecated
                 if self.adv_issue_ids:
                     vals['adv_issue_ids'] = [(6,0,[])]
             elif self.date_type == 'issue_date':
                 if self.dates:
-                    vals['dates'] = [(6,0,[])]
+                    vals['dates'] = [(6,0,[])] # FIXME: deprecated
                 if self.dateperiods:
                     vals['dateperiods'] = [(6,0,[])]
         return {'value': vals}
@@ -1176,7 +1176,7 @@ class SaleOrderLine(models.Model):
         ml_qty = 0
         ai = self.adv_issue
         ais = self.adv_issue_ids
-        ds = self.dates
+        ds = self.dates # FIXME: deprecated
         iis = self.issue_product_ids
         if self.title_ids and ais:
             titles = self.title_ids.ids
@@ -1196,7 +1196,7 @@ class SaleOrderLine(models.Model):
                 ml_qty = 1
         elif ai:
             ml_qty = 1
-        elif ds:
+        elif ds: # FIXME: deprecated
             if len(ds) >= 1:
                 ml_qty = 1
                 self.product_uom_qty = len(ds)
@@ -1407,6 +1407,7 @@ class OrderLineAdvIssuesProducts(models.Model):
     url_to_material = fields.Char('URL Material', size=64)
 
 
+# FIXME: deprecated model
 class OrderLineDate(models.Model):
 
     _name = "sale.order.line.date"

@@ -236,16 +236,16 @@
                                         </group>
                                     </group>
                                     <group>
-                                        <field name="dates" string="Advertising Dates" colspan="4"
-                                           attrs="{'invisible':['|','|',('adv_issue','=',False),('title','=',False),('date_type','!=','date')]}">
-                                            <tree string="Ad Dates" editable="bottom">
-                                                <field name="sequence" widget="handle" />
-                                                <field name="issue_date" string="Ad Date" required="True" />
-                                                <field name="name" string="Comment" />
-                                                <field name="page_reference" string="Ref" />
-                                                <field name="ad_number" string="Ad No." />
-                                            </tree>
-                                        </field>
+<!--                                        <field name="dates" string="Advertising Dates" colspan="4"-->
+<!--                                           attrs="{'invisible':['|','|',('adv_issue','=',False),('title','=',False),('date_type','!=','date')]}">-->
+<!--                                            <tree string="Ad Dates" editable="bottom">-->
+<!--                                                <field name="sequence" widget="handle" />-->
+<!--                                                <field name="issue_date" string="Ad Date" required="True" />-->
+<!--                                                <field name="name" string="Comment" />-->
+<!--                                                <field name="page_reference" string="Ref" />-->
+<!--                                                <field name="ad_number" string="Ad No." />-->
+<!--                                            </tree>-->
+<!--                                        </field>-->
                                         <field name="dateperiods" string="Advertising Periods" colspan="4"
                                             attrs="{'invisible':[('date_type','!=','validity')]}">
                                             <tree string="Ad Periods" editable="bottom">
@@ -1037,16 +1037,16 @@
                             </group>
                         </group>
                         <group>
-                            <field name="dates" string="Advertising Dates" colspan="4"
-                               attrs="{'invisible':['|','|',('adv_issue','=',False),('title','=',False),('date_type','!=','date')]}">
-                                <tree string="Ad Dates" editable="bottom">
-                                    <field name="sequence" widget="handle" />
-                                    <field name="issue_date" string="Ad Date" required="True" />
-                                    <field name="name" string="Comment" />
-                                    <field name="page_reference" string="Ref" />
-                                    <field name="ad_number" string="Ad No." />
-                                </tree>
-                            </field>
+<!--                            <field name="dates" string="Advertising Dates" colspan="4"-->
+<!--                               attrs="{'invisible':['|','|',('adv_issue','=',False),('title','=',False),('date_type','!=','date')]}">-->
+<!--                                <tree string="Ad Dates" editable="bottom">-->
+<!--                                    <field name="sequence" widget="handle" />-->
+<!--                                    <field name="issue_date" string="Ad Date" required="True" />-->
+<!--                                    <field name="name" string="Comment" />-->
+<!--                                    <field name="page_reference" string="Ref" />-->
+<!--                                    <field name="ad_number" string="Ad No." />-->
+<!--                                </tree>-->
+<!--                            </field>-->
                             <field name="dateperiods" string="Advertising Periods" colspan="4"
                                 attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','!=','validity')]}">
                                 <tree string="Ad Periods" editable="bottom">
