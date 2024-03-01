@@ -118,9 +118,9 @@
                                             <field name="title" string="Title"
                                                    domain="[('child_ids','!=', False),('medium','child_of', medium)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                                   attrs="{'invisible': [('title','=', False)]}"/>
-                                            <field name="title_ids" string="Titles"
-                                                   attrs="{'invisible': [('title','!=', False),('title_ids','=', [])]}"
+                                                   invisible="1"/>
+                                            <field name="title_ids" string="Title(s)"
+                                                   widget="many2many_tags"
                                                    domain="[('parent_id','=', False),('medium','child_of', medium)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
@@ -132,8 +132,8 @@
                                             <field name="deadline_offset" invisible="1" />
                                             <field name="deadline_passed" invisible="1" />
                                             <field name="deadline" invisible="0" />
-                                            <field name="adv_issue_ids" string="Advertising Issues" readonly="0"
-                                                   attrs="{'invisible': ['|',('adv_issue','!=', False),('issue_product_ids','!=', [])]}"
+                                            <field name="adv_issue_ids" string="Advertising Issue(s)" readonly="0" force_save="1"
+                                                   attrs="{'readonly': [('issue_product_ids','!=', [])]}"
                                                    domain="[('parent_id','!=', False),
                                                             '|',('parent_id','in', title_ids),('parent_id','=', title),
                                                             '|','|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
@@ -144,10 +144,10 @@
                                                     <field name="name" string="Name" readonly="1"/>
                                                 </tree>
                                             </field>
-                                            <field name="product_template_id"
+                                            <field name="domain4prod_ids" invisible="1"/>
+                                            <field name="product_template_id" domain="[('id','in', domain4prod_ids)]"
                                                    context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                                    attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('deadline_passed','=', True)]}"
-                                                   domain="[('categ_id','=', ad_class)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}" required="1"/>
                                             <field name="product_id" invisible="1" groups="base.group_no_one"
                                                    context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
@@ -186,7 +186,7 @@
                                                             '|','|',('deadline','&gt;=', deadline_offset),
                                                                     ('deadline','=', False),
                                                                     ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),]"
-                                                   attrs="{'invisible': [('adv_issue','=', False)]}"/>
+                                                   invisible="1"/>
                                             <field name="issue_date" readonly="1"
                                                    attrs="{'invisible': [('adv_issue','=', False)]}"/>
 
@@ -457,7 +457,7 @@
             <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_no_deadline_check'))]"/>
             <field name="arch" type="xml">
                 <field name="adv_issue_ids" position="attributes">
-                     <attribute name="string">Advertising Issue[NDL]</attribute>
+                     <attribute name="string">Advertising Issue</attribute>
                      <attribute name="domain" >[('parent_id','!=', False),'|',('parent_id','in', title_ids),('parent_id','=', title)]</attribute>
                 </field>
                 <field name="product_template_id" position="attributes">

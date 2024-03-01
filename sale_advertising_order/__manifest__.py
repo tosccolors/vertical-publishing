@@ -21,7 +21,7 @@
 ##############################################################################
 {
     'name': 'Sale Advertising Order',
-    'version': '14.0.2.9.5',
+    'version': '14.0.3',
     'category': 'Sale',
     'description': """
 This module allows you to use both CRM and Sales Management to run your advertising sales
@@ -59,7 +59,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
              "views/sale_dashboard_view.xml",
              "views/sale_advertising_view.xml",
              "views/proof_delivery_list_view.xml",
-             "views/crm_lead_view.xml",
+             # "views/crm_lead_view.xml", --deprecated
              "views/res_partner_view.xml",
              # "views/menuitems.xml", -- deprecated
              "views/menu_views.xml",

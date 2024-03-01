@@ -595,6 +595,36 @@ class SaleOrderLine(models.Model):
 
         return [('id','child_of', self.medium.id), ('id', '!=', self.medium.id)]
 
+
+    @api.depends('ad_class', 'title_ids')
+    def _get_prodTemplate2filter(self):
+        " Explicit Domain to filter Product based on Title Attribute "
+
+        AdsSOT = self.env.ref('sale_advertising_order.ads_sale_type').id
+        defSOT = self._context.get('default_type_id', False)
+
+        for line in self:
+            ptmplIDs = []
+
+            # Check SO type: Ads SOT
+            if (line.order_id and line.order_id.type_id.id == AdsSOT) or (defSOT == AdsSOT):
+
+                if line.ad_class and line.title_ids:
+                    ATpavIds = line.title_ids.mapped('product_attribute_value_id').ids
+                    prodTmpls = self.env['product.product'].search(
+                        [('sale_ok', '=', True),
+                         ('categ_id', '=', line.ad_class.id),
+                         ('product_template_attribute_value_ids.product_attribute_value_id', 'in', ATpavIds)]).mapped('product_tmpl_id')
+
+                    # Ensure all Title's PAV combination exists:
+                    for pt in prodTmpls:
+                        validPAV = pt.valid_product_template_attribute_line_ids.mapped("product_template_value_ids").mapped('product_attribute_value_id').ids
+                        if all(i in validPAV for i in ATpavIds):
+                            ptmplIDs.append(pt.id)
+
+            line.domain4prod_ids = [(6, 0, ptmplIDs)]
+
+
     mig_remark = fields.Text('Migration Remark')
     layout_remark = fields.Text('Material Remark')
     title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)])
@@ -664,6 +694,7 @@ class SaleOrderLine(models.Model):
     # proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False) #deep: has been overridden to M2M as below
     proof_number_payer = fields.Boolean('Proof Number Payer', default=False)
     booklet_surface_area = fields.Float(related='product_template_id.booklet_surface_area', readonly=True, string='Booklet Surface Area',digits='Product Unit of Measure')
+    domain4prod_ids = fields.Many2many('product.template', string='Domain for Product Template', compute=_get_prodTemplate2filter)
 
 
     # Brought from nsm_sale_advertising_order
@@ -672,9 +703,11 @@ class SaleOrderLine(models.Model):
                                                  string='Proof Number Advertising Customer')
     proof_number_amt_adv_customer = fields.Integer('Proof Number Amount Advertising', default=1)
 
+
     @api.onchange('medium')
     def onchange_medium(self):
         vals, data, result = {}, {}, {}
+        _logger.info("\n Came inside >>> onchange_medium [medium]")
         if not self.advertising:
             return {'value': vals }
         if self.medium:
@@ -689,7 +722,8 @@ class SaleOrderLine(models.Model):
             titles = self.env['sale.advertising.issue'].search([('parent_id','=', False),('medium', 'child_of', self.medium.id)]).ids
             if titles and len(titles) == 1:
                 vals['title'] = titles[0]
-                vals['title_ids'] = [(6, 0, [])]
+                # vals['title_ids'] = [(6, 0, [])]
+                vals['title_ids'] = [(6, 0, titles)]
             else:
                 vals['title'] = False
                 vals['title_ids'] = [(6, 0, [])]
@@ -703,6 +737,7 @@ class SaleOrderLine(models.Model):
     @api.onchange('ad_class')
     def onchange_ad_class(self):
         vals, data, result = {}, {}, {}
+        _logger.info("\n Came inside >>> onchange_ad_class [ad_class]")
         if not self.advertising:
             return {'value': vals}
         titles = self.title_ids if self.title_ids else self.title or False
@@ -711,7 +746,7 @@ class SaleOrderLine(models.Model):
             product_ids = self.env['product.product']
             for title in titles:
                 if title.product_attribute_value_id:
-                    ids = product_ids.search([('product_template_attribute_value_ids', '=', [title.product_attribute_value_id.id])])
+                    ids = product_ids.search([('product_template_attribute_value_ids', 'in', [title.product_attribute_value_id.id])])
                     product_ids += ids
             product_tmpl_ids = product_ids.mapped('product_tmpl_id').ids
             domain = [('id', 'in', product_tmpl_ids)]
@@ -731,31 +766,98 @@ class SaleOrderLine(models.Model):
             vals['date_type'] = False
         return {'value': vals, 'domain' : data, 'warning': result}
 
-    @api.onchange('title')
-    def title_oc(self):
-        data, vals = {}, {}
-        if not self.advertising:
-            return {'value': vals}
-        if self.title:
-            adissue_ids = self.title.child_ids.ids
-            if len(adissue_ids) == 1:
-                vals['adv_issue'] = adissue_ids[0]
-                vals['adv_issue_ids'] = [(6, 0, [])]
-                vals['product_id'] = False
-            else:
-                vals['adv_issue'] = False
-                vals['product_id'] = False
-        else:
-            vals['adv_issue'] = False
-            vals['product_id'] = False
-            vals['adv_issue_ids'] = [(6, 0, [])]
-        return {'value': vals, 'domain': data}
+    # @api.onchange('title')
+    # def title_oc(self):
+    #     data, vals = {}, {}
+    #     _logger.info("\n Came inside >>> title_oc [title]")
+    #     if not self.advertising:
+    #         return {'value': vals}
+    #     if self.title:
+    #         adissue_ids = self.title.child_ids.ids
+    #         if len(adissue_ids) == 1:
+    #             vals['adv_issue'] = adissue_ids[0]
+    #             vals['adv_issue_ids'] = [(6, 0, [])]
+    #             vals['product_id'] = False
+    #         else:
+    #             vals['adv_issue'] = False
+    #             vals['product_id'] = False
+    #     else:
+    #         vals['adv_issue'] = False
+    #         vals['product_id'] = False
+    #         vals['adv_issue_ids'] = [(6, 0, [])]
+    #     return {'value': vals, 'domain': data}
+    #
+    # @api.onchange('title_ids')
+    # def title_ids_oc(self):
+    #     _logger.info("\n Came inside >>> title_ids_oc [title_ids]")
+    #     vals = {}
+    #     if not self.advertising:
+    #         return {'value': vals}
+    #     if self.title_ids and self.adv_issue_ids:
+    #         titles = self.title_ids.ids
+    #         issue_ids = self.adv_issue_ids.ids
+    #         adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', issue_ids)])
+    #         issue_parent_ids = [x.parent_id.id for x in adv_issues]
+    #         for title in titles:
+    #             if not (title in issue_parent_ids):
+    #                 raise UserError(_('Not for every selected Title an Issue is selected.'))
+    #         if len(self.title_ids) == 1:
+    #             self.title = self.title_ids[0]
+    #             self.title_ids = [(6, 0, [])]
+    #
+    #     elif self.title_ids and self.issue_product_ids:
+    #         titles = self.title_ids.ids
+    #         adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', [x.adv_issue_id.id for x in self.issue_product_ids])])
+    #         issue_parent_ids = [x.parent_id.id for x in adv_issues]
+    #         back = False
+    #         for title in titles:
+    #             if not (title in issue_parent_ids):
+    #                 back = True
+    #                 break
+    #         if back:
+    #             self.adv_issue_ids = [(6, 0, adv_issues.ids)]
+    #             self.issue_product_ids = [(6, 0, [])]
+    #         if len(self.title_ids) == 1:
+    #             self.title = self.title_ids[0]
+    #             self.title_ids = [(6, 0, [])]
+    #         self.titles_issues_products_price()
+    #
+    #     elif self.title_ids:
+    #         self.product_template_id = False
+    #         self.product_id = False
+    #     else:
+    #         self.adv_issue = False
+    #         self.adv_issue_ids = [(6, 0, [])]
+    #         self.issue_product_ids = [(6, 0, [])]
+    #         self.product_id = False
+    #         self.product_template_id = False
+    #         self.product_uom = False
 
-    @api.onchange('title_ids')
-    def title_ids_oc(self):
+
+
+
+    @api.onchange('title', 'title_ids')
+    def onchange_title(self):
+        " Merge & Deprecate usage of  field title & adv_issue "
+
+        _logger.info("\n Came inside >>> DEEP onchange  [title | title_ids]")
         vals = {}
         if not self.advertising:
             return {'value': vals}
+
+        # import pdb; pdb.set_trace()
+
+        # Single Title: pre-populate Issue if only one present:
+        if len(self.title_ids) == 1 and not self.adv_issue_ids:
+            self.title = self.title_ids[0]
+            adissue_ids = self.title_ids.child_ids.ids
+            if len(adissue_ids) == 1:
+                self.adv_issue = adissue_ids[0]
+                self.adv_issue_ids = [(6, 0, adissue_ids)]
+
+        elif len(self.title_ids) > 1: # Multi Titles:
+            self.title = False
+
         if self.title_ids and self.adv_issue_ids:
             titles = self.title_ids.ids
             issue_ids = self.adv_issue_ids.ids
@@ -764,9 +866,9 @@ class SaleOrderLine(models.Model):
             for title in titles:
                 if not (title in issue_parent_ids):
                     raise UserError(_('Not for every selected Title an Issue is selected.'))
-            if len(self.title_ids) == 1:
-                self.title = self.title_ids[0]
-                self.title_ids = [(6, 0, [])]
+            # if len(self.title_ids) == 1:
+            #     self.title = self.title_ids[0]
+            #     self.title_ids = [(6, 0, [])]
 
         elif self.title_ids and self.issue_product_ids:
             titles = self.title_ids.ids
@@ -780,9 +882,9 @@ class SaleOrderLine(models.Model):
             if back:
                 self.adv_issue_ids = [(6, 0, adv_issues.ids)]
                 self.issue_product_ids = [(6, 0, [])]
-            if len(self.title_ids) == 1:
-                self.title = self.title_ids[0]
-                self.title_ids = [(6, 0, [])]
+            # if len(self.title_ids) == 1:
+            #     self.title = self.title_ids[0]
+            #     self.title_ids = [(6, 0, [])]
             self.titles_issues_products_price()
 
         elif self.title_ids:
@@ -796,12 +898,19 @@ class SaleOrderLine(models.Model):
             self.product_template_id = False
             self.product_uom = False
 
-
     @api.onchange('product_template_id')
     def titles_issues_products_price(self):
+        _logger.info("\n Came inside >>> titles_issues_products_price [product_template_id] ")
         vals = {}
         if not self.advertising:
             return {'value': vals}
+        # import pdb; pdb.set_trace()
+        if not self.product_template_id:
+            self.issue_product_ids = [(6, 0, [])]
+
+        if self.title_ids and (len(self.adv_issue_ids) == 0):
+            raise UserError(_('Please select Advertising Issue(s) to proceed further.'))
+
         volume_discount = self.product_template_id.volume_discount
         if self.product_template_id and self.adv_issue_ids and len(self.adv_issue_ids) > 1:
             _logger.info("Did i come here? - Multiple Edition ")
@@ -813,6 +922,8 @@ class SaleOrderLine(models.Model):
             price = 0
             issues_count = len(adv_issues)
             for adv_issue in adv_issues:
+                _logger.info("Loop for ==> %s"%adv_issue)
+                _logger.info("Inside Loop : %s , %s, %s, %s "%(adv_issue.parent_id.id ,  self.title_ids.ids , adv_issue.parent_id.id , self.title.id))
                 if adv_issue.parent_id.id in self.title_ids.ids or adv_issue.parent_id.id == self.title.id:
                     value = {}
                     if adv_issue.product_attribute_value_id:
@@ -824,7 +935,7 @@ class SaleOrderLine(models.Model):
                     _logger.info("Found ? pav %s" % pav)
                     product_id = self.env['product.product'].search(
                         [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids.product_attribute_value_id', '=', pav)])
-                    _logger.info("found pp %s \n PT %s" % (product_id, self.product_template_id))
+                    _logger.info("[Inside Loop] found pp %s \n PT %s" % (product_id, self.product_template_id))
                     if product_id:
                         product = product_id.with_context(
                             lang=self.order_id.partner_id.lang,
@@ -842,11 +953,11 @@ class SaleOrderLine(models.Model):
                                 self.company_id)
 
                             price += value['price_unit'] * self.product_uom_qty
-                            _logger.info("Values %s"%value)
+                            _logger.info("Value %s"%value)
                             values.append((0,0, value))
             if product_id:
                 self.update({
-                    'adv_issue_ids': [(6, 0, [])],
+                    # 'adv_issue_ids': [(6, 0, [])], # FIXME: Need this?
                     'issue_product_ids': values,
                     'product_id': product_id.id,
                     'multi_line_number': issues_count,
@@ -909,18 +1020,18 @@ class SaleOrderLine(models.Model):
                 if self.adv_issue.parent_id.id == self.title.id:
                     if self.adv_issue.product_attribute_value_id:
                         pav = self.adv_issue.product_attribute_value_id.id
-                        _logger.info("IF > pav %s" % pav)
+                        _logger.info("IF > pav ID %s :: %s" % (pav, self.adv_issue.product_attribute_value_id.name))
                     else:
                         pav = self.adv_issue.parent_id.product_attribute_value_id.id
-                        _logger.info("ELSE pav %s" % pav)
+                        _logger.info("ELSE pav ID %s :: %s" % (pav,self.adv_issue.parent_id.product_attribute_value_id))
                     _logger.info("whats pav %s"%pav)
                     product_id = self.env['product.product'].search(
                         [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids.product_attribute_value_id', '=', pav)])
                     _logger.info("found pp %s \n PT %s" %(product_id, self.product_template_id))
                     if product_id:
                         self.update({
-                            'adv_issue_ids': [(6, 0, [])],
-                            'issue_product_ids': [(6, 0, [])],
+                            # 'adv_issue_ids': [(6, 0, [])], # FIXME: Need this?
+                            # 'issue_product_ids': [(6, 0, [])], # FIXME: Need this?
                             'product_id': product_id.id,
                             'multi_line_number': 1,
                             'multi_line': False,
@@ -929,6 +1040,7 @@ class SaleOrderLine(models.Model):
     
     @api.onchange('product_id')
     def product_id_change(self):
+        _logger.info("\n Came inside >>> product_id_change [product_id] ")
         result = super(SaleOrderLine, self).product_id_change()
         if not self.advertising:
             return result
@@ -949,6 +1061,7 @@ class SaleOrderLine(models.Model):
 
     @api.onchange('date_type')
     def onchange_date_type(self):
+        _logger.info("\n Came inside >>> onchange_date_type [date_type] ")
         vals = {}
         if not self.advertising:
             return {'value': vals}
@@ -974,6 +1087,7 @@ class SaleOrderLine(models.Model):
 
     @api.onchange('price_unit')
     def onchange_price_unit(self):
+        _logger.info("\n Came inside >>> onchange_price_unit [price_unit] ")
         result = {}
         if not self.advertising:
             return {'value': result}
@@ -983,6 +1097,7 @@ class SaleOrderLine(models.Model):
 
     @api.onchange('computed_discount')
     def onchange_actualcd(self):
+        _logger.info("\n Came inside >>> onchange_actualcd [computed_discount] ")
         result = {}
         if not self.advertising:
             return {'value': result}
@@ -1012,6 +1127,7 @@ class SaleOrderLine(models.Model):
 
     @api.onchange('product_uom_qty','comb_list_price')
     def onchange_actualqty(self):
+        _logger.info("\n Came inside >>> onchange_actualqty [product_uom_qty, comb_list_price] ")
         result = {}
         if not self.advertising:
             return {'value': result}
@@ -1053,6 +1169,7 @@ class SaleOrderLine(models.Model):
 
     @api.onchange('adv_issue', 'adv_issue_ids','dates','issue_product_ids')
     def onchange_getQty(self):
+        _logger.info("\n Came inside >>> onchange_getQty [adv_issue | adv_issue_ids | dates | issue_product_ids]")
         result = {}
         if not self.advertising:
             return {'value': result}
@@ -1090,13 +1207,13 @@ class SaleOrderLine(models.Model):
             self.multi_line = True
         else:
             self.multi_line = False
-            if not self.title and self.title_ids:
-                self.title = self.title_ids[0]
-            elif self.title:
-                self.title_ids = [(6,0,[])]
+            # if not self.title and self.title_ids: # FIXME: deep
+            #     self.title = self.title_ids[0]
+            # elif self.title:
+            #     self.title_ids = [(6,0,[])]
         self.multi_line_number = ml_qty
-        self.adv_issue = ai
-        self.adv_issue_ids = ais
+        # self.adv_issue = ai # FIXME: deep
+        # self.adv_issue_ids = ais # FIXME: deep
 
     #added by sushma
     @api.onchange('dateperiods')
