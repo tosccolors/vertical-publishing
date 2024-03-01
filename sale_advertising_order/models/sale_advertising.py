@@ -300,8 +300,11 @@ class SaleOrder(models.Model):
         return True
 
     # overridden: -- added deep
-    
+
+    # FIXME: deprecated method:
     def print_quotation(self):
+        self.ensure_one()
+
         orders = self.filtered(lambda s: s.advertising and s.state in ['draft','approved1', 'submitted', 'approved2'])
         for order in orders:
             olines = []
@@ -312,7 +315,11 @@ class SaleOrder(models.Model):
                 self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
         self._cr.commit()
         orders.write({'state': 'sent'})
-        return super(SaleOrder, self).print_quotation()
+        # return super(SaleOrder, self).print_quotation() -- deprecated method.
+
+        # xmlid = "sale.report_saleorder"
+        # action = self.env.ref(xmlid).report_action(orders)
+        # return action
 
     
     def action_quotation_send(self):

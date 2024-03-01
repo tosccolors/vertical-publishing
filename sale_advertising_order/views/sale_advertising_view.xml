@@ -230,7 +230,9 @@
                                                        attrs="{'readonly': [('deadline_passed','=', True)]}"/>
                                             </div>
 <!--                                            <field name="proof_number_adv_customer" /> deprecated -->
-                                            <field name="proof_number_adv_customer" string="Proof Number Advertising Customer" domain="[('customer_rank', '>', 0)]" context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
+                                            <field name="proof_number_adv_customer" string="Proof Number Advertising Customer"
+                                                   domain="['|',('id', '=', parent.published_customer), ('parent_id', '=', parent.published_customer)]"
+                                                   context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
                                             <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
                                             <field name="proof_number_payer" />
                                         </group>
