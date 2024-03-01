@@ -747,31 +747,38 @@ class SaleOrderLine(models.Model):
         _logger.info("\n Came inside >>> onchange_ad_class [ad_class]")
         if not self.advertising:
             return {'value': vals}
-        titles = self.title_ids if self.title_ids else self.title or False
-        domain = []
-        if titles:
-            product_ids = self.env['product.product']
-            for title in titles:
-                if title.product_attribute_value_id:
-                    ids = product_ids.search([('product_template_attribute_value_ids', 'in', [title.product_attribute_value_id.id])])
-                    product_ids += ids
-            product_tmpl_ids = product_ids.mapped('product_tmpl_id').ids
-            domain = [('id', 'in', product_tmpl_ids)]
-        if self.ad_class:
-            product_ids = self.env['product.template'].search(domain+[('categ_id', '=', self.ad_class.id)])
-            if product_ids and len(product_ids) == 1:
-                vals['product_template_id'] = product_ids[0]
-            else:
-                vals['product_template_id'] = False
-            date_type = self.ad_class.date_type
-            if date_type:
-                vals['date_type'] = date_type
-            else: result = {'title':_('Warning'),
-                                 'message':_('The Ad Class has no Date Type. You have to define one')}
-        else:
-            vals['product_template_id'] = False
-            vals['date_type'] = False
-        return {'value': vals, 'domain' : data, 'warning': result}
+
+        # Reset
+        if not self.ad_class:
+            self.product_template_id = False
+
+        # -- deprecated -- NOT needed anymore
+        # titles = self.title_ids if self.title_ids else self.title or False
+        # domain = []
+        # if titles:
+        #     product_ids = self.env['product.product']
+        #     for title in titles:
+        #         if title.product_attribute_value_id:
+        #             ids = product_ids.search([('product_template_attribute_value_ids', 'in', [title.product_attribute_value_id.id])])
+        #             product_ids += ids
+        #     product_tmpl_ids = product_ids.mapped('product_tmpl_id').ids
+        #     domain = [('id', 'in', product_tmpl_ids)]
+
+        # if self.ad_class:
+        #     product_ids = self.env['product.template'].search(domain+[('categ_id', '=', self.ad_class.id)])
+        #     if product_ids and len(product_ids) == 1:
+        #         vals['product_template_id'] = product_ids[0]
+        #     else:
+        #         vals['product_template_id'] = False
+        #     date_type = self.ad_class.date_type
+        #     if date_type:
+        #         vals['date_type'] = date_type
+        #     else: result = {'title':_('Warning'),
+        #                          'message':_('The Ad Class has no Date Type. You have to define one')}
+        # else:
+        #     vals['product_template_id'] = False
+        #     vals['date_type'] = False
+        # return {'value': vals, 'domain' : data, 'warning': result}
 
     # @api.onchange('title')
     # def title_oc(self):
@@ -1096,10 +1103,13 @@ class SaleOrderLine(models.Model):
     def onchange_price_unit(self):
         _logger.info("\n Came inside >>> onchange_price_unit [price_unit] ")
         result = {}
+        stprice = 0
         if not self.advertising:
             return {'value': result}
         if self.price_unit > 0 and self.product_uom_qty > 0:
-            result['subtotal_before_agency_disc'] = self.price_unit * self.product_uom_qty
+             stprice = self.price_unit * self.product_uom_qty
+
+        self.subtotal_before_agency_disc = stprice
         return {'value': result}
 
     @api.onchange('computed_discount')
