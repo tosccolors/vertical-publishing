@@ -399,6 +399,7 @@
                             <group>
                                 <group string="Sales Information" name="sales_person">
                                     <field name="user_id"/>
+                                    <field name="operating_unit_id" widget="selection" groups="operating_unit.group_multi_operating_unit"/>
                                     <field name="team_id" options="{'no_create': True}"/>
 									<field name="tag_ids" widget="many2many_tags"/>
                                     <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
@@ -517,6 +518,7 @@
                     <field name="advertising_agency"/>
                     <field name="partner_acc_mgr"/>
                     <field name="user_id" optional="show" widget="many2one_avatar_user"/>
+                    <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>
                     <field name="activity_ids" widget="list_activity" optional="show"/>
                     <field name="team_id" optional="hide"/>
                     <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>
@@ -540,6 +542,7 @@
                 <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
                     <separator/>
                     <filter string="Sales" name="sales" domain="[('state','in',('sale','done'))]"/>
+                    <filter name="department" string="Department" domain="[]" groups="operating_unit.group_multi_operating_unit" context="{'group_by':'operating_unit_id'}"/>
                     <filter name="accmgr_sale_orders_filter" string="My Sales Orders (Account Manager)"
                             domain="[('partner_acc_mgr','=',uid)]" help="My Advertising Sales Orders as Account manager"/>
                     <field name="partner_acc_mgr"/>
@@ -553,6 +556,10 @@
                     <filter string="Sales Mgr Approved" name="approved1" domain="[('state','=','approved1')]" groups="sale_advertising_order.group_senior_sales"/>
                     <filter string="Traffic Approved" name="approved2" domain="[('state','=','approved2')]" groups="sale_advertising_order.group_traffic_user"/>
                 </xpath>
+
+                <field name="partner_id" position="after">
+                    <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>
+                </field>
 
                 <field name="analytic_account_id" position="after">
                     <field name="date_from" string="Order Date From" filter_domain="[('date_order','&gt;=',self)]"/>
@@ -660,6 +667,7 @@
                     <field name="advertising_agency"/>
                     <field name="partner_acc_mgr" optional="show"/>
                     <field name="user_id" widget="many2one_avatar_user" optional="show"/>
+                    <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>
                     <field name="activity_ids" widget="list_activity" optional="show"/>
                     <field name="team_id" optional="hide"/>
                     <field name="tag_ids" optional="hide" widget="many2many_tags" options="{'color_field': 'color'}"/>
