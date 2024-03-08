@@ -189,6 +189,7 @@
                                                    invisible="1"/>
                                             <field name="issue_date" readonly="1"
                                                    attrs="{'invisible': [('adv_issue','=', False)]}"/>
+                                            <field name="deadline"/>
 
                                         </group>
                                         <group>
@@ -210,7 +211,7 @@
                                             <field name="discount_reason_id" attrs="{'invisible': [('computed_discount','=', 0.0)],'required': [('computed_discount','!=', 0.0)]}"/>
                                             <field name="subtotal_before_agency_disc" readonly="False"/>
                                             <label for="discount" string="Agency Commission" groups="product.group_discount_per_so_line"/>
-                                                <div name="discount" groups="product.group_discount_per_so_line">
+                                                <div name="discount" string="Agency Discount (%)" groups="product.group_discount_per_so_line">
                                                     <field name="discount" invisible="1"/>
                                                     <field name="discount_dummy" class="oe_inline"/> %%
                                                 </div>
@@ -233,8 +234,10 @@
                                             <field name="proof_number_adv_customer" string="Proof Number Advertising Customer"
                                                    domain="['|',('id', '=', parent.published_customer), ('parent_id', '=', parent.published_customer)]"
                                                    context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
-                                            <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
                                             <field name="proof_number_payer" />
+                                            <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
+                                            <field name="proof_number_payer_id" domain="[('customer_rank', '>', 0),('id','child_of',parent.partner_id)]" attrs="{'required': [('proof_number_amt_payer', '>', 0)]}" context="{'default_parent_id': 'order_partner_id', 'show_address': 1}" options="{'no_create_edit': True, 'always_reload': True}"/>
+                                            <field name="proof_number_amt_payer" attrs="{'invisible':[('proof_number_payer_id','=', False)],'required':[('proof_number_payer_id','!=', False)]}"/>
                                         </group>
                                     </group>
                                     <group>
@@ -316,6 +319,7 @@
                                     <field name="id" optional="hide"/>
                                     <field name="title" />
                                     <field name="issue_date" />
+                                    <field name="deadline"/>
                                     <field name="ad_class" groups="base.group_no_one"/>
                                     <field name="product_id"
                                         attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
@@ -1042,8 +1046,8 @@
                                 </div>
 <!--                                <field name="proof_number_adv_customer" /> deprecated -->
                                 <field name="proof_number_adv_customer" string="Proof Number Advertising Customer" domain="[('customer_rank', '>', 0)]" context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
-                                <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
                                 <field name="proof_number_payer" />
+                                <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
                             </group>
                         </group>
                         <group>
