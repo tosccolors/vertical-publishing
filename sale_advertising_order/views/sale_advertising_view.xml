@@ -251,17 +251,18 @@
 <!--                                                <field name="ad_number" string="Ad No." />-->
 <!--                                            </tree>-->
 <!--                                        </field>-->
-                                        <field name="dateperiods" string="Advertising Periods" colspan="4"
-                                            attrs="{'invisible':[('date_type','!=','validity')]}">
-                                            <tree string="Ad Periods" editable="bottom">
-                                                <field name="sequence" widget="handle" />
-                                                <field name="from_date" string="Start of Validity" required="True"/>
-                                                <field name="to_date" string="End of Validity" required="True"/>
-                                                <field name="name" string="Comment" />
-                                                <field name="page_reference" string="Page Pref" />
-                                                <field name="ad_number" string="Ad No." />
-                                            </tree>
-                                        </field>
+                                        <!--          deprecated: deepa                    -->
+<!--                                        <field name="dateperiods" string="Advertising Periods" colspan="4"-->
+<!--                                            attrs="{'invisible':[('date_type','!=','validity')]}">-->
+<!--                                            <tree string="Ad Periods" editable="bottom">-->
+<!--                                                <field name="sequence" widget="handle" />-->
+<!--                                                <field name="from_date" string="Start of Validity" required="True"/>-->
+<!--                                                <field name="to_date" string="End of Validity" required="True"/>-->
+<!--                                                <field name="name" string="Comment" />-->
+<!--                                                <field name="page_reference" string="Page Pref" />-->
+<!--                                                <field name="ad_number" string="Ad No." />-->
+<!--                                            </tree>-->
+<!--                                        </field>-->
                                         <field name="issue_product_ids" string="Adv.Issues with Products and Prices"
                                                attrs="{'invisible':[('issue_product_ids','=',[])]}"
                                                options="{'no_create': True, 'no_create_edit': True}" readonly="0">
@@ -1061,17 +1062,18 @@
 <!--                                    <field name="ad_number" string="Ad No." />-->
 <!--                                </tree>-->
 <!--                            </field>-->
-                            <field name="dateperiods" string="Advertising Periods" colspan="4"
-                                attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','!=','validity')]}">
-                                <tree string="Ad Periods" editable="bottom">
-                                    <field name="sequence" widget="handle" />
-                                    <field name="from_date" string="Start of Validity" required="True"/>
-                                    <field name="to_date" string="End of Validity" required="True"/>
-                                    <field name="name" string="Comment" />
-                                    <field name="page_reference" string="Ref" />
-                                    <field name="ad_number" string="Ad No." />
-                                </tree>
-                            </field>
+                               <!--          deprecated: deepa                    -->
+<!--                            <field name="dateperiods" string="Advertising Periods" colspan="4"-->
+<!--                                attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','!=','validity')]}">-->
+<!--                                <tree string="Ad Periods" editable="bottom">-->
+<!--                                    <field name="sequence" widget="handle" />-->
+<!--                                    <field name="from_date" string="Start of Validity" required="True"/>-->
+<!--                                    <field name="to_date" string="End of Validity" required="True"/>-->
+<!--                                    <field name="name" string="Comment" />-->
+<!--                                    <field name="page_reference" string="Ref" />-->
+<!--                                    <field name="ad_number" string="Ad No." />-->
+<!--                                </tree>-->
+<!--                            </field>-->
                             <field name="issue_product_ids" string="Adv.Issues with Products and Prices"
                                    attrs="{'invisible':['|',('issue_product_ids','=',[]),('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
                                    options="{'no_create': True, 'no_create_edit': True}" readonly="0">
