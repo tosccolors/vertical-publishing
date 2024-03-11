@@ -33,10 +33,10 @@
                             attrs="{'invisible': ['|','|',('state','in',['cancel','sent','done']),('id','=',False),
                                                       ('ver_tr_exc','=',True),('state','in',['cancel','draft','submitted'])]}"
                             class="btn-primary"	groups="sales_team.group_sale_salesman"/>
-                    <button name="print_quotation" string="Print" type="object"
-                            attrs="{'invisible': ['|','|',('state','in',['cancel','submitted','sent','done']),('id','=',False),
-                                                      ('ver_tr_exc','=',True),('state','in',['cancel','draft','submitted'])]}"
-                            class="btn-primary" groups="sales_team.group_sale_salesman"/>
+<!--                    <button name="print_quotation" string="Print" type="object"-->
+<!--                            attrs="{'invisible': ['|','|',('state','in',['cancel','submitted','sent','done']),('id','=',False),-->
+<!--                                                      ('ver_tr_exc','=',True),('state','in',['cancel','draft','submitted'])]}"-->
+<!--                            class="btn-primary" groups="sales_team.group_sale_salesman"/>-->
                     <button name="action_cancel" states="draft,submitted,approved1,sent,sale" type="object" string="Cancel"/>
                     <button name="action_draft" states="cancel" type="object" string="Set to Quotation"/>
                     <button name="action_done" type="object" string="Lock" states="sale" groups="sale_advertising_order.group_traffic_user"/>
@@ -189,6 +189,7 @@
                                                    invisible="1"/>
                                             <field name="issue_date" readonly="1"
                                                    attrs="{'invisible': [('adv_issue','=', False)]}"/>
+                                            <field name="deadline"/>
 
                                         </group>
                                         <group>
@@ -210,7 +211,7 @@
                                             <field name="discount_reason_id" attrs="{'invisible': [('computed_discount','=', 0.0)],'required': [('computed_discount','!=', 0.0)]}"/>
                                             <field name="subtotal_before_agency_disc" readonly="False"/>
                                             <label for="discount" string="Agency Commission" groups="product.group_discount_per_so_line"/>
-                                                <div name="discount" groups="product.group_discount_per_so_line">
+                                                <div name="discount" string="Agency Discount (%)" groups="product.group_discount_per_so_line">
                                                     <field name="discount" invisible="1"/>
                                                     <field name="discount_dummy" class="oe_inline"/> %%
                                                 </div>
@@ -233,8 +234,10 @@
                                             <field name="proof_number_adv_customer" string="Proof Number Advertising Customer"
                                                    domain="['|',('id', '=', parent.published_customer), ('parent_id', '=', parent.published_customer)]"
                                                    context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
-                                            <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
                                             <field name="proof_number_payer" />
+                                            <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
+                                            <field name="proof_number_payer_id" domain="[('customer_rank', '>', 0),('id','child_of',parent.partner_id)]" attrs="{'required': [('proof_number_amt_payer', '>', 0)]}" context="{'default_parent_id': 'order_partner_id', 'show_address': 1}" options="{'no_create_edit': True, 'always_reload': True}"/>
+                                            <field name="proof_number_amt_payer" attrs="{'invisible':[('proof_number_payer_id','=', False)],'required':[('proof_number_payer_id','!=', False)]}"/>
                                         </group>
                                     </group>
                                     <group>
@@ -248,17 +251,18 @@
 <!--                                                <field name="ad_number" string="Ad No." />-->
 <!--                                            </tree>-->
 <!--                                        </field>-->
-                                        <field name="dateperiods" string="Advertising Periods" colspan="4"
-                                            attrs="{'invisible':[('date_type','!=','validity')]}">
-                                            <tree string="Ad Periods" editable="bottom">
-                                                <field name="sequence" widget="handle" />
-                                                <field name="from_date" string="Start of Validity" required="True"/>
-                                                <field name="to_date" string="End of Validity" required="True"/>
-                                                <field name="name" string="Comment" />
-                                                <field name="page_reference" string="Page Pref" />
-                                                <field name="ad_number" string="Ad No." />
-                                            </tree>
-                                        </field>
+                                        <!--          deprecated: deepa                    -->
+<!--                                        <field name="dateperiods" string="Advertising Periods" colspan="4"-->
+<!--                                            attrs="{'invisible':[('date_type','!=','validity')]}">-->
+<!--                                            <tree string="Ad Periods" editable="bottom">-->
+<!--                                                <field name="sequence" widget="handle" />-->
+<!--                                                <field name="from_date" string="Start of Validity" required="True"/>-->
+<!--                                                <field name="to_date" string="End of Validity" required="True"/>-->
+<!--                                                <field name="name" string="Comment" />-->
+<!--                                                <field name="page_reference" string="Page Pref" />-->
+<!--                                                <field name="ad_number" string="Ad No." />-->
+<!--                                            </tree>-->
+<!--                                        </field>-->
                                         <field name="issue_product_ids" string="Adv.Issues with Products and Prices"
                                                attrs="{'invisible':[('issue_product_ids','=',[])]}"
                                                options="{'no_create': True, 'no_create_edit': True}" readonly="0">
@@ -316,6 +320,7 @@
                                     <field name="id" optional="hide"/>
                                     <field name="title" />
                                     <field name="issue_date" />
+                                    <field name="deadline"/>
                                     <field name="ad_class" groups="base.group_no_one"/>
                                     <field name="product_id"
                                         attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
@@ -399,6 +404,7 @@
                             <group>
                                 <group string="Sales Information" name="sales_person">
                                     <field name="user_id"/>
+                                    <field name="operating_unit_id" widget="selection" groups="operating_unit.group_multi_operating_unit"/>
                                     <field name="team_id" options="{'no_create': True}"/>
 									<field name="tag_ids" widget="many2many_tags"/>
                                     <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
@@ -493,9 +499,9 @@
                 <button name="action_quotation_send" position="attributes">
                      <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sent','done'])]}</attribute>
                 </button>
-                <button name="print_quotation" position="attributes">
-                     <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sent','done'])]}</attribute>
-                </button>
+<!--                <button name="print_quotation" position="attributes">-->
+<!--                     <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sent','done'])]}</attribute>-->
+<!--                </button>-->
                 <xpath expr="//page[@name='order_line']/field[@name='order_line']" position="attributes">
                      <attribute name="attrs" >{'readonly': [('state', 'in', ['done','cancel'])]}</attribute>
                 </xpath>
@@ -517,6 +523,7 @@
                     <field name="advertising_agency"/>
                     <field name="partner_acc_mgr"/>
                     <field name="user_id" optional="show" widget="many2one_avatar_user"/>
+                    <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>
                     <field name="activity_ids" widget="list_activity" optional="show"/>
                     <field name="team_id" optional="hide"/>
                     <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>
@@ -540,6 +547,7 @@
                 <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
                     <separator/>
                     <filter string="Sales" name="sales" domain="[('state','in',('sale','done'))]"/>
+                    <filter name="department" string="Department" domain="[]" groups="operating_unit.group_multi_operating_unit" context="{'group_by':'operating_unit_id'}"/>
                     <filter name="accmgr_sale_orders_filter" string="My Sales Orders (Account Manager)"
                             domain="[('partner_acc_mgr','=',uid)]" help="My Advertising Sales Orders as Account manager"/>
                     <field name="partner_acc_mgr"/>
@@ -553,6 +561,10 @@
                     <filter string="Sales Mgr Approved" name="approved1" domain="[('state','=','approved1')]" groups="sale_advertising_order.group_senior_sales"/>
                     <filter string="Traffic Approved" name="approved2" domain="[('state','=','approved2')]" groups="sale_advertising_order.group_traffic_user"/>
                 </xpath>
+
+                <field name="partner_id" position="after">
+                    <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>
+                </field>
 
                 <field name="analytic_account_id" position="after">
                     <field name="date_from" string="Order Date From" filter_domain="[('date_order','&gt;=',self)]"/>
@@ -660,6 +672,7 @@
                     <field name="advertising_agency"/>
                     <field name="partner_acc_mgr" optional="show"/>
                     <field name="user_id" widget="many2one_avatar_user" optional="show"/>
+                    <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>
                     <field name="activity_ids" widget="list_activity" optional="show"/>
                     <field name="team_id" optional="hide"/>
                     <field name="tag_ids" optional="hide" widget="many2many_tags" options="{'color_field': 'color'}"/>
@@ -1034,8 +1047,8 @@
                                 </div>
 <!--                                <field name="proof_number_adv_customer" /> deprecated -->
                                 <field name="proof_number_adv_customer" string="Proof Number Advertising Customer" domain="[('customer_rank', '>', 0)]" context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
-                                <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
                                 <field name="proof_number_payer" />
+                                <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
                             </group>
                         </group>
                         <group>
@@ -1049,17 +1062,18 @@
 <!--                                    <field name="ad_number" string="Ad No." />-->
 <!--                                </tree>-->
 <!--                            </field>-->
-                            <field name="dateperiods" string="Advertising Periods" colspan="4"
-                                attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','!=','validity')]}">
-                                <tree string="Ad Periods" editable="bottom">
-                                    <field name="sequence" widget="handle" />
-                                    <field name="from_date" string="Start of Validity" required="True"/>
-                                    <field name="to_date" string="End of Validity" required="True"/>
-                                    <field name="name" string="Comment" />
-                                    <field name="page_reference" string="Ref" />
-                                    <field name="ad_number" string="Ad No." />
-                                </tree>
-                            </field>
+                               <!--          deprecated: deepa                    -->
+<!--                            <field name="dateperiods" string="Advertising Periods" colspan="4"-->
+<!--                                attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','!=','validity')]}">-->
+<!--                                <tree string="Ad Periods" editable="bottom">-->
+<!--                                    <field name="sequence" widget="handle" />-->
+<!--                                    <field name="from_date" string="Start of Validity" required="True"/>-->
+<!--                                    <field name="to_date" string="End of Validity" required="True"/>-->
+<!--                                    <field name="name" string="Comment" />-->
+<!--                                    <field name="page_reference" string="Ref" />-->
+<!--                                    <field name="ad_number" string="Ad No." />-->
+<!--                                </tree>-->
+<!--                            </field>-->
                             <field name="issue_product_ids" string="Adv.Issues with Products and Prices"
                                    attrs="{'invisible':['|',('issue_product_ids','=',[]),('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
                                    options="{'no_create': True, 'no_create_edit': True}" readonly="0">

@@ -301,26 +301,21 @@ class SaleOrder(models.Model):
 
     # overridden: -- added deep
 
-    # FIXME: deprecated method:
-    def print_quotation(self):
-        self.ensure_one()
-
-        orders = self.filtered(lambda s: s.advertising and s.state in ['draft','approved1', 'submitted', 'approved2'])
-        for order in orders:
-            olines = []
-            for line in order.order_line:
-                if line.multi_line:
-                    olines.append(line.id)
-            if not olines == []:
-                self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
-        self._cr.commit()
-        orders.write({'state': 'sent'})
-        # return super(SaleOrder, self).print_quotation() -- deprecated method.
-
-        # xmlid = "sale.report_saleorder"
-        # action = self.env.ref(xmlid).report_action(orders)
-        # return action
-
+    # # FIXME: deprecated method:
+    # def print_quotation(self):
+    #     self.ensure_one()
+    #
+    #     orders = self.filtered(lambda s: s.advertising and s.state in ['draft','approved1', 'submitted', 'approved2'])
+    #     for order in orders:
+    #         olines = []
+    #         for line in order.order_line:
+    #             if line.multi_line:
+    #                 olines.append(line.id)
+    #         if not olines == []:
+    #             self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
+    #     self._cr.commit()
+    #     orders.write({'state': 'sent'})
+    #     # return super(SaleOrder, self).print_quotation() -- deprecated method.
     
     def action_quotation_send(self):
         '''
@@ -708,6 +703,7 @@ class SaleOrderLine(models.Model):
     proof_number_payer_id = fields.Many2one('res.partner', 'Proof Number Payer ID')
     proof_number_adv_customer = fields.Many2many('res.partner', 'partner_line_proof_rel', 'line_id', 'partner_id',
                                                  string='Proof Number Advertising Customer')
+    proof_number_amt_payer = fields.Integer('Proof Number Amount Payer', default=1)
     proof_number_amt_adv_customer = fields.Integer('Proof Number Amount Advertising', default=1)
 
 
