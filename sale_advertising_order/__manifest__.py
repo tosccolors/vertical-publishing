@@ -21,7 +21,7 @@
 ##############################################################################
 {
     'name': 'Sale Advertising Order',
-    'version': '14.0.3.9',
+    'version': '14.0.4.0',
     'category': 'Sale',
     'description': """
 This module allows you to use both CRM and Sales Management to run your advertising sales
@@ -36,7 +36,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
                 'product_variant_template_categ_id','project',
                 'web_domain_field','account_payment_sale',
                 'web_tree_many2one_clickable', 'crm_industry',
-                'sale_order_type',
+                'sale_order_type', 'base_address_extended',
                 ],
     'data': [
              "data/sale_advertising_data.xml",
@@ -46,6 +46,8 @@ This module allows you to use both CRM and Sales Management to run your advertis
 
              "security/security.xml",
              "security/ir.model.access.csv",
+
+             "report/proof_number_delivery_list_xslx.xml",
 
              # "wizard/sale_order_type_view.xml",
              "wizard/sale_line_create_multi_view.xml",
