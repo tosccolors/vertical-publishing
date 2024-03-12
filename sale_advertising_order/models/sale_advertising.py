@@ -1238,11 +1238,10 @@ class SaleOrderLine(models.Model):
                 self.from_date = min(arr_frm_dates)
                 self.to_date = max(arr_to_dates)
 
-    # FIXME: deep | param is not compatible with 14.0
     def _prepare_invoice_line(self, **optional_values):
         res = super(SaleOrderLine, self)._prepare_invoice_line(**optional_values)
         if self.advertising:
-            res['account_analytic_id'] = self.adv_issue.analytic_account_id.id
+            res['analytic_account_id'] = self.adv_issue.analytic_account_id.id
             res['so_line_id'] = self.id
             res['price_unit'] = self.actual_unit_price
             res['ad_number'] = self.ad_number
