@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="action_proof_number_delivery_list_xlsx" model="ir.actions.report">
-        <field name="name">Report P.N.D.L Xlsx</field>
+        <field name="name">Report P.N.D.L</field>
         <field name="model">proof.number.delivery.list</field>
         <field name="type">ir.actions.report</field>
         <field name="binding_type">action</field>
