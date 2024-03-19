@@ -121,7 +121,7 @@ class Lead(models.Model):
                 'email_from': advertiser.email,
                 'phone': advertiser.phone,
                 'mobile': advertiser.mobile,
-                'fax': advertiser.fax,
+                # 'fax': advertiser.fax, --deprecated
                 'zip': advertiser.zip,
                 'function': advertiser.function,
                 'ad_agency_id': False,
@@ -139,11 +139,39 @@ class Lead(models.Model):
                 'email_from': agency.email,
                 'phone': agency.phone,
                 'mobile': agency.mobile,
-                'fax': agency.fax,
+                # 'fax': agency.fax, --deprecated
                 'zip': agency.zip,
                 'function': agency.function,
             }
         return {'value' : values}
+
+    # Backported:
+    def _onchange_partner_id_values(self, partner_id):
+        """ returns the new values when partner_id has changed """
+        if partner_id:
+            partner = self.env['res.partner'].browse(partner_id)
+
+            partner_name = partner.parent_id.name
+            if not partner_name and partner.is_company:
+                partner_name = partner.name
+
+            return {
+                'partner_name': partner_name,
+                'contact_name': partner.name if not partner.is_company else False,
+                'title': partner.title.id,
+                'street': partner.street,
+                'street2': partner.street2,
+                'city': partner.city,
+                'state_id': partner.state_id.id,
+                'country_id': partner.country_id.id,
+                'email_from': partner.email,
+                'phone': partner.phone,
+                'mobile': partner.mobile,
+                # 'fax': partner.fax, -- deprecated
+                'zip': partner.zip,
+                'function': partner.function,
+            }
+        return {}
 
     @api.onchange('partner_id')
     def onchange_partner(self):
@@ -167,7 +195,7 @@ class Lead(models.Model):
         values.update({
             'industry_id': part.industry_id,
             'secondary_industry_ids': [(6, 0, part.secondary_industry_ids.ids)],
-            'opt_out': part.opt_out,
+            # 'opt_out': part.opt_out, FIXME: Need?
             'partner_name': part.name,
             'partner_contact_id': contact_id,
             'partner_invoice_id': addr['invoice'],
@@ -224,7 +252,7 @@ class Lead(models.Model):
             'function': self.function,
             'phone': self.phone,
             'mobile': self.mobile,
-            # 'fax': self.fax,
+            # 'fax': self.fax, --deprecated
             'tag_ids': [(6, 0, [tag_id.id for tag_id in self.tag_ids])],
             'user_id': (self.user_id and self.user_id.id),
             'type': 'opportunity',

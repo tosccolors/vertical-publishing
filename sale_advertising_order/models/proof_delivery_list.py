@@ -14,8 +14,8 @@ class ProofNumberDeliveryList(models.Model):
             proof_payer = line.proof_number_payer
             line.proof_parent_name = proof_payer.parent_id and proof_payer.parent_id.name or False
             line.proof_parent_name = proof_payer.parent_id and proof_payer.parent_id.name or False
-            line.proof_initials = proof_payer.initials or ''
-            line.proof_infix = proof_payer.infix or ''
+            line.proof_initials = '' #proof_payer.initials or '' FIXME Check initials app
+            line.proof_infix = '' #proof_payer.infix or '' FIXME Check infix
             line.proof_lastname = proof_payer.lastname or ''
             line.proof_country_code = proof_payer.country_id.code or ''
             line.proof_zip = proof_payer.zip or ''

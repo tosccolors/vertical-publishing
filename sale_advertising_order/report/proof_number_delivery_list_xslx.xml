@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="action_proof_number_delivery_list_xlsx" model="ir.actions.report">
+        <field name="name">Report P.N.D.L</field>
+        <field name="model">proof.number.delivery.list</field>
+        <field name="type">ir.actions.report</field>
+        <field name="binding_type">action</field>
+        <field name="binding_model_id" ref="sale_advertising_order.model_proof_number_delivery_list" />
+        <field
+            name="report_name"
+        >pndl_report_xls.proof_number_delivery_list_xlsx</field>
+        <field name="report_file">proof_number_delivery_lis</field>
+        <field name="report_type">xlsx</field>
+    </record>
+</odoo>

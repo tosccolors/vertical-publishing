@@ -81,6 +81,12 @@ class Lead2OpportunityPartner(models.TransientModel):
         return {'value': {}}
 
 
+    # Backported:
+    @api.model
+    def _get_duplicated_leads(self, partner_id, email, include_lost=False):
+        """ Search for opportunities that have the same partner and that arent done or cancelled """
+        return self.env['crm.lead']._get_duplicated_leads_by_emails(partner_id, email, include_lost=include_lost)
+
     @api.model
     def default_get(self, fields):
         """ Default get for name, duplicated_lead_ids.
