@@ -26,7 +26,7 @@
                     <t t-set="tot_Cdiscount" t-value="l.computed_discount"/>
                     <t t-set="sale_order_line" t-value="l.so_line_id or l.sale_line_ids"/>
                     <t t-if="o.move_type != 'out_refund'">
-                        <td width="10%" t-if="sale_order_line.date_type not in ['validity','issue_date']"><span t-field="o.date_invoice"/></td>
+                        <td width="10%" t-if="sale_order_line.date_type not in ['validity','issue_date']"><span t-field="o.invoice_date"/></td>
                         <t t-if="sale_order_line.date_type == 'validity'">
                             <td width="10%" t-if="not sale_order_line.from_date">
                                 <t t-if="sale_order_line.dateperiods">
@@ -45,7 +45,7 @@
                         <td width="10%"><span t-field="sale_order_line.adv_issue.default_note"/></td>
                     </t>
                     <t t-if="o.move_type == 'out_refund'">
-                        <td width="10%" t-if="sale_order_line.date_type not in ['validity','issue_date']"><span t-field="o.refund_invoice_id.date_invoice"/></td>
+                        <td width="10%" t-if="sale_order_line.date_type not in ['validity','issue_date']"><span t-field="o.refund_invoice_id.invoice_date"/></td>
                         <t t-if="sale_order_line.date_type == 'validity'">
                             <td width="10%" t-if="not sale_order_line.from_date">
                                 <t t-if="sale_order_line.dateperiods">
@@ -129,12 +129,21 @@
                     <t t-if="o.company_id.country_id.vat_label" t-esc="o.company_id.country_id.vat_label" id="inv_tax_id_label"/>
                     <t t-else="">Tax ID</t>: <span t-field="o.partner_id.vat"/></div>
 
+                <div t-if="o.partner_id.is_company" class="mt16">
+                    <t>T.a.v.</t>: <t>Crediteurenadministratie</t>
+                </div>
+                <div t-if="not o.partner_id.is_company" class="mt16">
+                    <div t-if="o.partner_id and o.partner_id.parent_id">
+                        T.a.v.:<span t-field="o.partner_id.parent_id.name"/>
+                    </div>
+                </div>
+
                 <div t-if="o.published_customer and o.published_customer.id != o.partner_id.id" class="mt16">
                     <t>Advertiser</t>: <span t-field="o.published_customer.name"/>
                 </div>
             </t>
 
-            <div class="page" style="font-family: 'Titillium Web', sans-serif;page-break-after:always;">
+            <div class="page">
                 <h2>
                     <span t-if="o.move_type == 'out_invoice' and o.state == 'posted'">Invoice</span>
                     <span t-if="o.move_type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
@@ -157,10 +166,6 @@
                         <strong>Due Date:</strong>
                         <p class="m-0" t-field="o.invoice_date_due"/>
                     </div>
-<!--                    <div class="col-auto col-3 mw-100 mb-2" t-if="o.invoice_origin" name="origin">-->
-<!--                        <strong>Source:</strong>-->
-<!--                        <p class="m-0" t-field="o.invoice_origin"/>-->
-<!--                    </div>-->
                     <div class="col-auto col-3 mw-100 mb-2" t-if="o.ref" name="reference">
                         <strong>Your Reference:</strong>
                         <p class="m-0" t-field="o.name"/>
@@ -169,10 +174,6 @@
                         <strong>Customer Code:</strong>
                         <p class="m-0" t-field="o.partner_id.ref"/>
                     </div>
-<!--                    <div class="col-auto col-3 mw-100 mb-2" t-if="o.ref" name="reference">-->
-<!--                        <strong>Reference:</strong>-->
-<!--                        <p class="m-0" t-field="o.ref"/>-->
-<!--                    </div>-->
 
                     <t t-set="sale_order_line" t-value="o.invoice_line_ids.mapped('sale_order_id')"/>
                     <div class="col-auto col-3 mw-100 mb-2" t-if="not len(sale_order_line) > 1" name="so_nr">
