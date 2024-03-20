@@ -214,7 +214,7 @@
                             <table class="table table-sm" style="page-break-inside: avoid;">
 
                                 <tr t-if="display_discount" class="border-black" style="">
-                                    <td><strong>Subtotal before agency discoun</strong></td>
+                                    <td><strong>Subtotal before agency discount</strong></td>
                                     <td class="text-right">
                                         <span t-esc="total_before_discount"/>
                                     </td>
