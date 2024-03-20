@@ -12,9 +12,12 @@
     'website': 'http://www.magnus.nl',
 
     'category': 'Sale',
-    'version': '14.0.2',
+    'version': '14.0.3',
     'depends': ['sale_advertising_order'],
     'data': [
+        'reports/sale_report_template.xml',
+        'reports/invoice_report_template.xml',
+
         'views/sale_advertising_view.xml',
     ],
     'demo': [],
