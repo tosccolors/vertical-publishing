@@ -220,7 +220,6 @@ class SaleOrder(models.Model):
 
 
     # overridden:
-    
     @api.onchange('partner_id', 'published_customer', 'advertising_agency', 'agency_is_publish')
     def onchange_partner_id(self):
         """
@@ -279,7 +278,6 @@ class SaleOrder(models.Model):
         return self.write({'state': 'submitted'})
 
     # --added deep
-    
     def action_approve1(self):
         orders = self.filtered(lambda s: s.state in ['submitted'])
         orders.write({'state':'approved1'})
@@ -293,14 +291,12 @@ class SaleOrder(models.Model):
         return True
 
     # --added deep
-    
     def action_refuse(self):
         orders = self.filtered(lambda s: s.state in ['submitted', 'sale', 'sent', 'approved1', 'approved2'])
         orders.write({'state':'draft'})
         return True
 
     # overridden: -- added deep
-
     # # FIXME: deprecated method:
     # def print_quotation(self):
     #     self.ensure_one()
@@ -446,6 +442,18 @@ class SaleOrder(models.Model):
         if self.advertising:
             invoice_vals['published_customer'] = self.published_customer.id,
         return invoice_vals
+
+
+    def _get_name_quotation_report(self):
+        self.ensure_one()
+        ref = self.env.ref
+        template = 'sale.report_saleorder_document'
+
+        if self.type_id.id == ref('sale_advertising_order.ads_sale_type').id:
+            template = 'sale_advertising_order.report_saleorder_document_sao'
+
+        return template
+
 
 
 

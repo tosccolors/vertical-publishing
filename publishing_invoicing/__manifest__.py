@@ -18,10 +18,10 @@
     'website': "http://www.magnus.nl",
 
     'category': 'Sale',
-    'version': '0.1',
+    'version': '14.0.3.0',
 
     # any module necessary for this one to work correctly
-    'depends': ['sale_advertising_order_invoice_customisation', 'package_sale_advertising_order'],
+    'depends': ['sale_advertising_order_invoice_customisation', 'sale_advertising_order_package'],
 
     # always loaded
     'data': [

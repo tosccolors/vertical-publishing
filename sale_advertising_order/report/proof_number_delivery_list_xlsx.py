@@ -24,36 +24,13 @@ class ProofNUmberDeliveryListXlsx(models.AbstractModel):
         val = translate(self.env.cr, IR_TRANSLATION_NAME, "report", lang, src) or src
         return val
 
-    def _get_ws_params(self, workbook, data, amls):
-
-        _logger.info("\n _get_ws_params data : %s \namls : %s \nln : %s"%(data, amls, self._render("line.name")))
-
-        # Number: -- FIXME
-        # amount = 0
-        # customer = self._render("line.proof_number_payer")
-        # orderLine = self._render("line.line_id")
-        #
-        # if customer.id in orderLine.proof_number_adv_customer.ids:
-        #     amount += orderLine.proof_number_amt_adv_customer
-        # if orderLine.proof_number_payer_id and orderLine.proof_number_payer_id.id == customer.id:
-        #     amount += orderLine.proof_number_amt_payer
-
-        # Title / PaperCode -- FIXME
-        # def _get_title(orderLine):
-        #     title = []
-        #     for advtitle in orderLine.title_ids:
-        #         if advtitle.product_attribute_value_id:
-        #             title.append(advtitle.product_attribute_value_id.name)
-        #     if orderLine.title.product_attribute_value_id:
-        #         title.append(orderLine.title.product_attribute_value_id.name)
-        #     title = ",".join(list(set(title))) if title else ' '
-        #     return title
+    def _get_ws_params(self, workbook, data, pndls):
 
         # XLSX Template
         col_specs = {
             "papercode": {
-                "header": {"value": self._("PAPERCODE")}, # FIXME: Need to handle multi Titles
-                "lines": {"value": self._render("line.line_id.title.product_attribute_value_id.name or ''")},
+                "header": {"value": self._("PAPERCODE")},
+                "lines": {"value": self._render("papercode")},
                 "width": 12,
             },
             "custname": {
@@ -131,10 +108,11 @@ class ProofNUmberDeliveryListXlsx(models.AbstractModel):
             },
             "number": {
                 "header": {
-                    "value": self._("NUMBER"), # FIXME: deep
+                    "value": self._("NUMBER"),
                 },
                 "lines": {
-                    "value": 1 # FIXME - Logic to build later
+                    # "value": self._render("pncopies")
+                    "value": self._render("line.proof_number_amt")
                 },
                 "width": 10,
             },
@@ -194,19 +172,56 @@ class ProofNUmberDeliveryListXlsx(models.AbstractModel):
             col_specs_section="header",
             default_format=FORMATS["format_theader_yellow_left"],
         )
-
         ws.freeze_panes(row_pos, 0)
 
-        wanted_list = ws_params["wanted_list"]
-        # debit_pos = "debit" in wanted_list and wanted_list.index("debit")
-        # credit_pos = "credit" in wanted_list and wanted_list.index("credit")
+        # Copies / Number:
+        # def _get_PDCopies(orderLine):
+        #     amount = 0
+        #     if not orderLine: return amount
         #
+        #     SO = orderLine.order_id
+        #     _logger.info("\n\n\n _get_PDCopies ******************* order %s"%(orderLine.order_id.name))
+        #
+        #     customerID = SO.published_customer and SO.published_customer.id or False
+        #     payerID = SO.partner_id and SO.partner_id.id or False
+        #     _logger.info("\n\n\n _get_PDCopies ******************* Customer %s "
+        #                  "\n _get_PDCopies ******************* payerID %s"%(customerID, payerID))
+        #
+        #
+        #     # Adv Customer
+        #     if len(orderLine.proof_number_adv_customer.ids) > 0:
+        #         amount += orderLine.proof_number_amt_adv_customer
+        #
+        #     # Payer
+        #     if orderLine.proof_number_payer_id:
+        #         amount += orderLine.proof_number_amt_payer
+        #     return amount
+
+        # Title / PaperCode
+        def _get_titles(orderLine):
+            title = []
+            if not orderLine: return ''
+
+            for advtitle in orderLine.title_ids:
+                if advtitle.product_attribute_value_id:
+                    title.append(advtitle.product_attribute_value_id.name)
+            if orderLine.title.product_attribute_value_id:
+                title.append(orderLine.title.product_attribute_value_id.name)
+            title = ",".join(list(set(title))) if title else ' '
+            return title
+
         for line in pndls:
+            paperCode = _get_titles(line.line_id)
+            # copies = _get_PDCopies(line.line_id)
+
             row_pos = self._write_line(
                 ws,
                 row_pos,
                 ws_params,
                 col_specs_section="lines",
-                render_space={"line": line},
+                render_space={"line": line,
+                              "papercode": paperCode,
+                              # "pncopies": copies
+                              },
                 default_format=FORMATS["format_tcell_left"],
             )

@@ -32,6 +32,16 @@
                     <field name="computed_discount" invisible="1"/>
                     <field name="subtotal_before_agency_disc" />
                 </xpath>
+
+                <xpath expr="//notebook/page[@name='other_info']" position="before">
+                    <page string="Invoice Description">
+                        <div class="oe_clear">
+                            <label for="invoice_description"/>
+                        </div>
+                        <field name="invoice_description" class="oe_inline" placeholder="Add description" />
+                    </page>
+                </xpath>
+
             </field>
         </record>
         <!-- Invoice Lines -->

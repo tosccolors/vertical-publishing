@@ -21,7 +21,9 @@
 
 
 from odoo import api, fields, models, _
+import logging
 
+_logger = logging.getLogger(__name__)
 
 
 class Invoice(models.Model):
@@ -30,6 +32,17 @@ class Invoice(models.Model):
 
     ad = fields.Boolean(related='invoice_line_ids.ad', string='Ad', help="It indicates that the invoice is an Advertising Invoice.", store=True)
     published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer_rank', '>', 0)])
+
+    invoice_description = fields.Text('Description')
+
+
+    def _get_name_invoice_report(self):
+        self.ensure_one()
+        ref = self.env.ref
+
+        if self.sale_type_id.id == ref('sale_advertising_order.ads_sale_type').id:
+            return 'sale_advertising_order.report_invoice_document_sao'
+        return super()._get_name_invoice_report()
 
 
 class InvoiceLine(models.Model):
