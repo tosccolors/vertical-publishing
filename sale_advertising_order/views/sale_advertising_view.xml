@@ -872,6 +872,8 @@
                         <field name="order_agency_id" />
                         <field name="title" optional="hide"/>
                         <field name="adv_issue" />
+                        <field name="issue_date" />
+                        <field name="to_date"/>
                         <field name="ad_class" optional="hide"/>
                         <field name="product_id" optional="hide"/>
                         <field name="name" optional="hide"/>
