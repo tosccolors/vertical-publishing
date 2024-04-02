@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 IR_TRANSLATION_NAME = "proof.number.delivery.list.xls"
 
 
-class ProofNUmberDeliveryListXlsx(models.AbstractModel):
+class ProofNumberDeliveryListXlsx(models.AbstractModel):
     _name = "report.pndl_report_xls.proof_number_delivery_list_xlsx"
     _inherit = "report.report_xlsx.abstract"
     _description = "XLSX report for proof number delivery list."
@@ -103,7 +103,7 @@ class ProofNUmberDeliveryListXlsx(models.AbstractModel):
             },
             "door_num": {
                 "header": {
-                    "value": self._("DOOR #"),
+                    "value": self._("ADDITION #"),
                 },
                 "lines": {
                     "value": self._render("line.proof_number_payer.street_number2 or line.proof_number_payer.parent_id.street_number2 or ''")
@@ -185,7 +185,7 @@ class ProofNUmberDeliveryListXlsx(models.AbstractModel):
         self._set_column_width(ws, ws_params)
 
         row_pos = 0
-        row_pos = self._write_ws_title(ws, row_pos, ws_params)
+        # row_pos = self._write_ws_title(ws, row_pos, ws_params)
 
         row_pos = self._write_line(
             ws,
