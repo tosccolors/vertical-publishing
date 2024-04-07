@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Invoice (Report)
+    -->
+    <template id="report_invoice_document_account_package" inherit_id="sale_advertising_order.report_invoice_document_sao">
+        <xpath expr="//div[@name='invoice_orderlines']" position="replace">
+            <t t-if="o.invoice_line_ids and o.invoice_line_ids[0].sale_order_id and o.invoice_line_ids[0].sale_order_id.package">
+                <div style="text-align:justify;padding-left:70px;padding-right:0px;">
+                    <span><strong>Package Description</strong></span><br/>
+                    <span t-field="o.invoice_line_ids[0].sale_order_id.package_description"/><br/><br/>
+                </div>
+            </t>
+            <t t-if="o.invoice_line_ids and o.invoice_line_ids[0].sale_order_id and not o.invoice_line_ids[0].sale_order_id.package">
+                <div name="invoice_orderlines" style="" t-if="not o.invoice_description">
+                    <t t-call="sale_advertising_order.report_invoice_orderlines_document_sao"/>
+                </div>
+            </t>
+            <t t-if="o.invoice_line_ids and not o.invoice_line_ids[0].sale_order_id">
+                <div name="invoice_orderlines" style="" t-if="not o.invoice_description">
+                    <t t-call="sale_advertising_order.report_invoice_orderlines_document_sao"/>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

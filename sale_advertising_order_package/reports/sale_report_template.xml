@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Report (Sale)
+     -->
+    <template id="report_saleorder_document_package" inherit_id="sale_advertising_order.report_saleorder_document_sao">
+        <xpath expr="//div[@name='order_lines']" position="replace">
+            <t t-if="doc.package">
+                <div style="text-align:justify;padding-left:70px;padding-right:0px;">
+                    <span><strong>Package Description</strong></span><br/>
+                    <span t-field="doc.package_description"/><br/><br/>
+                </div>
+            </t>
+            <t t-if="not doc.package">
+                <div name="order_lines" class="row" style="">
+                    <t t-call="sale_advertising_order.report_saleorderlines_document_sao"/>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>
