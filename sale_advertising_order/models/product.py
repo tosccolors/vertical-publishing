@@ -92,6 +92,21 @@ class productCategory(models.Model):
 class productTemplate(models.Model):
     _inherit = "product.template"
 
+    @api.depends('categ_id')
+    def _compute_ads_products(self):
+        """
+        Compute the boolean for ads products.
+        """
+        ads_cat = self.env.ref('sale_advertising_order.advertising_category').id
+        title_categ = self.env.ref('sale_advertising_order.title_pricelist_category').id
+        for rec in self:
+            parent_categ_ids = [int(p) for p in rec.categ_id.parent_path.split('/')[:-1]]
+            if ads_cat in parent_categ_ids or title_categ in parent_categ_ids:
+                rec.is_ads_products = True
+            else:
+                rec.is_ads_products = False
+
+
     height = fields.Integer('Height', help="Height advertising format in mm")
     width = fields.Integer('Width', help="Width advertising format in mm")
     page_id = fields.Many2one('sale.advertising.page', string='Issue Page')
@@ -102,6 +117,20 @@ class productTemplate(models.Model):
     volume_discount = fields.Boolean('Volume Discount', help='Setting this flag makes that price finding in a multi-line '
                                                              'advertising sale order line, uses the multi_line_number '
                                                              'instead of product_uom_qty to implement volume discount' )
+    is_ads_products = fields.Boolean("Is Ads Products?", compute=_compute_ads_products)
 
+    @api.onchange('height', 'width')
+    def onchange_height_width(self):
+        product_variant_ids = self.env['product.product'].search([('product_tmpl_id', '=', self._origin.id)])
+        for variant in product_variant_ids:
+            variant.write({'height': self.height})
+            variant.write({'width': self.width})
+
+
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+
+    height = fields.Integer('Height', help="Height advertising format in mm", store=True)
+    width = fields.Integer('Width', help="Width advertising format in mm", store=True)
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
