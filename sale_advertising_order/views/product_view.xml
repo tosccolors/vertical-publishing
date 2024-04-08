@@ -99,11 +99,8 @@
 			<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
 		   	<field name="arch" type="xml">
 			  	<field name="categ_id" position="after">
-					<field name="is_ads_products" invisible="1"/>
-				 	<field name="height"
-						   attrs="{'invisible':[('is_ads_products','=', True)]}"/>
-				 	<field name="width"
-						   attrs="{'invisible':[('is_ads_products','=', True)]}"/>
+				 	<field name="height"/>
+				 	<field name="width"/>
 					<field name="space"/>
 				 	<field name="page_id"/>
 					<field name="price_edit"/>

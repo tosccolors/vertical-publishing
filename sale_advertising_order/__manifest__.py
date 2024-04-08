@@ -38,6 +38,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
                 'web_tree_many2one_clickable', 'crm_industry',
                 'sale_order_type', 'base_address_extended',
                 'partner_firstname', 'report_xlsx_helper',
+
                 ],
     'data': [
              "data/sale_advertising_data.xml",
