@@ -866,36 +866,30 @@
             <field name="model">sale.order.line</field>
             <field name="arch" type="xml">
                 <tree string="Sales Order Lines" create="false">
-                        <!--button name="%(sale_advertising_order.action_view_ad_order_line_make_invoice)d"
-                            string="Create Invoices from selected Order Lines" type="action"
-                            class="btn-primary" icon="fa-check text-success"/-->
-                        <field name="id"/>
                         <field name="order_id" />
-                        <field name="order_partner_id" />
+                        <field name="id" />
                         <field name="order_advertiser_id" />
                         <field name="order_agency_id" />
-                        <field name="title" />
+                        <field name="title" optional="hide"/>
                         <field name="adv_issue" />
-                        <field name="ad_class" />
-                        <field name="product_id" />
-                        <field name="booklet_surface_area"/>
-                        <!--<field name="layout_category_id" groups="sale.group_sale_layout"/>-->
-                        <field name="name"/>
-                        <field name="ad_number"/>
-                        <field name="page_reference"/>
-                        <field name="product_uom" />
-                        <field name="price_unit" />
-                        <field name="product_uom_qty"/>
-                        <field name="actual_unit_price"/>
-                        <field name="computed_discount" />
-                        <field name="subtotal_before_agency_disc" />
-                        <field name="discount_dummy" />
-                        <field name="tax_id" />
-                        <field name="discount" groups="product.group_discount_per_so_line" invisible="1"/>
+                        <field name="issue_date" />
+                        <field name="to_date"/>
+                        <field name="ad_class" optional="hide"/>
+                        <field name="product_id" optional="hide"/>
+                        <field name="name" optional="hide"/>
+                        <field name="product_uom" optional="hide"/>
+                        <field name="price_unit" optional="hide"/>
+                        <field name="product_uom_qty" optional="hide"/>
+                        <field name="actual_unit_price" optional="hide"/>
+                        <field name="computed_discount" optional="hide"/>
+                        <field name="subtotal_before_agency_disc" optional="hide"/>
+                        <field name="discount_dummy" optional="hide"/>
+                        <field name="tax_id" optional="hide"/>
                         <field name="price_subtotal" widget="monetary" groups="account.group_show_line_subtotals_tax_excluded"/>
                         <field name="price_total" widget="monetary" groups="account.group_show_line_subtotals_tax_included"/>
                         <field name="state" invisible="1"/>
-                        <field name="invoice_status" invisible="0"/>
+                        <field name="invoice_status" />
+                        <field name="currency_id" invisible="1"/>
                 </tree>
             </field>
         </record>
