@@ -200,7 +200,7 @@
                 <br/>
                 <!--  Invoice Description    -->
                 <div style="padding-left:85px;padding-right:15px;" t-if="o.invoice_description">
-                    <strong><span t-field="o.invoice_description"/></strong>
+                    <strong><p t-field="o.invoice_description"/></strong>
                 </div>
 
                 <!--  SOL Lines    -->

@@ -208,8 +208,8 @@ class SaleOrder(models.Model):
         ref = self.env.ref
         active_id = unquote("active_id")
 
-        return {'default_advertising': 1, 'default_type_id': ref('sale_advertising_order.ads_sale_type').id, 'search_default_opportunity_id': [active_id],
-                'default_opportunity_id': active_id}
+        return {'hide_sale': True, 'default_advertising': 1, 'default_type_id': ref('sale_advertising_order.ads_sale_type').id
+                , 'search_default_opportunity_id': [active_id], 'default_opportunity_id': active_id}
 
     def _domain_4_sale_action_quotations_adv(self):
         " Domain to use both active & ref"
