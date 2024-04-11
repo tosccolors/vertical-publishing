@@ -21,7 +21,7 @@
 ##############################################################################
 {
     'name': 'publishing_subscription_order',
-    'version': '1.0',
+    'version': '14.0.2.0',
     'category': 'Sale',
     'description': """
 This module allows you to use Sales Management to run your subscription sales
