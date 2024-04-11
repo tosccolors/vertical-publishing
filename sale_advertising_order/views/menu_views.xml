@@ -66,7 +66,7 @@
                  Reporting
         -->
         <menuitem id="menu_advertising_report" name="Reporting" parent="advertising_sale_menu_root"
-                groups="group_ads_sales_user"  sequence="4"/>
+                groups="group_ads_sales_manager"  sequence="4"/>
 
             <menuitem id="menu_action_sale_order_report_all" name="Order Analysis"
                   parent="menu_advertising_report" action="action_sale_order_report_all"  sequence="1"/>
