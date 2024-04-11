@@ -120,7 +120,7 @@
 			<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>
 			<field name="arch" type="xml">
 				<page name="invoicing" position="attributes">
-					<attribute name="groups">account.group_account_invoice,sale_advertising_order.group_traffic_user</attribute>
+					<attribute name="groups">account.group_account_invoice,sale_advertising_order.group_ads_traffic_user</attribute>
 				</page>
 			</field>
 		 </record>
