@@ -160,58 +160,6 @@
             </field>
         </record>
 
-        <!--need to check w.r.t v14-->
-        <!--<record id="res_partner_view_buttons" model="ir.ui.view">-->
-            <!--<field name="name">res.partner.view.buttons</field>-->
-            <!--<field name="model">res.partner</field>-->
-            <!--<field name="inherit_id" ref="sale.res_partner_view_buttons" />-->
-            <!--<field name="arch" type="xml">-->
-                <!--<xpath expr="//button[@name='%(sale.act_res_partner_2_sale_order)d']" position="attributes">-->
-                    <!--<attribute name="groups" >sale_advertising_order.group_regular_sales_user</attribute>-->
-                    <!--<attribute name="attrs">{'invisible': ['|', ('customer_rank', '>', 0), ('parent_id', '!=', False)]}</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//button[@name='%(crm.crm_activity_report_action)d']" position="attributes">-->
-                    <!--<attribute name="context">{'search_default_activities':1}</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//field[@name='activities_count']" position="attributes">-->
-                    <!--<attribute name="string">Activities Log</attribute>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//button[@name='%(crm_lead_opportunities_advertising)d']" position="replace">-->
-                    <!--<button class="oe_stat_button o_res_partner_tip_opp" type="action"-->
-                        <!--attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}"-->
-                        <!--name="%(sale_advertising_order.act_res_partner_2_opportunities_advertising)d"-->
-                        <!--icon="fa-star">-->
-                        <!--<field string="Opportunities" name="adv_opportunity_count" widget="statinfo"/>-->
-                    <!--</button>-->
-                    <!--<button class="oe_stat_button o_res_partner_tip_opp" type="action"-->
-                        <!--attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}"-->
-                        <!--name="%(sale_advertising_order.act_res_partner_2_next_activities_advertising)d"-->
-                        <!--icon="fa-star" groups="sale_advertising_order.group_next_activities_menu">-->
-                        <!--<field string="Next Activities" name="next_activities_count" widget="statinfo"/>-->
-                    <!--</button>-->
-                 <!--</xpath>-->
-                <!--<xpath expr="//button[@name='%(sale.act_res_partner_2_sale_order)d']" position="before">-->
-                    <!--<button class="oe_stat_button" type="action" name="%(sale_advertising_order.act_res_partner_2_quotation)d"-->
-                        <!--attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}" context="{'search_default_quotations':1}"-->
-                         <!--icon="fa-pencil-square-o">-->
-                        <!--<field string="Quote(s)" name="quotation_count" widget="statinfo"/>-->
-                    <!--</button>-->
-                    <!--<button class="oe_stat_button" type="action" name="%(sale_advertising_order.act_res_partner_2_quotation_adv)d"-->
-                        <!--attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}" context="{'search_default_quotations':1}"-->
-                         <!--icon="fa-pencil-square-o" groups="sale_advertising_order.group_advertising_sales_user">-->
-                        <!--<field string="Adv. Quote(s)" name="adv_quotation_count" widget="statinfo"/>-->
-                    <!--</button>-->
-                <!--</xpath>-->
-                <!--<xpath expr="//button[@name='%(sale.act_res_partner_2_sale_order)d']" position="after">-->
-                    <!--<button class="oe_stat_button" type="action" name="%(action_orders_advertising_smart_button)d"-->
-                        <!--attrs="{'invisible': ['|', ('customer', '=', False), ('parent_id', '!=', False)]}"-->
-                        <!--icon="fa-usd" groups="sale_advertising_order.group_advertising_sales_user">-->
-                        <!--<field string="Adv. Sales" name="adv_sale_order_count" widget="statinfo"/>-->
-                    <!--</button>-->
-                <!--</xpath>-->
-            <!--</field>-->
-        <!--</record>-->
-
         <record id="view_partner_form_sales_manager" model="ir.ui.view">
             <field name="name">res.partner.form</field>
             <field name="model">res.partner</field>

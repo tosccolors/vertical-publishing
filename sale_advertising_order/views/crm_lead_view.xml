@@ -401,10 +401,6 @@
 
 
 
-        <!--Regular Sales My Pipeline-->
-        <record model="ir.ui.menu" id="crm.menu_crm_opportunities">
-            <field name="groups_id" eval="[(6,0,[ref('group_regular_sales_crm_menus')])]"/>
-        </record>
 
         <!--
             Inherited: Lead Menu
@@ -476,13 +472,6 @@
             <field name="act_window_id" ref="crm_lead_all_leads_advertising"/>
         </record>
 
-
-
-        <!--Regular Sales Leads-->
-        <record model="ir.ui.menu" id="crm.crm_menu_sales">
-            <field name="groups_id" eval="[(6,0,[ref('group_regular_sales_crm_menus')])]"/>
-        </record>
-
         <!--check with w.r.t v14-->
        <!--
         &lt;!&ndash; CRM Next Activities Menu advertising set to false&ndash;&gt;
@@ -539,10 +528,6 @@
             </field>
         </record>-->
 
-        <!--Regular Sales Next Activities-->
-        <record model="ir.ui.menu" id="crm.crm_lead_menu_my_activities">
-            <field name="groups_id" eval="[(6,0,[ref('sale_advertising_order.group_next_activities_menu')])]"/>
-        </record>
 
         <!-- Advertising 'My Pipeline' menu : Server action, act_window_views and act_windows -->
         <record model="ir.actions.act_window" id="crm_lead_opportunities_advertising">
