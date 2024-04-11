@@ -22,9 +22,9 @@
                             string="Submit for Approval" class="oe_highlight"
 							groups="sales_team.group_sale_salesman"/>
 					<button name="action_approve1" states="submitted" type="object" string="Approval Sales Support" class="oe_highlight"
-							groups="sale_advertising_order.group_traffic_user, sale_advertising_order.group_senior_sales "/>
+							groups="sale_advertising_order.group_traffic_user,sale_advertising_order.group_ads_sales_manager"/>
 					<button name="action_refuse" string="Refuse" type="object" states="submitted"
-							groups="sale_advertising_order.group_traffic_user,sale_advertising_order.group_senior_sales"/>
+							groups="sale_advertising_order.group_traffic_user,sale_advertising_order.group_ads_sales_manager"/>
                     <button name="action_confirm" string="Confirm Sale" class="btn-primary o_sale_confirm"
                             attrs="{'invisible': ['|','|',('state','in',['cancel','sale','done']),('id','=',False),
                                                           ('ver_tr_exc','=',True),('state','in',['cancel','draft','submitted'])]}"
@@ -491,7 +491,7 @@
             <field name="name">sale.order.form.advertising.ss</field>
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
-            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_senior_sales'))]"/>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_manager'))]"/>
             <field name="arch" type="xml">
                 <button name="action_confirm" position="attributes">
                      <attribute name="attrs" >{'invisible': [('state','in',['cancel','sale','done'])]}</attribute>
@@ -558,7 +558,7 @@
 
                     <separator/>
                     <filter string="Submitted" name="submitted" domain="[('state','=','submitted')]"/>
-                    <filter string="Sales Mgr Approved" name="approved1" domain="[('state','=','approved1')]" groups="sale_advertising_order.group_senior_sales"/>
+                    <filter string="Sales Mgr Approved" name="approved1" domain="[('state','=','approved1')]" groups="sale_advertising_order.group_ads_sales_manager"/>
                     <filter string="Traffic Approved" name="approved2" domain="[('state','=','approved2')]" groups="sale_advertising_order.group_traffic_user"/>
                 </xpath>
 
