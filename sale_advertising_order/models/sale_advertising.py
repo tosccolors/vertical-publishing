@@ -22,7 +22,6 @@
 
 import json
 from odoo import api, fields, models, _
-import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError
 from datetime import datetime, timedelta
 from odoo.tools.translate import unquote
@@ -489,7 +488,7 @@ class SaleOrderLine(models.Model):
                     comp_discount = round((1.0 - float(subtotal_bad) / (float(price_unit) * float(qty) + float(csa) *
                                                                         float(qty))) * 100.0, 5)
                     unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), 5)
-                    decimals=self.env['decimal.precision'].search([('name','=','Product Price')]).digits or 4
+                    decimals=self.env['decimal.precision'].sudo().search([('name','=','Product Price')]).digits or 4
                     unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), decimals)
                 elif qty == 0.0:
                     unit_price = 0.0
@@ -1129,7 +1128,7 @@ class SaleOrderLine(models.Model):
         if comp_discount > 100.0:
             comp_discount = self.computed_discount = 100.0
         price = self.price_unit or 0.0
-        fraction_param = int(self.env['ir.config_parameter'].get_param('sale_advertising_order.fraction'))
+        fraction_param = int(self.env['ir.config_parameter'].sudo().get_param('sale_advertising_order.fraction'))
 
         if self.multi_line:
             clp = self.comb_list_price or 0.0

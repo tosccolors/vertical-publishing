@@ -50,6 +50,9 @@ class ProofNumberDeliveryList(models.Model):
     proof_number_amt = fields.Integer(compute='_get_proof_data', readonly=True, store=False, string="Proof Number Amount")
     proof_email = fields.Char(compute='_get_proof_data', readonly=True, store=False, string="Email")
 
+    user_id = fields.Many2one('res.users', string='Salesperson')
+
+
     def init(self):
         """ """
         tools.drop_view_if_exists(self.env.cr, 'proof_number_delivery_list')
@@ -59,6 +62,8 @@ class ProofNumberDeliveryList(models.Model):
                    WITH Q11 AS(
                             SELECT
                                 sol.id as id,sol.proof_number_payer_id as partner , sol.title as title, sol.adv_issue as adv_issue, sol.issue_date as issue_date
+                                , sol.salesman_id as user_id
+                                
                             FROM
                                 sale_order_line as sol
                             WHERE
@@ -68,6 +73,7 @@ class ProofNumberDeliveryList(models.Model):
 
                             SELECT
                                 ppl.line_id as id, ppl.partner_id as partner, sol.title as title, sol.adv_issue as adv_issue, sol.issue_date as issue_date
+                                , sol.salesman_id as user_id
                             FROM
                                 partner_line_proof_rel as ppl join sale_order_line as sol on (sol.id = ppl.line_id)
                             WHERE
@@ -75,9 +81,9 @@ class ProofNumberDeliveryList(models.Model):
                     )
     
                   SELECT 
-                      row_number() OVER () AS id, q.id as line_id, q.partner as proof_number_payer, min(q.title) as title, min(q.adv_issue) as adv_issue, min(q.issue_date) as issue_date
+                      row_number() OVER () AS id, q.id as line_id, q.partner as proof_number_payer, min(q.title) as title, min(q.adv_issue) as adv_issue, min(q.issue_date) as issue_date, q.user_id
                   FROM Q11 as q
-                  GROUP BY q.partner, q.id
+                  GROUP BY q.partner, q.id, q.user_id
                 )
         """)
         

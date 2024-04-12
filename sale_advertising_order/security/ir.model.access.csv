@@ -7,10 +7,10 @@ access_sale_order_line_date,sale.order.line.date,model_sale_order_line_date,sale
 access_sale_order_line_dateperiod,sale.order.line.dateperiod,model_sale_order_line_dateperiod,sales_team.group_sale_salesman,1,1,1,1
 access_sale_order_line_issues_products,sale.order.line.issues.products,model_sale_order_line_issues_products,sales_team.group_sale_salesman,1,1,1,1
 access_sale_advertising_available,sale.advertising.available,model_sale_advertising_available,sales_team.group_sale_salesman,1,1,1,1
-access_sale_advertising_available_traffic,sale.advertising.available,model_sale_advertising_available,group_traffic_user,1,1,1,1
-access_sale_advertising_page_traffic,sale.advertising.page,model_sale_advertising_page,group_traffic_user,1,1,1,1
+access_sale_advertising_available_traffic,sale.advertising.available,model_sale_advertising_available,group_ads_traffic_user,1,1,1,1
+access_sale_advertising_page_traffic,sale.advertising.page,model_sale_advertising_page,group_ads_traffic_user,1,1,1,1
 access_sale_advertising_page,sale.advertising.page,model_sale_advertising_page,sales_team.group_sale_salesman,1,0,0,0
-access_discount_reason_traffic,discount.reason,model_discount_reason,group_traffic_user,1,1,1,1
+access_discount_reason_traffic,discount.reason,model_discount_reason,group_ads_traffic_user,1,1,1,1
 access_discount_reason,discount.reason,model_discount_reason,sales_team.group_sale_salesman,1,0,0,0
 sale_advertising_order.access_crm_team_user,crm.team.user,model_crm_team,sales_team.group_sale_salesman,1,1,0,0
 access_proof_number_delivery_list_salesman,proof.number.delivery.list.salesman,model_proof_number_delivery_list,sales_team.group_sale_salesman,1,1,1,0
