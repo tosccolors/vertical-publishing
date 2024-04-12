@@ -69,7 +69,8 @@
                 groups="group_ads_sales_manager"  sequence="4"/>
 
             <menuitem id="menu_action_sale_order_report_all" name="Order Analysis"
-                  parent="menu_advertising_report" action="action_sale_order_report_all"  sequence="1"/>
+                  parent="menu_advertising_report" action="action_sale_order_report_all"
+                  groups="group_ads_sales_manager" sequence="1"/>
 
         <!--
                 Configuration
