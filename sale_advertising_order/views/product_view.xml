@@ -8,7 +8,7 @@
 				<field name="model">product.category</field>
         		<field name="mode">primary</field>
 				<field name="inherit_id" ref="product.product_category_list_view"/>
-			 	<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
+			 	<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>
 				<field name="arch" type="xml">
 					<field name="display_name" position="replace">
 						<field name="display_name" invisible="1"/>
@@ -24,7 +24,7 @@
 				<field name="model">product.category</field>
         		<field name="mode">primary</field>
 				<field name="inherit_id" ref="product.product_category_form_view"/>
-			 	<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
+			 	<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>
 				<field name="arch" type="xml">
 					<field name="parent_id" position="after">
 <!--						<field name="adv_parent" attrs="{'invisible':[('parent_id', '!=', False)]}"/>-->
@@ -78,7 +78,7 @@
 		   	<field name="name">product.template.product.tree</field>
 		   	<field name="model">product.template</field>
 		   	<field name="inherit_id" ref="product.product_template_tree_view"/>
-			<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
+			<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>
 		   	<field name="arch" type="xml">
 			  	<field name="categ_id" position="after">
 				 	<field name="height"/>
@@ -96,7 +96,7 @@
 		   	<field name="model">product.template</field>
 			<field name="priority">12</field>
 		   	<field name="inherit_id" ref="product.product_template_only_form_view"/>
-			<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
+			<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>
 		   	<field name="arch" type="xml">
 			  	<field name="categ_id" position="after">
 					<!--<field name="is_ads_products" invisible="1"/>-->
@@ -149,10 +149,10 @@
 			<field name="model">product.template</field>
 			<field name="priority">13</field>
 			<field name="inherit_id" ref="account.product_template_form_view"/>
-			<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_advertising_sales_user'))]"/>
+			<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>
 			<field name="arch" type="xml">
 				<page name="invoicing" position="attributes">
-					<attribute name="groups">account.group_account_invoice,sale_advertising_order.group_traffic_user</attribute>
+					<attribute name="groups">account.group_account_invoice,sale_advertising_order.group_ads_traffic_user</attribute>
 				</page>
 			</field>
 		 </record>
