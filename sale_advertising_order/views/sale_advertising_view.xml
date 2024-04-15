@@ -65,7 +65,7 @@
                                    context="{'tree_view_ref': 'nsm_crm.view_partner_tree_nsm_crm'}"
                                    domain="pub_cust_domain"
                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"
-                                   required="True" />
+                                   required="True" options="{'no_create':True}"/>
                             <field name="partner_id" string="Payer"
                                    domain="[(('customer_rank', '>', 0)), ('parent_id','=', False)]"
                                    context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True, "no_create_edit": True}'
