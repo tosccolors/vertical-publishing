@@ -76,7 +76,7 @@
                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"
                                    groups="sale.group_delivery_invoice_address"/>
                             <field name="customer_contact" required="False" context="{'default_parent_id': partner_id, 'show_email': 1}"
-                                   domain="[('is_company', '=', False), (('customer_rank', '>', 0)),('parent_id', '=', partner_id),('type', '=', 'contact')]"
+                                   domain="[('is_company', '=', False),('parent_id', '=', partner_id),('type', '=', 'contact')]"
                                    options='{"always_reload": True, "no_create_edit": True}'
                                    attrs="{'readonly':[('state','in', ['cancel','done'])]}"/>
                             <field name="advertising_agency"
