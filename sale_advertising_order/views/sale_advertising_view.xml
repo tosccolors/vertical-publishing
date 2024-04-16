@@ -13,31 +13,45 @@
                     <field name="ver_tr_exc" invisible="1"/>
                     <field name="id" invisible="1"/>
 
-                    <button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"
-                        type="action" context="{'default_advance_payment_method': 'percentage'}"
-                        attrs="{'invisible': ['|',('invoice_status', '!=', 'no'), ('state', '!=', 'sale')]}"
-                        groups="sale_advertising_order.group_ads_traffic_user"/>
+                    <button name="%(sale.action_view_sale_advance_payment_inv)d"
+                            string="Create Invoice"
+                            type="action" context="{'default_advance_payment_method': 'percentage'}"
+                            attrs="{'invisible': ['|',('invoice_status', '!=', 'no'), ('state', '!=', 'sale')]}"
+                            groups="sale_advertising_order.group_ads_traffic_user"/>
 
-					<button name="action_submit" attrs="{'invisible': ['|',('state','not in',['draft']),('ver_tr_exc','!=',True)]}" type="object"
-                            string="Submit for Approval" class="oe_highlight"
-							groups="sales_team.group_sale_salesman"/>
-					<button name="action_approve1" states="submitted" type="object" string="Approval Sales Support" class="oe_highlight"
-							groups="sale_advertising_order.group_ads_traffic_user,sale_advertising_order.group_ads_sales_manager"/>
-					<button name="action_refuse" string="Refuse" type="object" states="submitted"
-							groups="sale_advertising_order.group_ads_traffic_user,sale_advertising_order.group_ads_sales_manager"/>
-                    <button name="action_confirm" string="Confirm Sale" class="btn-primary o_sale_confirm"
-                            attrs="{'invisible': ['|','|',('state','in',['cancel','sale','done']),('id','=',False),
-                                                          ('ver_tr_exc','=',True),('state','in',['cancel','draft','submitted'])]}"
-                            groups="sales_team.group_sale_salesman" type="object" />
+					<button name="action_submit" string="Submit for Approval"
+                            attrs="{'invisible': ['|',('state','not in',['draft']),('ver_tr_exc','!=',True)]}" type="object"
+                            class="oe_highlight" groups="sale_advertising_order.group_ads_sales_user"/>
+
+					<button name="action_approve1" string="Approval Sales Support"
+                            states="submitted" type="object" class="oe_highlight"
+							groups="sale_advertising_order.group_ads_sales_manager"/>
+
+					<button name="action_refuse" string="Refuse"
+                            type="object" states="submitted"
+							groups="sale_advertising_order.group_ads_sales_manager"/>
+
                     <button name="action_quotation_send" string="Send by Email" type="object"
                             attrs="{'invisible': ['|','|',('state','in',['cancel','sent','done']),('id','=',False),
                                                       ('ver_tr_exc','=',True),('state','in',['cancel','draft','submitted'])]}"
-                            class="btn-primary"	groups="sales_team.group_sale_salesman"/>
-<!--                    <button name="print_quotation" string="Print" type="object"-->
-<!--                            attrs="{'invisible': ['|','|',('state','in',['cancel','submitted','sent','done']),('id','=',False),-->
-<!--                                                      ('ver_tr_exc','=',True),('state','in',['cancel','draft','submitted'])]}"-->
-<!--                            class="btn-primary" groups="sales_team.group_sale_salesman"/>-->
-                    <button name="action_cancel" states="draft,submitted,approved1,sent,sale" type="object" string="Cancel"/>
+                            class="btn-primary"	groups="sale_advertising_order.group_ads_sales_user"/>
+
+                    <button name="action_confirm" string="Confirm Sale"
+                            class="btn-primary o_sale_confirm"
+                            attrs="{'invisible': ['|','|',('state','in',['cancel','sale','done']),('id','=',False),
+                                                          ('ver_tr_exc','=',True),('state','in',['cancel','draft','submitted'])]}"
+                            groups="sale_advertising_order.group_ads_traffic_user" type="object" />
+
+                    <button name="action_cancel"  id="cancel" type="object" string="Cancel"
+                                  states="draft,sent"
+                                  groups="sale_advertising_order.group_ads_sales_user"/>
+                    <button name="action_cancel" id="cancel1" type="object" string="Cancel"
+                                  states="submitted,approved1"
+                                  groups="sale_advertising_order.group_ads_sales_manager"/>
+                    <button name="action_cancel" id="cancel2" type="object" string="Cancel"
+                             states="sale"
+                             groups="sale_advertising_order.group_ads_traffic_user"/>
+
                     <button name="action_draft" states="cancel" type="object" string="Set to Quotation"/>
                     <button name="action_done" type="object" string="Lock" states="sale" groups="sale_advertising_order.group_ads_traffic_user"/>
                             help="If the sale is locked, you can not modify it anymore. However, you will still be able to invoice or deliver."/>
@@ -62,7 +76,7 @@
                         <group>
                             <field name="pub_cust_domain" invisible="1"/>
                             <field name="published_customer"
-                                   context="{'tree_view_ref': 'nsm_crm.view_partner_tree_nsm_crm'}"
+                                   context="{'tree_view_ref': 'sale_advertising_order.view_partner_tree_nsm_crm'}"
                                    domain="pub_cust_domain"
                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"
                                    required="True" />
@@ -493,15 +507,12 @@
             <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
             <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_manager'))]"/>
             <field name="arch" type="xml">
-                <button name="action_confirm" position="attributes">
-                     <attribute name="attrs" >{'invisible': [('state','in',['cancel','sale','done'])]}</attribute>
-                </button>
+<!--                <button name="action_confirm" position="attributes">-->
+<!--                     <attribute name="attrs" >{'invisible': [('state','in',['cancel','sale','done'])]}</attribute>-->
+<!--                </button>-->
                 <button name="action_quotation_send" position="attributes">
                      <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sent','done'])]}</attribute>
                 </button>
-<!--                <button name="print_quotation" position="attributes">-->
-<!--                     <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sent','done'])]}</attribute>-->
-<!--                </button>-->
                 <xpath expr="//page[@name='order_line']/field[@name='order_line']" position="attributes">
                      <attribute name="attrs" >{'readonly': [('state', 'in', ['done','cancel'])]}</attribute>
                 </xpath>
@@ -616,12 +627,6 @@
             <field name="act_window_id" ref="action_orders_advertising"/>
         </record>
 
-
-<!--            <field name="domain"-->
-<!--                   eval="[('type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True),-->
-<!--                            ('state','in',('sale','done')),'|',('published_customer','=',active_id),-->
-<!--                                ('advertising_agency','=',active_id)]"-->
-<!--            />-->
 
         <!--Action for Advertising Sales smart button in Customers-->
         <record id="action_orders_advertising_smart_button" model="ir.actions.act_window">

@@ -122,10 +122,10 @@ class SaleOrder(models.Model):
 
     state = fields.Selection(selection=[
         ('draft', 'Draft Quotation'),
+        ('sent', 'Quotation Sent'),
         ('submitted', 'Submitted for Approval'),
         ('approved1', 'Approved by Sales Mgr'),
         ('approved2', 'Approved by Traffic'),
-        ('sent', 'Quotation Sent'),
         ('cancel', 'Cancelled'),
         ('sale', 'Sales Order'),
         ('done', 'Done'),
@@ -282,7 +282,7 @@ class SaleOrder(models.Model):
         orders.write({'state':'approved1'})
         return True
 
-    
+    # FIXME: Not in use??
     def action_approve2(self):
         orders = self.filtered(lambda s: s.state in ['approved1', 'submitted'])
         orders.write({'state': 'approved2',
@@ -311,7 +311,7 @@ class SaleOrder(models.Model):
     #     self._cr.commit()
     #     orders.write({'state': 'sent'})
     #     # return super(SaleOrder, self).print_quotation() -- deprecated method.
-    
+
     def action_quotation_send(self):
         '''
         This function opens a window to compose an email, with the edi sale template message loaded by default
