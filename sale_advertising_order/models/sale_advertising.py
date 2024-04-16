@@ -1318,23 +1318,33 @@ class SaleOrderLine(models.Model):
         self.ensure_one()
         if not self.product_template_id.page_id:
             return
-        user = self.env['res.users'].browse(self.env.uid)
+        # user = self.env['res.users'].browse(self.env.uid)
         lspace = self.product_uom_qty * self.product_template_id.space
         lpage = self.product_template_id.page_id
         lpage_id = lpage.id
-        avail = self.adv_issue.calc_page_space(lpage_id)
-        if lspace > avail and not user.has_group('sale_advertising_order.group_no_availability_check'):
-            raise UserError(_('There is not enough availability for this placement in Ordernumber %s line %s on %s in %s. '
-                              'Available Capacity is %d and required is %d') % (self.order_id.name, self.id, lpage.name, self.adv_issue.name, avail, lspace))
-        else:
-            vals = {
-                'adv_issue_id': self.adv_issue.id,
-                'name': 'Afboeking',
-                'order_line_id': self.id,
-                'page_id': lpage_id,
-                'available_qty': - int(lspace)
-            }
-            self.env['sale.advertising.available'].create(vals)
+        # avail = self.adv_issue.calc_page_space(lpage_id)
+        vals = {
+            'adv_issue_id': self.adv_issue.id,
+            'name': 'Afboeking',
+            'order_line_id': self.id,
+            'page_id': lpage_id,
+            'available_qty': - int(lspace)
+        }
+        self.env['sale.advertising.available'].create(vals)
+
+        # --deep deprecated
+        # if lspace > avail and not user.has_group('sale_advertising_order.group_no_availability_check'):
+        #     raise UserError(_('There is not enough availability for this placement in Ordernumber %s line %s on %s in %s. '
+        #                       'Available Capacity is %d and required is %d') % (self.order_id.name, self.id, lpage.name, self.adv_issue.name, avail, lspace))
+        # else:
+        #     vals = {
+        #         'adv_issue_id': self.adv_issue.id,
+        #         'name': 'Afboeking',
+        #         'order_line_id': self.id,
+        #         'page_id': lpage_id,
+        #         'available_qty': - int(lspace)
+        #     }
+        #     self.env['sale.advertising.available'].create(vals)
 
     
     def page_qty_check_update(self):

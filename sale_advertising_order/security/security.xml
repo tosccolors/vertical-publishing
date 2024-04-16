@@ -39,30 +39,29 @@
         <!--
             Extra Access Groups
         -->
-
-        <record model="ir.module.category" id="module_category_extra_ads">
-            <field name="description">Extra Access for Advertising Sales</field>
-            <field name="name">Extra Rights (Advertising Sales)</field>
-            <field name="sequence">2</field>
-        </record>
-
-        <record id="group_no_discount_check" model="res.groups">
-            <field name="name">No Discount Check</field>
-            <field name="category_id" ref="sale_advertising_order.module_category_extra_ads"/>
-            <field name="users" eval="[(4, ref('base.user_root'))]"/>
-        </record>
-
         <record id="group_no_deadline_check" model="res.groups">
-            <field name="name">No Deadline Check</field>
+            <field name="name">No Deadline Check (Advertising Sales Order)</field>
             <field name="category_id" ref="sale_advertising_order.module_category_extra_ads"/>
-            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="category_id" ref="base.module_category_hidden"/>
         </record>
 
-        <record id="group_no_availability_check" model="res.groups">
-            <field name="name">No Availability Check</field>
-            <field name="category_id" ref="sale_advertising_order.module_category_extra_ads"/>
-            <field name="users" eval="[(4, ref('base.user_root'))]"/>
-        </record>
+<!--        deep: deprecated-->
+<!--        <record model="ir.module.category" id="module_category_extra_ads">-->
+<!--            <field name="description">Extra Access for Advertising Sales</field>-->
+<!--            <field name="name">Extra Rights (Advertising Sales)</field>-->
+<!--            <field name="sequence">2</field>-->
+<!--        </record>-->
+
+<!--        <record id="group_no_discount_check" model="res.groups">-->
+<!--            <field name="name">No Discount Check</field>-->
+<!--            <field name="category_id" ref="sale_advertising_order.module_category_extra_ads"/>-->
+<!--            <field name="users" eval="[(4, ref('base.user_root'))]"/>-->
+<!--        </record>-->
+<!--        <record id="group_no_availability_check" model="res.groups">-->
+<!--            <field name="name">No Availability Check</field>-->
+<!--            <field name="category_id" ref="sale_advertising_order.module_category_extra_ads"/>-->
+<!--            <field name="users" eval="[(4, ref('base.user_root'))]"/>-->
+<!--        </record>-->
 
     </data>
 
