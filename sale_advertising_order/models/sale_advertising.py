@@ -43,7 +43,7 @@ class SaleOrder(models.Model):
         for order in self.filtered('advertising'):
             amount_untaxed = amount_tax = max_cdiscount = 0.0
             cdiscount = []
-            ver_tr_exc = False
+            # ver_tr_exc = False
             for line in order.order_line:
                 amount_untaxed += line.price_subtotal
                 cdiscount.append(line.computed_discount)
@@ -62,9 +62,9 @@ class SaleOrder(models.Model):
                     amount_tax += line.price_tax
             if cdiscount:
                 max_cdiscount = max(cdiscount)
-            if order.company_id.verify_order_setting != -1.00 and order.company_id.verify_order_setting < amount_untaxed \
-                                                                  or order.company_id.verify_discount_setting < max_cdiscount:
-                ver_tr_exc = True
+            # if order.company_id.verify_order_setting != -1.00 and order.company_id.verify_order_setting < amount_untaxed \
+            #                                                       or order.company_id.verify_discount_setting < max_cdiscount:
+            #     ver_tr_exc = True
             if order.pricelist_id.currency_id:
                 order.update({
                     'amount_untaxed': order.pricelist_id.currency_id.round(
@@ -77,7 +77,7 @@ class SaleOrder(models.Model):
                 # 'amount_untaxed': order.pricelist_id.currency_id and order.pricelist_id.currency_id.round(amount_untaxed) or 0.0,
                 # 'amount_tax': order.pricelist_id.currency_id.round(amount_tax),
                 # 'amount_total': amount_untaxed + amount_tax,
-                'ver_tr_exc': ver_tr_exc,
+                # 'ver_tr_exc': ver_tr_exc,
                 'max_discount': max_cdiscount,
             })
 
@@ -122,9 +122,9 @@ class SaleOrder(models.Model):
 
     state = fields.Selection(selection=[
         ('draft', 'Draft Quotation'),
-        ('sent', 'Quotation Sent'),
         ('submitted', 'Submitted for Approval'),
         ('approved1', 'Approved by Sales Mgr'),
+        ('sent', 'Quotation Sent'),
         ('approved2', 'Approved by Traffic'),
         ('cancel', 'Cancelled'),
         ('sale', 'Sales Order'),
@@ -147,7 +147,7 @@ class SaleOrder(models.Model):
     partner_acc_mgr = fields.Many2one(related='published_customer.user_id', relation='res.users', string='Account Manager', store=True , readonly=True)
     date_from = fields.Date(compute=lambda *a, **k: {}, string="Date from")
     date_to = fields.Date(compute=lambda *a, **k: {}, string="Date to")
-    ver_tr_exc = fields.Boolean(string='Verification Treshold', store=True, readonly=True, compute='_amount_all', track_visibility='always')
+    # ver_tr_exc = fields.Boolean(string='Verification Treshold', store=True, readonly=True, compute='_amount_all', track_visibility='always') # -- deep: deprecated
     advertising = fields.Boolean('Advertising', default=False)
     max_discount = fields.Integer(compute='_amount_all', track_visibility='always', store=True, string="Maximum Discount")
     display_discount_to_customer = fields.Boolean("Display Discount", default=False)
@@ -408,13 +408,14 @@ class SaleOrder(models.Model):
         orders = self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks'))
         for order in orders:
             user = self.env['res.users'].browse(self.env.uid)
-            if not user.has_group('sale_advertising_order.group_no_discount_check') \
-               and self.ver_tr_exc:
-                raise UserError(_(
-                    'You cannot save a Sale Order with a line more than %s%s discount or order total amount is more than %s.'
-                    '\nYou\'ll have to cancel the order and '
-                    'resubmit it or ask Sales Support for help.') % (
-                                order.company_id.verify_discount_setting, '%', order.company_id.verify_order_setting))
+            # -- deep: deprecated
+            # if not user.has_group('sale_advertising_order.group_no_discount_check') \
+            #    and self.ver_tr_exc:
+            #     raise UserError(_(
+            #         'You cannot save a Sale Order with a line more than %s%s discount or order total amount is more than %s.'
+            #         '\nYou\'ll have to cancel the order and '
+            #         'resubmit it or ask Sales Support for help.') % (
+            #                     order.company_id.verify_discount_setting, '%', order.company_id.verify_order_setting))
             olines = []
             for line in order.order_line:
                 if line.multi_line:
