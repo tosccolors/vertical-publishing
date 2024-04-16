@@ -34,7 +34,7 @@
                     <button name="action_quotation_send" string="Send by Email" type="object" states="approved1"
                             class="btn-primary"	groups="sale_advertising_order.group_ads_sales_user"/>
 
-                    <button name="action_confirm" string="Confirm Sale"
+                    <button name="action_confirm" string="Confirm Sale" states="approved1,sent"
                             class="btn-primary o_sale_confirm"
                             groups="sale_advertising_order.group_ads_traffic_user" type="object" />
 
@@ -507,13 +507,12 @@
 <!--                <button name="action_confirm" position="attributes">-->
 <!--                     <attribute name="attrs" >{'invisible': [('state','in',['cancel','sale','done'])]}</attribute>-->
 <!--                </button>-->
-                <button name="action_quotation_send" position="attributes">
-                     <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sent','done'])]}</attribute>
-                </button>
+<!--                <button name="action_quotation_send" position="attributes">-->
+<!--                     <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sent','done'])]}</attribute>-->
+<!--                </button>-->
                 <xpath expr="//page[@name='order_line']/field[@name='order_line']" position="attributes">
                      <attribute name="attrs" >{'readonly': [('state', 'in', ['done','cancel'])]}</attribute>
                 </xpath>
-
             </field>
         </record>
 
