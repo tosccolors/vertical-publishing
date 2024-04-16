@@ -166,61 +166,61 @@ class Partner(models.Model):
             self.zip = zip.replace(" ", "")
 
 
-class Company(models.Model):
-    _inherit = 'res.company'
-
-    verify_order_setting = fields.Float('Order Amount bigger than', digits='Account')
-    verify_discount_setting = fields.Float('Discount (%) bigger than', digits=(16, 2))
-
-
-    
-    def write(self, vals):
-        res = super(Company, self).write(vals)
+# class Company(models.Model):
+#     _inherit = 'res.company'
+# # -- deep: deprecated
+#     verify_order_setting = fields.Float('Order Amount bigger than', digits='Account')
+#     verify_discount_setting = fields.Float('Discount (%) bigger than', digits=(16, 2))
 
 
-        if 'verify_order_setting' in vals or 'verify_discount_setting' in vals:
-            for case in self:
-                treshold = case.verify_order_setting
-                maxdiscount = case.verify_discount_setting
-                if treshold == -1.00:
-                    self._cr.execute("""
-                                 UPDATE sale_order
-                                 SET ver_tr_exc=True
-                                 WHERE max_discount > %s
-                                 AND company_id= %s
-                                 AND advertising=True
-                                 AND state!='done';
-
-                                 UPDATE sale_order
-                                 SET ver_tr_exc=False
-                                 WHERE company_id= %s
-                                 AND advertising=True
-                                 AND max_discount <= %s
-                                 AND state!='done'
-                                 """, (maxdiscount, case.id, case.id, maxdiscount)
-                    )
-                else:
-                    self._cr.execute("""
-                                 UPDATE sale_order
-                                 SET ver_tr_exc=True
-                                 WHERE (amount_untaxed > %s
-                                 OR max_discount > %s)
-                                 AND company_id= %s
-                                 AND advertising=True
-                                 AND state!='done';
-                    
-                                 UPDATE sale_order
-                                 SET ver_tr_exc=False
-                                 WHERE amount_untaxed <= %s
-                                 AND company_id= %s
-                                 AND advertising=True
-                                 AND max_discount <= %s
-                                 AND state!='done'
-                                 """, (treshold, maxdiscount, case.id,  treshold, case.id, maxdiscount )
-                    )
-
-
-        return res
+    # -- deep: deprecated
+    # def write(self, vals):
+    #     res = super(Company, self).write(vals)
+    #
+    #
+    #     if 'verify_order_setting' in vals or 'verify_discount_setting' in vals:
+    #         for case in self:
+    #             treshold = case.verify_order_setting
+    #             maxdiscount = case.verify_discount_setting
+    #             if treshold == -1.00:
+    #                 self._cr.execute("""
+    #                              UPDATE sale_order
+    #                              SET ver_tr_exc=True
+    #                              WHERE max_discount > %s
+    #                              AND company_id= %s
+    #                              AND advertising=True
+    #                              AND state!='done';
+    #
+    #                              UPDATE sale_order
+    #                              SET ver_tr_exc=False
+    #                              WHERE company_id= %s
+    #                              AND advertising=True
+    #                              AND max_discount <= %s
+    #                              AND state!='done'
+    #                              """, (maxdiscount, case.id, case.id, maxdiscount)
+    #                 )
+    #             else:
+    #                 self._cr.execute("""
+    #                              UPDATE sale_order
+    #                              SET ver_tr_exc=True
+    #                              WHERE (amount_untaxed > %s
+    #                              OR max_discount > %s)
+    #                              AND company_id= %s
+    #                              AND advertising=True
+    #                              AND state!='done';
+    #
+    #                              UPDATE sale_order
+    #                              SET ver_tr_exc=False
+    #                              WHERE amount_untaxed <= %s
+    #                              AND company_id= %s
+    #                              AND advertising=True
+    #                              AND max_discount <= %s
+    #                              AND state!='done'
+    #                              """, (treshold, maxdiscount, case.id,  treshold, case.id, maxdiscount )
+    #                 )
+    #
+    #
+    #     return res
     
 # NOT FOUND IN V14
 # class ActivityLog(models.TransientModel):
