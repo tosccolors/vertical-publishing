@@ -52,40 +52,46 @@
             </field>
         </record>
 
-        <record id="action_view_ad_order_line_make_invoice" model="ir.actions.act_window">
-            <field name="name">Make Invoices</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">ad.order.line.make.invoice</field>
-            <!--<field name="view_type">form</field>-->
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="view_ad_order_line_make_invoice"/>
-            <field name="target">new</field>
-            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>
-        </record>
-        <record id="action_view_ad_order_make_invoice" model="ir.actions.act_window">
-            <field name="name">Make Invoices</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">ad.order.make.invoice</field>
-            <!--<field name="view_type">form</field>-->
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="view_ad_order_make_invoice"/>
-            <field name="target">new</field>
-            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>
-        </record>
+    <!--      deep:  Incompatible / Irrelevant Actions -->
+<!--        <record id="action_view_ad_order_line_make_invoice" model="ir.actions.act_window">-->
+<!--            <field name="name">Make Invoices (LLL??)</field>-->
+<!--            <field name="type">ir.actions.act_window</field>-->
+<!--            <field name="res_model">ad.order.line.make.invoice</field>-->
+<!--            <field name="view_mode">form</field>-->
+<!--            <field name="view_id" ref="view_ad_order_line_make_invoice"/>-->
+<!--            <field name="target">new</field>-->
+<!--            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>-->
+<!--        </record>-->
+<!--        <record id="action_view_ad_order_make_invoice" model="ir.actions.act_window">-->
+<!--            <field name="name">Make Invoices</field>-->
+<!--            <field name="type">ir.actions.act_window</field>-->
+<!--            <field name="res_model">ad.order.make.invoice</field>-->
+<!--            <field name="view_mode">form</field>-->
+<!--            <field name="view_id" ref="view_ad_order_make_invoice"/>-->
+<!--            <field name="target">new</field>-->
+<!--            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>-->
+<!--        </record>-->
 
 
+        <!--
+        Sales Order Line (Advertising > Order lines to Invoice ) > list
+         -->
         <record id="ad_order_line_make_invoice" model="ir.actions.act_window">
             <field name="name">Make Invoices</field>
-            <field name="res_model">ad.order.make.invoice</field>
+            <field name="res_model">ad.order.line.make.invoice</field>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="sale_advertising_order.view_ad_order_line_make_invoice"/>
             <field name="target">new</field>
-            <field name="context">{}</field>
             <field name="binding_model_id" ref="sale.model_sale_order_line"/>
             <field name="binding_view_types">list</field>
+            <field name="view_id" ref="sale_advertising_order.view_ad_order_line_make_invoice"/>
+            <field name="context">{}</field>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_traffic_user'))]"/>
         </record>
 
 
+        <!--
+        Sales Order  (Advertising) > list
+         -->
         <record id="ad_order_make_invoice" model="ir.actions.act_window">
             <field name="name">Make Invoices</field>
             <field name="res_model">ad.order.make.invoice</field>
@@ -93,7 +99,8 @@
             <field name="target">new</field>
             <field name="binding_model_id" ref="sale.model_sale_order"/>
             <field name="binding_view_types">list</field>
-            <field name="view_id" ref="sale_advertising_order.view_ad_order_line_make_invoice"/>
+            <field name="view_id" ref="sale_advertising_order.view_ad_order_make_invoice"/>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_traffic_user'))]"/>
         </record>
     </data>
 </odoo>
