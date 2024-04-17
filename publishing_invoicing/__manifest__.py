@@ -22,7 +22,7 @@
 
     # any module necessary for this one to work correctly
     'depends': ['sale_advertising_order_invoice_customisation', 'sale_advertising_order_package'
-               , 'digital_domain_sale_Advertising_order'],
+               , 'sale_Advertising_order_digital'],
 
     # always loaded
     'data': [
