@@ -44,7 +44,7 @@ class nsm_invoicing_property(models.Model):
 			('inv_whole_order_enddate', 'Invoice print order lines on or after issue date, invoice online order lines on or after end date'),
 			('inv_per_line_adv_online', 'Invoice online order lines on or after the selected date, invoice print order lines on or after issue date'),
 			('pay_in_terms', 'Invoice in terms'),
-			('manually', 'Invoiced as specified in order')
+			('inv_manually', 'Invoiced as specified in order')
 		]
 		, 'Timing'
 		, default='inv_per_line_adv_print'
