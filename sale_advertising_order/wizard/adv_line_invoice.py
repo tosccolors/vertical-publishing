@@ -61,9 +61,11 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 
     invoice_date = fields.Date('Invoice Date', default=fields.Date.today)
     posting_date = fields.Date('Posting Date', default=False)
-    job_queue = fields.Boolean('Process via Job Queue', default=False)
-    chunk_size = fields.Integer('Chunk Size Job Queue', default=50)
-    execution_datetime = fields.Datetime('Job Execution not before', default=fields.Datetime.now())
+
+    # --- [deprecated] following fields are removed in view level ---
+    job_queue = fields.Boolean('Process via Job Queue', default=False) # deprecated
+    chunk_size = fields.Integer('Chunk Size Job Queue', default=50) # deprecated
+    execution_datetime = fields.Datetime('Job Execution not before', default=fields.Datetime.now()) # deprecated
 
     @api.model
     def _prepare_invoice(self, keydict, lines, invoice_date, posting_date):
@@ -194,7 +196,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         return invoice
 
     # @job
-
     def make_invoices_job_queue(self, inv_date, post_date, chunk):
         invoices = {}
         count = 0
