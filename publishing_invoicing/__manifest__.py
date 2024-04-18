@@ -18,7 +18,7 @@
     'website': "http://www.magnus.nl",
 
     'category': 'Sale',
-    'version': '14.0.3.3',
+    'version': '14.0.3.4',
 
     # any module necessary for this one to work correctly
     'depends': ['sale_advertising_order_invoice_customisation', 'sale_advertising_order_package'
