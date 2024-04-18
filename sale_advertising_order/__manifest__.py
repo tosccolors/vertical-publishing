@@ -52,6 +52,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
              "report/report_external_views.xml",
              "report/invoice_report_template.xml",
              "report/sale_report_template.xml",
+             "report/report_indeellijst_list_views.xml",
 
              # "wizard/sale_order_type_view.xml",
              "wizard/sale_line_create_multi_view.xml",
