@@ -16,6 +16,12 @@
 
                     <button name="%(sale.action_view_sale_advance_payment_inv)d"
                             string="Create Invoice"
+                            type="action" class="btn-primary"
+                            attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}"
+                            groups="sale_advertising_order.group_ads_traffic_user"/>
+
+                    <button name="%(sale.action_view_sale_advance_payment_inv)d"
+                            string="Create Invoice"
                             type="action" context="{'default_advance_payment_method': 'percentage'}"
                             attrs="{'invisible': ['|',('invoice_status', '!=', 'no'), ('state', '!=', 'sale')]}"
                             groups="sale_advertising_order.group_ads_traffic_user"/>
