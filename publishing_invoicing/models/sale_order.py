@@ -96,10 +96,11 @@ class SaleOrderLine(models.Model):
 		return True
 
 
-	def write(self, vals):
-		user = self.env['res.users'].browse(self.env.uid)
-		ctx = self.env.context.copy()
-		if self.env.user.has_group('publishing_invoicing.advertising_sale_superuser'):
-			ctx.update({'allow_user':True})
-		return super(SaleOrderLine, self.with_context(ctx)).write(vals)
+	# deep: deprecated
+	# def write(self, vals):
+	# 	user = self.env['res.users'].browse(self.env.uid)
+	# 	ctx = self.env.context.copy()
+	# 	if self.env.user.has_group('publishing_invoicing.advertising_sale_superuser'):
+	# 		ctx.update({'allow_user':True})
+	# 	return super(SaleOrderLine, self.with_context(ctx)).write(vals)
 
