@@ -140,7 +140,7 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field eval="19" name="priority"/>
-            <xpath name="arch" type="xml">
+            <field name="arch" type="xml">
                 <data>
 
                     <field name="category_id" position="attributes">
