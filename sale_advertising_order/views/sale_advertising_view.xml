@@ -17,7 +17,9 @@
                     <button name="%(sale.action_view_sale_advance_payment_inv)d"
                             string="Create Invoice"
                             type="action" class="btn-primary"
-                            attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}"
+                            attrs="{'invisible': ['|', ('state', '!=', 'sale'),
+                                                  '|', ('state', '=', 'sale'),  ('invoice_status', '!=', 'to invoice'),
+                                                  '|',('invoice_status', '!=', 'to invoice'), ('state', '!=', 'sale')]}"
                             groups="sale_advertising_order.group_ads_traffic_user"/>
 
                     <button name="%(sale.action_view_sale_advance_payment_inv)d"
