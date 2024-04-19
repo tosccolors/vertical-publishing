@@ -512,15 +512,16 @@ class SaleOrderLine(models.Model):
                     'discount': discount,
                 })
             else:
-                clp = line.comb_list_price or 0.0
-                if clp > 0.0:
-                    comp_discount = round((1.0 - float(subtotal_bad) / (float(clp) + float(csa))) * 100.0, 2)
-                    unit_price = 0.0
-                    price_unit = 0.0
-                else:
-                    comp_discount = 0.0
-                    unit_price = 0.0
-                    price_unit = 0.0
+                #[Removed] default discount 100%
+                # clp = line.comb_list_price or 0.0
+                # if clp > 0.0:
+                #     comp_discount = round((1.0 - float(subtotal_bad) / (float(clp) + float(csa))) * 100.0, 2)
+                #     unit_price = 0.0
+                #     price_unit = 0.0
+                # else:
+                comp_discount = 0.0
+                unit_price = 0.0
+                price_unit = 0.0
 
 #                price = round(float(subtotal_bad) * (1.0 - float(discount or 0) / 100.0), 2)
                 price = round(subtotal_bad * (1 - (discount or 0.0) / 100.0), 4)
