@@ -17,7 +17,9 @@
                     <button name="%(sale.action_view_sale_advance_payment_inv)d"
                             string="Create Invoice"
                             type="action" class="btn-primary"
-                            attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}"
+                            attrs="{'invisible': ['|', ('state', '!=', 'sale'),
+                                                  '|', ('state', '=', 'sale'),  ('invoice_status', '!=', 'to invoice'),
+                                                  '|',('invoice_status', '!=', 'to invoice'), ('state', '!=', 'sale')]}"
                             groups="sale_advertising_order.group_ads_traffic_user"/>
 
                     <button name="%(sale.action_view_sale_advance_payment_inv)d"
@@ -218,8 +220,8 @@
                                             <field name="price_unit" readonly="0" attrs="{'invisible': ['|',('multi_line','=', True),('price_edit','!=', True)]}"/>
                                             <field name="price_unit_dummy" readonly="1" attrs="{'invisible': ['|',('multi_line','=', True),('price_edit','=', True)]}"/>
                                             <field name="comb_list_price" readonly="True" attrs="{'invisible': [('multi_line','=', False)]}"/>
-                                            <field name="color_surcharge" />
-                                            <field name="color_surcharge_amount" attrs="{'invisible': [('color_surcharge','=', False)]}"/>
+<!--                                            <field name="color_surcharge" /> deprecated-->
+<!--                                            <field name="color_surcharge_amount" attrs="{'invisible': [('color_surcharge','=', False)]}"/> deprecated-->
                                             <field name="actual_unit_price" attrs="{'invisible': [('multi_line','=', True)]}"/>
                                             <label for="computed_discount" groups="product.group_discount_per_so_line"/>
                                                 <div name="computed_discount" groups="product.group_discount_per_so_line">
@@ -1017,8 +1019,8 @@
                                 <field name="price_unit" readonly="0" attrs="{'invisible': [('price_edit','!=', True)]}"/>
                                 <field name="price_unit_dummy" readonly="1" attrs="{'invisible': [('multi_line','!=', False),('price_edit','=', True)]}"/>
                                 <field name="comb_list_price" readonly="True" attrs="{'invisible': [('multi_line','=', False)]}"/>
-                                <field name="color_surcharge" />
-                                <field name="color_surcharge_amount" attrs="{'invisible': [('color_surcharge','=', False)]}"/>
+<!--                                <field name="color_surcharge" /> deprecated-->
+<!--                                <field name="color_surcharge_amount" attrs="{'invisible': [('color_surcharge','=', False)]}"/> deprecated-->
                                 <field name="actual_unit_price" attrs="{'invisible': [('multi_line','=', True)]}"/>
                                 <label for="computed_discount" groups="product.group_discount_per_so_line"/>
                                     <div name="computed_discount" groups="product.group_discount_per_so_line">

@@ -698,9 +698,9 @@ class SaleOrderLine(models.Model):
     subtotal_before_agency_disc = fields.Monetary(string='Subtotal before Commission', digits='Account')
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
     multi_line = fields.Boolean(string='Multi Line')
-    color_surcharge = fields.Boolean(string='Color Surcharge')
+    color_surcharge = fields.Boolean(string='Color Surcharge') # deprecated in UI
     price_edit = fields.Boolean(compute='_compute_price_edit', string='Price Editable')
-    color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits='Product Price')
+    color_surcharge_amount = fields.Monetary(string='Color Surcharge', digits='Product Price') # deprecated in UI
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
     nett_nett = fields.Boolean(string='Netto Netto Line')
     # proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False) #deep: has been overridden to M2M as below
@@ -1160,35 +1160,37 @@ class SaleOrderLine(models.Model):
         else:
             self.subtotal_before_agency_disc = round((float(self.comb_list_price) + float(self.color_surcharge_amount)), 2)
 
-    @api.onchange('color_surcharge' )
-    def onchange_color(self):
-        result = {}
-        if not self.advertising:
-            return {'value': result}
-        pu = self.price_unit
-        clp = self.comb_list_price
-        if not self.multi_line:
-            if self.color_surcharge:
-                self.color_surcharge_amount = pu / 2
-            else:
-                self.color_surcharge_amount = 0.0
-        else:
-            if self.color_surcharge:
-                self.color_surcharge_amount = clp / 2
-            else:
-                self.color_surcharge_amount = 0.0
+    # deprecated
+    # @api.onchange('color_surcharge' )
+    # def onchange_color(self):
+    #     result = {}
+    #     if not self.advertising:
+    #         return {'value': result}
+    #     pu = self.price_unit
+    #     clp = self.comb_list_price
+    #     if not self.multi_line:
+    #         if self.color_surcharge:
+    #             self.color_surcharge_amount = pu / 2
+    #         else:
+    #             self.color_surcharge_amount = 0.0
+    #     else:
+    #         if self.color_surcharge:
+    #             self.color_surcharge_amount = clp / 2
+    #         else:
+    #             self.color_surcharge_amount = 0.0
 
-    @api.onchange('color_surcharge_amount')
-    def onchange_csa(self):
-        result = {}
-        if not self.advertising:
-            return {'value': result}
-        csa = self.color_surcharge_amount
-        if not self.multi_line:
-            self.subtotal_before_agency_disc = (self.price_unit + csa) * self.product_uom_qty * (
-                        1 - self.computed_discount / 100)
-        else:
-            self.subtotal_before_agency_disc = (self.comb_list_price + csa) * (1 - self.computed_discount / 100)
+    # deprecated
+    # @api.onchange('color_surcharge_amount')
+    # def onchange_csa(self):
+    #     result = {}
+    #     if not self.advertising:
+    #         return {'value': result}
+    #     csa = self.color_surcharge_amount
+    #     if not self.multi_line:
+    #         self.subtotal_before_agency_disc = (self.price_unit + csa) * self.product_uom_qty * (
+    #                     1 - self.computed_discount / 100)
+    #     else:
+    #         self.subtotal_before_agency_disc = (self.comb_list_price + csa) * (1 - self.computed_discount / 100)
 
     @api.onchange('adv_issue', 'adv_issue_ids','dates','issue_product_ids')
     def onchange_getQty(self):
