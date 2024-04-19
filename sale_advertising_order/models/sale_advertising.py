@@ -557,7 +557,7 @@ class SaleOrderLine(models.Model):
                     'multi_line_number': count,
                 })
 
-    @api.depends('adv_issue', 'ad_class')
+    @api.depends('adv_issue', 'ad_class', 'from_date')
     
     def _compute_deadline(self):
         """
@@ -568,6 +568,11 @@ class SaleOrderLine(models.Model):
             line.deadline_passed = False
             line.deadline = False
             line.deadline_offset = False
+            if line.date_type == 'issue_date':
+                line.deadline = line.adv_issue.deadline
+            elif line.date_type == 'validity' and line.from_date:
+                deadline_dt = (datetime.strptime(str(line.from_date), "%Y-%m-%d") + timedelta(hours=3, minutes=30)) - timedelta(days=14)
+                line.deadline = deadline_dt
             if line.ad_class:
                 if not user.has_group('sale_advertising_order.group_no_deadline_check'):
                     dt_offset = timedelta(hours=line.ad_class.deadline_offset or 0)
