@@ -101,7 +101,8 @@ class SaleOrder(models.Model):
             line_invoice_status = [line.invoice_status for line in order.order_line]
 
             if all(invoice_status == 'to invoice' for invoice_status in line_invoice_status):
-                invoice_status = 'not invoiced'
+                # invoice_status = 'not invoiced'
+                invoice_status = 'to invoice'
                 order['invoice_status'] = invoice_status
 
     @api.depends('agency_is_publish')

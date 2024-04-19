@@ -61,30 +61,35 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 
     invoice_date = fields.Date('Invoice Date', default=fields.Date.today)
     posting_date = fields.Date('Posting Date', default=False)
-    job_queue = fields.Boolean('Process via Job Queue', default=False)
-    chunk_size = fields.Integer('Chunk Size Job Queue', default=50)
-    execution_datetime = fields.Datetime('Job Execution not before', default=fields.Datetime.now())
+
+    # --- [deprecated] following fields are removed in view level ---
+    job_queue = fields.Boolean('Process via Job Queue', default=False) # deprecated
+    chunk_size = fields.Integer('Chunk Size Job Queue', default=50) # deprecated
+    execution_datetime = fields.Datetime('Job Execution not before', default=fields.Datetime.now()) # deprecated
 
     @api.model
     def _prepare_invoice(self, keydict, lines, invoice_date, posting_date):
+        ref = self.env.ref
 #        self.ensure_one()
 #        line_ids = [x.id for x in lines['lines']]
+
         partner = keydict['partner_id']
         published_customer = keydict['published_customer']
         payment_mode = keydict['payment_mode_id']
         operating_unit = keydict['operating_unit_id']
-        journal_id = self.env['account.move'].default_get(['journal_id'])['journal_id']
+        # journal_id = self.env['account.move'].default_get(['journal_id'])['journal_id']
+        journal_id = self.env['account.move'].with_context(default_move_type='out_invoice')._get_default_journal().id
         if not journal_id:
             raise UserError(_('Please define an accounting sale journal for this company.'))
         vals = {
-            'date_invoice': invoice_date,
+            'invoice_date': invoice_date,
             'date': posting_date or False,
-            'type': 'out_invoice',
-            'account_id': partner.property_account_receivable_id.id,
+            'move_type': 'out_invoice',
+            # 'account_id': partner.property_account_receivable_id.id, # deprecated
             'partner_id': partner.id,
             'published_customer': published_customer.id,
             'invoice_line_ids': lines['lines'],
-            'comment': lines['name'],
+            'narration': lines['name'],
             'invoice_payment_term_id': partner.property_payment_term_id.id or False,
             'journal_id': journal_id,
             'fiscal_position_id': partner.property_account_position_id.id or False,
@@ -95,6 +100,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'partner_bank_id': payment_mode.fixed_journal_id.bank_account_id.id
                                if payment_mode.bank_account_link == 'fixed'
                                else partner.bank_ids and partner.bank_ids[0].id or False,
+            'sale_type_id': ref('sale_advertising_order.ads_sale_type').id,
         }
         return vals
 
@@ -117,7 +123,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         if not context.get('active_ids', []):
             message = 'No ad order lines selected for invoicing.'
             if context.get('job_queue') == True :
-                _logger.info(message)
                 return message+"\n"
             else :
                 raise UserError(_(message))
@@ -135,7 +140,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             post_date = posting_date_ctx
         if jq_ctx and not jq:
             jq = True
-            if len(self)==1:
+            if len(self) == 1:
                 self.job_queue = True
             if size_ctx and not size:
                 size = size_ctx
@@ -153,7 +158,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             return "Lines dispatched."
 
     # @job
-
     def make_invoices_split_lines_jq(self, inv_date, post_date, olines, eta, size):
             partners = olines.mapped('order_id.partner_invoice_id')
             chunk = False
@@ -191,11 +195,10 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     def make_invoice(self, keydict, lines, inv_date, post_date):
         vals = self._prepare_invoice(keydict, lines, inv_date, post_date)
         invoice = self.env['account.move'].create(vals)
-        invoice.compute_taxes()
+        # invoice.compute_taxes() --deprecated
         return invoice
 
     # @job
-
     def make_invoices_job_queue(self, inv_date, post_date, chunk):
         invoices = {}
         count = 0
@@ -234,9 +237,9 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                 self.make_invoice(invoices[key]['keydict'], il, inv_date, post_date)
             except Exception as e:
                 if self.job_queue:
-                    raise FailedJobError(_("The details of the error:'%s' regarding '%s'") % (unicode(e), il['name'] ))
+                    raise FailedJobError(_("The details of the error:'%s' regarding '%s'") % (str(e), il['name'] ))
                 else:
-                    raise UserError(_("The details of the error:'%s' regarding '%s'") % (unicode(e), il['name'] ))
+                    raise UserError(_("The details of the error:'%s' regarding '%s'") % (str(e), il['name'] ))
         #raise ValidationError(_("Your selection consisted of:'%s' \n The number of succesfully invoiced lines is '%s'") % (len(chunk), len(chunk)))
         return "Invoice(s) successfully made."
 
@@ -277,15 +280,15 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         res = {
             'name': line.title.name or "/",
             'sequence': line.sequence,
-            'invoice_origin': line.order_id.name,
+            # 'origin': line.order_id.name, -- deprecated; perhaps we could use ref instead?
             'account_id': account.id,
             'price_unit': line.actual_unit_price,
             'quantity': line.product_uom_qty,
             'discount': line.discount,
-            'uom_id': line.product_uom.id,
+            'product_uom_id': line.product_uom.id,
             'product_id': line.product_id and line.product_id.id or False,
             # 'layout_category_id': line.layout_category_id and line.layout_category_id.id or False,
-            'invoice_line_tax_ids': [(6, 0, line.tax_id.ids or [])],
+            'tax_ids': [(6, 0, line.tax_id.ids or [])],
             'analytic_account_id': line.adv_issue.analytic_account_id and line.adv_issue.analytic_account_id.id or False,
             'analytic_tag_ids': [(6, 0, line.analytic_tag_ids.ids or [])],
             'so_line_id': line.id,

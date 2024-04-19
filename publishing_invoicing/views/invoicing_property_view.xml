@@ -51,12 +51,12 @@
         <record id="action_invoicing_property" model="ir.actions.act_window">
             <field name="name">Invoicing Properties</field>
             <field name="res_model">invoicing.property</field>
-            <!--<field name="view_type">form</field>-->
             <field name="view_mode">tree,form</field>
         </record>
         <menuitem id="menu_invoicing_property" name="Invoicing Properties"
-            parent="sale.menu_sale_invoicing" sequence="10"
-            action="action_invoicing_property"/>
+            parent="sale_advertising_order.menu_advertising_toinvoice" sequence="10"
+            action="action_invoicing_property"
+            groups="sale_advertising_order.group_ads_traffic_user"/>
 
     </data>
 </odoo>
