@@ -69,8 +69,10 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 
     @api.model
     def _prepare_invoice(self, keydict, lines, invoice_date, posting_date):
+        ref = self.env.ref
 #        self.ensure_one()
 #        line_ids = [x.id for x in lines['lines']]
+
         partner = keydict['partner_id']
         published_customer = keydict['published_customer']
         payment_mode = keydict['payment_mode_id']
@@ -98,6 +100,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'partner_bank_id': payment_mode.fixed_journal_id.bank_account_id.id
                                if payment_mode.bank_account_link == 'fixed'
                                else partner.bank_ids and partner.bank_ids[0].id or False,
+            'sale_type_id': ref('sale_advertising_order.ads_sale_type').id,
         }
         return vals
 
