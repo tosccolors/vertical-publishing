@@ -152,10 +152,10 @@
                     <field name="property_delivery_carrier_id" position="attributes">
                         <attribute name="groups">base.group_no_one</attribute>
                     </field>
-                    <field name="company_id" position="after">
+                    <xpath expr="//group[@name='misc']" position="inside">
                         <field name="is_ad_agency"/>
                         <field name="agency_discount" attrs="{'invisible': [('is_ad_agency', '=', False)]}"/>
-                    </field>
+                    </xpath>
                 </data>
             </field>
         </record>

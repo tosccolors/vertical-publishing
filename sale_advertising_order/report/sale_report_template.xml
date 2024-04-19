@@ -19,7 +19,7 @@
                         <th width="10%" t-if="not doc.advertising_agency" class="text-right">Actual unit price</th>
                         <th width="10%" t-if="doc.display_discount_to_customer" class="text-right">Computed discount(%)</th>
                         <th width="10%" t-if="doc.advertising_agency" class="text-right">SBAD</th>
-                        <th width="10%" t-if="doc.advertising_agency" class="text-right">Agency Disc(%)</th>
+<!--                        <th width="10%" t-if="doc.advertising_agency" class="text-right">Agency Disc(%)</th>-->
                         <th name="line_amount_th" width="10%" class="text-right">Tax excluded price</th>
                     </tr>
                 </thead>
@@ -50,9 +50,9 @@
                             <td t-if="doc.advertising_agency" class="text-right">
                                 <span t-if="doc.pricelist_id and doc.pricelist_id.currency_id" t-field="doc.pricelist_id.currency_id.symbol"/><span> </span><span t-esc="'%.2f'% l.subtotal_before_agency_disc"/>
                             </td>
-                            <td t-if="doc.advertising_agency" class="text-right">
-                                <span t-esc="'%.2f'% l.discount"/>
-                            </td>
+<!--                            <td t-if="doc.advertising_agency" class="text-right">-->
+<!--                                <span t-esc="'%.2f'% l.discount"/>-->
+<!--                            </td>-->
                             <td name="line_amount_td" class="text-right" >
                                 <span t-if="doc.pricelist_id and doc.pricelist_id.currency_id" t-field="doc.pricelist_id.currency_id.symbol"/><span> </span><span t-esc="'%.2f'% l.price_subtotal"/>
                             </td>

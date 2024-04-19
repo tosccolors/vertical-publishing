@@ -16,7 +16,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         return key, keydict
 
     # @job
-    
     def make_invoices_job_queue(self, inv_date, post_date, chunk):
         """"Filter out lines with invoicing properties pay in terms or invoice as package deal"""
         ctx = self._context
