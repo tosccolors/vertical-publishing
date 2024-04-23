@@ -641,6 +641,14 @@ class SaleOrderLine(models.Model):
 
             line.domain4prod_ids = [(6, 0, ptmplIDs)]
 
+    @api.depends('state')
+    def _get_product_data(self):
+        for line in self:
+            prod = line.product_id
+            if prod:
+                line.product_width = prod.width
+                line.product_height = prod.height
+
 
     mig_remark = fields.Text('Migration Remark')
     layout_remark = fields.Text('Material Remark')
@@ -720,6 +728,9 @@ class SaleOrderLine(models.Model):
                                                  string='Proof Number Advertising Customer')
     proof_number_amt_payer = fields.Integer('Proof Number Amount Payer', default=1)
     proof_number_amt_adv_customer = fields.Integer('Proof Number Amount Advertising', default=1)
+
+    product_width = fields.Float(compute='_get_product_data', readonly=True, store=False, string="Width")
+    product_height = fields.Float(compute='_get_product_data', readonly=True, store=False, string="Height")
 
 
     @api.onchange('medium')
