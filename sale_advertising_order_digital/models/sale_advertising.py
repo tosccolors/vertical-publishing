@@ -21,6 +21,7 @@
 ##############################################################################
 
 from odoo import api, fields, models, _
+from datetime import date
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -46,6 +47,8 @@ class SaleOrderLine(models.Model):
             domain =[('parent_id', 'in', titles.ids)]
             if class_issue_ids:
                 domain += [('adv_class_issue_id', 'in', adv_class_issue_ids.ids)]
-
+            mag_categ = self.env.ref('sale_advertising_order.magazine_advertising_category').id
+            if self.medium.id == mag_categ and not self.medium.digital:
+                domain += [('issue_date', '>=', date.today())]
             ol.adv_class_issue_ids = self.env['sale.advertising.issue'].search(domain).ids
 
