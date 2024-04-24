@@ -6,14 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-20 14:49+0000\n"
-"PO-Revision-Date: 2024-03-20 14:49+0000\n"
+"POT-Creation-Date: 2024-04-23 07:28+0000\n"
+"PO-Revision-Date: 2024-04-23 12:10+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
-"Plural-Forms: \n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #. module: sale_advertising_order
 #: model:mail.template,body_html:sale_advertising_order.email_template_edi_sale_adver
@@ -23,7 +25,8 @@ msgid ""
 "% set access_action = object.with_context(force_website=True).get_access_action()\n"
 "% set doc_name = 'quotation' if object.state in ('draft', 'sent') else 'order confirmation'\n"
 "% set is_online = access_action and access_action['type'] == 'ir.actions.act_url'\n"
-"% set access_name = is_online and object.template_id and doc_name == 'quotation' and 'Accept and pay %s online' % doc_name or 'View %s' % doc_name\n"
+"% set access_name = is_online and object.template_id and doc_name == 'quotation' and 'Accept and pay %s "
+"online' % doc_name or 'View %s' % doc_name\n"
 "% set access_url = is_online and access_action['url'] or None\n"
 "\n"
 "% if object.partner_id.parent_id:\n"
@@ -42,7 +45,8 @@ msgid ""
 "    <br/><br/>\n"
 "% if is_online:\n"
 "    <center>\n"
-"        <a href=\"${access_url}\" style=\"background-color: #1abc9c; padding: 20px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;\" class=\"o_default_snippet_text\">${access_name}</a>\n"
+"        <a href=\"${access_url}\" style=\"background-color: #1abc9c; padding: 20px; text-decoration: none; "
+"color: #fff; border-radius: 5px; font-size: 16px;\" class=\"o_default_snippet_text\">${access_name}</a>\n"
 "        <br/><br/>\n"
 "        <span style=\"color:#888888\">(or view attached PDF)</span>\n"
 "    </center>\n"
@@ -65,7 +69,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_partner__adv_quotation_count
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_users__adv_quotation_count
 msgid "# of Advertising Quotations"
-msgstr ""
+msgstr "# Advertentie Offertes"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_crm_lead__quotations_count
@@ -73,34 +77,32 @@ msgstr ""
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_partner__quotation_count
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_users__quotation_count
 msgid "# of Quotations"
-msgstr ""
+msgstr "# Offertes"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_brand__adv_sale_order_count
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_partner__adv_sale_order_count
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_users__adv_sale_order_count
 msgid "# of Sales Order"
-msgstr ""
+msgstr "# Verkooporders"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_brand__total_sales_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_partner__total_sales_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_users__total_sales_order
 msgid "# of Total Sales Order"
-msgstr ""
+msgstr "# Totale Verkooporders"
 
 #. module: sale_advertising_order
 #: model:mail.template,report_name:sale_advertising_order.email_template_edi_sale_adver
-msgid ""
-"${(object.name or '').replace('/','_')}${object.state == 'draft' and "
-"'_draft' or ''}"
+msgid "${(object.name or '').replace('/','_')}${object.state == 'draft' and '_draft' or ''}"
 msgstr ""
 
 #. module: sale_advertising_order
 #: model:mail.template,subject:sale_advertising_order.email_template_edi_sale_adver
 msgid ""
-"${object.company_id.name} ${object.state in ('draft', 'sent') and "
-"'Quotation' or 'Order'} (Ref ${object.name or 'n/a' })"
+"${object.company_id.name} ${object.state in ('draft', 'sent') and 'Quotation' or 'Order'} (Ref ${object.name "
+"or 'n/a' })"
 msgstr ""
 
 #. module: sale_advertising_order
@@ -121,9 +123,7 @@ msgstr ""
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/models/crm_lead.py:0
 #, python-format
-msgid ""
-"<p>As you don't belong to any Sales Team, Odoo opens the first one by "
-"default.</p>"
+msgid "<p>As you don't belong to any Sales Team, Odoo opens the first one by default.</p>"
 msgstr ""
 
 #. module: sale_advertising_order
@@ -138,9 +138,7 @@ msgstr ""
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
-msgid ""
-"<strong class=\"text-center\">Scan me with your banking "
-"app.</strong><br/><br/>"
+msgid "<strong class=\"text-center\">Scan me with your banking app.</strong><br/><br/>"
 msgstr ""
 
 #. module: sale_advertising_order
@@ -151,17 +149,17 @@ msgstr "<strong>Adverteerder:</strong>"
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
 msgid "<strong>Amount Due</strong>"
-msgstr ""
+msgstr "<strong>Verschuldigd bedrag</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorder_document_sao
 msgid "<strong>Computed discount</strong>"
-msgstr ""
+msgstr "<strong>Berekende korting</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
 msgid "<strong>Credit Note Date:</strong>"
-msgstr ""
+msgstr "<strong>Creditnota datum:</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
@@ -177,22 +175,22 @@ msgstr "<strong>Datum:</strong>"
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
 msgid "<strong>Due Date:</strong>"
-msgstr ""
+msgstr "<strong>Vervaldatum:</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorder_document_sao
 msgid "<strong>Expiration:</strong>"
-msgstr ""
+msgstr "<strong>Vervaldatum:</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorder_document_sao
 msgid "<strong>Fiscal Position Remark:</strong>"
-msgstr ""
+msgstr "<strong>Opmerking fiscale positie:</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorder_document_sao
 msgid "<strong>For approval:</strong>"
-msgstr ""
+msgstr "<strong>Voor akkoord:</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
@@ -212,37 +210,37 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorder_document_sao
 msgid "<strong>Order Date:</strong>"
-msgstr ""
+msgstr "<strong>Orderdatum:</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorder_document_sao
 msgid "<strong>Quotation Date:</strong>"
-msgstr ""
+msgstr "<strong>Offertedatum:</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
 msgid "<strong>Receipt Date:</strong>"
-msgstr ""
+msgstr "<strong>Ontvangstdatum:</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
 msgid "<strong>Sale Order nr:</strong>"
-msgstr ""
+msgstr "<strong>Verkoopordernummer:</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorder_document_sao
 msgid "<strong>Salesperson:</strong>"
-msgstr ""
+msgstr "<strong>Verkoper:</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorder_document_sao
 msgid "<strong>Shipping Address:</strong>"
-msgstr ""
+msgstr "<strong>Verzendadres:</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorder_document_sao
 msgid "<strong>Signature</strong>"
-msgstr ""
+msgstr "<strong>Handtekening</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
@@ -252,7 +250,7 @@ msgstr "<strong>Onderwerp:</strong>"
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
 msgid "<strong>Subtotal before agency discount</strong>"
-msgstr ""
+msgstr "<strong>Subtotaal voor bureaukorting</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
@@ -263,7 +261,7 @@ msgstr "<strong>Subtotaal</strong>"
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
 msgid "<strong>Sum of agency discount</strong>"
-msgstr ""
+msgstr "<strong>Totale bureaukorting</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
@@ -276,6 +274,12 @@ msgstr "<strong>Totaal</strong>"
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorder_document_sao
 msgid "<strong>Your Reference:</strong>"
 msgstr "<strong>Uw Referentie:</strong>"
+
+#. module: sale_advertising_order
+#: code:addons/sale_advertising_order/report/proof_number_delivery_list_xlsx.py:0
+#, python-format
+msgid "ADDITION #"
+msgstr ""
 
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/report/proof_number_delivery_list_xlsx.py:0
@@ -296,6 +300,12 @@ msgid "ADDRESS ZIP"
 msgstr ""
 
 #. module: sale_advertising_order
+#: code:addons/sale_advertising_order/report/report_indeellijst_list.py:0
+#, python-format
+msgid "ADVERTEERDER"
+msgstr ""
+
+#. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_crm_lead__partner_acc_mgr
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__partner_acc_mgr
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__partner_acc_mgr
@@ -312,23 +322,23 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__message_needaction
 msgid "Action Needed"
-msgstr ""
+msgstr "Activering nodig"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__active
 msgid "Active"
-msgstr ""
+msgstr "Actief"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_crm_lead__activities_count
 msgid "Activities"
-msgstr ""
+msgstr "Activiteiten"
 
 #. module: sale_advertising_order
 #: model:ir.actions.act_window,name:sale_advertising_order.crm_activity_report_action_tree
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.crm_activity_report_view_search
 msgid "Activities Log"
-msgstr ""
+msgstr "Activiteitenlog"
 
 #. module: sale_advertising_order
 #: model:ir.actions.act_window,name:sale_advertising_order.act_res_partner_2_activities_report
@@ -336,23 +346,23 @@ msgstr ""
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_partner__activities_report_count
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_users__activities_report_count
 msgid "Activities Report"
-msgstr ""
+msgstr "Activiteiten rapport"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_crm_lead__is_activity
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.crm_activity_report_view_search
 msgid "Activity"
-msgstr ""
+msgstr "Activiteit"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__actual_unit_price
 msgid "Actual Unit Price"
-msgstr ""
+msgstr "Stuksprijs"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorderlines_document_sao
 msgid "Actual unit price"
-msgstr ""
+msgstr "Stuksprijs"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_account_bank_statement_line__ad
@@ -360,29 +370,29 @@ msgstr ""
 #: model:ir.model.fields,field_description:sale_advertising_order.field_account_move_line__ad
 #: model:ir.model.fields,field_description:sale_advertising_order.field_account_payment__ad
 msgid "Ad"
-msgstr ""
+msgstr "Advertentie"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_res_partner_filter_crm
 msgid "Ad Agencies"
-msgstr ""
+msgstr "Mediabureau"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_res_partner_filter_crm
 msgid "Ad Agency Partners"
-msgstr ""
+msgstr "Mediabureau partner"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 msgid "Ad No."
-msgstr ""
+msgstr "Advertentienummer."
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_available_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_available_tree
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_issue_form
 msgid "Ad Page"
-msgstr ""
+msgstr "Advertentie pagina"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_available__order_line_id
@@ -390,33 +400,33 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_available_tree
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_issue_form
 msgid "Ad Placement"
-msgstr ""
+msgstr "Advertentie locatie"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_move_form
 msgid "Add description"
-msgstr ""
+msgstr "Voeg beschrijving toe"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.product_category_search_view
 msgid "Ads Categories"
-msgstr ""
+msgstr "Advertentie categorie"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.product_template_search_view_inherit
 msgid "Ads products"
-msgstr ""
+msgstr "Advertentieproducten"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__issue_product_ids
 msgid "Adv. Issues with Product Prices"
-msgstr ""
+msgstr "Advertentie edities met productprijzen"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Adv.Issues with Products and Prices"
-msgstr ""
+msgstr "Advertentie edities met producten en prijzen"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_account_bank_statement_line__published_customer
@@ -429,7 +439,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
 msgid "Advertiser"
-msgstr ""
+msgstr "Adverteerder"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_crm_lead__advertising
@@ -437,33 +447,33 @@ msgstr ""
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__advertising
 #: model:ir.ui.menu,name:sale_advertising_order.menu_adverstising_subconfig
 msgid "Advertising"
-msgstr ""
+msgstr "Advertentie"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__advertising_agency
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__order_agency_id
 msgid "Advertising Agency"
-msgstr ""
+msgstr "Mediabureau"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__ad_class
 msgid "Advertising Class"
-msgstr ""
+msgstr "Advertentiesoort"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__order_advertiser_id
 msgid "Advertising Customer"
-msgstr ""
+msgstr "Advertentieklant"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__dateperiods
 msgid "Advertising Date Periods"
-msgstr ""
+msgstr "Advertentie periode"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__dates
 msgid "Advertising Dates"
-msgstr ""
+msgstr "Advertentie periode"
 
 #. module: sale_advertising_order
 #: model:ir.actions.act_window,name:sale_advertising_order.action_sale_advertising_issue
@@ -478,23 +488,23 @@ msgstr "Advertentie editie"
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_available__adv_issue_id
 msgid "Advertising Issue Reference"
-msgstr ""
+msgstr "Advertentie editie referentie"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Advertising Issue(s)"
-msgstr "Advertentie edities"
+msgstr "Advertentie editie(s)"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__adv_issue_ids
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 msgid "Advertising Issues"
-msgstr "Advertentie edities"
+msgstr "Advertentie editie(s)"
 
 #. module: sale_advertising_order
 #: model:sale.order.type,name:sale_advertising_order.ads_sale_type
 msgid "Advertising Order"
-msgstr ""
+msgstr "Advertentie order"
 
 #. module: sale_advertising_order
 #: model:ir.model,name:sale_advertising_order.model_sale_order_line_issues_products
@@ -519,7 +529,7 @@ msgstr "Aanmaken factuur orderregel"
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_pivot
 msgid "Advertising Order Lines"
-msgstr ""
+msgstr "Advertentie order regels"
 
 #. module: sale_advertising_order
 #: model:ir.model,name:sale_advertising_order.model_ad_order_make_invoice
@@ -540,7 +550,7 @@ msgstr "Advertentie paginas"
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_page_tree
 msgid "Advertising Pages"
-msgstr ""
+msgstr "Advertentie pagina"
 
 #. module: sale_advertising_order
 #: model:ir.actions.act_window,name:sale_advertising_order.action_sale_advertising_proof
@@ -550,12 +560,13 @@ msgstr "Advertentie bewijsnummers"
 #. module: sale_advertising_order
 #: model:ir.actions.act_window,name:sale_advertising_order.act_res_partner_2_quotation_adv
 msgid "Advertising Quotations"
-msgstr ""
+msgstr "Advertentie offertes"
 
 #. module: sale_advertising_order
+#: model:ir.module.category,name:sale_advertising_order.module_category_ads
 #: model:ir.ui.menu,name:sale_advertising_order.advertising_sale_menu_root
 msgid "Advertising Sales"
-msgstr ""
+msgstr "Advertentie Sales"
 
 #. module: sale_advertising_order
 #: model:ir.actions.act_window,name:sale_advertising_order.action_orders_advertising_smart_button
@@ -563,19 +574,14 @@ msgid "Advertising Sales Orders"
 msgstr "Advertentie verkooporders"
 
 #. module: sale_advertising_order
-#: model:res.groups,name:sale_advertising_order.group_advertising_sales_user
-msgid "Advertising Sales User"
-msgstr "Advertentie sales medewerker"
-
-#. module: sale_advertising_order
 #: model:ir.actions.act_window,name:sale_advertising_order.ads_indeellijst_action
 msgid "Advertising Schedules"
-msgstr ""
+msgstr "Advertentie schema"
 
 #. module: sale_advertising_order
 #: model:ir.actions.act_window,name:sale_advertising_order.action_sale_advertising_issue_title
 msgid "Advertising Title"
-msgstr ""
+msgstr "Advertentie titel"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_issue_ids_tree
@@ -590,7 +596,7 @@ msgstr "Advertentie editie"
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_proof_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_proof_tree
 msgid "Advertising proof"
-msgstr ""
+msgstr "Advertentie bewijs"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields.selection,name:sale_advertising_order.selection__sale_advertising_available__name__afboeking
@@ -611,28 +617,23 @@ msgstr ""
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_users__is_ad_agency
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
 msgid "Agency"
-msgstr ""
+msgstr "Mediabureau"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Agency Commission"
-msgstr ""
+msgstr "Bureaukorting"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__discount_dummy
 msgid "Agency Commission (%)"
-msgstr ""
+msgstr "Bureaukorting (%)"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_orderlines_document_sao
 msgid "Agency Disc"
-msgstr ""
-
-#. module: sale_advertising_order
-#: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorderlines_document_sao
-msgid "Agency Disc(%)"
-msgstr ""
+msgstr "Bureaukorting"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_brand__agency_discount
@@ -640,12 +641,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_users__agency_discount
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Agency Discount (%)"
-msgstr ""
+msgstr "Bureaukorting (%)"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__agency_is_publish
 msgid "Agency is Publishing Customer"
-msgstr ""
+msgstr "Mediabureau is adverteerder"
 
 #. module: sale_advertising_order
 #: model:ir.actions.act_window,name:sale_advertising_order.all_advertising_order_lines_action
@@ -690,12 +691,12 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:ir.model.fields.selection,name:sale_advertising_order.selection__sale_order__state__approved1
 msgid "Approved by Sales Mgr"
-msgstr ""
+msgstr "Goedgekeurd door Sales Manager"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields.selection,name:sale_advertising_order.selection__sale_order__state__approved2
 msgid "Approved by Traffic"
-msgstr ""
+msgstr "Goedgekeurd door Traffic"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_crm_lead2opportunity_partner_adv
@@ -738,7 +739,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:sale_advertising_order.field_product_template__booklet_surface_area
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__booklet_surface_area
 msgid "Booklet Surface Area"
-msgstr ""
+msgstr "Pagina oppervlakte"
 
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/report/proof_number_delivery_list_xlsx.py:0
@@ -778,7 +779,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_sale_order_line_create_multi
 msgid "Cancel"
-msgstr ""
+msgstr "Annuleer"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields.selection,name:sale_advertising_order.selection__sale_order__state__cancel
@@ -794,14 +795,12 @@ msgstr "Geannuleerde FACTUUR"
 #: code:addons/sale_advertising_order/models/sale_advertising.py:0
 #, python-format
 msgid ""
-"Changing the Customer can have a change in Agency Discount as a result.This "
-"change will only show after saving the order!Before saving the order the "
-"order lines and the total amounts may thereforshow wrong values."
+"Changing the Customer can have a change in Agency Discount as a result.This change will only show after "
+"saving the order!Before saving the order the order lines and the total amounts may thereforshow wrong values."
 msgstr ""
-"Als de relatie wordt aangepast dan kan dit gevolgen hebben voor de "
-"mediabureau commissie. Eventuele aanpassingen zullen pas zichtbaar worden na"
-" het opslaan van de order. Voordat de order is opgeslagen kunnen de "
-"orderregels en totaalbedragen dus afwijkingen bevatten."
+"Als de relatie wordt aangepast dan kan dit gevolgen hebben voor de mediabureau commissie. Eventuele "
+"aanpassingen zullen pas zichtbaar worden na het opslaan van de order. Voordat de order is opgeslagen kunnen "
+"de orderregels en totaalbedragen dus afwijkingen bevatten."
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,help:sale_advertising_order.field_crm_lead2opportunity_partner__update1
@@ -812,8 +811,6 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_ad_order_line_make_invoice__chunk_size
 #: model:ir.model.fields,field_description:sale_advertising_order.field_ad_order_make_invoice__chunk_size
-#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_ad_order_line_make_invoice
-#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_ad_order_make_invoice
 msgid "Chunk Size Job Queue"
 msgstr ""
 
@@ -840,12 +837,12 @@ msgstr "Sluiten"
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_issue_form
 msgid "Closed"
-msgstr ""
+msgstr "Gesloten"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,help:sale_advertising_order.field_sale_advertising_issue__deadline
 msgid "Closing Time for Sales"
-msgstr ""
+msgstr "Sluitingstijd voor verkoop"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__code
@@ -865,7 +862,7 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__comb_list_price
 msgid "Combined_List Price"
-msgstr ""
+msgstr "Gecombineerde lijstprijs"
 
 #. module: sale_advertising_order
 #: model:ir.model,name:sale_advertising_order.model_res_company
@@ -884,7 +881,7 @@ msgstr "Bedrijf"
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorderlines_document_sao
 msgid "Computed discount(%)"
-msgstr ""
+msgstr "Berekende korting (%)"
 
 #. module: sale_advertising_order
 #: model:ir.model,name:sale_advertising_order.model_res_config_settings
@@ -893,19 +890,18 @@ msgstr "Configuratie instellingen"
 
 #. module: sale_advertising_order
 #: model:ir.ui.menu,name:sale_advertising_order.menu_advertising_config
-#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_nsm_res_company_form_sale_adv
 msgid "Configuration"
 msgstr ""
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_order_confirm_view
 msgid "Confirm Orders"
-msgstr ""
+msgstr "Bevestig orders"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Confirm Sale"
-msgstr ""
+msgstr "Bevestig verkoop"
 
 #. module: sale_advertising_order
 #: model:ir.actions.act_window,name:sale_advertising_order.action_sale_order_confirm
@@ -926,12 +922,12 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_crm_lead__partner_contact_id
 msgid "Contact Person"
-msgstr ""
+msgstr "Contactpersoon"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_partner_tree_nsm_crm
 msgid "Contacts"
-msgstr ""
+msgstr "Contactpersonen"
 
 #. module: sale_advertising_order
 #: model:ir.model,name:sale_advertising_order.model_crm_lead2opportunity_partner_mass
@@ -946,7 +942,7 @@ msgstr "Converteer lead naar verkoopkans (niet in bulk)"
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_crm_lead2opportunity_partner_adv
 msgid "Convert to Opportunity"
-msgstr ""
+msgstr "Omzetten naar opportunity"
 
 #. module: sale_advertising_order
 #: model:ir.actions.act_window,name:sale_advertising_order.action_crm_lead2opportunity_partner_adv
@@ -956,28 +952,28 @@ msgstr "Omzetten naar opportunity"
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_res_partner_filter_crm
 msgid "Country"
-msgstr ""
+msgstr "Land"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_proof_number_delivery_list__proof_country_code
 msgid "Country Code"
-msgstr ""
+msgstr "Landcode"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Create Invoice"
-msgstr ""
+msgstr "Factuur aanmaken"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_ad_order_line_make_invoice
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_ad_order_make_invoice
 msgid "Create Invoices"
-msgstr ""
+msgstr "Facturen aanmaken"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_sale_order_line_create_multi
 msgid "Create Multi Lines"
-msgstr ""
+msgstr "Creëer meerdere orderregels"
 
 #. module: sale_advertising_order
 #: model:ir.actions.act_window,name:sale_advertising_order.action_view_sale_order_line_create_multi
@@ -989,7 +985,7 @@ msgstr "Creëer meerdere orderregels"
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_crm_lead2opportunity_partner_adv
 msgid "Create Opportunity"
-msgstr ""
+msgstr "Verkoopkans aanmaken"
 
 #. module: sale_advertising_order
 #: model_terms:ir.actions.act_window,help:sale_advertising_order.act_res_partner_2_quotation
@@ -997,23 +993,23 @@ msgstr ""
 #: model_terms:ir.actions.act_window,help:sale_advertising_order.action_orders_advertising_smart_button
 #: model_terms:ir.actions.act_window,help:sale_advertising_order.action_quotations_advertising
 msgid "Create a Quotation, the first step of a new sale."
-msgstr ""
+msgstr "Maak een offerte aan, de eerste stap richting een nieuwe verkoop."
 
 #. module: sale_advertising_order
 #: model_terms:ir.actions.act_window,help:sale_advertising_order.product_template_action_ads
 msgid "Create a new product"
-msgstr ""
+msgstr "Maak een nieuw product aan"
 
 #. module: sale_advertising_order
 #: model_terms:ir.actions.act_window,help:sale_advertising_order.product_normal_action_sell_ads
 msgid "Create a new product variant"
-msgstr ""
+msgstr "Maak een nieuw productvariant aan"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_ad_order_line_make_invoice
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_ad_order_make_invoice
 msgid "Create invoices"
-msgstr ""
+msgstr "Maak facturen"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_ad_order_line_make_invoice__create_uid
@@ -1050,7 +1046,7 @@ msgstr "Aangemaakt op"
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_quotation_advertising_tree
 msgid "Creation Date"
-msgstr ""
+msgstr "Aangemaakt op"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__credit
@@ -1060,7 +1056,7 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
 msgid "Credit Note"
-msgstr ""
+msgstr "Creditnota"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
@@ -1070,7 +1066,7 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__currency_id
 msgid "Currency"
-msgstr ""
+msgstr "Valuta"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__partner_id
@@ -1082,7 +1078,7 @@ msgstr "Klant"
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_res_partner_filter_crm
 msgid "Customer Partners"
-msgstr ""
+msgstr "Klanten"
 
 #. module: sale_advertising_order
 #: model:ir.actions.act_window,name:sale_advertising_order.action_partner_form_crm
@@ -1093,16 +1089,10 @@ msgid "Customers"
 msgstr "Klanten"
 
 #. module: sale_advertising_order
-#: code:addons/sale_advertising_order/report/proof_number_delivery_list_xlsx.py:0
-#, python-format
-msgid "DOOR #"
-msgstr "AANVULLING"
-
-#. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_orderlines_document_sao
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorderlines_document_sao
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__date_type
@@ -1117,27 +1107,27 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__date_from
 msgid "Date from"
-msgstr ""
+msgstr "Startdatum"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_date__issue_date
 msgid "Date of Issue"
-msgstr ""
+msgstr "Datum van uitgifte"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields.selection,name:sale_advertising_order.selection__product_category__date_type__date
 msgid "Date of Publication"
-msgstr ""
+msgstr "Publicatiedatum"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,help:sale_advertising_order.field_sale_order__traffic_appr_date
 msgid "Date on which sales order is confirmed bij Traffic."
-msgstr ""
+msgstr "Datum waarop de verkooporder bevestigd is door Traffic"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__date_to
 msgid "Date to"
-msgstr ""
+msgstr "Einddatum"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__deadline
@@ -1171,18 +1161,18 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_issue_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_issue_tree
 msgid "Default Note"
-msgstr ""
+msgstr "Standaard notitie"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Delivered Quantity"
-msgstr ""
+msgstr "Geleverde hoeveelheid"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_proof__address_id
 msgid "Delivery Address"
-msgstr ""
+msgstr "Afleveradres"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_order_view_search_inherit_sale
@@ -1207,17 +1197,12 @@ msgstr "Omschrijving"
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_account_move_line__computed_discount
 msgid "Discount"
-msgstr ""
+msgstr "Korting"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__computed_discount
 msgid "Discount (%)"
-msgstr ""
-
-#. module: sale_advertising_order
-#: model:ir.model.fields,field_description:sale_advertising_order.field_res_company__verify_discount_setting
-msgid "Discount (%) bigger than"
-msgstr ""
+msgstr "Korting (%)"
 
 #. module: sale_advertising_order
 #: model:ir.model,name:sale_advertising_order.model_discount_reason
@@ -1236,7 +1221,7 @@ msgstr "Kortingsredenen"
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__display_discount_to_customer
 msgid "Display Discount"
-msgstr ""
+msgstr "Toon korting in bijlage"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_account_move__display_name
@@ -1250,8 +1235,10 @@ msgstr ""
 #: model:ir.model.fields,field_description:sale_advertising_order.field_discount_reason__display_name
 #: model:ir.model.fields,field_description:sale_advertising_order.field_mail_compose_message__display_name
 #: model:ir.model.fields,field_description:sale_advertising_order.field_product_category__display_name
+#: model:ir.model.fields,field_description:sale_advertising_order.field_product_product__display_name
 #: model:ir.model.fields,field_description:sale_advertising_order.field_product_template__display_name
 #: model:ir.model.fields,field_description:sale_advertising_order.field_proof_number_delivery_list__display_name
+#: model:ir.model.fields,field_description:sale_advertising_order.field_report_indeellijst_report_xls_indeellijst_report_xlsx__display_name
 #: model:ir.model.fields,field_description:sale_advertising_order.field_report_pndl_report_xls_proof_number_delivery_list_xlsx__display_name
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_company__display_name
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_config_settings__display_name
@@ -1283,12 +1270,12 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
 msgid "Draft Invoice"
-msgstr ""
+msgstr "Conceptfactuur"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields.selection,name:sale_advertising_order.selection__sale_order__state__draft
 msgid "Draft Quotation"
-msgstr ""
+msgstr "Concept offerte"
 
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/report/proof_number_delivery_list_xlsx.py:0
@@ -1310,22 +1297,22 @@ msgstr "Wizard e-mail opstellen"
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__to_date
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_dateperiod__to_date
 msgid "End of Validity"
-msgstr ""
+msgstr "Einddatum"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__week_number_even
 msgid "Even Week Number"
-msgstr ""
+msgstr "Even weeknummer"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_issue_filter
 msgid "Even Week Numbers"
-msgstr ""
+msgstr "Even weeknummers"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "External Ref."
-msgstr ""
+msgstr "Externe referentie"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_account_move_line__ad_number
@@ -1334,6 +1321,16 @@ msgstr ""
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_dateperiod__ad_number
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_issues_products__ad_number
 msgid "External Reference"
+msgstr "Externe referentie"
+
+#. module: sale_advertising_order
+#: model:ir.module.category,description:sale_advertising_order.module_category_extra_ads
+msgid "Extra Access for Advertising Sales"
+msgstr ""
+
+#. module: sale_advertising_order
+#: model:ir.module.category,name:sale_advertising_order.module_category_extra_ads
+msgid "Extra Rights (Advertising Sales)"
 msgstr ""
 
 #. module: sale_advertising_order
@@ -1359,9 +1356,8 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.actions.act_window,help:sale_advertising_order.action_sale_order_report_all
 msgid ""
-"From this report, you can have an overview of the sale confirmed with your "
-"customers. The search tool can also be used to personalise your Sales "
-"reports and so, match this analysis to your needs."
+"From this report, you can have an overview of the sale confirmed with your customers. The search tool can "
+"also be used to personalise your Sales reports and so, match this analysis to your needs."
 msgstr ""
 
 #. module: sale_advertising_order
@@ -1396,13 +1392,20 @@ msgid "HOUSE #"
 msgstr "HUISNUMMER"
 
 #. module: sale_advertising_order
+#: model:ir.model.fields,field_description:sale_advertising_order.field_product_product__height
 #: model:ir.model.fields,field_description:sale_advertising_order.field_product_template__height
 msgid "Height"
-msgstr ""
+msgstr "Hoogte"
 
 #. module: sale_advertising_order
+#: model:ir.model.fields,help:sale_advertising_order.field_product_product__height
 #: model:ir.model.fields,help:sale_advertising_order.field_product_template__height
 msgid "Height advertising format in mm"
+msgstr "Hoogte advertentie formaat in mm"
+
+#. module: sale_advertising_order
+#: model:ir.module.category,description:sale_advertising_order.module_category_ads
+msgid "Helps you handle your quotations, sale orders under Advertising"
 msgstr ""
 
 #. module: sale_advertising_order
@@ -1430,8 +1433,10 @@ msgstr ""
 #: model:ir.model.fields,field_description:sale_advertising_order.field_discount_reason__id
 #: model:ir.model.fields,field_description:sale_advertising_order.field_mail_compose_message__id
 #: model:ir.model.fields,field_description:sale_advertising_order.field_product_category__id
+#: model:ir.model.fields,field_description:sale_advertising_order.field_product_product__id
 #: model:ir.model.fields,field_description:sale_advertising_order.field_product_template__id
 #: model:ir.model.fields,field_description:sale_advertising_order.field_proof_number_delivery_list__id
+#: model:ir.model.fields,field_description:sale_advertising_order.field_report_indeellijst_report_xls_indeellijst_report_xlsx__id
 #: model:ir.model.fields,field_description:sale_advertising_order.field_report_pndl_report_xls_proof_number_delivery_list_xlsx__id
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_company__id
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_config_settings__id
@@ -1484,6 +1489,13 @@ msgid "If you change the pricelist, only newly added lines will be affected."
 msgstr ""
 
 #. module: sale_advertising_order
+#: code:addons/sale_advertising_order/report/report_indeellijst_list.py:0
+#: model:ir.actions.report,name:sale_advertising_order.action_report_nsm_indeellijst_report_xlsx
+#, python-format
+msgid "Indeellijst XLSX"
+msgstr ""
+
+#. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_proof_number_delivery_list__proof_infix
 msgid "Infix"
 msgstr ""
@@ -1505,12 +1517,12 @@ msgstr "FACTUUR"
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_ad_order_line_make_invoice
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_ad_order_make_invoice
 msgid "Invoice Date"
-msgstr ""
+msgstr "Factuurdatum"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_move_form
 msgid "Invoice Description"
-msgstr ""
+msgstr "Factuur beschrijving"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__invoice_status
@@ -1518,7 +1530,6 @@ msgid "Invoice Status"
 msgstr "Factuurstatus"
 
 #. module: sale_advertising_order
-#: code:addons/sale_advertising_order/wizard/adv_line_invoice.py:0
 #: code:addons/sale_advertising_order/wizard/adv_line_invoice.py:0
 #, python-format
 msgid ""
@@ -1534,7 +1545,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Invoiced Quantity"
-msgstr ""
+msgstr "Aantal gafactureerd"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
@@ -1549,11 +1560,17 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorder_document_sao
 msgid "Invoicing Address:"
-msgstr ""
+msgstr "Factuuradres:"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorder_document_sao
 msgid "Invoicing and Shipping Address:"
+msgstr ""
+
+#. module: sale_advertising_order
+#: model:ir.model.fields,field_description:sale_advertising_order.field_product_product__is_ads_products
+#: model:ir.model.fields,field_description:sale_advertising_order.field_product_template__is_ads_products
+msgid "Is Ads Products?"
 msgstr ""
 
 #. module: sale_advertising_order
@@ -1569,7 +1586,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Issue"
-msgstr ""
+msgstr "Editie"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_proof_number_delivery_list__issue_date
@@ -1584,7 +1601,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_proof_number_delivery_list_filter
 msgid "Issue Date"
-msgstr ""
+msgstr "Editiedatum"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_product_product__page_id
@@ -1600,14 +1617,14 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_issue_form
 msgid "Issue(s)"
-msgstr ""
+msgstr "Editie(s)"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__child_ids
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_available_filter
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_issue_filter
 msgid "Issues"
-msgstr ""
+msgstr "Edities"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
@@ -1671,8 +1688,10 @@ msgstr "ACHTERNAAM"
 #: model:ir.model.fields,field_description:sale_advertising_order.field_discount_reason____last_update
 #: model:ir.model.fields,field_description:sale_advertising_order.field_mail_compose_message____last_update
 #: model:ir.model.fields,field_description:sale_advertising_order.field_product_category____last_update
+#: model:ir.model.fields,field_description:sale_advertising_order.field_product_product____last_update
 #: model:ir.model.fields,field_description:sale_advertising_order.field_product_template____last_update
 #: model:ir.model.fields,field_description:sale_advertising_order.field_proof_number_delivery_list____last_update
+#: model:ir.model.fields,field_description:sale_advertising_order.field_report_indeellijst_report_xls_indeellijst_report_xlsx____last_update
 #: model:ir.model.fields,field_description:sale_advertising_order.field_report_pndl_report_xls_proof_number_delivery_list_xlsx____last_update
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_company____last_update
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_config_settings____last_update
@@ -1694,7 +1713,7 @@ msgstr "Laatst gewijzigd op"
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_proof_number_delivery_list__proof_lastname
 msgid "Last Name"
-msgstr ""
+msgstr "Achternaam"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_ad_order_line_make_invoice__write_uid
@@ -1747,20 +1766,12 @@ msgstr ""
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,help:sale_advertising_order.field_crm_lead__ad_agency_id
-msgid ""
-"Linked Advertising Agency (optional). Usually created when converting the "
-"lead."
+msgid "Linked Advertising Agency (optional). Usually created when converting the lead."
 msgstr ""
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,help:sale_advertising_order.field_crm_lead__partner_contact_id
-msgid ""
-"Linked Contact Person (optional). Usually created when converting the lead."
-msgstr ""
-
-#. module: sale_advertising_order
-#: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__linked_operating_unit
-msgid "Linked Operating Unit"
+msgid "Linked Contact Person (optional). Usually created when converting the lead."
 msgstr ""
 
 #. module: sale_advertising_order
@@ -1792,6 +1803,12 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:crm.stage,name:sale_advertising_order.stage_lost
 msgid "Lost"
+msgstr "VERLOREN"
+
+#. module: sale_advertising_order
+#: code:addons/sale_advertising_order/report/report_indeellijst_list.py:0
+#, python-format
+msgid "MATERIAL ID"
 msgstr ""
 
 #. module: sale_advertising_order
@@ -1800,34 +1817,37 @@ msgid "Main Attachment"
 msgstr ""
 
 #. module: sale_advertising_order
-#: model:ir.actions.act_window,name:sale_advertising_order.action_view_ad_order_line_make_invoice
-#: model:ir.actions.act_window,name:sale_advertising_order.action_view_ad_order_make_invoice
 #: model:ir.actions.act_window,name:sale_advertising_order.ad_order_line_make_invoice
 #: model:ir.actions.act_window,name:sale_advertising_order.ad_order_make_invoice
 msgid "Make Invoices"
 msgstr "Facturen aanmaken"
 
 #. module: sale_advertising_order
+#: model:res.groups,name:sale_advertising_order.group_ads_sales_manager
+msgid "Manager"
+msgstr ""
+
+#. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Mapping Remarks"
-msgstr ""
+msgstr "Opmerking indeling"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__layout_remark
 msgid "Material Remark"
-msgstr ""
+msgstr "Opmerking materiaal"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Material Remarks"
-msgstr ""
+msgstr "Opmerkingen materiaal"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__max_discount
 msgid "Maximum Discount"
-msgstr ""
+msgstr "Maximale korting"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__medium
@@ -1857,18 +1877,18 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__mig_remark
 msgid "Migration Remark"
-msgstr ""
+msgstr "Opmerking migratie"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Migration Remarks"
-msgstr ""
+msgstr "Opmerkingen migratie"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__multi_line
 msgid "Multi Line"
-msgstr ""
+msgstr "Multi regel"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_sale_order_line_create_multi
@@ -1935,12 +1955,12 @@ msgstr "AANTAL"
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Name"
-msgstr ""
+msgstr "Naam"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_crm_lead__name_salesperson
 msgid "Name Salesperson"
-msgstr ""
+msgstr "Naam verkoper"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__nett_nett
@@ -1950,7 +1970,7 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__nett_nett
 msgid "Netto Netto Line"
-msgstr ""
+msgstr "Netto Netto regel"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields.selection,name:sale_advertising_order.selection__product_category__date_type__newsletter
@@ -1962,27 +1982,15 @@ msgstr ""
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_brand__next_activities_count
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_partner__next_activities_count
 #: model:ir.model.fields,field_description:sale_advertising_order.field_res_users__next_activities_count
-#: model:res.groups,name:sale_advertising_order.group_next_activities_menu
 msgid "Next Activities"
 msgstr ""
 
 #. module: sale_advertising_order
-#: model:res.groups,name:sale_advertising_order.group_no_availability_check
-msgid "No Availability Check User"
-msgstr "Geen beschikbaarheids check"
-
-#. module: sale_advertising_order
 #: model:res.groups,name:sale_advertising_order.group_no_deadline_check
-msgid "No Deadline Check User"
-msgstr "Geen deadline check"
+msgid "No Deadline Check (Advertising Sales Order)"
+msgstr ""
 
 #. module: sale_advertising_order
-#: model:res.groups,name:sale_advertising_order.group_no_discount_check
-msgid "No Discount Check User"
-msgstr "Geen kortings check"
-
-#. module: sale_advertising_order
-#: code:addons/sale_advertising_order/models/sale_advertising.py:0
 #: code:addons/sale_advertising_order/models/sale_advertising.py:0
 #, python-format
 msgid "Not for every selected Title an Issue is selected."
@@ -1990,17 +1998,15 @@ msgstr "Niet voor iedere titel is een editie geselecteerd."
 
 #. module: sale_advertising_order
 #: model_terms:ir.actions.act_window,help:sale_advertising_order.action_orders_advertising
-msgid ""
-"Note that once a Quotation becomes a Order, it will be moved from the "
-"Quotations list to the Order list."
+msgid "Note that once a Quotation becomes a Order, it will be moved from the Quotations list to the Order list."
 msgstr ""
 
 #. module: sale_advertising_order
 #: model_terms:ir.actions.act_window,help:sale_advertising_order.act_res_partner_2_quotation
 #: model_terms:ir.actions.act_window,help:sale_advertising_order.action_orders_advertising_smart_button
 msgid ""
-"Note that once a Quotation becomes a Sale Order, it will be moved from the "
-"Quotations list to the Sales Order list."
+"Note that once a Quotation becomes a Sale Order, it will be moved from the Quotations list to the Sales Order "
+"list."
 msgstr ""
 
 #. module: sale_advertising_order
@@ -2028,7 +2034,7 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__multi_line_number
 msgid "Number of Lines"
-msgstr ""
+msgstr "Aantal regels"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__message_has_error_counter
@@ -2051,6 +2057,24 @@ msgid "Number of unread messages"
 msgstr ""
 
 #. module: sale_advertising_order
+#: code:addons/sale_advertising_order/report/report_indeellijst_list.py:0
+#, python-format
+msgid "OPMERKINGEN"
+msgstr ""
+
+#. module: sale_advertising_order
+#: code:addons/sale_advertising_order/report/report_indeellijst_list.py:0
+#, python-format
+msgid "OPPORTUNITY SUBJECT"
+msgstr ""
+
+#. module: sale_advertising_order
+#: code:addons/sale_advertising_order/report/report_indeellijst_list.py:0
+#, python-format
+msgid "ORDER ID"
+msgstr ""
+
+#. module: sale_advertising_order
 #: model_terms:ir.actions.act_window,help:sale_advertising_order.act_res_partner_2_opportunities_advertising
 msgid ""
 "Odoo helps you keep track of your sales pipeline to follow\n"
@@ -2060,9 +2084,8 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.actions.act_window,help:sale_advertising_order.action_view_task_sale_advertising
 msgid ""
-"Odoo's project management allows you to manage the pipeline of your tasks "
-"efficiently. You can track progress, discuss on tasks, attach documents, "
-"etc."
+"Odoo's project management allows you to manage the pipeline of your tasks efficiently. You can track "
+"progress, discuss on tasks, attach documents, etc."
 msgstr ""
 
 #. module: sale_advertising_order
@@ -2148,14 +2171,9 @@ msgid "Order #"
 msgstr ""
 
 #. module: sale_advertising_order
-#: model:ir.model.fields,field_description:sale_advertising_order.field_res_company__verify_order_setting
-msgid "Order Amount bigger than"
-msgstr ""
-
-#. module: sale_advertising_order
 #: model:ir.ui.menu,name:sale_advertising_order.menu_action_sale_order_report_all
 msgid "Order Analysis"
-msgstr ""
+msgstr "Order Analyse"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_order_view_search_inherit_quotation
@@ -2172,32 +2190,32 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_proof_number_delivery_list_filter
 msgid "Order Line"
-msgstr ""
+msgstr "Orderregel"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Order Lines"
-msgstr ""
+msgstr "Orderregels"
 
 #. module: sale_advertising_order
 #: model:ir.ui.menu,name:sale_advertising_order.menu_sale_advertising_order_lines2
 msgid "Order Lines to Invoice"
-msgstr ""
+msgstr "Orderregels te factureren"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
 msgid "Order Lines with Issue Date before today"
-msgstr ""
+msgstr "Orderregels met editiedatum voor vandaag"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
 msgid "Order Lines with Start of Validity before today"
-msgstr ""
+msgstr "Orderregels met startdatum voor vandaag"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
 msgid "Order Lines with Start of validity before today"
-msgstr ""
+msgstr "Orderregels met startdatum voor vandaag"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_account_move_line__sale_order_id
@@ -2207,7 +2225,7 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_advertising_tree
 msgid "Order Number"
-msgstr ""
+msgstr "Ordernummer"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__state
@@ -2217,13 +2235,13 @@ msgstr "Order status"
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_proof_number_delivery_list__line_id
 msgid "Order line"
-msgstr ""
+msgstr "Orderregel"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Ordered Quantity"
-msgstr ""
+msgstr "Bestelde hoeveelheid"
 
 #. module: sale_advertising_order
 #: model:ir.ui.menu,name:sale_advertising_order.menu_advertising_order
@@ -2234,11 +2252,17 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Other Information"
-msgstr ""
+msgstr "Overige informatie"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_order_view_search_inherit_quotation
 msgid "Overdue Quotations"
+msgstr ""
+
+#. module: sale_advertising_order
+#: code:addons/sale_advertising_order/report/report_indeellijst_list.py:0
+#, python-format
+msgid "PAGINASOORT"
 msgstr ""
 
 #. module: sale_advertising_order
@@ -2248,22 +2272,28 @@ msgid "PAPERCODE"
 msgstr ""
 
 #. module: sale_advertising_order
+#: code:addons/sale_advertising_order/report/report_indeellijst_list.py:0
+#, python-format
+msgid "PRODUCT"
+msgstr ""
+
+#. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_available_filter
 msgid "Page"
-msgstr ""
+msgstr "Pagina"
 
 #. module: sale_advertising_order
 #: model:ir.ui.menu,name:sale_advertising_order.menu_sale_advertising_available2
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_available_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_available_tree
 msgid "Page Availability"
-msgstr ""
+msgstr "Pagina beschikbaarheid"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Page Category"
-msgstr ""
+msgstr "Katern"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__page_class_domain
@@ -2279,14 +2309,14 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Page Pref."
-msgstr ""
+msgstr "Pagina voorkeur"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__page_reference
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_date__page_reference
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_dateperiod__page_reference
 msgid "Page Preference"
-msgstr ""
+msgstr "Pagina voorkeur"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,help:sale_advertising_order.field_product_product__booklet_surface_area
@@ -2325,28 +2355,28 @@ msgstr "Relatie"
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_crm_lead2opportunity_partner_adv
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Payer"
-msgstr ""
+msgstr "Opdrachtgever"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__customer_contact
 msgid "Payer Contact Person"
-msgstr ""
+msgstr "Contactpersoon opdrachtgever"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_crm_lead__partner_shipping_id
 msgid "Payer Delivery Address"
-msgstr ""
+msgstr "Afleveradres opdrachtgever"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_crm_lead__partner_invoice_id
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Payer Invoice Address"
-msgstr ""
+msgstr "Factuuradres opdrachtgever"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_res_partner_filter_crm
 msgid "Persons"
-msgstr ""
+msgstr "Personen"
 
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/wizard/adv_line_invoice.py:0
@@ -2357,12 +2387,8 @@ msgstr "Geef alstublieft een verkoop dagboek op voor dit bedrijf."
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/wizard/adv_line_invoice.py:0
 #, python-format
-msgid ""
-"Please define income account for this product: \"%s\" (id:%d) - or for its "
-"category: \"%s\"."
-msgstr ""
-"Geef alstublieft een inkomende rekening op voor product: \"%s\" (id:%d) - or"
-" for its category: \"%s\"."
+msgid "Please define income account for this product: \"%s\" (id:%d) - or for its category: \"%s\"."
+msgstr "Geef alstublieft een inkomende rekening op voor product: \"%s\" (id:%d) - or for its category: \"%s\"."
 
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/models/sale_advertising.py:0
@@ -2417,7 +2443,7 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:ir.ui.menu,name:sale_advertising_order.menu_product_pricelist_action2
 msgid "Pricelists"
-msgstr ""
+msgstr "Prijslijsten"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_ad_order_line_make_invoice__job_queue
@@ -2426,6 +2452,7 @@ msgid "Process via Job Queue"
 msgstr ""
 
 #. module: sale_advertising_order
+#: model:ir.model,name:sale_advertising_order.model_product_product
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__product_template_id
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_issues_products__product_id
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_orderlines_document_sao
@@ -2456,7 +2483,7 @@ msgstr "Productsjabloon"
 #: model:ir.actions.act_window,name:sale_advertising_order.product_normal_action_sell_ads
 #: model:ir.ui.menu,name:sale_advertising_order.menu_product_normal_action_sell
 msgid "Product Variants"
-msgstr ""
+msgstr "Productvarianten"
 
 #. module: sale_advertising_order
 #: model:ir.actions.act_window,name:sale_advertising_order.product_template_action_ads
@@ -2464,7 +2491,7 @@ msgstr ""
 #: model:ir.ui.menu,name:sale_advertising_order.menu_product_template_action
 #: model:ir.ui.menu,name:sale_advertising_order.menu_products_subconfig
 msgid "Products"
-msgstr ""
+msgstr "Producten"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__project_count
@@ -2480,29 +2507,29 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_proof_number_delivery_list_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_proof_number_delivery_list_tree
 msgid "Proof Delivery Lists"
-msgstr ""
+msgstr "Bewijsnummerlijst"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__proof_number_adv_customer
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Proof Number Advertising Customer"
-msgstr ""
+msgstr "Bewijsnummer adverteerder"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_proof_number_delivery_list__proof_number_amt
 msgid "Proof Number Amount"
-msgstr ""
+msgstr "Bewijsnummer aantal"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__proof_number_amt_adv_customer
 msgid "Proof Number Amount Advertising"
-msgstr ""
+msgstr "Bewijsnummer aantal adverteerder"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__proof_number_amt_payer
 msgid "Proof Number Amount Payer"
-msgstr ""
+msgstr "Bewijsnummer aantal betaler"
 
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/report/proof_number_delivery_list_xlsx.py:0
@@ -2511,17 +2538,17 @@ msgstr ""
 #: model:ir.ui.menu,name:sale_advertising_order.menu_proof_delivery_list_action
 #, python-format
 msgid "Proof Number Delivery List"
-msgstr ""
+msgstr "Bewijsnummerlijst"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__proof_number_payer
 msgid "Proof Number Payer"
-msgstr ""
+msgstr "Bewijsnummer betaler"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__proof_number_payer_id
 msgid "Proof Number Payer ID"
-msgstr ""
+msgstr "Bewijsnummer betaler ID"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__pub_cust_domain
@@ -2561,7 +2588,7 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_quotation_advertising_tree
 msgid "Quotation Number"
-msgstr ""
+msgstr "Offertenummer"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields.selection,name:sale_advertising_order.selection__sale_order__state__sent
@@ -2612,16 +2639,6 @@ msgid "Refuse"
 msgstr ""
 
 #. module: sale_advertising_order
-#: model:res.groups,name:sale_advertising_order.group_regular_sales_crm_menus
-msgid "Regular Sales CRM menus"
-msgstr ""
-
-#. module: sale_advertising_order
-#: model:res.groups,name:sale_advertising_order.group_regular_sales_user
-msgid "Regular Sales User"
-msgstr "Sales medewerker"
-
-#. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__analytic_account_id
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_issue_ids_tree
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_issue_titles_tree
@@ -2633,13 +2650,13 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:ir.actions.report,name:sale_advertising_order.action_proof_number_delivery_list_xlsx
 msgid "Report P.N.D.L"
-msgstr ""
+msgstr "Bewijsnummerlijst"
 
 #. module: sale_advertising_order
 #: model:ir.ui.menu,name:sale_advertising_order.menu_advertising_report
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Reporting"
-msgstr ""
+msgstr "Rapportages"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.crm_team_salesteams_view_kanban
@@ -2649,6 +2666,18 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.crm_team_salesteams_view_kanban
 msgid "Revenue This Month"
+msgstr ""
+
+#. module: sale_advertising_order
+#: code:addons/sale_advertising_order/report/report_indeellijst_list.py:0
+#, python-format
+msgid "SALE ORDER"
+msgstr ""
+
+#. module: sale_advertising_order
+#: code:addons/sale_advertising_order/report/report_indeellijst_list.py:0
+#, python-format
+msgid "SALESPERSON"
 msgstr ""
 
 #. module: sale_advertising_order
@@ -2679,11 +2708,6 @@ msgid "Sale Advertising Proof"
 msgstr "Advertentieorder bewijs"
 
 #. module: sale_advertising_order
-#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_nsm_res_company_form_sale_adv
-msgid "Sale Order Treshold"
-msgstr ""
-
-#. module: sale_advertising_order
 #: model:ir.model,name:sale_advertising_order.model_sale_order_line_create_multi_lines
 msgid "Sale OrderLine Create Multi"
 msgstr "Creëer meerdere orderregels"
@@ -2702,7 +2726,7 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Sales Information"
-msgstr ""
+msgstr "Sales informatie"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_order_view_search_inherit_quotation
@@ -2758,6 +2782,7 @@ msgid "Sales Teams"
 msgstr ""
 
 #. module: sale_advertising_order
+#: model:ir.model.fields,field_description:sale_advertising_order.field_proof_number_delivery_list__user_id
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.crm_activity_report_view_search
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
 msgid "Salesperson"
@@ -2767,7 +2792,7 @@ msgstr ""
 #: model:ir.ui.menu,name:sale_advertising_order.menu_ads_schedule
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_indeellijst_list_tree
 msgid "Schedules"
-msgstr ""
+msgstr "Indeellijst"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_available_filter
@@ -2797,21 +2822,14 @@ msgstr ""
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/wizard/sale_order_state.py:0
 #, python-format
-msgid ""
-"Selected order(s) cannot be confirmed as they are not in 'Draft', 'Approved'"
-" or 'Sent' state."
+msgid "Selected order(s) cannot be confirmed as they are not in 'Draft', 'Approved' or 'Sent' state."
 msgstr ""
-"De geselecteerde order(s) kunnen niet bevestigd worden aangezien deze niet "
-"de ‘Concept’, ‘Goedgekeurd’ of ‘Verstuurd’ status hebben."
+"De geselecteerde order(s) kunnen niet bevestigd worden aangezien deze niet de ‘Concept’, ‘Goedgekeurd’ of "
+"‘Verstuurd’ status hebben."
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Send by Email"
-msgstr ""
-
-#. module: sale_advertising_order
-#: model:res.groups,name:sale_advertising_order.group_senior_sales
-msgid "Senior Sales"
 msgstr ""
 
 #. module: sale_advertising_order
@@ -2832,8 +2850,7 @@ msgstr "Stel een omzetdoel in: "
 #: model:ir.model.fields,help:sale_advertising_order.field_res_company__call_onchange_for_payers_advertisers
 #: model:ir.model.fields,help:sale_advertising_order.field_res_config_settings__call_onchange_for_payers_advertisers
 msgid ""
-"Set if you want to call onchange function for Payers and Advertisers "
-"available in Quotation and Sale forms."
+"Set if you want to call onchange function for Payers and Advertisers available in Quotation and Sale forms."
 msgstr ""
 
 #. module: sale_advertising_order
@@ -2845,9 +2862,8 @@ msgstr ""
 #: model:ir.model.fields,help:sale_advertising_order.field_product_product__volume_discount
 #: model:ir.model.fields,help:sale_advertising_order.field_product_template__volume_discount
 msgid ""
-"Setting this flag makes that price finding in a multi-line advertising sale "
-"order line, uses the multi_line_number instead of product_uom_qty to "
-"implement volume discount"
+"Setting this flag makes that price finding in a multi-line advertising sale order line, uses the "
+"multi_line_number instead of product_uom_qty to implement volume discount"
 msgstr ""
 
 #. module: sale_advertising_order
@@ -2862,9 +2878,7 @@ msgstr ""
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_order_view_search_inherit_quotation
-msgid ""
-"Show all advertising quotations for which the expiration date is before "
-"today"
+msgid "Show all advertising quotations for which the expiration date is before today"
 msgstr ""
 
 #. module: sale_advertising_order
@@ -2875,7 +2889,7 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorder_document_sao
 msgid "Sincerely,"
-msgstr ""
+msgstr "Met vriendelijke groet,"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_product_product__space
@@ -2893,12 +2907,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__from_date
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_dateperiod__from_date
 msgid "Start of Validity"
-msgstr ""
+msgstr "Startdatum"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__state
 msgid "State"
-msgstr ""
+msgstr "Status"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__state
@@ -2911,12 +2925,12 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_proof_number_delivery_list__proof_street_name
 msgid "Street Name"
-msgstr ""
+msgstr "Straat"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_proof_number_delivery_list__proof_street_number
 msgid "Street Number"
-msgstr ""
+msgstr "Huisnummer"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_account_move_line__opportunity_subject
@@ -2924,38 +2938,38 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_quotation_advertising_tree
 msgid "Subject"
-msgstr ""
+msgstr "Onderwerp"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,help:sale_advertising_order.field_sale_order__opportunity_subject
 msgid "Subject of Opportunity from which this Sales Order is derived."
-msgstr ""
+msgstr "Onderwerp van de kans waaruit deze verkooporder is voortgekomen."
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Submit for Approval"
-msgstr ""
+msgstr "Indienen ter goedkeuring"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_order_view_search_inherit_quotation
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_order_view_search_inherit_sale
 msgid "Submitted"
-msgstr ""
+msgstr "Ingediend"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields.selection,name:sale_advertising_order.selection__sale_order__state__submitted
 msgid "Submitted for Approval"
-msgstr ""
+msgstr "Ingediend ter goedkeuring"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__subtotal_before_agency_disc
 msgid "Subtotal before Commission"
-msgstr ""
+msgstr "Subtotaal voor commissie"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_crm_lead__adv_sale_amount_total
 msgid "Sum of Adv. Orders"
-msgstr ""
+msgstr "Som van alle advertentie orders"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
@@ -2975,7 +2989,7 @@ msgstr ""
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_proof__target_id
 msgid "Target"
-msgstr ""
+msgstr "Doel"
 
 #. module: sale_advertising_order
 #: model:ir.actions.act_window,name:sale_advertising_order.action_view_task_sale_advertising
@@ -2990,18 +3004,18 @@ msgstr "Bedrag"
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
 msgid "Tax ID"
-msgstr ""
+msgstr "Btw nummer"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_advertising_tree
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_quotation_advertising_tree
 msgid "Tax Total"
-msgstr ""
+msgstr "Btw"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorderlines_document_sao
 msgid "Tax excluded price"
-msgstr "Bedrag"
+msgstr "Bedrag ex. btw"
 
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/models/sale_advertising.py:0
@@ -3011,17 +3025,16 @@ msgstr "De deadline %s voor deze advertentie editie is verstreken."
 
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/wizard/adv_line_invoice.py:0
-#: code:addons/sale_advertising_order/wizard/adv_line_invoice.py:0
 #, python-format
 msgid "The details of the error:'%s' regarding '%s'"
-msgstr ""
+msgstr "De details van de fout: ‘%s’ met betrekking tot ‘%s’"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,help:sale_advertising_order.field_crm_lead__partner_acc_mgr
 #: model:ir.model.fields,help:sale_advertising_order.field_sale_order__partner_acc_mgr
 #: model:ir.model.fields,help:sale_advertising_order.field_sale_order_line__partner_acc_mgr
 msgid "The internal user in charge of this contact."
-msgstr ""
+msgstr "De interne gebruiker die verantwoordelijk is voor dit contact."
 
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/wizard/sale_line_create_multi.py:0
@@ -3033,22 +3046,12 @@ msgstr "Er zijn geen orderregels met multi regels aanwezig in de selectie."
 #: code:addons/sale_advertising_order/models/advertising_issue.py:0
 #, python-format
 msgid "There can only be one Availability posting per order_line"
-msgstr ""
-
-#. module: sale_advertising_order
-#: code:addons/sale_advertising_order/models/sale_advertising.py:0
-#, python-format
-msgid ""
-"There is not enough availability for this placement in Ordernumber %s line "
-"%s on %s in %s. Available Capacity is %d and required is %d"
-msgstr ""
-"Er is niet genoeg ruimte voor deze plaatsing in Ordernummer %s regel %s in "
-"%s in %s. Beschikbare capaciteit is %d en vereist is %d"
+msgstr "Er kan slechts één beschikbaarheidsboeking per orderregel zijn."
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_task_search_form_sale_advertising
 msgid "This Week Activities"
-msgstr ""
+msgstr "Activiteiten van deze week"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_proof_number_delivery_list__title
@@ -3064,116 +3067,116 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_proof_number_delivery_list_filter
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_issue_form
 msgid "Title / Issue"
-msgstr ""
+msgstr "Titel / Editie"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Title(s)"
-msgstr ""
+msgstr "Titel(s)"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__title_ids
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_issue_filter
 msgid "Titles"
-msgstr ""
+msgstr "Titels"
 
 #. module: sale_advertising_order
 #: model:ir.ui.menu,name:sale_advertising_order.menu_advertising_toinvoice
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_order_view_search_inherit_sale
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_sales_order_line_filter
 msgid "To Invoice"
-msgstr ""
+msgstr "Te factureren"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_task_search_form_sale_advertising
 msgid "Today"
-msgstr ""
+msgstr "Vandaag"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_advertising_tree
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_quotation_advertising_tree
 msgid "Total Tax Excluded"
-msgstr ""
+msgstr "Totaal ex. btw"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_advertising_tree
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_quotation_advertising_tree
 msgid "Total Tax Included"
-msgstr ""
+msgstr "Totaal incl. btw"
+
+#. module: sale_advertising_order
+#: model:res.groups,name:sale_advertising_order.group_ads_traffic_user
+msgid "Traffic"
+msgstr "Traffic"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Traffic Approval Date"
-msgstr ""
+msgstr "Datum goedkeuring Traffic"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_order_view_search_inherit_quotation
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_order_view_search_inherit_sale
 msgid "Traffic Approved"
-msgstr ""
+msgstr "Goedgekeurd door Traffic"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__traffic_comments
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Traffic Comments"
-msgstr ""
+msgstr "Traffic opmerkingen"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__traffic_appr_date
 msgid "Traffic Confirmation Date"
-msgstr ""
+msgstr "Datum bevestiging Traffic"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_advertising_tree
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_quotation_advertising_tree
 msgid "Traffic Date"
-msgstr ""
+msgstr "Traffic datum"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_order_view_search_inherit_quotation
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_order_view_search_inherit_sale
 msgid "Traffic Date From"
-msgstr ""
+msgstr "Traffic datum van"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_order_view_search_inherit_quotation
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.advertising_order_view_search_inherit_sale
 msgid "Traffic Date To"
-msgstr ""
+msgstr "Traffic datum tot"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__traffic_employee
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Traffic Employee"
-msgstr ""
-
-#. module: sale_advertising_order
-#: model:res.groups,name:sale_advertising_order.group_traffic_user
-msgid "Traffic User"
-msgstr "Gebruiker Traffic"
+msgstr "Traffic medewerker"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "URL Ad Material"
-msgstr ""
+msgstr "URL advertentie materiaal"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__url_to_material
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line_issues_products__url_to_material
 msgid "URL Material"
-msgstr ""
+msgstr "URL materiaal"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_issue_filter
 msgid "Uneven Week Numbers"
-msgstr ""
+msgstr "Oneven weeknummers"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__price_unit_dummy
@@ -3182,12 +3185,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "Unit Price"
-msgstr "Prijs"
+msgstr "Lijstprijs"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorderlines_document_sao
 msgid "Unit price"
-msgstr "Prijs"
+msgstr "Lijstprijs"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__message_unread
@@ -3203,12 +3206,17 @@ msgstr ""
 #: model:ir.model.fields,field_description:sale_advertising_order.field_crm_lead2opportunity_partner__update1
 #: model:ir.model.fields,field_description:sale_advertising_order.field_crm_lead2opportunity_partner_mass__update1
 msgid "Update Advertiser/Agency"
-msgstr ""
+msgstr "Update Adverteerder/Bureau"
+
+#. module: sale_advertising_order
+#: model:res.groups,name:sale_advertising_order.group_ads_sales_user
+msgid "User"
+msgstr "Gebruiker"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields.selection,name:sale_advertising_order.selection__product_category__date_type__validity
 msgid "Validity Date Range"
-msgstr ""
+msgstr "Datum range"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__product_attribute_value_id
@@ -3216,7 +3224,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_issue_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_issue_tree
 msgid "Variant Title"
-msgstr ""
+msgstr "Variant titel"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
@@ -3229,45 +3237,34 @@ msgid "Vendor Credit Note"
 msgstr "Creditfactuur leverancier"
 
 #. module: sale_advertising_order
-#: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order__ver_tr_exc
-msgid "Verification Treshold"
-msgstr ""
-
-#. module: sale_advertising_order
-#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_ad_order_line_make_invoice
-#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_ad_order_make_invoice
-msgid "Via Job Queue"
-msgstr ""
-
-#. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_orderlines_document_sao
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorderlines_document_sao
 msgid "Volume"
-msgstr ""
+msgstr "Volume"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_product_product__volume_discount
 #: model:ir.model.fields,field_description:sale_advertising_order.field_product_template__volume_discount
 msgid "Volume Discount"
-msgstr ""
+msgstr "Volume korting"
 
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/models/sale_advertising.py:0
 #, python-format
 msgid "Warning"
-msgstr ""
+msgstr "Waarschuwing"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorder_document_sao
 msgid "We would like to thank you and take good care of your order placement."
-msgstr ""
+msgstr "We willen u bedanken en zullen zorg dragen voor uw order."
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorder_document_sao
 msgid ""
-"We would like to thank you for your request. We are looking forward to "
-"receiving your response as soon as possible."
-msgstr ""
+"We would like to thank you for your request. We are looking forward to receiving your response as soon as "
+"possible."
+msgstr "We willen u bedanken voor uw verzoek. We zien uw reactie graag tegemoet."
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_advertising_issue__website_message_ids
@@ -3285,28 +3282,35 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_issue_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_issue_tree
 msgid "Week Number"
-msgstr ""
+msgstr "Weeknummer"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_advertising_issue_filter
 msgid "Weeknumbers"
-msgstr ""
+msgstr "Weeknummers"
 
 #. module: sale_advertising_order
+#: model:ir.model.fields,field_description:sale_advertising_order.field_product_product__width
 #: model:ir.model.fields,field_description:sale_advertising_order.field_product_template__width
 msgid "Width"
-msgstr ""
+msgstr "Breedte"
 
 #. module: sale_advertising_order
+#: model:ir.model.fields,help:sale_advertising_order.field_product_product__width
 #: model:ir.model.fields,help:sale_advertising_order.field_product_template__width
 msgid "Width advertising format in mm"
-msgstr ""
+msgstr "Breedte advertentie formaat in mm"
 
 #. module: sale_advertising_order
 #. openerp-web
 #: code:addons/sale_advertising_order/static/src/js/sale.js:0
 #, python-format
 msgid "Wrong value entered!"
+msgstr ""
+
+#. module: sale_advertising_order
+#: model:ir.model,name:sale_advertising_order.model_report_indeellijst_report_xls_indeellijst_report_xlsx
+msgid "XLSX report for indeellijst xls."
 msgstr ""
 
 #. module: sale_advertising_order
@@ -3318,28 +3322,19 @@ msgstr ""
 #: code:addons/sale_advertising_order/models/advertising_issue.py:0
 #, python-format
 msgid "You can't select more than one medium."
-msgstr ""
+msgstr "Je kunt maximaal één Medium selecteren."
 
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/models/sale_advertising.py:0
 #, python-format
 msgid "You cannot change an order line after it has been fully invoiced."
-msgstr ""
-
-#. module: sale_advertising_order
-#: code:addons/sale_advertising_order/models/sale_advertising.py:0
-#, python-format
-msgid ""
-"You cannot save a Sale Order with a line more than %s%s discount or order total amount is more than %s.\n"
-"You'll have to cancel the order and resubmit it or ask Sales Support for help."
-msgstr ""
+msgstr "Je kunt een orderregel niet meer wijzigen nadat deze volledig is gefactureerd."
 
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/models/sale_advertising.py:0
 #, python-format
 msgid "You cannot submit a quotation/sales order which has no line."
-msgstr ""
-"Het is niet mogelijk een offerte/verkooporder te verzenden zonder regel."
+msgstr "Het is niet mogelijk een offerte/verkooporder te verzenden zonder regel."
 
 #. module: sale_advertising_order
 #: model_terms:ir.actions.act_window,help:sale_advertising_order.product_template_action_ads
@@ -3376,33 +3371,33 @@ msgstr ""
 #: model_terms:ir.actions.act_window,help:sale_advertising_order.act_res_partner_2_quotation
 #: model_terms:ir.actions.act_window,help:sale_advertising_order.action_orders_advertising_smart_button
 msgid ""
-"Your next actions should flow efficiently: confirm the Quotation to a Sale "
-"Order, then create the Invoice and collect the Payment."
+"Your next actions should flow efficiently: confirm the Quotation to a Sale Order, then create the Invoice and "
+"collect the Payment."
 msgstr ""
 
 #. module: sale_advertising_order
 #: model_terms:ir.actions.act_window,help:sale_advertising_order.action_orders_advertising
 msgid ""
-"Your next actions should flow efficiently: confirm the Quotation to an "
-"Advertising Order, then create the Invoice and collect the Payment."
+"Your next actions should flow efficiently: confirm the Quotation to an Advertising Order, then create the "
+"Invoice and collect the Payment."
 msgstr ""
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_proof_number_delivery_list__proof_zip
 msgid "Zip"
-msgstr ""
+msgstr "Postcode"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid "days"
-msgstr ""
+msgstr "dagen"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
 msgid ""
-"help=\"If the sale is locked, you can not modify it anymore. However, you "
-"will still be able to invoice or deliver.\"/&gt;"
+"help=\"If the sale is locked, you can not modify it anymore. However, you will still be able to invoice or "
+"deliver.\"/&gt;"
 msgstr ""
 
 #. module: sale_advertising_order
