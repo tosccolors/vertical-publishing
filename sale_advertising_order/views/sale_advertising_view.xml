@@ -31,7 +31,7 @@
 					<button name="action_submit" string="Submit for Approval" states="draft" type="object"
                             class="oe_highlight" groups="sale_advertising_order.group_ads_sales_user"/>
 
-					<button name="action_approve1" string="Approval Sales Support"
+					<button name="action_approve1" string="Approve Quotation"
                             states="submitted" type="object" class="oe_highlight"
 							groups="sale_advertising_order.group_ads_sales_manager"/>
 
