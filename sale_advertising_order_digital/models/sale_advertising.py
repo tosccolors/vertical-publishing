@@ -48,7 +48,7 @@ class SaleOrderLine(models.Model):
             if class_issue_ids:
                 domain += [('adv_class_issue_id', 'in', adv_class_issue_ids.ids)]
             mag_categ = self.env.ref('sale_advertising_order.magazine_advertising_category').id
-            if ol.medium.id == mag_categ and not ol.medium.digital:
+            if self.medium.id == mag_categ and not self.medium.digital:
                 domain += [('issue_date', '>=', date.today())]
             ol.adv_class_issue_ids = self.env['sale.advertising.issue'].search(domain).ids
 
