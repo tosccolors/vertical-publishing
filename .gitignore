@@ -103,3 +103,6 @@ ENV/
 # mypy
 .mypy_cache/
 publishing_invoicing/wizard/redesign_adv_line_invoice.py
+
+# csv lock files
+*.csv#
