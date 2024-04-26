@@ -31,7 +31,7 @@
 					<button name="action_submit" string="Submit for Approval" states="draft" type="object"
                             class="oe_highlight" groups="sale_advertising_order.group_ads_sales_user"/>
 
-					<button name="action_approve1" string="Approval Sales Support"
+					<button name="action_approve1" string="Approve Quotation"
                             states="submitted" type="object" class="oe_highlight"
 							groups="sale_advertising_order.group_ads_sales_manager"/>
 
@@ -39,7 +39,7 @@
                             type="object" states="submitted"
 							groups="sale_advertising_order.group_ads_sales_manager"/>
 
-                    <button name="action_quotation_send" string="Send by Email" type="object" states="approved1"
+                    <button name="action_quotation_send" string="Send by Email" type="object" states="approved1,sent,sale,done"
                             class="btn-primary"	groups="sale_advertising_order.group_ads_sales_user"/>
 
                     <button name="action_confirm" string="Confirm Sale" states="approved1,sent"
@@ -1831,8 +1831,7 @@
             <field name="arch" type="xml">
                 <tree string="Schedules" create="false" edit="false" delete="false">
                         <field name="order_id" widget="many2one_clickable"/>
-                        <field name="id"/>
-<!--                        <field name="material_id" /> TODO  Port?-->
+                        <field name="id" optional="hide"/>
                         <field name="order_advertiser_id" />
                         <field name="adv_issue" />
                         <field name="issue_date"/>
@@ -1841,12 +1840,12 @@
                         <field name="ad_class"/>
                         <field name="product_template_id"/>
                         <field name="product_uom_qty" />
-<!--                        <field name="product_width" TODO: Port ?/>-->
-<!--                        <field name="product_height" Todo: Port? />-->
+                        <field name="product_width"/>
+                        <field name="product_height"/>
                         <field name="page_reference"/>
-                        <field name="layout_remark" />
+                        <field name="layout_remark" optional="hide"/>
                         <field name="name" />
-                        <field name="analytic_tag_ids"/>
+                        <field name="analytic_tag_ids" optional="hide"/>
                 </tree>
             </field>
         </record>

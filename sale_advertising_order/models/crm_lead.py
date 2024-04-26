@@ -27,7 +27,9 @@ from odoo.tools import email_re, email_split
 from datetime import datetime, timedelta, date
 from dateutil.relativedelta import relativedelta
 from lxml import etree
-# from odoo.osv.orm import setup_modifiers
+
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class Lead(models.Model):
@@ -179,7 +181,7 @@ class Lead(models.Model):
             return {}
 
         part = self.partner_id
-        addr = self.partner_id.address_get(['delivery', 'invoice', 'contact'])
+        addr = self.partner_id.address_get(['delivery', 'invoice', 'contact', 'default'])
 
         if part.type == 'contact':
             contact = self.env['res.partner'].search([('is_company','=', False),('type','=', 'contact'),('parent_id','=', part.id)])
