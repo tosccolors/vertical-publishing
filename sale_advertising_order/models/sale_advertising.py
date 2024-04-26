@@ -463,7 +463,6 @@ class SaleOrderLine(models.Model):
 
     @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'nett_nett', 'subtotal_before_agency_disc',
                  'price_unit', 'tax_id')
-    
     def _compute_amount(self):
         """
         Compute the amounts of the SO line.
@@ -1303,12 +1302,14 @@ class SaleOrderLine(models.Model):
         for line in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
             if 'pubble_sent' in vals:
                 continue
-            is_allowed = user.has_group('account.group_account_invoice') or 'allow_user' in self.env.context
-            if line.invoice_status == 'invoiced' and not (vals.get('product_uom_qty') == 0 and line.qty_invoiced == 0) \
-                                                 and not is_allowed \
-                                                 and not user.id == 1:
 
-                raise UserError(_('You cannot change an order line after it has been fully invoiced.'))
+            # deprecated this logic -- Modification of confirmed SO shall no longer be allowed
+            # is_allowed = user.has_group('account.group_account_invoice') or 'allow_user' in self.env.context
+            # if line.invoice_status == 'invoiced' and not (vals.get('product_uom_qty') == 0 and line.qty_invoiced == 0) \
+            #                                      and not is_allowed \
+            #                                      and not user.id == 1:
+            #     raise UserError(_('You cannot change an order line after it has been fully invoiced. SO: %s , state: %s, allowed: %s vals : %s'%(line.order_id.name, line.invoice_status, is_allowed, vals)))
+
             if not line.multi_line and ('product_id' in vals or 'adv_issue' in vals or 'product_uom_qty' in vals):
                 if line.deadline_check():
                     line.page_qty_check_update()
