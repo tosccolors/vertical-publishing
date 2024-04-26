@@ -126,11 +126,11 @@ class SaleOrder(models.Model):
         ('submitted', 'Submitted for Approval'),
         ('approved1', 'Approved by Sales Mgr'),
         ('sent', 'Quotation Sent'),
-        ('approved2', 'Approved by Traffic'),
         ('cancel', 'Cancelled'),
         ('sale', 'Sales Order'),
         ('done', 'Done'),
         ])
+        # ('approved2', 'Approved by Traffic'), -- deprecated
     invoice_status = fields.Selection(selection_add=[
         ('not invoiced', 'Nothing Invoiced Yet')
         ])
@@ -142,7 +142,7 @@ class SaleOrder(models.Model):
     customer_contact = fields.Many2one('res.partner', 'Payer Contact Person', domain=[(('customer_rank', '>', 0))])
     traffic_employee = fields.Many2one('res.users', 'Traffic Employee',)
     traffic_comments = fields.Text('Traffic Comments')
-    traffic_appr_date = fields.Date('Traffic Confirmation Date', index=True, help="Date on which sales order is confirmed bij Traffic.")
+    # traffic_appr_date = fields.Date('Traffic Confirmation Date', index=True, help="Date on which sales order is confirmed bij Traffic.") deprecated
     opportunity_subject = fields.Char('Opportunity Subject', size=64,
                           help="Subject of Opportunity from which this Sales Order is derived.")
     partner_acc_mgr = fields.Many2one(related='published_customer.user_id', relation='res.users', string='Account Manager', store=True , readonly=True)
@@ -283,16 +283,16 @@ class SaleOrder(models.Model):
         orders.write({'state':'approved1'})
         return True
 
-    # FIXME: Not in use??
-    def action_approve2(self):
-        orders = self.filtered(lambda s: s.state in ['approved1', 'submitted'])
-        orders.write({'state': 'approved2',
-                      'traffic_appr_date': fields.Date.context_today(self)})
-        return True
+    # deprecated
+    # def action_approve2(self):
+    #     orders = self.filtered(lambda s: s.state in ['approved1', 'submitted'])
+    #     orders.write({'state': 'approved2',
+    #                   'traffic_appr_date': fields.Date.context_today(self)})
+    #     return True
 
     # --added deep
     def action_refuse(self):
-        orders = self.filtered(lambda s: s.state in ['submitted', 'sale', 'sent', 'approved1', 'approved2'])
+        orders = self.filtered(lambda s: s.state in ['submitted', 'sale', 'sent', 'approved1'])
         orders.write({'state':'draft'})
         return True
 
@@ -321,7 +321,7 @@ class SaleOrder(models.Model):
         if not self.advertising:
             return super(SaleOrder, self).action_quotation_send()
 
-        elif self.state in ['draft', 'approved1', 'submitted', 'approved2']:
+        elif self.state in ['draft', 'approved1', 'submitted']:
             olines = []
             for line in self.order_line:
                 if line.multi_line:
@@ -684,12 +684,12 @@ class SaleOrderLine(models.Model):
         ('draft', 'Quotation'),
         ('submitted', 'Submitted for Approval'),
         ('approved1', 'Approved by Sales Mgr'),
-        ('approved2', 'Approved by Traffic'),
         ('sent', 'Quotation Sent'),
         ('sale', 'Sale Order'),
         ('done', 'Done'),
         ('cancel', 'Cancelled'),
     ], related='order_id.state', string='Order Status', readonly=True, copy=False, store=True, default='draft')
+
     multi_line_number = fields.Integer(compute='_multi_price', string='Number of Lines', store=True)
     partner_acc_mgr = fields.Many2one(related='order_id.partner_acc_mgr', store=True, string='Account Manager', readonly=True)
     order_partner_id = fields.Many2one(related='order_id.partner_id', relation='res.partner', string='Customer', store=True)
@@ -1512,7 +1512,7 @@ class MailComposeMessage(models.TransientModel):
     def send_mail(self, auto_commit=False):
         if self._context.get('default_model') == 'sale.order' and self._context.get('default_res_id') and self._context.get('mark_so_as_sent'):
             order = self.env['sale.order'].browse([self._context['default_res_id']])
-            if order.state in ['approved2','approved1']:
+            if order.state in ['approved1']:
                 order.state = 'sent'
         return super(MailComposeMessage, self.with_context(mail_post_autofollow=True)).send_mail(auto_commit=auto_commit)
 

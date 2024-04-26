@@ -111,7 +111,6 @@
                             <field name="client_order_ref" string="Client Order Reference"/>
 						    <field name="traffic_employee" invisible="1" string="Traffic Employee" groups="sale_advertising_order.group_ads_traffic_user"/>
                             <field name="traffic_comments" invisible="1" string="Traffic Comments"/>
-						    <field name="traffic_appr_date" invisible="1" string="Traffic Approval Date" readonly="True"/>
                             <field name="pricelist_id" groups="product.group_sale_pricelist"/>
                             <field name="currency_id" invisible="1"/>
                             <field name="payment_term_id" options="{'no_create': True}"/>
@@ -544,7 +543,6 @@
                     <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>
                     <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>
                     <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1" optional="show"/>
-                    <field name="traffic_appr_date" string="Traffic Date" invisible="1"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="invoice_status" decoration-success="invoice_status == 'invoiced'" decoration-info="invoice_status == 'to invoice'" decoration-warning="invoice_status == 'upselling'" widget="badge" optional="show"/>
                     <field name="tag_ids" optional="hide" widget="many2many_tags" options="{'color_field': 'color'}"/>
@@ -574,7 +572,6 @@
                     <separator/>
                     <filter string="Submitted" name="submitted" domain="[('state','=','submitted')]"/>
                     <filter string="Sales Mgr Approved" name="approved1" domain="[('state','=','approved1')]" groups="sale_advertising_order.group_ads_sales_manager"/>
-                    <filter string="Traffic Approved" name="approved2" domain="[('state','=','approved2')]" groups="sale_advertising_order.group_ads_traffic_user"/>
                 </xpath>
 
                 <field name="partner_id" position="after">
@@ -584,8 +581,6 @@
                 <field name="analytic_account_id" position="after">
                     <field name="date_from" string="Order Date From" filter_domain="[('date_order','&gt;=',self)]"/>
                     <field name="date_to" string="Order Date To" filter_domain="[('date_order','&lt;=',self)]"/>
-                    <field name="date_from" string="Traffic Date From" filter_domain="[('traffic_appr_date','&gt;=',self)]" groups="sale_advertising_order.group_ads_traffic_user"/>
-                    <field name="date_to" string="Traffic Date To" filter_domain="[('traffic_appr_date','&lt;=',self)]" groups="sale_advertising_order.group_ads_traffic_user"/>
                 </field>
                 <xpath expr="." position="inside">
                     <filter string="Account Manager" name="acc_manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
@@ -688,7 +683,6 @@
                     <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>
                     <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>
                     <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1" optional="show"/>
-                    <field name="traffic_appr_date" string="Traffic Date" optional="show"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="state" decoration-success="state == 'sale' or state == 'done'" decoration-info="state == 'draft' or state == 'sent'" widget="badge" optional="show"/>
                     <field name="invoice_status" optional="hide"/>
@@ -734,7 +728,6 @@
                     <separator/>
                     <filter string="Submitted" name="submitted" domain="[('state','in',('submitted',))]"/>
                     <filter string="Sales Mgr Approved" name="approved1" domain="[('state','in',('approved1',))]"/>
-                    <filter string="Traffic Approved" name="approved2" domain="[('state','in',('approved2',))]"/>
 
                     <separator/>
                     <filter string="Overdue Quotations" name="overdue_quotes"
@@ -745,8 +738,6 @@
                 <field name="analytic_account_id" position="after" >
                     <field name="date_from" string="Order Date From" filter_domain="[('date_order','&gt;=',self)]"/>
                     <field name="date_to" string="Order Date To" filter_domain="[('date_order','&lt;=',self)]"/>
-                    <field name="date_from" string="Traffic Date From" filter_domain="[('traffic_appr_date','&gt;=',self)]"/>
-                    <field name="date_to" string="Traffic Date To" filter_domain="[('traffic_appr_date','&lt;=',self)]"/>
                 </field>
                 <xpath expr="." position="inside">
                     <filter string="Account Manager" name="acc_manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
