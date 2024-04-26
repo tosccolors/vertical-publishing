@@ -120,9 +120,8 @@
                     </group>
                     <notebook>
                         <page string="Order Lines" name="order_line">
-<!--                            FIXME: Need this?-->
-<!--                                   attrs="{'readonly': ['|',('state', 'in', ['done','cancel']),('state', 'in', ['approved1','sent']),('ver_tr_exc','=',True)]}"-->
                             <field name="order_line" mode="tree,kanban"
+                                   attrs="{'readonly': [('state', 'in', ['sale','done','cancel'])}"
                                    context="{'customer_contact': customer_contact}">
                                 <form string="Sales Order Lines">
                                     <group>
@@ -377,6 +376,9 @@
                                     <field name="invoice_status" invisible="1"/>
                                     <field name="customer_lead" invisible="1"/>
                                     <field name="currency_id" invisible="1"/>
+                                    <button name="cancel_line" icon="fa-cog" string="Cancel"  type="object"
+                                            attrs="{'invisible': [('invoice_status','!=', 'to invoice')]}"
+                                            groups="sale_advertising_order.group_ads_traffic_user"/>
                                 </tree>
                                 <kanban class="o_kanban_mobile">
                                     <field name="product_id"/>
@@ -505,23 +507,24 @@
             </field>
         </record>
 
-        <record id="view_order_form_advertising_senior_sales" model="ir.ui.view">
-            <field name="name">sale.order.form.advertising.ss</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
-            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_manager'))]"/>
-            <field name="arch" type="xml">
-<!--                <button name="action_confirm" position="attributes">-->
-<!--                     <attribute name="attrs" >{'invisible': [('state','in',['cancel','sale','done'])]}</attribute>-->
-<!--                </button>-->
-<!--                <button name="action_quotation_send" position="attributes">-->
-<!--                     <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sent','done'])]}</attribute>-->
-<!--                </button>-->
-                <xpath expr="//page[@name='order_line']/field[@name='order_line']" position="attributes">
-                     <attribute name="attrs" >{'readonly': [('state', 'in', ['done','cancel'])]}</attribute>
-                </xpath>
-            </field>
-        </record>
+<!--        deprecated: not needed any more -->
+<!--        <record id="view_order_form_advertising_senior_sales" model="ir.ui.view">-->
+<!--            <field name="name">sale.order.form.advertising.ss</field>-->
+<!--            <field name="model">sale.order</field>-->
+<!--            <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>-->
+<!--            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_manager'))]"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--&lt;!&ndash;                <button name="action_confirm" position="attributes">&ndash;&gt;-->
+<!--&lt;!&ndash;                     <attribute name="attrs" >{'invisible': [('state','in',['cancel','sale','done'])]}</attribute>&ndash;&gt;-->
+<!--&lt;!&ndash;                </button>&ndash;&gt;-->
+<!--&lt;!&ndash;                <button name="action_quotation_send" position="attributes">&ndash;&gt;-->
+<!--&lt;!&ndash;                     <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sent','done'])]}</attribute>&ndash;&gt;-->
+<!--&lt;!&ndash;                </button>&ndash;&gt;-->
+<!--                <xpath expr="//page[@name='order_line']/field[@name='order_line']" position="attributes">-->
+<!--                     <attribute name="attrs" >{'readonly': [('state', 'in', ['done','cancel'])]}</attribute>-->
+<!--                </xpath>-->
+<!--            </field>-->
+<!--        </record>-->
 
         <record id="view_order_advertising_tree" model="ir.ui.view">
             <field name="name">sale.order.advertising.tree</field>

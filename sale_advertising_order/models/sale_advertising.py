@@ -1417,6 +1417,13 @@ class SaleOrderLine(models.Model):
         'Migration: from nsm_sale_advertising_order'
         self.proof_number_amt_payer = 1 if self.proof_number_payer_id else 0
 
+    def cancel_line(self):
+        'Allow cancel of SOL by resetting qty to Zero'
+        self.ensure_one()
+        if self.invoice_status != 'to invoice':
+            return
+        self.product_uom_qty = 0
+
 
 
 class OrderLineAdvIssuesProducts(models.Model):
