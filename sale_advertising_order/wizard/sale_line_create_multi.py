@@ -102,7 +102,8 @@ class sale_order_line_create_multi_lines(models.TransientModel):
         aup = sbad / ol.product_uom_qty
         res = {'title': ad_issue.parent_id.id,
                  'adv_issue': ad_issue.id,
-                 'title_ids': False,
+                 'title_ids': [(6, 0, [ad_issue.parent_id.id])],
+                 'adv_issue_ids': [(6, 0, [ad_issue.id])],
                  'product_id': ad_iss.product_id.id,
                  'name': ol.order_id.name or False,
                  'price_unit': ad_iss.price_unit,
