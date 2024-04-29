@@ -31,7 +31,7 @@
                         </group>
                         <group name="invoice_layout">
                             <field name="selected_invoicing_property_layout"
-                                   widget="radio"/>
+                                   widget="radio" />
                         </group>
                     </sheet>
                 </form>

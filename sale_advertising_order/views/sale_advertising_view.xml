@@ -31,7 +31,7 @@
 					<button name="action_submit" string="Submit for Approval" states="draft" type="object"
                             class="oe_highlight" groups="sale_advertising_order.group_ads_sales_user"/>
 
-					<button name="action_approve1" string="Approval Sales Support"
+					<button name="action_approve1" string="Approve Quotation"
                             states="submitted" type="object" class="oe_highlight"
 							groups="sale_advertising_order.group_ads_sales_manager"/>
 
@@ -39,7 +39,7 @@
                             type="object" states="submitted"
 							groups="sale_advertising_order.group_ads_sales_manager"/>
 
-                    <button name="action_quotation_send" string="Send by Email" type="object" states="approved1"
+                    <button name="action_quotation_send" string="Send by Email" type="object" states="approved1,sent,sale,done"
                             class="btn-primary"	groups="sale_advertising_order.group_ads_sales_user"/>
 
                     <button name="action_confirm" string="Confirm Sale" states="approved1,sent"
@@ -111,7 +111,6 @@
                             <field name="client_order_ref" string="Client Order Reference"/>
 						    <field name="traffic_employee" invisible="1" string="Traffic Employee" groups="sale_advertising_order.group_ads_traffic_user"/>
                             <field name="traffic_comments" invisible="1" string="Traffic Comments"/>
-						    <field name="traffic_appr_date" invisible="1" string="Traffic Approval Date" readonly="True"/>
                             <field name="pricelist_id" groups="product.group_sale_pricelist"/>
                             <field name="currency_id" invisible="1"/>
                             <field name="payment_term_id" options="{'no_create': True}"/>
@@ -121,9 +120,8 @@
                     </group>
                     <notebook>
                         <page string="Order Lines" name="order_line">
-<!--                            FIXME: Need this?-->
-<!--                                   attrs="{'readonly': ['|',('state', 'in', ['done','cancel']),('state', 'in', ['approved1','sent']),('ver_tr_exc','=',True)]}"-->
                             <field name="order_line" mode="tree,kanban"
+                                   attrs="{'readonly': [('state', 'in', ['sale','done','cancel'])]}"
                                    context="{'customer_contact': customer_contact}">
                                 <form string="Sales Order Lines">
                                     <group>
@@ -378,6 +376,10 @@
                                     <field name="invoice_status" invisible="1"/>
                                     <field name="customer_lead" invisible="1"/>
                                     <field name="currency_id" invisible="1"/>
+                                    <button name="cancel_line" icon="fa-cog" string="Cancel"  type="object"
+                                            attrs="{'invisible': [('invoice_status','!=', 'to invoice')]}"
+                                            confirm="Are you sure you want to cancel this line?"
+                                            groups="sale_advertising_order.group_ads_traffic_user"/>
                                 </tree>
                                 <kanban class="o_kanban_mobile">
                                     <field name="product_id"/>
@@ -506,23 +508,24 @@
             </field>
         </record>
 
-        <record id="view_order_form_advertising_senior_sales" model="ir.ui.view">
-            <field name="name">sale.order.form.advertising.ss</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
-            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_manager'))]"/>
-            <field name="arch" type="xml">
-<!--                <button name="action_confirm" position="attributes">-->
-<!--                     <attribute name="attrs" >{'invisible': [('state','in',['cancel','sale','done'])]}</attribute>-->
-<!--                </button>-->
-<!--                <button name="action_quotation_send" position="attributes">-->
-<!--                     <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sent','done'])]}</attribute>-->
-<!--                </button>-->
-                <xpath expr="//page[@name='order_line']/field[@name='order_line']" position="attributes">
-                     <attribute name="attrs" >{'readonly': [('state', 'in', ['done','cancel'])]}</attribute>
-                </xpath>
-            </field>
-        </record>
+<!--        deprecated: not needed any more -->
+<!--        <record id="view_order_form_advertising_senior_sales" model="ir.ui.view">-->
+<!--            <field name="name">sale.order.form.advertising.ss</field>-->
+<!--            <field name="model">sale.order</field>-->
+<!--            <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>-->
+<!--            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_manager'))]"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--&lt;!&ndash;                <button name="action_confirm" position="attributes">&ndash;&gt;-->
+<!--&lt;!&ndash;                     <attribute name="attrs" >{'invisible': [('state','in',['cancel','sale','done'])]}</attribute>&ndash;&gt;-->
+<!--&lt;!&ndash;                </button>&ndash;&gt;-->
+<!--&lt;!&ndash;                <button name="action_quotation_send" position="attributes">&ndash;&gt;-->
+<!--&lt;!&ndash;                     <attribute name="attrs" >{'invisible': [('state', 'in',['cancel','sent','done'])]}</attribute>&ndash;&gt;-->
+<!--&lt;!&ndash;                </button>&ndash;&gt;-->
+<!--                <xpath expr="//page[@name='order_line']/field[@name='order_line']" position="attributes">-->
+<!--                     <attribute name="attrs" >{'readonly': [('state', 'in', ['done','cancel'])]}</attribute>-->
+<!--                </xpath>-->
+<!--            </field>-->
+<!--        </record>-->
 
         <record id="view_order_advertising_tree" model="ir.ui.view">
             <field name="name">sale.order.advertising.tree</field>
@@ -544,7 +547,6 @@
                     <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>
                     <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>
                     <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1" optional="show"/>
-                    <field name="traffic_appr_date" string="Traffic Date" invisible="1"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="invoice_status" decoration-success="invoice_status == 'invoiced'" decoration-info="invoice_status == 'to invoice'" decoration-warning="invoice_status == 'upselling'" widget="badge" optional="show"/>
                     <field name="tag_ids" optional="hide" widget="many2many_tags" options="{'color_field': 'color'}"/>
@@ -574,7 +576,6 @@
                     <separator/>
                     <filter string="Submitted" name="submitted" domain="[('state','=','submitted')]"/>
                     <filter string="Sales Mgr Approved" name="approved1" domain="[('state','=','approved1')]" groups="sale_advertising_order.group_ads_sales_manager"/>
-                    <filter string="Traffic Approved" name="approved2" domain="[('state','=','approved2')]" groups="sale_advertising_order.group_ads_traffic_user"/>
                 </xpath>
 
                 <field name="partner_id" position="after">
@@ -584,8 +585,6 @@
                 <field name="analytic_account_id" position="after">
                     <field name="date_from" string="Order Date From" filter_domain="[('date_order','&gt;=',self)]"/>
                     <field name="date_to" string="Order Date To" filter_domain="[('date_order','&lt;=',self)]"/>
-                    <field name="date_from" string="Traffic Date From" filter_domain="[('traffic_appr_date','&gt;=',self)]" groups="sale_advertising_order.group_ads_traffic_user"/>
-                    <field name="date_to" string="Traffic Date To" filter_domain="[('traffic_appr_date','&lt;=',self)]" groups="sale_advertising_order.group_ads_traffic_user"/>
                 </field>
                 <xpath expr="." position="inside">
                     <filter string="Account Manager" name="acc_manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
@@ -688,7 +687,6 @@
                     <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>
                     <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>
                     <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1" optional="show"/>
-                    <field name="traffic_appr_date" string="Traffic Date" optional="show"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="state" decoration-success="state == 'sale' or state == 'done'" decoration-info="state == 'draft' or state == 'sent'" widget="badge" optional="show"/>
                     <field name="invoice_status" optional="hide"/>
@@ -734,7 +732,6 @@
                     <separator/>
                     <filter string="Submitted" name="submitted" domain="[('state','in',('submitted',))]"/>
                     <filter string="Sales Mgr Approved" name="approved1" domain="[('state','in',('approved1',))]"/>
-                    <filter string="Traffic Approved" name="approved2" domain="[('state','in',('approved2',))]"/>
 
                     <separator/>
                     <filter string="Overdue Quotations" name="overdue_quotes"
@@ -745,8 +742,6 @@
                 <field name="analytic_account_id" position="after" >
                     <field name="date_from" string="Order Date From" filter_domain="[('date_order','&gt;=',self)]"/>
                     <field name="date_to" string="Order Date To" filter_domain="[('date_order','&lt;=',self)]"/>
-                    <field name="date_from" string="Traffic Date From" filter_domain="[('traffic_appr_date','&gt;=',self)]"/>
-                    <field name="date_to" string="Traffic Date To" filter_domain="[('traffic_appr_date','&lt;=',self)]"/>
                 </field>
                 <xpath expr="." position="inside">
                     <filter string="Account Manager" name="acc_manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
@@ -1831,8 +1826,7 @@
             <field name="arch" type="xml">
                 <tree string="Schedules" create="false" edit="false" delete="false">
                         <field name="order_id" widget="many2one_clickable"/>
-                        <field name="id"/>
-<!--                        <field name="material_id" /> TODO  Port?-->
+                        <field name="id" optional="hide"/>
                         <field name="order_advertiser_id" />
                         <field name="adv_issue" />
                         <field name="issue_date"/>
@@ -1841,12 +1835,12 @@
                         <field name="ad_class"/>
                         <field name="product_template_id"/>
                         <field name="product_uom_qty" />
-<!--                        <field name="product_width" TODO: Port ?/>-->
-<!--                        <field name="product_height" Todo: Port? />-->
+                        <field name="product_width"/>
+                        <field name="product_height"/>
                         <field name="page_reference"/>
-                        <field name="layout_remark" />
+                        <field name="layout_remark" optional="hide"/>
                         <field name="name" />
-                        <field name="analytic_tag_ids"/>
+                        <field name="analytic_tag_ids" optional="hide"/>
                 </tree>
             </field>
         </record>
