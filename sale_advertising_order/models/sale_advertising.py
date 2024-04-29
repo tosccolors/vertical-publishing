@@ -126,11 +126,11 @@ class SaleOrder(models.Model):
         ('submitted', 'Submitted for Approval'),
         ('approved1', 'Approved by Sales Mgr'),
         ('sent', 'Quotation Sent'),
-        ('approved2', 'Approved by Traffic'),
         ('cancel', 'Cancelled'),
         ('sale', 'Sales Order'),
         ('done', 'Done'),
         ])
+        # ('approved2', 'Approved by Traffic'), -- deprecated
     invoice_status = fields.Selection(selection_add=[
         ('not invoiced', 'Nothing Invoiced Yet')
         ])
@@ -142,7 +142,7 @@ class SaleOrder(models.Model):
     customer_contact = fields.Many2one('res.partner', 'Payer Contact Person', domain=[(('customer_rank', '>', 0))])
     traffic_employee = fields.Many2one('res.users', 'Traffic Employee',)
     traffic_comments = fields.Text('Traffic Comments')
-    traffic_appr_date = fields.Date('Traffic Confirmation Date', index=True, help="Date on which sales order is confirmed bij Traffic.")
+    # traffic_appr_date = fields.Date('Traffic Confirmation Date', index=True, help="Date on which sales order is confirmed bij Traffic.") deprecated
     opportunity_subject = fields.Char('Opportunity Subject', size=64,
                           help="Subject of Opportunity from which this Sales Order is derived.")
     partner_acc_mgr = fields.Many2one(related='published_customer.user_id', relation='res.users', string='Account Manager', store=True , readonly=True)
@@ -283,16 +283,16 @@ class SaleOrder(models.Model):
         orders.write({'state':'approved1'})
         return True
 
-    # FIXME: Not in use??
-    def action_approve2(self):
-        orders = self.filtered(lambda s: s.state in ['approved1', 'submitted'])
-        orders.write({'state': 'approved2',
-                      'traffic_appr_date': fields.Date.context_today(self)})
-        return True
+    # deprecated
+    # def action_approve2(self):
+    #     orders = self.filtered(lambda s: s.state in ['approved1', 'submitted'])
+    #     orders.write({'state': 'approved2',
+    #                   'traffic_appr_date': fields.Date.context_today(self)})
+    #     return True
 
     # --added deep
     def action_refuse(self):
-        orders = self.filtered(lambda s: s.state in ['submitted', 'sale', 'sent', 'approved1', 'approved2'])
+        orders = self.filtered(lambda s: s.state in ['submitted', 'sale', 'sent', 'approved1'])
         orders.write({'state':'draft'})
         return True
 
@@ -321,7 +321,7 @@ class SaleOrder(models.Model):
         if not self.advertising:
             return super(SaleOrder, self).action_quotation_send()
 
-        elif self.state in ['draft', 'approved1', 'submitted', 'approved2']:
+        elif self.state in ['draft', 'approved1', 'submitted']:
             olines = []
             for line in self.order_line:
                 if line.multi_line:
@@ -463,7 +463,6 @@ class SaleOrderLine(models.Model):
 
     @api.depends('product_uom_qty', 'order_id.partner_id', 'order_id.nett_nett', 'nett_nett', 'subtotal_before_agency_disc',
                  'price_unit', 'tax_id')
-    
     def _compute_amount(self):
         """
         Compute the amounts of the SO line.
@@ -684,12 +683,12 @@ class SaleOrderLine(models.Model):
         ('draft', 'Quotation'),
         ('submitted', 'Submitted for Approval'),
         ('approved1', 'Approved by Sales Mgr'),
-        ('approved2', 'Approved by Traffic'),
         ('sent', 'Quotation Sent'),
         ('sale', 'Sale Order'),
         ('done', 'Done'),
         ('cancel', 'Cancelled'),
     ], related='order_id.state', string='Order Status', readonly=True, copy=False, store=True, default='draft')
+
     multi_line_number = fields.Integer(compute='_multi_price', string='Number of Lines', store=True)
     partner_acc_mgr = fields.Many2one(related='order_id.partner_acc_mgr', store=True, string='Account Manager', readonly=True)
     order_partner_id = fields.Many2one(related='order_id.partner_id', relation='res.partner', string='Customer', store=True)
@@ -1302,12 +1301,14 @@ class SaleOrderLine(models.Model):
         for line in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
             if 'pubble_sent' in vals:
                 continue
-            is_allowed = user.has_group('account.group_account_invoice') or 'allow_user' in self.env.context
-            if line.invoice_status == 'invoiced' and not (vals.get('product_uom_qty') == 0 and line.qty_invoiced == 0) \
-                                                 and not is_allowed \
-                                                 and not user.id == 1:
 
-                raise UserError(_('You cannot change an order line after it has been fully invoiced.'))
+            # deprecated this logic -- Modification of confirmed SO shall no longer be allowed
+            # is_allowed = user.has_group('account.group_account_invoice') or 'allow_user' in self.env.context
+            # if line.invoice_status == 'invoiced' and not (vals.get('product_uom_qty') == 0 and line.qty_invoiced == 0) \
+            #                                      and not is_allowed \
+            #                                      and not user.id == 1:
+            #     raise UserError(_('You cannot change an order line after it has been fully invoiced. SO: %s , state: %s, allowed: %s vals : %s'%(line.order_id.name, line.invoice_status, is_allowed, vals)))
+
             if not line.multi_line and ('product_id' in vals or 'adv_issue' in vals or 'product_uom_qty' in vals):
                 if line.deadline_check():
                     line.page_qty_check_update()
@@ -1415,6 +1416,13 @@ class SaleOrderLine(models.Model):
         'Migration: from nsm_sale_advertising_order'
         self.proof_number_amt_payer = 1 if self.proof_number_payer_id else 0
 
+    def cancel_line(self):
+        'Allow cancel of SOL by resetting qty to Zero'
+        self.ensure_one()
+        if self.invoice_status != 'to invoice':
+            return
+        self.product_uom_qty = 0
+
 
 
 class OrderLineAdvIssuesProducts(models.Model):
@@ -1510,7 +1518,7 @@ class MailComposeMessage(models.TransientModel):
     def send_mail(self, auto_commit=False):
         if self._context.get('default_model') == 'sale.order' and self._context.get('default_res_id') and self._context.get('mark_so_as_sent'):
             order = self.env['sale.order'].browse([self._context['default_res_id']])
-            if order.state in ['approved2','approved1']:
+            if order.state in ['approved1']:
                 order.state = 'sent'
         return super(MailComposeMessage, self.with_context(mail_post_autofollow=True)).send_mail(auto_commit=auto_commit)
 
