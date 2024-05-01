@@ -730,7 +730,7 @@
                     <field name="partner_acc_mgr"/>
 
                     <separator/>
-                    <filter string="Submitted" name="submitted" domain="[('state','in',('submitted',))]"/>
+                    <filter string="Submitted" name="submitted" domain="[('state','=','submitted')]"/>
                     <filter string="Sales Mgr Approved" name="approved1" domain="[('state','in',('approved1',))]"/>
 
                     <separator/>
