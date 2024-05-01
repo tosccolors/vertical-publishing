@@ -1426,7 +1426,7 @@
 			<field name="type">tree</field>
 			<field name="model">sale.advertising.issue</field>
 			<field name="arch" type="xml">
-				<tree string="Advertising issue">
+				<tree string="Advertising issue" default_order='name asc'>
                     <field name="name" string="Name"/>
                     <field name="code" string="Code"/>
                     <field name="product_attribute_value_id" string="Variant Title"/>
@@ -1444,7 +1444,7 @@
 			<field name="type">tree</field>
 			<field name="model">sale.advertising.issue</field>
 			<field name="arch" type="xml">
-				<tree string="Advertising issue">
+				<tree string="Advertising issue" default_order="issue_date asc">
                     <field name="name" string="Name"/>
                     <field name="code" string="Code"/>
                     <field name="parent_id" string="Title"/>
