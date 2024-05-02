@@ -897,9 +897,9 @@ class SaleOrderLine(models.Model):
             issue_ids = self.adv_issue_ids.ids
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', issue_ids)])
             issue_parent_ids = [x.parent_id.id for x in adv_issues]
-            for title in titles:
-                if not (title in issue_parent_ids):
-                    raise UserError(_('Not for every selected Title an Issue is selected.'))
+            # for title in titles:
+            #     if not (title in issue_parent_ids):
+            #         raise UserError(_('Not for every selected Title an Issue is selected.'))
             # if len(self.title_ids) == 1:
             #     self.title = self.title_ids[0]
             #     self.title_ids = [(6, 0, [])]
@@ -1206,7 +1206,8 @@ class SaleOrderLine(models.Model):
     #     else:
     #         self.subtotal_before_agency_disc = (self.comb_list_price + csa) * (1 - self.computed_discount / 100)
 
-    @api.onchange('adv_issue', 'adv_issue_ids','dates','issue_product_ids')
+    # @api.onchange('adv_issue', 'adv_issue_ids','dates','issue_product_ids')
+    @api.onchange('adv_issue', 'adv_issue_ids','issue_product_ids')
     def onchange_getQty(self):
         _logger.info("\n Came inside >>> onchange_getQty [adv_issue | adv_issue_ids | dates | issue_product_ids]")
         result = {}
@@ -1222,9 +1223,9 @@ class SaleOrderLine(models.Model):
             issue_ids = ais.ids
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', issue_ids)])
             issue_parent_ids = [x.parent_id.id for x in adv_issues]
-            for title in titles:
-                if not (title in issue_parent_ids):
-                    raise UserError(_('Not for every selected Title an Issue is selected.'))
+            # for title in titles:
+            #     if not (title in issue_parent_ids):
+            #         raise UserError(_('Not for every selected Title an Issue is selected.'))
         if ais:
             if len(ais) > 1:
                 ml_qty = len(ais)

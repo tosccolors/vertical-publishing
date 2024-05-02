@@ -58,7 +58,7 @@ class AdvertisingIssue(models.Model):
                 domain = json.dumps(
                     [('parent_id', 'child_of', i2p)]
                 )
-        rec.medium_domain = domain
+            rec.medium_domain = domain
 
     
     @api.depends('issue_date')
@@ -67,8 +67,8 @@ class AdvertisingIssue(models.Model):
         Compute the week number of the issue.
         """
         for issue in self:
-            if self.issue_date:
-                wk = fields.Date.from_string(self.issue_date).isocalendar()[1]
+            if issue.issue_date:
+                wk = fields.Date.from_string(issue.issue_date).isocalendar()[1]
                 issue.update({
                     'issue_week_number': wk,
                     'week_number_even': wk % 2 == 0
@@ -78,7 +78,7 @@ class AdvertisingIssue(models.Model):
     def _availability(self):
         self.ensure_one()
         qty = 0
-        for line in self.available_ids:
+        for line in self.available_ids: # FIXME: this doesn't look right
             qty += line.available_qty
         self.amount_total = qty
 
