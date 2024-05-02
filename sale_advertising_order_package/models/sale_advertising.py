@@ -13,4 +13,4 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = ["sale.order.line"]
 
-    package = fields.Boolean(related='order_id.package', string='Package', readonly=True)
+    package = fields.Boolean(related='order_id.package', string='Package', readonly=True, store=True)
