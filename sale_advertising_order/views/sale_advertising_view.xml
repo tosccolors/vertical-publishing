@@ -142,14 +142,15 @@
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
                                                              'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
-                                                <tree create="true" edit="false" delete="true" copy="false">
-                                                    <field name="name" string="Name" readonly="1"/>
-                                                </tree>
+<!--                                                <tree create="true" edit="false" delete="true" copy="false">-->
+<!--                                                    <field name="name" string="Name" readonly="1"/>-->
+<!--                                                </tree>-->
                                             </field>
                                             <field name="deadline_offset" invisible="1" />
                                             <field name="deadline_passed" invisible="1" />
                                             <field name="deadline" invisible="0" />
-                                            <field name="adv_issue_ids" string="Advertising Issue(s)" readonly="0" force_save="1"
+                                            <field name="adv_issue_ids" string="Advertising Issue(s)"
+                                                   widget="many2many_tags"
                                                    attrs="{'readonly': [('issue_product_ids','!=', [])]}"
                                                    domain="[('parent_id','!=', False),
                                                             '|',('parent_id','in', title_ids),('parent_id','=', title),
@@ -157,9 +158,6 @@
                                                                     ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
                                                    context="{'search_view_ref':'sale_advertising_order.view_advertising_issue_filter', 'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
-                                                <tree create="true" edit="false" delete="true" copy="false">
-                                                    <field name="name" string="Name" readonly="1"/>
-                                                </tree>
                                             </field>
                                             <field name="domain4prod_ids" invisible="1"/>
                                             <field name="product_template_id" domain="[('id','in', domain4prod_ids)]"
