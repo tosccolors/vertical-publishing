@@ -22,7 +22,7 @@
 
 import json
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from datetime import datetime, timedelta
 from odoo.tools.translate import unquote
 
@@ -556,7 +556,6 @@ class SaleOrderLine(models.Model):
                 })
 
     @api.depends('adv_issue', 'ad_class', 'from_date')
-    
     def _compute_deadline(self):
         """
         Compute the deadline for this placement.
@@ -1255,15 +1254,32 @@ class SaleOrderLine(models.Model):
         # self.adv_issue = ai # FIXME: deep
         # self.adv_issue_ids = ais # FIXME: deep
 
-    #added by sushma
-    @api.onchange('dateperiods')
-    def onchange_dateperiods(self):
-        if self.date_type == 'validity':
-            arr_frm_dates = [d.from_date for d in self.dateperiods]
-            arr_to_dates = [d.to_date for d in self.dateperiods]
-            if arr_frm_dates and arr_to_dates :
-                self.from_date = min(arr_frm_dates)
-                self.to_date = max(arr_to_dates)
+    # #added by sushma | deprecated -- deepa
+    # @api.onchange('dateperiods')
+    # def onchange_dateperiods(self):
+    #     if self.date_type == 'validity':
+    #         arr_frm_dates = [d.from_date for d in self.dateperiods]
+    #         arr_to_dates = [d.to_date for d in self.dateperiods]
+    #         if arr_frm_dates and arr_to_dates :
+    #             self.from_date = min(arr_frm_dates)
+    #             self.to_date = max(arr_to_dates)
+
+    @api.onchange('from_date', 'to_date')
+    def _check_validity_dates(self,):
+        "Check correctness of date"
+        if self.from_date and self.to_date:
+            if (self.from_date > self.to_date):
+                raise UserError(_('Please make sure that the start date is smaller than or equal to the end date.'))
+
+    @api.constrains('from_date', 'to_date')
+    def _check_start_end_dates(self):
+        "Check correctness of date"
+        for case in self:
+            if case.from_date and case.to_date:
+                if case.from_date > case.to_date:
+                    raise ValidationError(
+                        _("Please make sure that the start date is smaller than or equal to the end date '%s'.")
+                        % (case.name))
 
     def _prepare_invoice_line(self, **optional_values):
         res = super(SaleOrderLine, self)._prepare_invoice_line(**optional_values)
@@ -1278,7 +1294,6 @@ class SaleOrderLine(models.Model):
             res['so_line_id'] = self.id
             
         return res
-
     @api.model
     def create(self, values):
         result = super(SaleOrderLine, self).create(values)
