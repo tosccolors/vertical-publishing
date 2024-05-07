@@ -334,7 +334,7 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="product_uom_category_id" invisible="1"/>
                                     <field name="id" optional="hide"/>
-                                    <field name="title" />
+                                    <field name="adv_issue_ids" widget="many2many_tags"/>
                                     <field name="issue_date" optional="show"/>
                                     <field name="from_date" optional="show"/>
                                     <field name="to_date"/>
