@@ -538,7 +538,6 @@ class SaleOrderLine(models.Model):
 
 
     @api.depends('issue_product_ids.price')
-    
     def _multi_price(self):
         """
         Compute the combined price in the multi_line.
@@ -582,7 +581,6 @@ class SaleOrderLine(models.Model):
 
 
     @api.depends('ad_class')
-    
     def _compute_tags_domain(self):
         """
         Compute the domain for the Pageclass domain.
@@ -646,13 +644,35 @@ class SaleOrderLine(models.Model):
                 line.product_width = prod.width
                 line.product_height = prod.height
 
+    @api.model
+    def _get_domain4Titles(self):
+        domain = [('parent_id','=', False)] # default
+        if self.medium:
+            domain += [('medium','child_of', self.medium.id)]
+        return domain
+
+    @api.model
+    def _get_domain4Issues(self):
+        domain = []
+        if self.title_ids:
+            domain = [('parent_id', 'in', self.title_ids.ids)]
+
+        # No deadline check
+        if not self.env.user.has_group('sale_advertising_order.group_no_deadline_check'):
+            domain += ['|', '|', ('deadline', '>=', self.deadline_offset), ('deadline', '=', False),
+                       ('issue_date', '<=', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]
+
+        return domain
+
 
     mig_remark = fields.Text('Migration Remark')
     layout_remark = fields.Text('Material Remark')
     title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)])
     page_class_domain = fields.Char(compute='_compute_tags_domain', readonly=True, store=False,)
-    title_ids = fields.Many2many('sale.advertising.issue', 'sale_order_line_adv_issue_title_rel', 'order_line_id', 'adv_issue_id', 'Titles')
-    adv_issue_ids = fields.Many2many('sale.advertising.issue','sale_order_line_adv_issue_rel', 'order_line_id', 'adv_issue_id',  'Advertising Issues')
+    title_ids = fields.Many2many('sale.advertising.issue', 'sale_order_line_adv_issue_title_rel', 'order_line_id', 'adv_issue_id', 'Titles',
+                                 domain=_get_domain4Titles)
+    adv_issue_ids = fields.Many2many('sale.advertising.issue','sale_order_line_adv_issue_rel', 'order_line_id', 'adv_issue_id',  'Advertising Issues',
+                                     domain=_get_domain4Issues)
     issue_product_ids = fields.One2many('sale.order.line.issues.products', 'order_line_id', 'Adv. Issues with Product Prices')
     dates = fields.One2many('sale.order.line.date', 'order_line_id', 'Advertising Dates') # FIXME: deprecated
     dateperiods = fields.One2many('sale.order.line.dateperiod', 'order_line_id', 'Advertising Date Periods')
@@ -878,8 +898,6 @@ class SaleOrderLine(models.Model):
         if not self.advertising:
             return {'value': vals}
 
-        # import pdb; pdb.set_trace()
-
         # Single Title: pre-populate Issue if only one present:
         if len(self.title_ids) == 1 and not self.adv_issue_ids:
             self.title = self.title_ids[0]
@@ -930,6 +948,8 @@ class SaleOrderLine(models.Model):
             self.product_id = False
             self.product_template_id = False
             self.product_uom = False
+
+        return {'domain': {'adv_issue_ids': self._get_domain4Issues()}}
 
     @api.onchange('product_template_id')
     def titles_issues_products_price(self):
