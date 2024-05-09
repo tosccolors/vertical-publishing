@@ -694,7 +694,7 @@ class SaleOrderLine(models.Model):
     product_template_id = fields.Many2one('product.template', string='Product', domain=[('sale_ok', '=', True)],
                                  change_default=True, ondelete='restrict')
     page_reference = fields.Char('Page Preference', size=32)
-    ad_number = fields.Char('External Reference', size=32)
+    ad_number = fields.Char('External Reference', size=50)
     url_to_material = fields.Char('URL Material')
     from_date = fields.Date('Start of Validity')
     to_date = fields.Date('End of Validity')
@@ -1496,7 +1496,7 @@ class OrderLineAdvIssuesProducts(models.Model):
     qty = fields.Float(related='order_line_id.product_uom_qty', readonly=True)
     price = fields.Float(compute='_compute_price', string='Price', readonly=True, required=True, digits='Product Price', default=0.0)
     page_reference = fields.Char('Reference of the Page', size=64)
-    ad_number = fields.Char('External Reference', size=32)
+    ad_number = fields.Char('External Reference', size=50)
     url_to_material = fields.Char('URL Material', size=64)
 
 
@@ -1512,7 +1512,7 @@ class OrderLineDate(models.Model):
     issue_date = fields.Date('Date of Issue')
     name = fields.Char('Name', size=64)
     page_reference = fields.Char('Page Preference', size=64)
-    ad_number = fields.Char('External Reference', size=32)
+    ad_number = fields.Char('External Reference', size=50)
 
 
 class OrderLineDateperiod(models.Model):
@@ -1527,7 +1527,7 @@ class OrderLineDateperiod(models.Model):
     to_date = fields.Date('End of Validity')
     name = fields.Char('Name', size=64)
     page_reference = fields.Char('Page Preference', size=64)
-    ad_number = fields.Char('External Reference', size=32)
+    ad_number = fields.Char('External Reference', size=50)
 
 
 class AdvertisingProof(models.Model):
