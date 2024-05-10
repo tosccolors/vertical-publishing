@@ -646,12 +646,12 @@ class SaleOrderLine(models.Model):
                 line.product_width = prod.width
                 line.product_height = prod.height
 
-    @api.model
-    def _get_domain4Titles(self):
-        domain = [('parent_id','=', False)] # default
-        if self.medium:
-            domain += [('medium','child_of', self.medium.id)]
-        return domain
+    # @api.model
+    # def _get_domain4Titles(self):
+    #     domain = [('parent_id','=', False)] # default
+    #     if self.medium:
+    #         domain += [('medium','child_of', self.medium.id)]
+    #     return domain
 
     @api.model
     def _get_domain4Issues(self):
@@ -671,10 +671,8 @@ class SaleOrderLine(models.Model):
     layout_remark = fields.Text('Material Remark')
     title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)])
     page_class_domain = fields.Char(compute='_compute_tags_domain', readonly=True, store=False,)
-    title_ids = fields.Many2many('sale.advertising.issue', 'sale_order_line_adv_issue_title_rel', 'order_line_id', 'adv_issue_id', 'Titles',
-                                 domain=_get_domain4Titles)
-    adv_issue_ids = fields.Many2many('sale.advertising.issue','sale_order_line_adv_issue_rel', 'order_line_id', 'adv_issue_id',  'Advertising Issues',
-                                     domain=_get_domain4Issues)
+    title_ids = fields.Many2many('sale.advertising.issue', 'sale_order_line_adv_issue_title_rel', 'order_line_id', 'adv_issue_id', 'Titles')
+    adv_issue_ids = fields.Many2many('sale.advertising.issue','sale_order_line_adv_issue_rel', 'order_line_id', 'adv_issue_id',  'Advertising Issues')
     issue_product_ids = fields.One2many('sale.order.line.issues.products', 'order_line_id', 'Adv. Issues with Product Prices')
     dates = fields.One2many('sale.order.line.date', 'order_line_id', 'Advertising Dates') # FIXME: deprecated
     dateperiods = fields.One2many('sale.order.line.dateperiod', 'order_line_id', 'Advertising Date Periods')
