@@ -403,12 +403,11 @@ class SaleOrder(models.Model):
     
     def write(self, vals):
         result = super(SaleOrder, self).write(vals)
-        # import pdb; pdb.set_trace()
 
-        _logger.info("GET I COME HERE SO WRITE ")
-        orders = self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks'))
-        for order in orders:
-            user = self.env['res.users'].browse(self.env.uid)
+        _logger.info("GET I COME HERE SO WRITE %s"%(vals))
+        # orders = self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks'))
+        # for order in orders:
+            # user = self.env['res.users'].browse(self.env.uid)
             # -- deep: deprecated
             # if not user.has_group('sale_advertising_order.group_no_discount_check') \
             #    and self.ver_tr_exc:
@@ -417,7 +416,10 @@ class SaleOrder(models.Model):
             #         '\nYou\'ll have to cancel the order and '
             #         'resubmit it or ask Sales Support for help.') % (
             #                     order.company_id.verify_discount_setting, '%', order.company_id.verify_order_setting))
+
+        for order in self:
             olines = []
+            _logger.info("GET I COME HERE SO WRITE | LINESIss %s" % (order.order_line.adv_issue_ids))
             for line in order.order_line:
                 if line.multi_line:
                     olines.append(line.id)
@@ -1459,7 +1461,19 @@ class SaleOrderLine(models.Model):
             return
         self.product_uom_qty = 0
 
-
+    @api.constrains('title_ids', 'adv_issue_ids')
+    def _validate_AdvIssues(self):
+        "Check if Issues for every Titles"
+        _logger.info("\n\n\nInside constraints")
+        for case in self:
+            if len(case.title_ids.ids) > 0 and len(case.adv_issue_ids.ids) > 0:
+                issue_parent_ids = [x.parent_id.id for x in case.adv_issue_ids]
+                _logger.info("\n\n\nInside constraints titles %s issue_parent_ids %s"%(case.title_ids.ids, issue_parent_ids))
+                for title in case.title_ids.ids:
+                    if not (title in issue_parent_ids):
+                        raise ValidationError(
+                            _("Not for every selected Title an Issue is selected.")
+                            % (case.name))
 
 class OrderLineAdvIssuesProducts(models.Model):
 
