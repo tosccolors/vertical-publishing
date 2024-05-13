@@ -22,7 +22,7 @@
 
 import json
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from datetime import datetime, timedelta
 from odoo.tools.translate import unquote
 
@@ -123,9 +123,9 @@ class SaleOrder(models.Model):
 
     state = fields.Selection(selection=[
         ('draft', 'Draft Quotation'),
+        ('sent', 'Quotation Sent'),
         ('submitted', 'Submitted for Approval'),
         ('approved1', 'Approved by Sales Mgr'),
-        ('sent', 'Quotation Sent'),
         ('cancel', 'Cancelled'),
         ('sale', 'Sales Order'),
         ('done', 'Done'),
@@ -403,12 +403,11 @@ class SaleOrder(models.Model):
     
     def write(self, vals):
         result = super(SaleOrder, self).write(vals)
-        # import pdb; pdb.set_trace()
 
-        _logger.info("GET I COME HERE SO WRITE ")
-        orders = self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks'))
-        for order in orders:
-            user = self.env['res.users'].browse(self.env.uid)
+        _logger.info("GET I COME HERE SO WRITE %s"%(vals))
+        # orders = self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks'))
+        # for order in orders:
+            # user = self.env['res.users'].browse(self.env.uid)
             # -- deep: deprecated
             # if not user.has_group('sale_advertising_order.group_no_discount_check') \
             #    and self.ver_tr_exc:
@@ -417,7 +416,10 @@ class SaleOrder(models.Model):
             #         '\nYou\'ll have to cancel the order and '
             #         'resubmit it or ask Sales Support for help.') % (
             #                     order.company_id.verify_discount_setting, '%', order.company_id.verify_order_setting))
+
+        for order in self:
             olines = []
+            _logger.info("GET I COME HERE SO WRITE | LINESIss %s" % (order.order_line.adv_issue_ids))
             for line in order.order_line:
                 if line.multi_line:
                     olines.append(line.id)
@@ -538,7 +540,6 @@ class SaleOrderLine(models.Model):
 
 
     @api.depends('issue_product_ids.price')
-    
     def _multi_price(self):
         """
         Compute the combined price in the multi_line.
@@ -556,7 +557,6 @@ class SaleOrderLine(models.Model):
                 })
 
     @api.depends('adv_issue', 'ad_class', 'from_date')
-    
     def _compute_deadline(self):
         """
         Compute the deadline for this placement.
@@ -583,7 +583,6 @@ class SaleOrderLine(models.Model):
 
 
     @api.depends('ad_class')
-    
     def _compute_tags_domain(self):
         """
         Compute the domain for the Pageclass domain.
@@ -647,6 +646,26 @@ class SaleOrderLine(models.Model):
                 line.product_width = prod.width
                 line.product_height = prod.height
 
+    # @api.model
+    # def _get_domain4Titles(self):
+    #     domain = [('parent_id','=', False)] # default
+    #     if self.medium:
+    #         domain += [('medium','child_of', self.medium.id)]
+    #     return domain
+
+    @api.model
+    def _get_domain4Issues(self):
+        domain = []
+        if self.title_ids:
+            domain = [('parent_id', 'in', self.title_ids.ids)]
+
+        # No deadline check
+        if not self.env.user.has_group('sale_advertising_order.group_no_deadline_check'):
+            domain += ['|', '|', ('deadline', '>=', self.deadline_offset), ('deadline', '=', False),
+                       ('issue_date', '<=', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]
+
+        return domain
+
 
     mig_remark = fields.Text('Migration Remark')
     layout_remark = fields.Text('Material Remark')
@@ -675,7 +694,7 @@ class SaleOrderLine(models.Model):
     product_template_id = fields.Many2one('product.template', string='Product', domain=[('sale_ok', '=', True)],
                                  change_default=True, ondelete='restrict')
     page_reference = fields.Char('Page Preference', size=32)
-    ad_number = fields.Char('External Reference', size=32)
+    ad_number = fields.Char('External Reference', size=50)
     url_to_material = fields.Char('URL Material')
     from_date = fields.Date('Start of Validity')
     to_date = fields.Date('End of Validity')
@@ -879,8 +898,6 @@ class SaleOrderLine(models.Model):
         if not self.advertising:
             return {'value': vals}
 
-        # import pdb; pdb.set_trace()
-
         # Single Title: pre-populate Issue if only one present:
         if len(self.title_ids) == 1 and not self.adv_issue_ids:
             self.title = self.title_ids[0]
@@ -897,9 +914,9 @@ class SaleOrderLine(models.Model):
             issue_ids = self.adv_issue_ids.ids
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', issue_ids)])
             issue_parent_ids = [x.parent_id.id for x in adv_issues]
-            # for title in titles:
-            #     if not (title in issue_parent_ids):
-            #         raise UserError(_('Not for every selected Title an Issue is selected.'))
+            for title in titles:
+                if not (title in issue_parent_ids):
+                    raise UserError(_('Not for every selected Title an Issue is selected.'))
             # if len(self.title_ids) == 1:
             #     self.title = self.title_ids[0]
             #     self.title_ids = [(6, 0, [])]
@@ -931,6 +948,8 @@ class SaleOrderLine(models.Model):
             self.product_id = False
             self.product_template_id = False
             self.product_uom = False
+
+        return {'domain': {'adv_issue_ids': self._get_domain4Issues()}}
 
     @api.onchange('product_template_id')
     def titles_issues_products_price(self):
@@ -1223,9 +1242,9 @@ class SaleOrderLine(models.Model):
             issue_ids = ais.ids
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', issue_ids)])
             issue_parent_ids = [x.parent_id.id for x in adv_issues]
-            # for title in titles:
-            #     if not (title in issue_parent_ids):
-            #         raise UserError(_('Not for every selected Title an Issue is selected.'))
+            for title in titles:
+                if not (title in issue_parent_ids):
+                    raise UserError(_('Not for every selected Title an Issue is selected.'))
         if ais:
             if len(ais) > 1:
                 ml_qty = len(ais)
@@ -1255,15 +1274,32 @@ class SaleOrderLine(models.Model):
         # self.adv_issue = ai # FIXME: deep
         # self.adv_issue_ids = ais # FIXME: deep
 
-    #added by sushma
-    @api.onchange('dateperiods')
-    def onchange_dateperiods(self):
-        if self.date_type == 'validity':
-            arr_frm_dates = [d.from_date for d in self.dateperiods]
-            arr_to_dates = [d.to_date for d in self.dateperiods]
-            if arr_frm_dates and arr_to_dates :
-                self.from_date = min(arr_frm_dates)
-                self.to_date = max(arr_to_dates)
+    # #added by sushma | deprecated -- deepa
+    # @api.onchange('dateperiods')
+    # def onchange_dateperiods(self):
+    #     if self.date_type == 'validity':
+    #         arr_frm_dates = [d.from_date for d in self.dateperiods]
+    #         arr_to_dates = [d.to_date for d in self.dateperiods]
+    #         if arr_frm_dates and arr_to_dates :
+    #             self.from_date = min(arr_frm_dates)
+    #             self.to_date = max(arr_to_dates)
+
+    @api.onchange('from_date', 'to_date')
+    def _check_validity_dates(self,):
+        "Check correctness of date"
+        if self.from_date and self.to_date:
+            if (self.from_date > self.to_date):
+                raise UserError(_('Please make sure that the start date is smaller than or equal to the end date.'))
+
+    @api.constrains('from_date', 'to_date')
+    def _check_start_end_dates(self):
+        "Check correctness of date"
+        for case in self:
+            if case.from_date and case.to_date:
+                if case.from_date > case.to_date:
+                    raise ValidationError(
+                        _("Please make sure that the start date is smaller than or equal to the end date '%s'.")
+                        % (case.name))
 
     def _prepare_invoice_line(self, **optional_values):
         res = super(SaleOrderLine, self)._prepare_invoice_line(**optional_values)
@@ -1278,7 +1314,6 @@ class SaleOrderLine(models.Model):
             res['so_line_id'] = self.id
             
         return res
-
     @api.model
     def create(self, values):
         result = super(SaleOrderLine, self).create(values)
@@ -1424,7 +1459,19 @@ class SaleOrderLine(models.Model):
             return
         self.product_uom_qty = 0
 
-
+    @api.constrains('title_ids', 'adv_issue_ids')
+    def _validate_AdvIssues(self):
+        "Check if Issues for every Titles"
+        _logger.info("\n\n\nInside constraints")
+        for case in self:
+            if len(case.title_ids.ids) > 0 and len(case.adv_issue_ids.ids) > 0:
+                issue_parent_ids = [x.parent_id.id for x in case.adv_issue_ids]
+                _logger.info("\n\n\nInside constraints titles %s issue_parent_ids %s"%(case.title_ids.ids, issue_parent_ids))
+                for title in case.title_ids.ids:
+                    if not (title in issue_parent_ids):
+                        raise ValidationError(
+                            _("Not for every selected Title an Issue is selected.")
+                            % (case.name))
 
 class OrderLineAdvIssuesProducts(models.Model):
 
@@ -1461,7 +1508,7 @@ class OrderLineAdvIssuesProducts(models.Model):
     qty = fields.Float(related='order_line_id.product_uom_qty', readonly=True)
     price = fields.Float(compute='_compute_price', string='Price', readonly=True, required=True, digits='Product Price', default=0.0)
     page_reference = fields.Char('Reference of the Page', size=64)
-    ad_number = fields.Char('External Reference', size=32)
+    ad_number = fields.Char('External Reference', size=50)
     url_to_material = fields.Char('URL Material', size=64)
 
 
@@ -1477,7 +1524,7 @@ class OrderLineDate(models.Model):
     issue_date = fields.Date('Date of Issue')
     name = fields.Char('Name', size=64)
     page_reference = fields.Char('Page Preference', size=64)
-    ad_number = fields.Char('External Reference', size=32)
+    ad_number = fields.Char('External Reference', size=50)
 
 
 class OrderLineDateperiod(models.Model):
@@ -1492,7 +1539,7 @@ class OrderLineDateperiod(models.Model):
     to_date = fields.Date('End of Validity')
     name = fields.Char('Name', size=64)
     page_reference = fields.Char('Page Preference', size=64)
-    ad_number = fields.Char('External Reference', size=32)
+    ad_number = fields.Char('External Reference', size=50)
 
 
 class AdvertisingProof(models.Model):

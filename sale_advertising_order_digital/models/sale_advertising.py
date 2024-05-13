@@ -22,10 +22,13 @@
 
 from odoo import api, fields, models, _
 
+import logging
+_logger = logging.getLogger(__name__)
+
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    ad_class_digital = fields.Boolean(compute='_compute_digital', string='Advertising Class Digital')
+    ad_class_digital = fields.Boolean(compute='_compute_digital', string='Advertising Class Digital', default=False, store=True)
 
     adv_class_issue_ids = fields.Many2many('sale.advertising.issue', compute='_compute_class_issue_matrix',
                                             string='Advertising Class Issue Link')
@@ -49,3 +52,13 @@ class SaleOrderLine(models.Model):
 
             ol.adv_class_issue_ids = self.env['sale.advertising.issue'].search(domain).ids
 
+
+    @api.model
+    def _get_domain4Issues(self):
+        result = super()._get_domain4Issues()
+        domain = [('digital','=', self.ad_class_digital)]
+
+        if self.adv_class_issue_ids:
+            domain = [('id', 'in', self.adv_class_issue_ids.ids)]
+
+        return domain + result
