@@ -138,7 +138,8 @@
                                                    widget="many2many_tags"
                                                    domain="[('parent_id','=', False), ('medium','child_of', medium)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                                   context="{'active_test': False}">
+                                                   context="{'active_test': False, 'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
+                                                             'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
                                             </field>
                                             <field name="deadline_offset" invisible="1" />
                                             <field name="deadline_passed" invisible="1" />
@@ -150,8 +151,12 @@
                                                             '|','|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
                                                                     ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                                   context="{'active_test': False}">
+                                                   context="{'active_test': False, 'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
+                                                             'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
                                             </field>
+
+                                            <field name="issue_date" readonly="1"
+                                                   attrs="{'invisible': [('adv_issue','=', False)]}"/>
                                             <field name="domain4prod_ids" invisible="1"/>
                                             <field name="product_template_id" domain="[('id','in', domain4prod_ids)]"
                                                    context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
@@ -195,9 +200,7 @@
                                                                     ('deadline','=', False),
                                                                     ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),]"
                                                    invisible="1"/>
-                                            <field name="issue_date" readonly="1"
-                                                   attrs="{'invisible': [('adv_issue','=', False)]}"/>
-                                            <field name="deadline"/>
+<!--                                            <field name="deadline"/>-->
 
                                         </group>
                                         <group>

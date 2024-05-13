@@ -949,7 +949,7 @@ class SaleOrderLine(models.Model):
             self.product_template_id = False
             self.product_uom = False
 
-        return {'domain': {'adv_issue_ids': self._get_domain4Issues()}}
+        # return {'domain': {'adv_issue_ids': self._get_domain4Issues()}}
 
     @api.onchange('product_template_id')
     def titles_issues_products_price(self):
@@ -1314,6 +1314,7 @@ class SaleOrderLine(models.Model):
             res['so_line_id'] = self.id
             
         return res
+
     @api.model
     def create(self, values):
         result = super(SaleOrderLine, self).create(values)
