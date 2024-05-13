@@ -213,7 +213,7 @@
                    <filter string="Invoice" name="type_invoice" domain="[('is_company','=',0),('type','=','invoice')]"/>
                    <filter string="Companies" name="type_company" domain="[('is_company','=',1)]"/>
                    <separator/>
-                   <filter string="Customers" name="customer" domain="[('customer_rank','>',0),('parent_id', '=', False)]" help="Customer Partners"/>
+                   <filter string="Customers" name="customer" domain="[('is_customer', '=', True),('parent_id', '=', False)]" help="Customer Partners"/>
                    <separator/>
                    <filter string="Ad Agencies" name="agency" domain="[('is_ad_agency','=',1),('parent_id', '=', False)]" help="Ad Agency Partners"/>
                    <separator/>

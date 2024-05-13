@@ -35,7 +35,7 @@ _logger = logging.getLogger(__name__)
 class Lead(models.Model):
     _inherit = ["crm.lead"]
 
-    published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer_rank', '>', 0)], ondelete='set null',
+    published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('is_customer', '=', True)], ondelete='set null',
                                         track_visibility='onchange', index=True,
                                         help="Linked Advertiser (optional). ")
     partner_id = fields.Many2one('res.partner', 'Payer', ondelete='set null', track_visibility='onchange',

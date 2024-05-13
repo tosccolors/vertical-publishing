@@ -114,11 +114,11 @@ class SaleOrder(models.Model):
         for rec in self:
             if rec.agency_is_publish:
                 rec.pub_cust_domain = json.dumps(
-                    [('is_ad_agency', '=', True), ('parent_id', '=', False), ('customer_rank', '>', 0)]
+                    [('is_ad_agency', '=', True), ('parent_id', '=', False), ('is_customer', '=', True)]
                 )
             else:
                 rec.pub_cust_domain = json.dumps(
-                    [('is_ad_agency', '!=', True),('parent_id', '=', False), ('customer_rank', '>', 0)]
+                    [('is_ad_agency', '!=', True),('parent_id', '=', False), ('is_customer', '=', True)]
                 )
 
     state = fields.Selection(selection=[
@@ -134,12 +134,12 @@ class SaleOrder(models.Model):
     invoice_status = fields.Selection(selection_add=[
         ('not invoiced', 'Nothing Invoiced Yet')
         ])
-    published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer_rank', '>', 0)])
-    advertising_agency = fields.Many2one('res.partner', 'Advertising Agency', domain=[('customer_rank', '>', 0)])
+    published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('is_customer', '=', True)])
+    advertising_agency = fields.Many2one('res.partner', 'Advertising Agency', domain=[('is_customer', '=', True)])
     nett_nett = fields.Boolean('Netto Netto Deal', default=False)
     pub_cust_domain = fields.Char(compute=_compute_pub_cust_domain, readonly=True, store=False, )
     agency_is_publish = fields.Boolean('Agency is Publishing Customer', default=False)
-    customer_contact = fields.Many2one('res.partner', 'Payer Contact Person', domain=[(('customer_rank', '>', 0))])
+    customer_contact = fields.Many2one('res.partner', 'Payer Contact Person', domain=[('is_customer', '=', True)])
     traffic_employee = fields.Many2one('res.users', 'Traffic Employee',)
     traffic_comments = fields.Text('Traffic Comments')
     # traffic_appr_date = fields.Date('Traffic Confirmation Date', index=True, help="Date on which sales order is confirmed bij Traffic.") deprecated
@@ -949,7 +949,7 @@ class SaleOrderLine(models.Model):
             self.product_template_id = False
             self.product_uom = False
 
-        return {'domain': {'adv_issue_ids': self._get_domain4Issues()}}
+        # return {'domain': {'adv_issue_ids': self._get_domain4Issues()}}
 
     @api.onchange('product_template_id')
     def titles_issues_products_price(self):
@@ -1314,6 +1314,7 @@ class SaleOrderLine(models.Model):
             res['so_line_id'] = self.id
             
         return res
+
     @api.model
     def create(self, values):
         result = super(SaleOrderLine, self).create(values)
