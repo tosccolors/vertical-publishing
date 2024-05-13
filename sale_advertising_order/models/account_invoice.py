@@ -31,7 +31,7 @@ class Invoice(models.Model):
     _inherit = 'account.move'
 
     ad = fields.Boolean(related='invoice_line_ids.ad', string='Ad', help="It indicates that the invoice is an Advertising Invoice.", store=True)
-    published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('customer_rank', '>', 0)])
+    published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('is_customer', '=', True)])
 
     invoice_description = fields.Text('Description')
 

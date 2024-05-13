@@ -85,7 +85,7 @@
                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"
                                    required="True" options="{'no_create':True}"/>
                             <field name="partner_id" string="Payer"
-                                   domain="[(('customer_rank', '>', 0)), ('parent_id','=', False)]"
+                                   domain="[('is_customer', '=', True), ('parent_id','=', False)]"
                                    context="{'search_default_customer':1, 'show_address': 1, 'res_partner_search_mode': 'customer'}" options='{"always_reload": True, "no_create_edit": True}'
                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"
                             />
@@ -98,7 +98,7 @@
                                    options='{"always_reload": True, "no_create_edit": True}'
                                    attrs="{'readonly':[('state','in', ['cancel','done'])]}"/>
                             <field name="advertising_agency"
-                                   domain="[('is_ad_agency','=', True),(('customer_rank', '>', 0)), ('is_company','=', True)]"
+                                   domain="[('is_ad_agency','=', True),('is_customer', '=', True), ('is_company','=', True)]"
                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"
                                    context="{'res_partner_search_mode': 'customer'}"/>
 
@@ -138,7 +138,8 @@
                                                    widget="many2many_tags"
                                                    domain="[('parent_id','=', False), ('medium','child_of', medium)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                                   context="{'active_test': False}">
+                                                   context="{'active_test': False, 'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
+                                                             'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
                                             </field>
                                             <field name="deadline_offset" invisible="1" />
                                             <field name="deadline_passed" invisible="1" />
@@ -150,8 +151,12 @@
                                                             '|','|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
                                                                     ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                                   context="{'active_test': False}">
+                                                   context="{'active_test': False, 'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
+                                                             'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
                                             </field>
+
+                                            <field name="issue_date" readonly="1"
+                                                   attrs="{'invisible': [('adv_issue','=', False)]}"/>
                                             <field name="domain4prod_ids" invisible="1"/>
                                             <field name="product_template_id" domain="[('id','in', domain4prod_ids)]"
                                                    context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
@@ -195,9 +200,7 @@
                                                                     ('deadline','=', False),
                                                                     ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),]"
                                                    invisible="1"/>
-                                            <field name="issue_date" readonly="1"
-                                                   attrs="{'invisible': [('adv_issue','=', False)]}"/>
-                                            <field name="deadline"/>
+<!--                                            <field name="deadline"/>-->
 
                                         </group>
                                         <group>
@@ -244,7 +247,7 @@
                                                    context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
                                             <field name="proof_number_payer" />
                                             <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
-                                            <field name="proof_number_payer_id" domain="[('customer_rank', '>', 0),('id','child_of',parent.partner_id)]" attrs="{'required': [('proof_number_amt_payer', '>', 0)]}" context="{'default_parent_id': 'order_partner_id', 'show_address': 1}" options="{'no_create_edit': True, 'always_reload': True}"/>
+                                            <field name="proof_number_payer_id" domain="[('is_customer', '=', True),('id','child_of',parent.partner_id)]" attrs="{'required': [('proof_number_amt_payer', '>', 0)]}" context="{'default_parent_id': 'order_partner_id', 'show_address': 1}" options="{'no_create_edit': True, 'always_reload': True}"/>
                                             <field name="proof_number_amt_payer" attrs="{'invisible':[('proof_number_payer_id','=', False)],'required':[('proof_number_payer_id','!=', False)]}"/>
                                         </group>
                                     </group>
@@ -1028,7 +1031,7 @@
                                            attrs="{'readonly': [('deadline_passed','=', True)]}"/>
                                 </div>
 <!--                                <field name="proof_number_adv_customer" /> deprecated -->
-                                <field name="proof_number_adv_customer" string="Proof Number Advertising Customer" domain="[('customer_rank', '>', 0)]" context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
+                                <field name="proof_number_adv_customer" string="Proof Number Advertising Customer" domain="[('is_customer', '=', True)]" context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
                                 <field name="proof_number_payer" />
                                 <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
                             </group>
