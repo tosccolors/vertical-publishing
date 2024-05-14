@@ -44,6 +44,12 @@
             <field name="category_id" ref="base.module_category_hidden"/>
         </record>
 
+        <!-- Misc group to hide/remove extra menus from End users      -->
+        <record id="group_misc_hide" model="res.groups">
+            <field name="name">Miscellaneous Hide</field>
+            <field name="category_id" ref="base.module_category_extra"/>
+        </record>
+
 <!--        deep: deprecated-->
 <!--        <record model="ir.module.category" id="module_category_extra_ads">-->
 <!--            <field name="description">Extra Access for Advertising Sales</field>-->
