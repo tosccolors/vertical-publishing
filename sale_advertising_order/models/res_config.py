@@ -26,18 +26,6 @@ from bs4 import BeautifulSoup
 class Partner(models.Model):
     _inherit = 'res.partner'
 
-    # # Overridden:
-    # type = fields.Selection(
-    #     [('contact', 'Contact'),
-    #      ('invoice', 'Invoice Address'),
-    #      ('delivery', 'Delivery Address'),
-    #      ('other', 'Other Address'),
-    #      ("private", "Private Address"),
-    #     ], string='Address Type',
-    #     default='contact',
-    #     help="Invoice & Delivery addresses are used in sales orders. Private addresses are only visible by authorized users.")
-    #
-    # # New:
     agency_discount = fields.Float('Agency Discount (%)', digits=(16, 2), default=0.0)
     is_ad_agency = fields.Boolean('Agency', default=False)
     adv_sale_order_count = fields.Integer(compute='_compute_adv_sale_order_count', string='# of Sales Order')
