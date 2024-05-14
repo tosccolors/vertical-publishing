@@ -26,18 +26,18 @@ from bs4 import BeautifulSoup
 class Partner(models.Model):
     _inherit = 'res.partner'
 
-    # Overridden:
-    type = fields.Selection(
-        [('contact', 'Contact'),
-         ('invoice', 'Invoice Address'),
-         ('delivery', 'Delivery Address'),
-         ('other', 'Other Address'),
-         ("private", "Private Address"),
-        ], string='Address Type',
-        default='contact',
-        help="Invoice & Delivery addresses are used in sales orders. Private addresses are only visible by authorized users.")
-
-    # New:
+    # # Overridden:
+    # type = fields.Selection(
+    #     [('contact', 'Contact'),
+    #      ('invoice', 'Invoice Address'),
+    #      ('delivery', 'Delivery Address'),
+    #      ('other', 'Other Address'),
+    #      ("private", "Private Address"),
+    #     ], string='Address Type',
+    #     default='contact',
+    #     help="Invoice & Delivery addresses are used in sales orders. Private addresses are only visible by authorized users.")
+    #
+    # # New:
     agency_discount = fields.Float('Agency Discount (%)', digits=(16, 2), default=0.0)
     is_ad_agency = fields.Boolean('Agency', default=False)
     adv_sale_order_count = fields.Integer(compute='_compute_adv_sale_order_count', string='# of Sales Order')
@@ -48,7 +48,15 @@ class Partner(models.Model):
     quotation_count = fields.Integer(compute='_compute_quotation_count', string='# of Quotations')
     adv_quotation_count = fields.Integer(compute='_compute_adv_quotation_count', string='# of Advertising Quotations')
 
-    
+
+    @api.model
+    def default_get(self, fields):
+        """Function gets default values."""
+        res = super().default_get(fields)
+        res.update({"type": "contact"})
+        return res
+
+
     def _compute_activities_count(self):
         activity_data = self.env['crm.activity.report'].read_group([('partner_id', 'in', self.ids),('subtype_id','not in', ('Lead Created','Stage Changed','Opportunity Won','Discussions','Note','Lead aangemaakt','Fase gewijzigd','Prospect gewonnen','Discussies','Notitie')), ('subtype_id','!=',False)], ['partner_id'], ['partner_id'])
         mapped_data = {act['partner_id'][0]: act['partner_id_count'] for act in activity_data}

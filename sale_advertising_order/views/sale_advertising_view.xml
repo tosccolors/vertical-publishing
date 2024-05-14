@@ -247,7 +247,7 @@
                                                    context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
                                             <field name="proof_number_payer" />
                                             <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
-                                            <field name="proof_number_payer_id" domain="[('is_customer', '=', True),('id','child_of',parent.partner_id)]" attrs="{'required': [('proof_number_amt_payer', '>', 0)]}" context="{'default_parent_id': 'order_partner_id', 'show_address': 1}" options="{'no_create_edit': True, 'always_reload': True}"/>
+                                            <field name="proof_number_payer_id" domain="[('type', '=', 'contact'),('id','child_of',parent.partner_id)]" attrs="{'required': [('proof_number_amt_payer', '>', 0)]}" context="{'default_parent_id': 'order_partner_id', 'show_address': 1}" options="{'no_create_edit': True, 'always_reload': True}"/>
                                             <field name="proof_number_amt_payer" attrs="{'invisible':[('proof_number_payer_id','=', False)],'required':[('proof_number_payer_id','!=', False)]}"/>
                                         </group>
                                     </group>
