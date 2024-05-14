@@ -32,7 +32,7 @@
                       parent="menu_advertising_order" action="nsm_proof_delivery_list_action" sequence="4"/>
 
             <menuitem id="menu_partners3"  name="Customers"
-                      parent="menu_advertising_order" action="base.action_partner_form" sequence="5"/>
+                      parent="menu_advertising_order" action="account.res_partner_action_customer" sequence="5"/>
 
 
 
