@@ -76,7 +76,8 @@ class AdvertisingIssue(models.Model):
 
     @api.depends('available_ids.available_qty')
     def _availability(self):
-        self.ensure_one()
+        # --@sushma: deprecated compute method is always for multi record
+        # self.ensure_one()
         qty = 0
         for line in self.available_ids: # FIXME: this doesn't look right
             qty += line.available_qty

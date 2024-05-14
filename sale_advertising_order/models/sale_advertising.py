@@ -398,6 +398,15 @@ class SaleOrder(models.Model):
                 raise UserError(_(partner.sale_warn_msg))
 
         result = super(SaleOrder, self).create(vals)
+        # multi-split only works with order.create not order_line.create, due to removing old one and creating new ones
+        olines = []
+        for line in result.order_line:
+            if line.multi_line:
+                olines.append(line.id)
+                continue
+        if not olines == []:
+            self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(
+                orderlines=olines, orders=result)
         return result
 
     
@@ -428,9 +437,10 @@ class SaleOrder(models.Model):
                 list = self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(
                     orderlines=olines, orders=order)
                 newlines = self.env['sale.order.line'].browse(list)
-                for newline in newlines:
-                    if newline.deadline_check():
-                        newline.page_qty_check_create()
+                # @sushma:deprecated, on action_confirm() method page_qty_create() called.
+                # for newline in newlines:
+                #     if newline.deadline_check():
+                #         newline.page_qty_check_create()
 
         return result
 
@@ -1271,6 +1281,9 @@ class SaleOrderLine(models.Model):
             # elif self.title:
             #     self.title_ids = [(6,0,[])]
         self.multi_line_number = ml_qty
+        # Reset
+        if len(self.adv_issue_ids) > 1 and not self.issue_product_ids:
+            self.product_template_id = False
         # self.adv_issue = ai # FIXME: deep
         # self.adv_issue_ids = ais # FIXME: deep
 
@@ -1362,7 +1375,9 @@ class SaleOrderLine(models.Model):
     def deadline_check(self):
         self.ensure_one()
         user = self.env['res.users'].browse(self.env.uid)
-        if self.issue_date and fields.Datetime.from_string(self.issue_date) <= datetime.now():
+        issue_date = (self.issue_date or self.adv_issue_ids[0].issue_date) \
+            if len(self.adv_issue_ids) == 1 else self.issue_date
+        if issue_date and fields.Datetime.from_string(issue_date) <= datetime.now():
             return False
         elif not user.has_group('sale_advertising_order.group_no_deadline_check') and self.deadline:
             if fields.Datetime.from_string(self.deadline) < datetime.now():
@@ -1381,7 +1396,7 @@ class SaleOrderLine(models.Model):
         lpage_id = lpage.id
         # avail = self.adv_issue.calc_page_space(lpage_id)
         vals = {
-            'adv_issue_id': self.adv_issue.id,
+            'adv_issue_id': self.adv_issue_ids.ids[0],
             'name': 'Afboeking',
             'order_line_id': self.id,
             'page_id': lpage_id,
