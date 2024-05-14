@@ -32,7 +32,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
     'author': 'Deepa, Willem Hulshof, The Open Source Company (TOSC)',
     'website': 'http://www.tosc.nl',
     'depends': [
-                'sale', 'sale_crm', 'sale_operating_unit',
+                'sale', 'sale_crm', 'sale_operating_unit', 'account',
                 'product_variant_template_categ_id','project',
                 'web_domain_field','account_payment_sale',
                 'web_tree_many2one_clickable', 'crm_industry',
