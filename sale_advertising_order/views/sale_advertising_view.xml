@@ -872,10 +872,12 @@
                         <field name="title" optional="hide"/>
                         <field name="adv_issue" />
                         <field name="issue_date" />
+                        <field name="from_date"/>
                         <field name="to_date"/>
                         <field name="ad_class" optional="hide"/>
                         <field name="product_id" optional="hide"/>
                         <field name="name" optional="hide"/>
+                        <field name="ad_number"/>
                         <field name="product_uom" optional="hide"/>
                         <field name="price_unit" optional="hide"/>
                         <field name="product_uom_qty" optional="hide"/>
