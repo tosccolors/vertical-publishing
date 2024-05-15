@@ -156,6 +156,19 @@
                         <field name="is_ad_agency"/>
                         <field name="agency_discount" attrs="{'invisible': [('is_ad_agency', '=', False)]}"/>
                     </xpath>
+
+                    <field name="child_ids" position="attributes">
+                        <attribute
+                            name="context"
+                            operation="python_dict"
+                            key="default_is_customer"
+                        >is_customer</attribute>
+                        <attribute
+                            name="context"
+                            operation="python_dict"
+                            key="default_is_supplier"
+                        >is_supplier</attribute>
+                    </field>
                 </data>
             </field>
         </record>
@@ -179,7 +192,7 @@
             </field>
         </record>
 
-        <!-- Partner -->
+        <!-- Partner | for Published Customer in SO -->
         <record id="view_partner_tree_nsm_crm" model="ir.ui.view">
             <field name="name">res.partner.tree</field>
             <field name="model">res.partner</field>
@@ -197,110 +210,114 @@
             </field>
         </record>
 
-        <record id="view_res_partner_filter_crm" model="ir.ui.view">
-            <field name="name">res.partner.select</field>
-            <field name="model">res.partner</field>
-            <field name="arch" type="xml">
-                <search string="Search Partner">
-                   <field name="name"
-                       filter_domain="['|','|',('name','ilike',self),('parent_id','ilike',self),('ref','=',self)]"/>
-                   <field name="zip" filter_domain="['|',('zip','ilike',self),('zip','=',self)]"/>
-                   <field name="email" filter_domain="['|',('email','ilike',self),('email','=',self)]"/>
-                   <field name="city" filter_domain="['|',('city','ilike',self),('city','=',self)]"/>
-                   <filter help="My Customers" name="my_partners" icon="terp-personal+" domain="[('user_id','=',uid)]"/>
-                   <separator/>
-                   <filter string="Persons" name="type_person" domain="[('is_company','=',0),('type','=','contact')]"/>
-                   <filter string="Invoice" name="type_invoice" domain="[('is_company','=',0),('type','=','invoice')]"/>
-                   <filter string="Companies" name="type_company" domain="[('is_company','=',1)]"/>
-                   <separator/>
-                   <filter string="Customers" name="customer" domain="[('is_customer', '=', True),('parent_id', '=', False)]" help="Customer Partners"/>
-                   <separator/>
-                   <filter string="Ad Agencies" name="agency" domain="[('is_ad_agency','=',1),('parent_id', '=', False)]" help="Ad Agency Partners"/>
-                   <separator/>
-                   <field name="category_id" string="Tag" filter_domain="[('category_id','ilike', self)]"/>
-                   <field name="user_id" string="Account Manager"/>
-                   <field name="parent_id" domain="[('is_company','=',1)]" operator="child_of"/>
-                   <group expand="0" string="Group By...">
-                       <filter name="acc_manager" string="Account Manager" icon="terp-personal" domain="[]" context="{'group_by' : 'user_id'}" />
-                       <filter name="company" string="Company" context="{'group_by': 'parent_id'}"/>
-                       <filter name="country" string="Country" context="{'group_by': 'country_id'}"/>
-                   </group>
-               </search>
-            </field>
-        </record>
+        <!--    merged & deprecated | deepa    -->
+<!--        <record id="view_res_partner_filter_crm" model="ir.ui.view">-->
+<!--            <field name="name">res.partner.select</field>-->
+<!--            <field name="model">res.partner</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <search string="Search Partner">-->
+<!--                   <field name="name"-->
+<!--                       filter_domain="['|','|',('name','ilike',self),('parent_id','ilike',self),('ref','=',self)]"/>-->
+<!--                   <field name="zip" filter_domain="['|',('zip','ilike',self),('zip','=',self)]"/>-->
+<!--                   <field name="email" filter_domain="['|',('email','ilike',self),('email','=',self)]"/>-->
+<!--                   <field name="city" filter_domain="['|',('city','ilike',self),('city','=',self)]"/>-->
+<!--                   <filter help="My Customers" name="my_partners" icon="terp-personal+" domain="[('user_id','=',uid)]"/>-->
+<!--                   <separator/>-->
+<!--                   <filter string="Persons" name="type_person" domain="[('is_company','=',0),('type','=','contact')]"/>-->
+<!--                   <filter string="Invoice" name="type_invoice" domain="[('is_company','=',0),('type','=','invoice')]"/>-->
+<!--                   <filter string="Companies" name="type_company" domain="[('is_company','=',1)]"/>-->
+<!--                   <separator/>-->
+<!--                   <filter string="Customers" name="customer" domain="[('is_customer', '=', True),('parent_id', '=', False)]" help="Customer Partners"/>-->
+<!--                   <separator/>-->
+<!--                   <filter string="Ad Agencies" name="agency" domain="[('is_ad_agency','=',1),('parent_id', '=', False)]" help="Ad Agency Partners"/>-->
+<!--                   <separator/>-->
+<!--                   <field name="category_id" string="Tag" filter_domain="[('category_id','ilike', self)]"/>-->
+<!--                   <field name="user_id" string="Account Manager"/>-->
+<!--                   <field name="parent_id" domain="[('is_company','=',1)]" operator="child_of"/>-->
+<!--                   <group expand="0" string="Group By...">-->
+<!--                       <filter name="acc_manager" string="Account Manager" icon="terp-personal" domain="[]" context="{'group_by' : 'user_id'}" />-->
+<!--                       <filter name="company" string="Company" context="{'group_by': 'parent_id'}"/>-->
+<!--                       <filter name="country" string="Country" context="{'group_by': 'country_id'}"/>-->
+<!--                   </group>-->
+<!--               </search>-->
+<!--            </field>-->
+<!--        </record>-->
 
-        <record id="action_partner_form_crm" model="ir.actions.act_window">
-            <field name="name">Customers</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">res.partner</field>
-            <field name="view_mode">form,tree,kanban</field>
-            <field name="context">{"search_default_customer":1, "search_default_type_company":1, "search_default_my_partners":1,}</field>
-            <field name="search_view_id" ref="view_res_partner_filter_crm"/>
-            <field name="help" type="html">
-              <p class="oe_view_nocontent_create">
-                Click to add a contact in your address book.
-              </p><p>
-                OpenERP helps you easily track all activities related to
-                a customer; discussions, history of business opportunities,
-                documents, etc.
-              </p>
-            </field>
-        </record>
-        <record id="base.action_partner_supplier_form" model="ir.actions.act_window">
-            <field name="name">Suppliers</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">res.partner</field>
-            <field name="domain">[]</field>
-            <field name="view_mode">form,tree,kanban</field>
-            <field name="context">{'search_default_supplier': 1,'default_customer': 0,'default_supplier': 1}</field>
-            <field name="search_view_id" ref="base.view_res_partner_filter"/>
-            <field name="filter" eval="True"/>
-            <field name="help" type="html">
-              <p class="oe_view_nocontent_create">
-                Click to add a contact in your address book.
-              </p><p>
-                OpenERP helps you easily track all activities related to
-                a supplier: discussions, history of purchases,
-                documents, etc.
-              </p>
-            </field>
-        </record>
-        <record id="action_partner_tree_view1_nsm_crm" model="ir.actions.act_window.view">
-            <field name="sequence" eval="0"/>
-            <field name="view_mode">tree</field>
-            <field name="view_id" ref="view_partner_tree_nsm_crm"/>
-            <field name="act_window_id" ref="action_partner_form_crm"/>
-        </record>
-        <record id="action_partner_form_view1" model="ir.actions.act_window.view">
-            <field eval="1" name="sequence"/>
-            <field name="view_mode">kanban</field>
-            <field name="view_id" ref="base.res_partner_kanban_view"/>
-            <field name="act_window_id" ref="action_partner_form_crm"/>
-        </record>
-        <record id="action_partner_form_view2" model="ir.actions.act_window.view">
-            <field eval="2" name="sequence"/>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="base.view_partner_form"/>
-            <field name="act_window_id" ref="action_partner_form_crm"/>
-        </record>
+       <!-- deprecated  | deepa     -->
+<!--        <record id="action_partner_form_crm" model="ir.actions.act_window">-->
+<!--            <field name="name">Customers</field>-->
+<!--            <field name="type">ir.actions.act_window</field>-->
+<!--            <field name="res_model">res.partner</field>-->
+<!--            <field name="view_mode">form,tree,kanban</field>-->
+<!--            <field name="context">{"search_default_customer":1, "search_default_type_company":1, "search_default_my_partners":1,}</field>-->
+<!--            <field name="search_view_id" ref="view_res_partner_filter_crm"/>-->
+<!--            <field name="help" type="html">-->
+<!--              <p class="oe_view_nocontent_create">-->
+<!--                Click to add a contact in your address book.-->
+<!--              </p><p>-->
+<!--                OpenERP helps you easily track all activities related to-->
+<!--                a customer; discussions, history of business opportunities,-->
+<!--                documents, etc.-->
+<!--              </p>-->
+<!--            </field>-->
+<!--        </record>-->
+<!--        <record id="base.action_partner_supplier_form" model="ir.actions.act_window">-->
+<!--            <field name="name">Suppliers</field>-->
+<!--            <field name="type">ir.actions.act_window</field>-->
+<!--            <field name="res_model">res.partner</field>-->
+<!--            <field name="domain">[]</field>-->
+<!--            <field name="view_mode">form,tree,kanban</field>-->
+<!--            <field name="context">{'search_default_supplier': 1,'default_customer': 0,'default_supplier': 1}</field>-->
+<!--            <field name="search_view_id" ref="base.view_res_partner_filter"/>-->
+<!--            <field name="filter" eval="True"/>-->
+<!--            <field name="help" type="html">-->
+<!--              <p class="oe_view_nocontent_create">-->
+<!--                Click to add a contact in your address book.-->
+<!--              </p><p>-->
+<!--                OpenERP helps you easily track all activities related to-->
+<!--                a supplier: discussions, history of purchases,-->
+<!--                documents, etc.-->
+<!--              </p>-->
+<!--            </field>-->
+<!--        </record>-->
+<!--        <record id="action_partner_tree_view1_nsm_crm" model="ir.actions.act_window.view">-->
+<!--            <field name="sequence" eval="0"/>-->
+<!--            <field name="view_mode">tree</field>-->
+<!--            <field name="view_id" ref="view_partner_tree_nsm_crm"/>-->
+<!--            <field name="act_window_id" ref="action_partner_form_crm"/>-->
+<!--        </record>-->
+<!--        <record id="action_partner_form_view1" model="ir.actions.act_window.view">-->
+<!--            <field eval="1" name="sequence"/>-->
+<!--            <field name="view_mode">kanban</field>-->
+<!--            <field name="view_id" ref="base.res_partner_kanban_view"/>-->
+<!--            <field name="act_window_id" ref="action_partner_form_crm"/>-->
+<!--        </record>-->
+<!--        <record id="action_partner_form_view2" model="ir.actions.act_window.view">-->
+<!--            <field eval="2" name="sequence"/>-->
+<!--            <field name="view_mode">form</field>-->
+<!--            <field name="view_id" ref="base.view_partner_form"/>-->
+<!--            <field name="act_window_id" ref="action_partner_form_crm"/>-->
+<!--        </record>-->
+
+        <!--   deprecated | deepa     -->
         <!--Action Inherited for Sales Orders smart button in Customers-->
-        <record id="sale.act_res_partner_2_sale_order" model="ir.actions.act_window">
-            <field name="name">Sales Orders</field>
-            <field name="res_model">sale.order</field>
-            <field name="domain">[('state','in',('sale','done')), ('advertising','=',False), ('partner_id','child_of',active_id)]</field>
-            <field name="view_mode">tree,form,graph</field>
-            <field name="context">{'default_partner_id': active_id}</field>
-            <field name="groups_id" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
-            <field name="help" type="html">
-              <p class="oe_view_nocontent_create">
-                Create a Quotation, the first step of a new sale.
-              </p><p>
-                Your next actions should flow efficiently: confirm the Quotation to a Sale Order, then create the Invoice and collect the Payment.
-              </p><p>
-                Note that once a Quotation becomes a Sale Order, it will be moved from the Quotations list to the Sales Order list.
-              </p>
-            </field>
-        </record>
+<!--        <record id="sale.act_res_partner_2_sale_order" model="ir.actions.act_window">-->
+<!--            <field name="name">Sales Orders</field>-->
+<!--            <field name="res_model">sale.order</field>-->
+<!--            <field name="domain">[('state','in',('sale','done')), ('advertising','=',False), ('partner_id','child_of',active_id)]</field>-->
+<!--            <field name="view_mode">tree,form,graph</field>-->
+<!--            <field name="context">{'default_partner_id': active_id}</field>-->
+<!--            <field name="groups_id" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>-->
+<!--            <field name="help" type="html">-->
+<!--              <p class="oe_view_nocontent_create">-->
+<!--                Create a Quotation, the first step of a new sale.-->
+<!--              </p><p>-->
+<!--                Your next actions should flow efficiently: confirm the Quotation to a Sale Order, then create the Invoice and collect the Payment.-->
+<!--              </p><p>-->
+<!--                Note that once a Quotation becomes a Sale Order, it will be moved from the Quotations list to the Sales Order list.-->
+<!--              </p>-->
+<!--            </field>-->
+<!--        </record>-->
 
         <record id="view_res_partner_filter" model="ir.ui.view">
             <field name="name">res.partner.select</field>
@@ -309,10 +326,32 @@
             <field name="arch" type="xml">
                 <field name="name" position="after">
                     <field name="zip" filter_domain="['|',('zip','ilike',self),('zip','=',self)]"/>
-                    <field name="email" filter_domain="['|',('email','ilike',self),('email','=',self)]"/>
                     <field name="city" filter_domain="['|',('city','ilike',self),('city','=',self)]"/>
+                    <field name="user_id" string="Account Manager"/>
                 </field>
+
+                <xpath expr="//filter[@name='inactive']" position="before">
+                   <filter help="My Customers" name="my_partners" icon="terp-personal+" domain="[('user_id','=',uid)]"/>
+                   <separator/>
+                   <filter string="Customers" name="iscustomer" domain="[('is_customer','=', True),('parent_id', '=', False)]"/>
+                   <filter string="Vendors" name="issupplier" domain="[('is_supplier','=', True),('parent_id', '=', False)]"/>
+                   <separator/>
+                   <filter string="Ad Agencies" name="agency" domain="[('is_ad_agency','=',1),('parent_id', '=', False)]" help="Ad Agencies"/>
+                </xpath>
+
+                <xpath expr="//filter[@name='group_company']" position="before">
+                   <filter name="acc_manager" string="Account Manager" icon="terp-personal" domain="[]" context="{'group_by' : 'user_id'}" />
+                </xpath>
             </field>
+        </record>
+
+        <!--
+                Customer (account)
+                extended
+        -->
+        <record id="account.res_partner_action_customer" model="ir.actions.act_window">
+            <field name="name">Customers</field>
+            <field name="context">{'default_is_customer': 1, 'search_default_iscustomer': 1,'res_partner_search_mode': 'customer', 'default_is_company': True, 'default_customer_rank': 1}</field>
         </record>
 
     </data>
