@@ -334,7 +334,7 @@
                                     <field name="from_date" optional="show"/>
                                     <field name="to_date"/>
                                     <field name="deadline"/>
-                                    <field name="ad_class" groups="base.group_no_one"/>
+                                    <field name="ad_class" groups="base.group_no_one" optional="hide"/>
                                     <field name="product_id"
                                         attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
                                         context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
@@ -342,24 +342,24 @@
                                     <!--field name="layout_category_id" groups="sale.group_sale_layout,base.group_no_one" /-->
                                     <!--<field name="layout_category_id" groups="base.group_no_one" />-->
                                     <field name="name" groups="base.group_no_one" optional="hide"/>
-                                    <field name="ad_number" optional="hide"/>
-						            <field name="page_reference" optional="hide"/>
+                                    <field name="ad_number"/>
+                                    <field name="page_reference"/>
                                     <field name="qty_invoiced"
                                             invisible="context.get('hide_sale')" groups="base.group_no_one" optional="hide"/>
                                     <field name="qty_to_invoice" invisible="1"/>
                                     <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting"
-                                           string="Page Category" invisible="0" widget="many2many_tags" optional="hide"/>
-									<field name="price_unit" readonly="1"/>
+                                           string="Page Category" invisible="0" widget="many2many_tags"/>
+                                    <field name="price_unit" readonly="1"/>
                                     <field name="product_uom_qty"/>
                                     <field name="product_uom"
                                             attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
                                             context="{'company_id': parent.company_id}"
                                             groups="uom.group_uom" options='{"no_open": True}'/>
-                                    <field name="actual_unit_price" widget="monetary" optional="hide"/>
+                                    <field name="actual_unit_price" widget="monetary"/>
                                     <field name="comb_list_price" widget="monetary" optional="hide"/>
-                                    <field name="computed_discount" optional="hide"/>
-                                    <field name="subtotal_before_agency_disc" widget="monetary" optional="hide"/>
-                                    <field name="discount_dummy" optional="hide"/>
+                                    <field name="computed_discount" />
+                                    <field name="subtotal_before_agency_disc" widget="monetary"/>
+                                    <field name="discount_dummy" />
                                     <field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
                                             attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
                                             groups="account.group_account_invoice, sale_advertising_order.group_ads_traffic_user"/>
