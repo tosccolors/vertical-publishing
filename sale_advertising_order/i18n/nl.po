@@ -936,6 +936,11 @@ msgid "Convert to opportunity"
 msgstr "Omzetten naar opportunity"
 
 #. module: sale_advertising_order
+#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_res_partner_filter_crm
+msgid "Country"
+msgstr "Land"
+
+#. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_proof_number_delivery_list__proof_country_code
 msgid "Country Code"
 msgstr "Landcode"
