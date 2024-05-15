@@ -9,6 +9,15 @@
                 <field name="partner_id" position="after">
                     <field name="customer_contact"/>
                 </field>
+                <xpath expr="//page[@name='other_info']/group[@id='other_tab_group']/group[@name='sale_info_group']/label[@for='ref']"
+                        position="replace">
+                </xpath>
+                <xpath expr="//page[@name='other_info']/group[@id='other_tab_group']/group[@name='sale_info_group']/field[@name='ref']"
+                        position="replace">
+                </xpath>
+                <xpath expr="//label[@for='journal_id']" position="before">
+                    <field name="ref"/>
+                </xpath>
             </field>
         </record>
     </data>
