@@ -21,7 +21,7 @@
 ##############################################################################
 {
     'name': 'Advertising invoice customisation',
-    'version': '1.0',
+    'version': '14.0.0.0',
     'category': 'Generic Modules',
     'description': """
 This module improves the integration between sale advertising orders and advertising invoices generated from sale advertising orders.

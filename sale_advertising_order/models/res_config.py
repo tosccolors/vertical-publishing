@@ -173,6 +173,15 @@ class Partner(models.Model):
         if zip:
             self.zip = zip.replace(" ", "")
 
+    @api.depends('name', 'ref')
+    def name_get(self):
+        result = []
+        for record in self:
+            name = record.name
+            if record.ref:
+                name = '['+record.ref+']' +name
+            result.append((record.id, name))
+        return result
 
 # class Company(models.Model):
 #     _inherit = 'res.company'
