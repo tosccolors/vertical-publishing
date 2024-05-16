@@ -291,6 +291,6 @@ msgid "Invoiceable order lines with a cut off date before last sunday"
 msgstr "Order Regels factureerbaar tot en met de meest recente zondag"
 
 #. module: publishing_invoicing
-#: model:ir.ui.view,arch_db:publishing_invoicing.view_advertising_sales_order_line_filter_publishing_invoicing
-msgid "Order Lines with cut off date before last sunday"
-msgstr "Order Regels factureerbaar tot en met de meest recente zondag"
+#: model_terms:ir.ui.view,arch_db:publishing_invoicing.view_advertising_sales_order_line_filter_publishing_invoicing
+msgid "Order Lines with cut off date until last Sunday"
+msgstr "Weekfacturatie"
