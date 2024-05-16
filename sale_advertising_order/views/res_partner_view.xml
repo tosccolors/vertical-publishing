@@ -327,6 +327,7 @@
                 <field name="name" position="after">
                     <field name="zip" filter_domain="['|',('zip','ilike',self),('zip','=',self)]"/>
                     <field name="city" filter_domain="['|',('city','ilike',self),('city','=',self)]"/>
+                    <field name="ref" filter_domain="['|',('ref','ilike',self),('ref','=',self)]"/>
                     <field name="user_id" string="Account Manager"/>
                 </field>
 
