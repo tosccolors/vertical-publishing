@@ -919,6 +919,7 @@ class SaleOrderLine(models.Model):
         elif len(self.title_ids) > 1: # Multi Titles:
             self.title = False
 
+        # Multi Titles & Multi Editions:
         if self.title_ids and self.adv_issue_ids:
             titles = self.title_ids.ids
             issue_ids = self.adv_issue_ids.ids
@@ -1247,6 +1248,8 @@ class SaleOrderLine(models.Model):
         ais = self.adv_issue_ids
         ds = self.dates # FIXME: deprecated
         iis = self.issue_product_ids
+
+        # Multi Titles & Multi Editions:
         if self.title_ids and ais:
             titles = self.title_ids.ids
             issue_ids = ais.ids
@@ -1255,6 +1258,7 @@ class SaleOrderLine(models.Model):
             for title in titles:
                 if not (title in issue_parent_ids):
                     raise UserError(_('Not for every selected Title an Issue is selected.'))
+
         if ais:
             if len(ais) > 1:
                 ml_qty = len(ais)

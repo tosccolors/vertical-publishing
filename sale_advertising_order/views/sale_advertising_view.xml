@@ -141,6 +141,10 @@
                                                    context="{'active_test': False, 'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
                                                              'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
                                             </field>
+                                            <field name="from_date"
+                                                   attrs="{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')]}"/>
+                                            <field name="to_date"
+                                                   attrs="{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')]}"/>
                                             <field name="deadline_offset" invisible="1" />
                                             <field name="deadline_passed" invisible="1" />
                                             <field name="deadline" invisible="0" />
@@ -155,8 +159,7 @@
                                                              'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
                                             </field>
 
-                                            <field name="issue_date" readonly="1"
-                                                   attrs="{'invisible': [('adv_issue','=', False)]}"/>
+                                            <field name="issue_date" invisible="1"/>
                                             <field name="domain4prod_ids" invisible="1"/>
                                             <field name="product_template_id" domain="[('id','in', domain4prod_ids)]"
                                                    context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
@@ -296,12 +299,6 @@
                                             <field name="ad_number"/>
                                             <field name="page_reference"/>
                                             <field name="url_to_material" />
-                                        </group>
-                                        <group attrs="{'invisible':[('date_type','!=','validity')]}">
-                                            <field name="from_date"
-                                                   attrs="{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')]}"/>
-                                            <field name="to_date"
-                                                   attrs="{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')]}"/>
                                         </group>
                                     </group>
                                     <group>
@@ -521,6 +518,18 @@
 <!--                </xpath>-->
 <!--            </field>-->
 <!--        </record>-->
+
+        <record id="view_order_form_advertising_traffic" model="ir.ui.view">
+            <field name="name">sale.order.form.advertising.traffic</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_traffic_user'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='order_line']/field[@name='order_line']" position="attributes">
+                     <attribute name="attrs" >{'readonly': [('state', 'in', ['done','cancel'])]}</attribute>
+                </xpath>
+            </field>
+        </record>
 
         <record id="view_order_advertising_tree" model="ir.ui.view">
             <field name="name">sale.order.advertising.tree</field>
