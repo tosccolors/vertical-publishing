@@ -591,6 +591,12 @@ class SaleOrderLine(models.Model):
                         line.deadline_passed = datetime.now() > (dt_deadline - dt_offset) and \
                                                datetime.now() < fields.Datetime.from_string(line.adv_issue.issue_date)
 
+    @api.depends('adv_issue_ids')
+    def _compute_Issuedt(self):
+        """ Compute the Issue date """
+        for line in self.filtered('advertising'):
+            # First advIssue's date
+            line.issue_date = line.adv_issue_ids and line.adv_issue_ids[0].issue_date or False
 
     @api.depends('ad_class')
     def _compute_tags_domain(self):
@@ -695,12 +701,12 @@ class SaleOrderLine(models.Model):
                         ('issue_date', 'Issue Date'),
                    ], relation='product.category', string='Date Type', readonly=True)
     adv_issue = fields.Many2one('sale.advertising.issue','Advertising Issue')
-    issue_date = fields.Date(related='adv_issue.issue_date', string='Issue Date', store=True)
+    issue_date = fields.Date(compute='_compute_Issuedt', string='Issue Date', store=True)
     medium = fields.Many2one('product.category', string='Medium')
     ad_class = fields.Many2one('product.category', 'Advertising Class', domain=_get_adClass_domain)
-    deadline_passed = fields.Boolean(compute='_compute_deadline', string='Deadline Passed')
+    deadline_passed = fields.Boolean(compute='_compute_deadline', string='Deadline Passed', store=False)
     deadline = fields.Datetime(compute='_compute_deadline', string='Deadline', store=False)
-    deadline_offset = fields.Datetime(compute='_compute_deadline')
+    deadline_offset = fields.Datetime(compute='_compute_deadline', store=False)
     product_template_id = fields.Many2one('product.template', string='Product', domain=[('sale_ok', '=', True)],
                                  change_default=True, ondelete='restrict')
     page_reference = fields.Char('Page Preference', size=32)
