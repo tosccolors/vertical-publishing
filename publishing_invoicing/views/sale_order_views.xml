@@ -68,7 +68,7 @@
             <field name="arch" type="xml">
                 <xpath expr="/search/filter[1]" position="after">
                     <separator/>
-                    <filter name="cut_off_date_order_lines" string="Order Lines with cut off date before last sunday" domain="[('qty_to_invoice','&gt;', 0), ('cutoff_date','&lt;=', (context_today() + relativedelta(weeks=-1, weekday=6)).strftime('%Y-%m-%d'))]" help="Invoiceable order lines with a cut off date before last sunday" />
+                    <filter name="cut_off_date_order_lines" string="Order Lines with cut off date until last Sunday" domain="[('qty_to_invoice','&gt;', 0), ('cutoff_date','&lt;=', (context_today() + relativedelta(weeks=-1, weekday=6)).strftime('%Y-%m-%d'))]" help="Invoiceable order lines with a cut off date until sunday" />
                     <!--<filter name="cut_off_date_order_lines" string="Order Lines with cut off date before today" domain="['|',('qty_to_invoice','&lt;&gt;', 0), ('cutoff_date','&lt;=', datetime.datetime.now())]" help="Invoiceable order lines with a cut off date on or before last sunday" />
                     -->
                 </xpath>

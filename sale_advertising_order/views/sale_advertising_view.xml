@@ -735,7 +735,7 @@
 
                     <separator/>
                     <filter string="Submitted" name="submitted" domain="[('state','=','submitted')]"/>
-                    <filter string="Sales Mgr Approved" name="approved1" domain="[('state','in',('approved1',))]"/>
+                    <filter string="Sales Mgr Approved" name="approved1" domain="[('state', '=', 'approved1')]"/>
 
                     <separator/>
                     <filter string="Overdue Quotations" name="overdue_quotes"
