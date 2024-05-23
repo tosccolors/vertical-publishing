@@ -959,7 +959,7 @@ class SaleOrderLine(models.Model):
             self.product_template_id = False
             self.product_id = False
         else:
-            self.adv_issue = False
+            # self.adv_issue = False
             self.adv_issue_ids = [(6, 0, [])]
             self.issue_product_ids = [(6, 0, [])]
             self.product_id = False
@@ -1036,6 +1036,7 @@ class SaleOrderLine(models.Model):
             self.comb_list_price = price
             self.subtotal_before_agency_disc = price
 
+        # Issue Products
         elif self.product_template_id and self.issue_product_ids and len(self.issue_product_ids) > 1:
             _logger.info("Did i come here? - Single Issue Product ")
             self.product_uom = self.product_template_id.uom_id
@@ -1243,14 +1244,14 @@ class SaleOrderLine(models.Model):
     #         self.subtotal_before_agency_disc = (self.comb_list_price + csa) * (1 - self.computed_discount / 100)
 
     # @api.onchange('adv_issue', 'adv_issue_ids','dates','issue_product_ids')
-    @api.onchange('adv_issue', 'adv_issue_ids','issue_product_ids')
+    @api.onchange('adv_issue_ids','issue_product_ids')
     def onchange_getQty(self):
         _logger.info("\n Came inside >>> onchange_getQty [adv_issue | adv_issue_ids | dates | issue_product_ids]")
         result = {}
         if not self.advertising:
             return {'value': result}
         ml_qty = 0
-        ai = self.adv_issue
+        ai = False #self.adv_issue
         ais = self.adv_issue_ids
         ds = self.dates # FIXME: deprecated
         iis = self.issue_product_ids
@@ -1264,6 +1265,16 @@ class SaleOrderLine(models.Model):
             for title in titles:
                 if not (title in issue_parent_ids):
                     raise UserError(_('Not for every selected Title an Issue is selected.'))
+
+        # consider 1st Issue (as Single Edition) for computation
+        if len(ais) == 1:
+            ai = self.adv_issue_ids.ids[0]
+
+        # Force assign 1st Issue, always
+        if ais:
+            self.adv_issue = self.adv_issue_ids.ids[0]
+        else:
+            self.adv_issue = False
 
         if ais:
             if len(ais) > 1:
@@ -1294,8 +1305,6 @@ class SaleOrderLine(models.Model):
         # Reset
         if len(self.adv_issue_ids) > 1 and not self.issue_product_ids:
             self.product_template_id = False
-        # self.adv_issue = ai # FIXME: deep
-        # self.adv_issue_ids = ais # FIXME: deep
 
     # #added by sushma | deprecated -- deepa
     # @api.onchange('dateperiods')
