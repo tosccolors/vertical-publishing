@@ -203,7 +203,6 @@
                                                                     ('deadline','=', False),
                                                                     ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),]"
                                                    invisible="1"/>
-<!--                                            <field name="deadline"/>-->
 
                                         </group>
                                         <group>
@@ -327,9 +326,9 @@
                                     <field name="product_uom_category_id" invisible="1"/>
                                     <field name="id" optional="hide"/>
                                     <field name="adv_issue_ids" widget="many2many_tags"/>
-                                    <field name="issue_date" optional="show"/>
+                                    <field name="issue_date" />
                                     <field name="from_date" optional="show"/>
-                                    <field name="to_date"/>
+                                    <field name="to_date" optional="show"/>
                                     <field name="deadline"/>
                                     <field name="ad_class" groups="base.group_no_one" optional="hide"/>
                                     <field name="product_id"
@@ -339,24 +338,24 @@
                                     <!--field name="layout_category_id" groups="sale.group_sale_layout,base.group_no_one" /-->
                                     <!--<field name="layout_category_id" groups="base.group_no_one" />-->
                                     <field name="name" groups="base.group_no_one" optional="hide"/>
-                                    <field name="ad_number"/>
-                                    <field name="page_reference"/>
+                                    <field name="ad_number" optional="show"/>
+                                    <field name="page_reference" optional="show"/>
                                     <field name="qty_invoiced"
                                             invisible="context.get('hide_sale')" groups="base.group_no_one" optional="hide"/>
                                     <field name="qty_to_invoice" invisible="1"/>
                                     <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting"
-                                           string="Page Category" invisible="0" widget="many2many_tags"/>
-                                    <field name="price_unit" readonly="1"/>
+                                           string="Page Category" widget="many2many_tags" optional="hide"/>
+                                    <field name="price_unit" readonly="1" optional="hide"/>
+                                    <field name="actual_unit_price" widget="monetary"/>
                                     <field name="product_uom_qty"/>
                                     <field name="product_uom"
                                             attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
                                             context="{'company_id': parent.company_id}"
                                             groups="uom.group_uom" options='{"no_open": True}'/>
-                                    <field name="actual_unit_price" widget="monetary"/>
                                     <field name="comb_list_price" widget="monetary" optional="hide"/>
                                     <field name="computed_discount" />
-                                    <field name="subtotal_before_agency_disc" widget="monetary"/>
-                                    <field name="discount_dummy" />
+                                    <field name="subtotal_before_agency_disc" widget="monetary" optional="hide"/>
+                                    <field name="discount_dummy" optional="hide"/>
                                     <field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
                                             attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
                                             groups="account.group_account_invoice, sale_advertising_order.group_ads_traffic_user"/>
@@ -366,7 +365,7 @@
                                     <field name="qty_delivered_manual" invisible="1"/>
                                     <!--<field name="procurement_ids" invisible="1"/>-->
                                     <field name="state" invisible="1"/>
-                                    <field name="invoice_status" invisible="1"/>
+                                    <field name="invoice_status" optional="hide"/>
                                     <field name="customer_lead" invisible="1"/>
                                     <field name="currency_id" invisible="1"/>
                                     <button name="cancel_line" icon="fa-cog" string="Cancel"  type="object"
@@ -1410,7 +1409,7 @@
                     <field name="issue_date" string="Issue Date"/>
                     <field name="issue_week_number" string="Week Number" optional="hide"/>
                     <field name="week_number_even" optional="hide"/>
-                    <field name="deadline" string="Deadline" optional="hide"/>
+                    <field name="deadline" string="Deadline"/>
                     <field name="medium" string="Medium" />
                     <field name="default_note" string="Default Note"/>
                     <field name="state" string="Status" decoration-success="state == 'open'" decoration-muted="state == 'cancel'" widget="badge"/>
