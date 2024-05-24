@@ -131,6 +131,9 @@ class Partner(models.Model):
                 elif record.email and domain == 'email':
                     name = '['+record.email+']'+str_name
                     res.append((record.id, name))
+                elif record.ref and domain == 'ref':
+                    name = '[' + record.ref + ']' + str_name
+                    res.append((record.id, name))
                 else:
                     res.append((record.id, str_name))
             else:
@@ -161,6 +164,9 @@ class Partner(models.Model):
                     partner_ids = self.search([('email', operator, operand1), ('name', operator, operand2)] + args,
                                       limit=limit)
                     ctx.update({'searchFor': 'email'}) if partner_ids else ctx
+            if not partner_ids:
+                partner_ids = self.search([('ref', '=like', name + "%")] + args, limit=limit)
+                ctx.update({'searchFor': 'ref'}) if partner_ids else ctx
             if partner_ids:
                 return self.with_context(ctx).name_get_custom(list(set(partner_ids)))
             else:
@@ -172,16 +178,6 @@ class Partner(models.Model):
         zip = self.zip
         if zip:
             self.zip = zip.replace(" ", "")
-
-    @api.depends('name', 'ref')
-    def name_get(self):
-        result = []
-        for record in self:
-            name = record.name
-            if record.ref:
-                name = '['+record.ref+']' +name
-            result.append((record.id, name))
-        return result
 
 # class Company(models.Model):
 #     _inherit = 'res.company'
