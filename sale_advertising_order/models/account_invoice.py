@@ -49,23 +49,20 @@ class InvoiceLine(models.Model):
     """ Inherits invoice.line and adds advertising order line id and publishing date to invoice """
     _inherit = 'account.move.line'
 
-
-    
     @api.depends('price_unit', 'quantity')
     def _compute_price(self):
         """
         Compute subtotal_before_agency_disc.
         """
         for line in self:
+            sbad = 0.0
             if line.ad:
                 price_unit = line.price_unit or 0.0
                 qty = line.quantity or 0.0
                 if price_unit and qty:
-                    line.subtotal_before_agency_disc = price_unit * qty
-            else:
-                line.subtotal_before_agency_disc = 0.0
-        # super(InvoiceLine, self)._compute_price()
+                    sbad = price_unit * qty
 
+            line.subtotal_before_agency_disc = sbad
 
     date_publish = fields.Date('Publishing Date')
     so_line_id = fields.Many2one('sale.order.line', 'link between Sale Order Line and Invoice Line')
