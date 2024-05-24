@@ -25,12 +25,12 @@
                     <attribute name="invisible" >1</attribute>
                 </xpath>-->
                 <xpath expr="//sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
-                    <field name="opportunity_subject" />
-                    <field name="ad_number" />
+                    <field name="opportunity_subject" optional="hide"/>
+                    <field name="ad_number" optional="hide"/>
                 </xpath>
                 <xpath expr="//sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="after">
                     <field name="computed_discount" invisible="1"/>
-                    <field name="subtotal_before_agency_disc" />
+                    <field name="subtotal_before_agency_disc" optional="hide"/>
                 </xpath>
 
                 <xpath expr="//notebook/page[@name='other_info']" position="before">
@@ -55,12 +55,12 @@
                            context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}"/>
                 </field>
                 <field name="name" position="after">
-                    <field name="opportunity_subject" />
-                    <field name="ad_number" />
+                    <field name="opportunity_subject" optional="hide"/>
+                    <field name="ad_number" optional="hide"/>
                 </field>
                 <field name="credit" position="after">
                     <field name="computed_discount" invisible="1"/>
-                    <field name="subtotal_before_agency_disc" />
+                    <field name="subtotal_before_agency_disc" optional="hide"/>
                 </field>
             </field>
         </record>
@@ -73,10 +73,10 @@
                 <field name="company_id" position="after">
                     <field name="sale_order_id"
                            context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}"/>
-                    <field name="opportunity_subject" />
-                    <field name="ad_number" />
+                    <field name="opportunity_subject" optional="hide"/>
+                    <field name="ad_number" optional="hide"/>
                     <field name="computed_discount" readonly="1"/>
-                    <field name="subtotal_before_agency_disc" />
+                    <field name="subtotal_before_agency_disc" optional="hide"/>
                 </field>
             </field>
         </record>
