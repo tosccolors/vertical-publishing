@@ -306,7 +306,7 @@
                                             <field name="layout_remark" colspan="2" nolabel="1"/>
                                         </group>
                                         <group>
-                                            <separator string="Mapping Remarks" colspan="2"/>
+                                            <separator string="Description" colspan="2"/>
                                             <field name="name" colspan="2" nolabel="1"/>
                                         </group>
                                         <group>
@@ -1103,7 +1103,7 @@
                                 <field name="layout_remark" colspan="2" nolabel="1"/>
                             </group>
                             <group>
-                                <separator string="Mapping Remarks" colspan="2"/>
+                                <separator string="Description" colspan="2"/>
                                 <field name="name" colspan="2" nolabel="1"/>
                             </group>
                             <group>

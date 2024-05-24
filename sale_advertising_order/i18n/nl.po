@@ -1786,7 +1786,7 @@ msgstr ""
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_adv_order_line_form
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
-msgid "Mapping Remarks"
+msgid "Description"
 msgstr "Opmerking indeling"
 
 #. module: sale_advertising_order
