@@ -168,7 +168,7 @@
                     </div>
                     <div class="col-auto col-3 mw-100 mb-2" t-if="o.ref" name="reference">
                         <strong>Your Reference:</strong>
-                        <p class="m-0" t-field="o.name"/>
+                        <p class="m-0" t-field="o.ref"/>
                     </div>
                     <div class="col-auto col-3 mw-100 mb-2" t-if="o.partner_id.ref" name="customer_code">
                         <strong>Customer Code:</strong>
