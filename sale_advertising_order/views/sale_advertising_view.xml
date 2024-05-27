@@ -116,6 +116,7 @@
                             <field name="currency_id" invisible="1"/>
                             <field name="payment_term_id" options="{'no_create': True}"/>
                             <field name="payment_mode_id" domain="[('payment_type', '=', 'inbound')]" widget="selection"/>
+                            <field name="operating_unit_id" widget="selection" groups="operating_unit.group_multi_operating_unit"/>
                             <field name="display_discount_to_customer"/>
                         </group>
                     </group>
@@ -417,7 +418,6 @@
                             <group>
                                 <group string="Sales Information" name="sales_person0">
                                     <field name="user_id"/>
-                                    <field name="operating_unit_id" widget="selection" groups="operating_unit.group_multi_operating_unit"/>
                                     <field name="team_id" options="{'no_create': True}"/>
 									<field name="tag_ids" widget="many2many_tags"/>
                                     <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
