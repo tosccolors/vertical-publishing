@@ -29,7 +29,8 @@
             <xpath expr="//field[@name='agency_discount']" position="after">
                 <field name ="customer_rank" invisible="1"/>
                 <field name="invoicing_property_id" options="{'no_create': True}"
-                       attrs="{'invisible': [('customer_rank', '>', 0)]}"/>
+                       attrs="{'invisible': [('is_customer','=', False)]}"
+                       groups="sale_advertising_order.group_ads_traffic_user"/>
             </xpath>
         </field>
     </record>
