@@ -195,5 +195,17 @@
             </field>
         </record>
 
+        <record id="product_product_tree_view" model="ir.ui.view">
+			<field name="name">product.product.tree.inherit</field>
+			<field name="model">product.product</field>
+			<field name="inherit_id" ref="product.product_product_tree_view" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='product_template_attribute_value_ids']" position="after">
+					<field name="height" />
+					<field name="width" />
+				</xpath>
+			</field>
+		</record>
+
 	</data>
 </odoo>
