@@ -325,7 +325,10 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="product_uom_category_id" invisible="1"/>
                                     <field name="id" optional="hide"/>
-                                    <field name="adv_issue_ids" widget="many2many_tags"/>
+                                    <field name="medium" invisible="1" />
+                                    <field name="deadline_offset" invisible="1" />
+                                    <field name="title_ids" invisible="1" domain="[('parent_id','=', False), ('medium','child_of', medium)]" />
+                                    <field name="adv_issue_ids" widget="many2many_tags" domain="[('parent_id','in', title_ids), '|','|',('deadline','&gt;=', deadline_offset),('deadline','=', False),('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"/>
                                     <field name="issue_date" />
                                     <field name="from_date" optional="show"/>
                                     <field name="to_date" optional="show"/>
