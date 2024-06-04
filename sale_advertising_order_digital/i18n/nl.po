@@ -1,0 +1,99 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* sale_advertising_order_digital
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-30 12:43+0000\n"
+"PO-Revision-Date: 2024-05-30 12:43+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sale_advertising_order_digital
+#: model:ir.model.fields,field_description:sale_advertising_order_digital.field_sale_order_line__ad_class_digital
+msgid "Advertising Class Digital"
+msgstr ""
+
+#. module: sale_advertising_order_digital
+#: model:ir.model.fields,field_description:sale_advertising_order_digital.field_sale_order_line__adv_class_issue_ids
+msgid "Advertising Class Issue Link"
+msgstr ""
+
+#. module: sale_advertising_order_digital
+#: model:ir.actions.act_window,name:sale_advertising_order_digital.action_advertising_class_issue_matrix
+#: model:ir.ui.menu,name:sale_advertising_order_digital.menu_advertising_class_issue_matrix
+msgid "Advertising Class Issue matrix"
+msgstr ""
+
+#. module: sale_advertising_order_digital
+#: model_terms:ir.ui.view,arch_db:sale_advertising_order_digital.advertising_class_issue_matrix_form
+msgid "Advertising Class issue Matrix"
+msgstr ""
+
+#. module: sale_advertising_order_digital
+#: model_terms:ir.ui.view,arch_db:sale_advertising_order_digital.advertising_class_issue_matrix_tree
+msgid "Advertising Product Matrix"
+msgstr ""
+
+#. module: sale_advertising_order_digital
+#: model:ir.model.fields,field_description:sale_advertising_order_digital.field_product_category__digital
+#: model:ir.model.fields,field_description:sale_advertising_order_digital.field_sale_advertising_issue__digital
+msgid "Digital"
+msgstr ""
+
+#. module: sale_advertising_order_digital
+#: model:ir.model.fields,field_description:sale_advertising_order_digital.field_product_category__display_name
+#: model:ir.model.fields,field_description:sale_advertising_order_digital.field_sale_advertising_issue__display_name
+#: model:ir.model.fields,field_description:sale_advertising_order_digital.field_sale_order_line__display_name
+msgid "Display Name"
+msgstr "Schermnaam"
+
+#. module: sale_advertising_order_digital
+#: model:ir.model.fields,field_description:sale_advertising_order_digital.field_product_category__id
+#: model:ir.model.fields,field_description:sale_advertising_order_digital.field_sale_advertising_issue__id
+#: model:ir.model.fields,field_description:sale_advertising_order_digital.field_sale_order_line__id
+msgid "ID"
+msgstr ""
+
+#. module: sale_advertising_order_digital
+#: model:ir.model.fields,field_description:sale_advertising_order_digital.field_sale_order_line__issue_date_filter
+msgid "Issue Date >= Today"
+msgstr "Editiedatum >= vandaag"
+
+#. module: sale_advertising_order_digital
+#: model:ir.model.fields,field_description:sale_advertising_order_digital.field_product_category____last_update
+#: model:ir.model.fields,field_description:sale_advertising_order_digital.field_sale_advertising_issue____last_update
+#: model:ir.model.fields,field_description:sale_advertising_order_digital.field_sale_order_line____last_update
+msgid "Last Modified on"
+msgstr "Laatst gewijzigd op"
+
+#. module: sale_advertising_order_digital
+#: model:ir.model,name:sale_advertising_order_digital.model_product_category
+msgid "Product Category"
+msgstr "Productcategorie"
+
+#. module: sale_advertising_order_digital
+#: model:ir.model,name:sale_advertising_order_digital.model_sale_advertising_issue
+msgid "Sale Advertising Issue"
+msgstr "Advertentie editie"
+
+#. module: sale_advertising_order_digital
+#: model:ir.model,name:sale_advertising_order_digital.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Verkooporderregel"
+
+#. module: sale_advertising_order_digital
+#: model:ir.model.fields,field_description:sale_advertising_order_digital.field_sale_order_line__show_issue_date_filter
+msgid "Show Issue Date Filter"
+msgstr ""
+
+#. module: sale_advertising_order_digital
+#: model:ir.model,name:sale_advertising_order_digital.model_advertising_class_issue_matrix
+msgid "advertising.class.issue.matrix"
+msgstr ""
