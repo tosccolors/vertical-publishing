@@ -475,6 +475,20 @@ class Lead(models.Model):
 #        return adv_opportunity_view
 
 
+
+    #Overridden:
+    def action_new_quotation(self):
+        original = super(Lead, self).action_new_quotation()
+        ctx = original.get('context', {})
+
+        action = self.env["ir.actions.actions"]._for_xml_id("sale_advertising_order.action_lead2quoteSOT")
+        # raise UserWarning("ctx ac %s"%(action))
+        # ctx2 = action.get('context', {})
+        # ctx2.update(ctx)
+        action['context'] = ctx
+        return action
+
+
 class Team(models.Model):
     _inherit = ['crm.team']
 
