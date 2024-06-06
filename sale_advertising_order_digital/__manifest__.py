@@ -21,14 +21,14 @@
     # Check https://github.com/odoo/odoo/blob/master/odoo/addons/base/module/module_data.xml
     # for the full list
     'category': 'Sale',
-    'version': '14.0.2.2',
+    'version': '14.0.2.3',
 
     # any module necessary for this one to work correctly
     'depends': ['sale_advertising_order'],
 
     # always loaded
     'data': [
-        'security/ir.model.access.csv',
+        # 'security/ir.model.access.csv',
         'views/product_view.xml',
         'views/sale_advertising_view.xml',
         # 'views/advertising_class_issue_matrix_view.xml',
