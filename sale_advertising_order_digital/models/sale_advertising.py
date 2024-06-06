@@ -63,7 +63,7 @@ class SaleOrderLine(models.Model):
             # class_issue_ids = adv_class_issue_ids and adv_class_issue_ids.ids or []
             titles = ol.title + ol.title_ids
             domain =[('parent_id', 'in', titles.ids)]
-            if self.issue_date_filter:
+            if ol.issue_date_filter:
                 domain += [('issue_date','>=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]
             # if class_issue_ids:
             #     domain += [('adv_class_issue_id', 'in', adv_class_issue_ids.ids)]
