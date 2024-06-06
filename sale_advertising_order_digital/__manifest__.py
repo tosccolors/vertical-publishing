@@ -21,7 +21,7 @@
     # Check https://github.com/odoo/odoo/blob/master/odoo/addons/base/module/module_data.xml
     # for the full list
     'category': 'Sale',
-    'version': '14.0.2.3',
+    'version': '14.0.2.4',
 
     # any module necessary for this one to work correctly
     'depends': ['sale_advertising_order'],
