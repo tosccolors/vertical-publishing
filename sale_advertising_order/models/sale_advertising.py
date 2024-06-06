@@ -26,6 +26,9 @@ from odoo.exceptions import UserError, ValidationError
 from datetime import datetime, timedelta
 from odoo.tools.translate import unquote
 
+from functools import partial
+from odoo.tools.misc import formatLang
+
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -60,6 +63,7 @@ class SaleOrder(models.Model):
                         amount_tax += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
                 else:
                     amount_tax += line.price_tax
+
             if cdiscount:
                 max_cdiscount = max(cdiscount)
             # if order.company_id.verify_order_setting != -1.00 and order.company_id.verify_order_setting < amount_untaxed \
@@ -156,6 +160,53 @@ class SaleOrder(models.Model):
                                  default=lambda self: self.env[
                                      'res.company']._company_default_get(
                                      'sale.order'), index=True)
+
+    # Overridden: Sale
+    def _amount_by_group(self):
+        """ Fixme: Overridden from Sale,
+             if app: sale_global_discount is in use, logic needs to extend to that.
+        """
+
+        # Advertising Orders Only:
+        for order in self.filtered('advertising'):
+            currency = order.currency_id or order.company_id.currency_id
+            fmt = partial(formatLang, self.with_context(lang=order.partner_id.lang).env, currency_obj=currency)
+            res = {}
+            for line in order.order_line:
+                discount = 0.0
+                # At this point, it will always be Single Edition:
+                nn = True if order.nett_nett or line.nett_nett else False
+                if order.partner_id.is_ad_agency and not nn:
+                    discount = order.partner_id.agency_discount
+
+                price_reduce = line.actual_unit_price * (1.0 - discount / 100.0)
+
+                taxes = line.tax_id.compute_all(price_reduce, quantity=line.product_uom_qty, product=line.product_id, partner=order.partner_shipping_id)['taxes']
+                for tax in line.tax_id:
+                    group = tax.tax_group_id
+                    res.setdefault(group, {'amount': 0.0, 'base': 0.0})
+                    for t in taxes:
+                        if t['id'] == tax.id or t['id'] in tax.children_tax_ids.ids:
+                            res[group]['amount'] += t['amount']
+                            res[group]['base'] += t['base']
+            res = sorted(res.items(), key=lambda l: l[0].sequence)
+
+            # round amount and prevent -0.00
+            for group_data in res:
+                group_data[1]['amount'] = currency.round(group_data[1]['amount']) + 0.0
+                group_data[1]['base'] = currency.round(group_data[1]['base']) + 0.0
+
+            order.amount_by_group = [(
+                l[0].name, l[1]['amount'], l[1]['base'],
+                fmt(l[1]['amount']), fmt(l[1]['base']),
+                len(res),
+            ) for l in res]
+
+        # Non Ads Sales; Force return Super
+        otherSO = self.filtered(lambda rec: not rec.advertising)
+        if otherSO:
+            super(SaleOrder, otherSO)._amount_by_group()
+
 
     @api.model
     def default_get(self, fields):
@@ -478,33 +529,43 @@ class SaleOrderLine(models.Model):
         Compute the amounts of the SO line.
         """
         super(SaleOrderLine, self.filtered(lambda record: record.advertising != True))._compute_amount()
+        precision = self.env['decimal.precision'].precision_get('Product Price') or 4
+
         for line in self.filtered('advertising'):
             nn = True if line.order_id.nett_nett or line.nett_nett else False
             comp_discount = line.computed_discount or 0.0
             price_unit = line.price_unit or 0.0
             unit_price = line.actual_unit_price or 0.0
             qty = line.product_uom_qty or 0.0
-            csa = line.color_surcharge_amount or 0.0
+            csa = 0.0 #line.color_surcharge_amount or 0.0 -- deprecated
             subtotal_bad = line.subtotal_before_agency_disc or 0.0
             if line.order_id.partner_id.is_ad_agency and not nn:
                 discount = line.order_id.partner_id.agency_discount
             else:
                 discount = 0.0
 
+            # Single Edition:
             if not line.multi_line:
                 if price_unit == 0.0:
-                    unit_price = csa
+                    # unit_price = csa
+                    unit_price = 0.0
                     comp_discount = 0.0
                 elif price_unit > 0.0 and qty > 0.0 :
-                    comp_discount = round((1.0 - float(subtotal_bad) / (float(price_unit) * float(qty) + float(csa) *
-                                                                        float(qty))) * 100.0, 5)
-                    unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), 5)
-                    decimals=self.env['decimal.precision'].sudo().search([('name','=','Product Price')]).digits or 4
-                    unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), decimals)
+                    # comp_discount = round((1.0 - float(subtotal_bad) / (float(price_unit) * float(qty) + float(csa) *
+                    #                                                     float(qty))) * 100.0, 5)
+                    # unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), 5)
+                    # decimals=self.env['decimal.precision'].sudo().search([('name','=','Product Price')]).digits or 4
+                    # unit_price = round((float(price_unit) + float(csa)) * (1 - float(comp_discount) / 100), decimals)
+
+                    comp_discount = round((1.0 - float(subtotal_bad) / (float(price_unit) * float(qty))) * 100.0, 5)
+                    unit_price = round(float(price_unit) * (1 - float(comp_discount) / 100), precision)
+
                 elif qty == 0.0:
                     unit_price = 0.0
                     comp_discount = 0.0
+
                 price = round(unit_price * (1 - (discount or 0.0) / 100.0), 5)
+
                 taxes = line.tax_id.compute_all(
                     price,
                     line.order_id.currency_id,
@@ -512,6 +573,7 @@ class SaleOrderLine(models.Model):
                     product=line.product_id,
                     partner=line.order_id.partner_id
                 )
+
                 line.update({
                     'actual_unit_price': unit_price,
                     'price_tax': taxes['total_included'] - taxes['total_excluded'],
@@ -1150,7 +1212,7 @@ class SaleOrderLine(models.Model):
         result = {}
         if not self.advertising:
             return {'value': result}
-        csa = self.color_surcharge_amount or 0.0
+        # csa = self.color_surcharge_amount or 0.0  -- deprecated
         comp_discount = self.computed_discount
         if comp_discount < 0.0:
             comp_discount = self.computed_discount = 0.000
@@ -1161,12 +1223,19 @@ class SaleOrderLine(models.Model):
 
         if self.multi_line:
             clp = self.comb_list_price or 0.0
-            fraction = (float(clp) + float(csa)) / fraction_param
-            subtotal_bad = round((float(clp) + float(csa)) * (1.0 - float(comp_discount) / 100.0), 2)
+            # fraction = (float(clp) + float(csa)) / fraction_param
+            # subtotal_bad = round((float(clp) + float(csa)) * (1.0 - float(comp_discount) / 100.0), 2)
+
+            fraction = float(clp) / fraction_param
+            subtotal_bad = round(float(clp) * (1.0 - float(comp_discount) / 100.0), 2)
+
+        # Single Edition:
         else:
-            gross_price = (float(price) + float(csa)) * float(self.product_uom_qty)
+            # gross_price = (float(price) + float(csa)) * float(self.product_uom_qty)
+            gross_price = float(price) * float(self.product_uom_qty)
             fraction = gross_price / fraction_param
             subtotal_bad = round(float(gross_price) * (1.0 - float(comp_discount) / 100.0), 2)
+
         if self.subtotal_before_agency_disc == 0 or (self.subtotal_before_agency_disc > 0 and
                 abs(float(subtotal_bad) - float(self.subtotal_before_agency_disc)) > fraction):
             result['subtotal_before_agency_disc'] = subtotal_bad
@@ -1179,11 +1248,18 @@ class SaleOrderLine(models.Model):
         result = {}
         if not self.advertising:
             return {'value': result}
+        # if not self.multi_line:
+        #     self.subtotal_before_agency_disc = round((float(self.price_unit) + (float(self.color_surcharge_amount))) *
+        #                                               float(self.product_uom_qty) * float(1.0 - self.computed_discount / 100.0), 2)
+        # else:
+        #     self.subtotal_before_agency_disc = round((float(self.comb_list_price) + float(self.color_surcharge_amount)), 2)
+
         if not self.multi_line:
-            self.subtotal_before_agency_disc = round((float(self.price_unit) + (float(self.color_surcharge_amount))) *
-                                                      float(self.product_uom_qty) * float(1.0 - self.computed_discount / 100.0), 2)
+            self.subtotal_before_agency_disc = round(
+                float(self.price_unit) *
+                float(self.product_uom_qty) * float(1.0 - self.computed_discount / 100.0), 2)
         else:
-            self.subtotal_before_agency_disc = round((float(self.comb_list_price) + float(self.color_surcharge_amount)), 2)
+            self.subtotal_before_agency_disc = round(float(self.comb_list_price), 2)
 
     # deprecated
     # @api.onchange('color_surcharge' )
