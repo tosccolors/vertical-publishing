@@ -26,6 +26,9 @@ from odoo.exceptions import UserError, ValidationError
 from datetime import datetime, timedelta
 from odoo.tools.translate import unquote
 
+from functools import partial
+from odoo.tools.misc import formatLang
+
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -61,7 +64,6 @@ class SaleOrder(models.Model):
                 else:
                     amount_tax += line.price_tax
 
-                _logger.info("\n-------------- SO ------------- \n line.price_tax : %s"%(line.price_tax))
             if cdiscount:
                 max_cdiscount = max(cdiscount)
             # if order.company_id.verify_order_setting != -1.00 and order.company_id.verify_order_setting < amount_untaxed \
@@ -74,7 +76,6 @@ class SaleOrder(models.Model):
                     'amount_tax': order.pricelist_id.currency_id.round(amount_tax),
                     'amount_total': amount_untaxed + amount_tax,
                 })
-            _logger.info("**** \n SO: amount_tax %s"%(amount_tax))
 
             order.update({
                 # 'amount_untaxed': order.pricelist_id.currency_id and order.pricelist_id.currency_id.round(amount_untaxed) or 0.0,
@@ -159,6 +160,53 @@ class SaleOrder(models.Model):
                                  default=lambda self: self.env[
                                      'res.company']._company_default_get(
                                      'sale.order'), index=True)
+
+    # Overridden: Sale
+    def _amount_by_group(self):
+        """ Fixme: Overridden from Sale,
+             if app: sale_global_discount is in use, logic needs to extend to that.
+        """
+
+        # Advertising Orders Only:
+        for order in self.filtered('advertising'):
+            currency = order.currency_id or order.company_id.currency_id
+            fmt = partial(formatLang, self.with_context(lang=order.partner_id.lang).env, currency_obj=currency)
+            res = {}
+            for line in order.order_line:
+                discount = 0.0
+                # At this point, it will always be Single Edition:
+                nn = True if order.nett_nett or line.nett_nett else False
+                if order.partner_id.is_ad_agency and not nn:
+                    discount = order.partner_id.agency_discount
+
+                price_reduce = line.actual_unit_price * (1.0 - discount / 100.0)
+
+                taxes = line.tax_id.compute_all(price_reduce, quantity=line.product_uom_qty, product=line.product_id, partner=order.partner_shipping_id)['taxes']
+                for tax in line.tax_id:
+                    group = tax.tax_group_id
+                    res.setdefault(group, {'amount': 0.0, 'base': 0.0})
+                    for t in taxes:
+                        if t['id'] == tax.id or t['id'] in tax.children_tax_ids.ids:
+                            res[group]['amount'] += t['amount']
+                            res[group]['base'] += t['base']
+            res = sorted(res.items(), key=lambda l: l[0].sequence)
+
+            # round amount and prevent -0.00
+            for group_data in res:
+                group_data[1]['amount'] = currency.round(group_data[1]['amount']) + 0.0
+                group_data[1]['base'] = currency.round(group_data[1]['base']) + 0.0
+
+            order.amount_by_group = [(
+                l[0].name, l[1]['amount'], l[1]['base'],
+                fmt(l[1]['amount']), fmt(l[1]['base']),
+                len(res),
+            ) for l in res]
+
+        # Non Ads Sales; Force return Super
+        otherSO = self.filtered(lambda rec: not rec.advertising)
+        if otherSO:
+            super(SaleOrder, otherSO)._amount_by_group()
+
 
     @api.model
     def default_get(self, fields):
@@ -525,7 +573,7 @@ class SaleOrderLine(models.Model):
                     product=line.product_id,
                     partner=line.order_id.partner_id
                 )
-                _logger.info("\n\n Price %s : \n Aunit_price %s \n price_tax %s"%(price, unit_price, taxes['total_included'] - taxes['total_excluded']))
+
                 line.update({
                     'actual_unit_price': unit_price,
                     'price_tax': taxes['total_included'] - taxes['total_excluded'],
