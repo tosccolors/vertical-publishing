@@ -108,3 +108,4 @@ access_crm_tag_salesman,crm_tag salesman,sales_team.model_crm_tag,group_ads_sale
 access_crm_tag_manager,crm_tag manager,sales_team.model_crm_tag,group_ads_sales_manager,1,1,1,1
 access_website_visitor_salesman,access_website_visitor_salesman,website.model_website_visitor,group_ads_sales_user,1,0,0,0
 access_website_track_salesman,access_website_track_salesman,website.model_website_track,group_ads_sales_user,1,0,0,0
+access_lead2quote_sot,access_lead2quote_sot,model_lead_to_quote_sot,,1,1,1,1

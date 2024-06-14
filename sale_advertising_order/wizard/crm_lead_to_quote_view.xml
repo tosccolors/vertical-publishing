@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+       <!--
+            Sale Order Type
+        -->
+        <record id="sot_sale_order_type_form_view_sao" model="ir.ui.view">
+            <field name="name">sale.order.type.SAO</field>
+            <field name="model">sale.order.type</field>
+            <field name="inherit_id" ref="sale_order_type.sot_sale_order_type_form_view" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='incoterm_id']" position="after">
+                    <field name="act_window_id" groups="base.group_no_one"
+                           options="{'no_create': True, 'no_edit': True, 'no_delete': True}"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <!--
+            Lead2Quote SOT (Wizard)
+        -->
+        <record id="lead2quoteSOT_view" model="ir.ui.view">
+            <field name="name">lead.to.quote.sot.form</field>
+            <field name="model">lead.to.quote.sot</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="order_type_id" widget="radio" />
+                    </group>
+                    <footer>
+                        <button string="New Quotation" type="object" name="action_proceed" class="btn btn-primary"/>
+                        <button string="Cancel" special="cancel" class="btn btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_lead2quoteSOT" model="ir.actions.act_window">
+           <field name="name">Select Order Type</field>
+           <field name="type">ir.actions.act_window</field>
+           <field name="res_model">lead.to.quote.sot</field>
+           <field name="view_mode">form</field>
+           <field name="target">new</field>
+      </record>
+
+    </data>
+</odoo>

@@ -65,19 +65,19 @@ class Partner(models.Model):
     def _compute_adv_opportunity_count(self):
         for partner in self:
             operator = 'child_of' if partner.is_company else '='  # the opportunity count should counts the opportunities of this company and all its contacts
-            partner.adv_opportunity_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('type', '=', 'opportunity'), ('partner_id', operator, partner.id), ('is_activity', '=', False), ('stage_id.name','not in',('Won','Logged','Lost'))])
+            partner.adv_opportunity_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('type', '=', 'opportunity'), ('partner_id', operator, partner.id), ('stage_id.name','not in',('Won','Logged','Lost'))])
 
     
     def _compute_next_activities_count(self):
         for partner in self:
             operator = 'child_of' if partner.is_company else '='  # the activity count should counts the activities of this company and all its contacts
-            partner.next_activities_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('is_activity', '=', True), ('stage_id.name','!=','Logged')])
+            partner.next_activities_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('stage_id.name','!=','Logged')])
 
     
     def _compute_activities_report_count(self):
         for partner in self:
             operator = 'child_of' if partner.is_company else '='  # the activity count should counts the activities of this company and all its contacts
-            partner.activities_report_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('is_activity', '=', True), ('stage_id.name','!=','Qualified'), ('stage_id.name','!=','Proposition')])
+            partner.activities_report_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('stage_id.name','!=','Qualified'), ('stage_id.name','!=','Proposition')])
 
     
     def _compute_opportunity_count(self):
