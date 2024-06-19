@@ -1464,7 +1464,8 @@
                         </group>
                         <group name="sh2">
                             <field name="order_id" readonly="1" required="1"
-                                   options="{'no_create': True, 'no_create_edit': True}" />
+                                   options="{'no_create': True, 'no_create_edit': True}"
+                                   context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}"/>
                             <field name="order_pricelist_id" invisible="1"/>
                             <field name="company_id" invisible="1"/>
                         </group>
