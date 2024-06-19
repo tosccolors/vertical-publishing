@@ -917,138 +917,546 @@
             </field>
         </record>
 
-        <record model="ir.ui.view" id="view_adv_order_line_form">
-                <field name="name">sale.adv.order.line.form</field>
-                <field name="model">sale.order.line</field>
-                <field name="arch" type="xml">
-                    <form string="Sales Order Lines" create="0" edit="0" delete="0">
-                        <group>
-                            <group>
-                                <field name="order_partner_id" readonly="0" required="True"
-                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}" />
-                                <field name="order_advertiser_id" required="True"
-                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}" />
-                                <field name="medium" required="True"
-                                       domain="[('parent_id','=', %(sale_advertising_order.advertising_category)d)]"
-                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
-                                <field name="ad_class" required="True"
-                                       domain="[('id','child_of', medium)]"
-                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
-                                <field name="title" string="Title"
-                                       domain="[('child_ids','!=', False),('medium','child_of', medium)]"
-                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                       attrs="{'invisible': [('title','=', False)]}"/>
-                                <field name="title_ids" string="Titles"
-                                       domain="[('parent_id','=', False),('medium','child_of', medium)]"
-                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                       context="{'active_test': False}">
-                                </field>
-                                <field name="deadline_offset" invisible="1" groups="base.group_no_one"/>
-                                <field name="deadline_passed" invisible="1" />
-                                <field name="deadline" invisible="0" />
-                                <field name="adv_issue_ids" string="Advertising Issues"
-                                       attrs="{'invisible': [('issue_product_ids','!=', [])]}"
-                                       domain="[('parent_id','!=', False),
-                                                '|',('parent_id','in', title_ids),('parent_id','=', title),
-                                                '|','|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
-                                                        ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
-                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                       context="{'active_test': False}">
-                                </field>
-                                <field name="order_id" invisible="1"/>
-                                <field name="order_pricelist_id" invisible="1"/>
-                                <field name="company_id" invisible="1"/>
-                                <field name="product_template_id"
-                                       context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': company_id}"
-                                       attrs="{'readonly': ['|',('qty_invoiced', '&gt;', 0), ('deadline_passed','=', True)]}"
-                                       domain="[('categ_id','=', ad_class)]"
-                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}" required="1"/>
-                                <field name="product_id" invisible="0" groups="base.group_no_one"
-                                       context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': company_id}"
-                                       attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
-                                       domain="['|','&amp;',('categ_id','=', ad_class),('product_template_attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id)]"
-                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
-                                <field name="booklet_surface_area" readonly="1"/>
-                                <!--<field name="layout_category_id" groups="sale.group_sale_layout"/>-->
-                                <field name="invoice_status" invisible="1"/>
-                                <field name="qty_to_invoice" invisible="1"/>
-                                <field name="qty_delivered_manual" invisible="1"/>
-                                <!--<field name="procurement_ids" invisible="1"/>-->
-                                <field name="nett_nett" />
-                                <field name="multi_line" invisible="0" groups="base.group_no_one"/>
-                                <field name="multi_line_number" invisible="0" readonly="True" groups="base.group_no_one"/>
-                                <label for="product_uom_qty" string="Ordered Quantity"/>
-                                <div>
-                                    <field name="product_uom_qty" class="oe_inline"
-                                           context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id,
-                                                        'uom':product_uom, 'uom_qty_change':True, 'company_id': company_id}"
-                                           attrs="{'readonly': [('deadline_passed','=', True)]}"/>
-                                    <field name="product_uom" groups="uom.group_uom" class="oe_inline oe_no_button"
-                                           readonly="True"/>
-                                </div>
-                                <label for="qty_delivered" string="Delivered Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>
-                                <div invisible="context.get('hide_sale')" groups="base.group_no_one">
-                                    <field name="qty_delivered" attrs="{'readonly': [('qty_delivered_manual', '=', False)]}"/>
-                                </div>
-                                <label for="qty_invoiced" string="Invoiced Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>
-                                <div invisible="context.get('hide_sale')" groups="base.group_no_one">
-                                    <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
-                                </div>
-                                <field name="adv_issue" domain="[('parent_id','!=', False),
-                                                                ('parent_id','=', title),
-                                                                '|','|',('deadline','&gt;=', deadline_offset),
-                                                                        ('deadline','=', False),
-                                                                        ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),]"
-                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                       attrs="{'invisible': [('adv_issue','=', False)]}"/>
-                                <field name="issue_date" readonly="1"
-                                       attrs="{'invisible': [('adv_issue','=', False)]}"/>
+        <!--    Following view has been defined below -->
+<!--        <record model="ir.ui.view" id="view_adv_order_line_form">-->
+<!--                <field name="name">sale.adv.order.line.form</field>-->
+<!--                <field name="model">sale.order.line</field>-->
+<!--                <field name="arch" type="xml">-->
+<!--                    <form string="Sales Order Lines" create="0" edit="0" delete="0">-->
+<!--                        <group>-->
+<!--                            <group>-->
+<!--                                <field name="order_partner_id" readonly="0" required="True"-->
+<!--                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}" />-->
+<!--                                <field name="order_advertiser_id" required="True"-->
+<!--                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}" />-->
+<!--                                <field name="medium" required="True"-->
+<!--                                       domain="[('parent_id','=', %(sale_advertising_order.advertising_category)d)]"-->
+<!--                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>-->
+<!--                                <field name="ad_class" required="True"-->
+<!--                                       domain="[('id','child_of', medium)]"-->
+<!--                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>-->
+<!--                                <field name="title" string="Title"-->
+<!--                                       domain="[('child_ids','!=', False),('medium','child_of', medium)]"-->
+<!--                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}"-->
+<!--                                       attrs="{'invisible': [('title','=', False)]}"/>-->
+<!--                                <field name="title_ids" string="Titles"-->
+<!--                                       domain="[('parent_id','=', False),('medium','child_of', medium)]"-->
+<!--                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}"-->
+<!--                                       context="{'active_test': False}">-->
+<!--                                </field>-->
+<!--                                <field name="deadline_offset" invisible="1" groups="base.group_no_one"/>-->
+<!--                                <field name="deadline_passed" invisible="1" />-->
+<!--                                <field name="deadline" invisible="0" />-->
+<!--                                <field name="adv_issue_ids" string="Advertising Issues"-->
+<!--                                       attrs="{'invisible': [('issue_product_ids','!=', [])]}"-->
+<!--                                       domain="[('parent_id','!=', False),-->
+<!--                                                '|',('parent_id','in', title_ids),('parent_id','=', title),-->
+<!--                                                '|','|',('deadline','&gt;=', deadline_offset),('deadline','=', False),-->
+<!--                                                        ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"-->
+<!--                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}"-->
+<!--                                       context="{'active_test': False}">-->
+<!--                                </field>-->
+<!--                                <field name="order_id" invisible="1"/>-->
+<!--                                <field name="order_pricelist_id" invisible="1"/>-->
+<!--                                <field name="company_id" invisible="1"/>-->
+<!--                                <field name="product_template_id"-->
+<!--                                       context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': company_id}"-->
+<!--                                       attrs="{'readonly': ['|',('qty_invoiced', '&gt;', 0), ('deadline_passed','=', True)]}"-->
+<!--                                       domain="[('categ_id','=', ad_class)]"-->
+<!--                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}" required="1"/>-->
+<!--                                <field name="product_id" invisible="0" groups="base.group_no_one"-->
+<!--                                       context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': company_id}"-->
+<!--                                       attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"-->
+<!--                                       domain="['|','&amp;',('categ_id','=', ad_class),('product_template_attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id)]"-->
+<!--                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>-->
+<!--                                <field name="booklet_surface_area" readonly="1"/>-->
+<!--                                &lt;!&ndash;<field name="layout_category_id" groups="sale.group_sale_layout"/>&ndash;&gt;-->
+<!--                                <field name="invoice_status" invisible="1"/>-->
+<!--                                <field name="qty_to_invoice" invisible="1"/>-->
+<!--                                <field name="qty_delivered_manual" invisible="1"/>-->
+<!--                                &lt;!&ndash;<field name="procurement_ids" invisible="1"/>&ndash;&gt;-->
+<!--                                <field name="nett_nett" />-->
+<!--                                <field name="multi_line" invisible="0" groups="base.group_no_one"/>-->
+<!--                                <field name="multi_line_number" invisible="0" readonly="True" groups="base.group_no_one"/>-->
+<!--                                <label for="product_uom_qty" string="Ordered Quantity"/>-->
+<!--                                <div>-->
+<!--                                    <field name="product_uom_qty" class="oe_inline"-->
+<!--                                           context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id,-->
+<!--                                                        'uom':product_uom, 'uom_qty_change':True, 'company_id': company_id}"-->
+<!--                                           attrs="{'readonly': [('deadline_passed','=', True)]}"/>-->
+<!--                                    <field name="product_uom" groups="uom.group_uom" class="oe_inline oe_no_button"-->
+<!--                                           readonly="True"/>-->
+<!--                                </div>-->
+<!--                                <label for="qty_delivered" string="Delivered Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>-->
+<!--                                <div invisible="context.get('hide_sale')" groups="base.group_no_one">-->
+<!--                                    <field name="qty_delivered" attrs="{'readonly': [('qty_delivered_manual', '=', False)]}"/>-->
+<!--                                </div>-->
+<!--                                <label for="qty_invoiced" string="Invoiced Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>-->
+<!--                                <div invisible="context.get('hide_sale')" groups="base.group_no_one">-->
+<!--                                    <field name="qty_invoiced" invisible="context.get('hide_sale')"/>-->
+<!--                                </div>-->
+<!--                                <field name="adv_issue" domain="[('parent_id','!=', False),-->
+<!--                                                                ('parent_id','=', title),-->
+<!--                                                                '|','|',('deadline','&gt;=', deadline_offset),-->
+<!--                                                                        ('deadline','=', False),-->
+<!--                                                                        ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),]"-->
+<!--                                       options="{'no_open': True,'no_create': True, 'no_create_edit': True}"-->
+<!--                                       attrs="{'invisible': [('adv_issue','=', False)]}"/>-->
+<!--                                <field name="issue_date" readonly="1"-->
+<!--                                       attrs="{'invisible': [('adv_issue','=', False)]}"/>-->
 
-                            </group>
-                            <group>
-                                <field name="tax_id" widget="many2many_tags" options="{'no_create': True}" context="{'search_view_ref': 'account.account_tax_view_search'}"
-                                       domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
-                                        attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
-                                        groups="sale_advertising_order.group_ads_traffic_user"/>
-                                <field name="price_edit" invisible="1"/>
-                                <field name="price_unit" readonly="0" attrs="{'invisible': [('price_edit','!=', True)]}"/>
-                                <field name="price_unit_dummy" readonly="1" attrs="{'invisible': [('multi_line','!=', False),('price_edit','=', True)]}"/>
-                                <field name="comb_list_price" readonly="True" attrs="{'invisible': [('multi_line','=', False)]}"/>
+<!--                            </group>-->
+<!--                            <group>-->
+<!--                                <field name="tax_id" widget="many2many_tags" options="{'no_create': True}" context="{'search_view_ref': 'account.account_tax_view_search'}"-->
+<!--                                       domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"-->
+<!--                                        attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"-->
+<!--                                        groups="sale_advertising_order.group_ads_traffic_user"/>-->
+<!--                                <field name="price_edit" invisible="1"/>-->
+<!--                                <field name="price_unit" readonly="0" attrs="{'invisible': [('price_edit','!=', True)]}"/>-->
+<!--                                <field name="price_unit_dummy" readonly="1" attrs="{'invisible': [('multi_line','!=', False),('price_edit','=', True)]}"/>-->
+<!--                                <field name="comb_list_price" readonly="True" attrs="{'invisible': [('multi_line','=', False)]}"/>-->
+<!--&lt;!&ndash;                                <field name="color_surcharge" /> deprecated&ndash;&gt;-->
+<!--&lt;!&ndash;                                <field name="color_surcharge_amount" attrs="{'invisible': [('color_surcharge','=', False)]}"/> deprecated&ndash;&gt;-->
+<!--                                <field name="actual_unit_price" attrs="{'invisible': [('multi_line','=', True)]}"/>-->
+<!--                                <label for="computed_discount" groups="product.group_discount_per_so_line"/>-->
+<!--                                    <div name="computed_discount" groups="product.group_discount_per_so_line">-->
+<!--                                        <field name="computed_discount" class="oe_inline"/> %%-->
+<!--                                    </div>-->
+<!--                                <field name="discount_reason_id" attrs="{'invisible': [('computed_discount','=', 0.0)],'required': [('computed_discount','!=', 0.0)]}"/>-->
+<!--                                <field name="subtotal_before_agency_disc" readonly="False"/>-->
+<!--                                <label for="discount" string="Agency Commission" groups="product.group_discount_per_so_line"/>-->
+<!--                                    <div name="discount" groups="product.group_discount_per_so_line">-->
+<!--                                        <field name="discount" invisible="1"/>-->
+<!--                                        <field name="discount_dummy" class="oe_inline"/> %%-->
+<!--                                    </div>-->
+<!--                                <field name="price_subtotal" readonly="True" />-->
+<!--                                <field name="date_type" invisible="True"/>-->
+<!--                                <label for="customer_lead" groups="base.group_no_one"/>-->
+<!--                                <div groups="base.group_no_one">-->
+<!--                                    <field name="customer_lead" class="oe_inline" groups="base.group_no_one"/> days-->
+<!--                                </div>-->
+<!--                                <field name="page_class_domain" invisible="1"/>-->
+<!--                                <label for="analytic_tag_ids" string="Page Category"/>-->
+<!--                                <div>-->
+<!--                                    <field name="analytic_tag_ids"-->
+<!--                                           string="Page Category"-->
+<!--                                           widget="many2many_tags"-->
+<!--                                           domain="page_class_domain"-->
+<!--                                           attrs="{'readonly': [('deadline_passed','=', True)]}"/>-->
+<!--                                </div>-->
+<!--&lt;!&ndash;                                <field name="proof_number_adv_customer" /> deprecated &ndash;&gt;-->
+<!--                                <field name="proof_number_adv_customer" string="Proof Number Advertising Customer" domain="[('is_customer', '=', True)]" context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>-->
+<!--                                <field name="proof_number_payer" />-->
+<!--                                <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>-->
+<!--                            </group>-->
+<!--                        </group>-->
+<!--                        <group>-->
+<!--&lt;!&ndash;                            <field name="dates" string="Advertising Dates" colspan="4"&ndash;&gt;-->
+<!--&lt;!&ndash;                               attrs="{'invisible':['|','|',('adv_issue','=',False),('title','=',False),('date_type','!=','date')]}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <tree string="Ad Dates" editable="bottom">&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <field name="sequence" widget="handle" />&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <field name="issue_date" string="Ad Date" required="True" />&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <field name="name" string="Comment" />&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <field name="page_reference" string="Ref" />&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <field name="ad_number" string="Ad No." />&ndash;&gt;-->
+<!--&lt;!&ndash;                                </tree>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </field>&ndash;&gt;-->
+<!--                               &lt;!&ndash;          deprecated: deepa                    &ndash;&gt;-->
+<!--&lt;!&ndash;                            <field name="dateperiods" string="Advertising Periods" colspan="4"&ndash;&gt;-->
+<!--&lt;!&ndash;                                attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','!=','validity')]}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <tree string="Ad Periods" editable="bottom">&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <field name="sequence" widget="handle" />&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <field name="from_date" string="Start of Validity" required="True"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <field name="to_date" string="End of Validity" required="True"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <field name="name" string="Comment" />&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <field name="page_reference" string="Ref" />&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <field name="ad_number" string="Ad No." />&ndash;&gt;-->
+<!--&lt;!&ndash;                                </tree>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </field>&ndash;&gt;-->
+<!--                            <field name="issue_product_ids" string="Adv.Issues with Products and Prices"-->
+<!--                                   attrs="{'invisible':['|',('issue_product_ids','=',[]),('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"-->
+<!--                                   options="{'no_create': True, 'no_create_edit': True}" readonly="0">-->
+<!--                                <tree string="Issues Products Prices" editable="bottom">-->
+<!--                                    <field name="adv_issue_id" string="Issue" force_save="1" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>-->
+<!--                                    <field name="product_attribute_value_id" force_save="1" invisible="True" />-->
+<!--                                    <field name="product_id" string="Product" force_save="1" domain="[('product_tmpl_id','=', parent.product_template_id), ('product_template_attribute_value_ids','in', product_attribute_value_id)]"/>-->
+<!--                                    <field name="price_unit" force_save="1" string="Unit Price"/>-->
+<!--                                    <field name="qty" force_save="1" string="Qty"/>-->
+<!--                                    <field name="price" force_save="1" string="Price"/>-->
+<!--                                    <field name="page_reference" string="Ref" />-->
+<!--                                    <field name="ad_number" string="Ad No." />-->
+<!--                                    <field name="url_to_material" string="URL Ad Material" />-->
+<!--                                </tree>-->
+<!--                            </field>-->
+
+<!--                            <group name="ad_refs" attrs="{'invisible':[('multi_line','!=', False)]}">-->
+<!--                                <field name="ad_number"/>-->
+<!--                                <field name="page_reference"/>-->
+<!--                                <field name="url_to_material" />-->
+<!--                            </group>-->
+<!--                            <group attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')]}">-->
+<!--                                <field name="from_date"-->
+<!--                                       attrs="{'invisible':['|',('multi_line','!=', False),('date_type','!=','validity')], 'required': [('date_type','=','validity')]}"/>-->
+<!--                                <field name="to_date"-->
+<!--                                       attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')], 'required': [('date_type','=','validity')]}"/>-->
+<!--                            </group>-->
+<!--                        </group>-->
+<!--                        <group>-->
+<!--                            <group>-->
+<!--                                <separator string="Material Remarks" colspan="2"/>-->
+<!--                                <field name="layout_remark" colspan="2" nolabel="1"/>-->
+<!--                            </group>-->
+<!--                            <group>-->
+<!--                                <separator string="Description" colspan="2"/>-->
+<!--                                <field name="name" colspan="2" nolabel="1"/>-->
+<!--                            </group>-->
+<!--                            <group>-->
+<!--                                <separator string="Migration Remarks" colspan="2"/>-->
+<!--                                <field name="mig_remark" colspan="2" nolabel="1"/>-->
+<!--                            </group>-->
+<!--                        </group>-->
+<!--                        <div groups="base.group_no_one">-->
+<!--                            <label for="invoice_lines"/>-->
+<!--                            <field name="invoice_lines"/>-->
+<!--                        </div>-->
+<!--                        <field name="state" invisible="1"/>-->
+<!--                    </form>-->
+<!--                    &lt;!&ndash;form string="Sales Order Lines">-->
+<!--                        <group>-->
+<!--                            <group>-->
+<!--                                <field name="title" string="Title" domain="[('child_ids','!=', False)]" required="True"-->
+<!--                                       options="{'limit': 10, 'create': false, 'create_edit': false}"/>-->
+<!--                                <field name="medium" invisible="1" />-->
+<!--                                <field name="ad_class"  required="1"-->
+<!--                                       domain="[('type','!=', 'view'), ('id','child_of', medium)]" options="{'limit': 10, 'create': false, 'create_edit': false}"/>-->
+<!--                                <field name="product_id"-->
+<!--                                       context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"-->
+<!--                                       attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"-->
+<!--                                       domain="[('categ_id','=', ad_class)]"-->
+<!--                                       options="{'limit': 10, 'create': false, 'create_edit': false}"/>-->
+<!--                                <field name="layout_category_id" groups="sale.group_sale_layout"/>-->
+<!--                                <field name="invoice_status" invisible="1"/>-->
+<!--                                <field name="qty_to_invoice" invisible="1"/>-->
+<!--                                <field name="qty_delivered_manual" invisible="1"/>-->
+<!--                                <field name="procurement_ids" invisible="1"/>-->
+<!--                                <field name="price_subtotal" invisible="1"/>-->
+<!--                                <label for="product_uom_qty" string="Ordered Quantity"/>-->
+<!--                                <div>-->
+<!--                                    <field-->
+<!--                                        context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"-->
+<!--                                        name="product_uom_qty" class="oe_inline"/>-->
+<!--                                    <field name="product_uom" groups="uom.group_uom" class="oe_inline oe_no_button"-->
+<!--                                        attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"-->
+<!--                                        invisible="1"/>-->
+<!--                                </div>-->
+<!--                                <label for="qty_delivered" string="Delivered Quantity" invisible="context.get('hide_sale')"/>-->
+<!--                                <div invisible="context.get('hide_sale')">-->
+<!--                                    <field name="qty_delivered" attrs="{'readonly': [('qty_delivered_manual', '=', False)]}"/>-->
+<!--                                </div>-->
+<!--                                <label for="qty_invoiced" string="Invoiced Quantity" invisible="context.get('hide_sale')"/>-->
+<!--                                <div invisible="context.get('hide_sale')">-->
+<!--                                    <field name="qty_invoiced" invisible="context.get('hide_sale')"/>-->
+<!--                                </div>-->
+<!--                                <field name="adv_issue" domain="[('parent_id','=', title)]" attrs="{'invisible':['|',('adv_issue','=',False),('title','=',False)]}"-->
+<!--                                       options="{'limit': 10, 'create': false, 'create_edit': false}"/>-->
+<!--                                <field name="adv_issue_ids" string="Advertising Issues"-->
+<!--                                       domain="[('id','child_of', title)]"-->
+<!--                                       options="{'limit': 10, 'create': false, 'create_edit': false}">-->
+<!--                                        <tree >-->
+<!--                                            <field name="name" string="Name"/>-->
+<!--                                        </tree>-->
+<!--                                </field>-->
+<!--                            </group>-->
+<!--                            <group>-->
+<!--                                <field name="tax_id" widget="many2many_tags"-->
+<!--                                    domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"-->
+<!--                                    groups="sale_advertising_order.group_traffic_user"-->
+<!--                                    attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>-->
+<!--                                <field name="price_unit" readonly="True" />-->
+<!--                                <field name="actual_unit_price" />-->
+<!--                                <label for="computed_discount" groups="product.group_discount_per_so_line"/>-->
+<!--                                    <div name="computed_discount" groups="product.group_discount_per_so_line">-->
+<!--                                        <field name="computed_discount" class="oe_inline"/> %%-->
+<!--                                    </div>-->
+<!--                                <field name="subtotal_before_agency_disc" readonly="False"/>-->
+<!--                                <label for="discount" string="Agency Commission" groups="product.group_discount_per_so_line"/>-->
+<!--                                    <div name="discount" groups="product.group_discount_per_so_line">-->
+<!--                                        <field name="discount" invisible="1"/>-->
+<!--                                        <field name="discount_dummy" class="oe_inline"/> %%-->
+<!--                                    </div>-->
+<!--                                <field name="price_subtotal" readonly="True" />-->
+<!--                                <field name="date_type" invisible="True"/>-->
+<!--                                <label for="customer_lead"/>-->
+<!--                                <div>-->
+<!--                                    <field name="customer_lead" class="oe_inline"/> days-->
+<!--                                </div>-->
+<!--                                <label for="analytic_tag_ids"/>-->
+<!--                                <div>-->
+<!--                                    <field name="analytic_tag_ids" widget="many2many_tags"/>-->
+<!--                                </div>-->
+<!--                            </group>-->
+<!--                        </group>-->
+<!--                        <group>-->
+<!--                            <field name="dates" string="Advertising Dates" colspan="4"-->
+<!--                               attrs="{'invisible':['|','|',('adv_issue','=',False),('title','=',False),('date_type','!=','date')]}">-->
+<!--                                <tree string="Ad Dates" editable="bottom">-->
+<!--                                    <field name="sequence" widget="handle" />-->
+<!--                                    <field name="issue_date" string="Ad Date" required="True" />-->
+<!--                                    <field name="name" string="Comment" />-->
+<!--                                    <field name="page_reference" string="Ref" />-->
+<!--                                    <field name="ad_number" string="Ad No." />-->
+<!--                                </tree>-->
+<!--                            </field>-->
+<!--                            <field name="dateperiods" string="Advertising Periods" colspan="4"-->
+<!--                                attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','!=','validity')]}">-->
+<!--                                <tree string="Ad Periods" editable="bottom">-->
+<!--                                    <field name="sequence" widget="handle" />-->
+<!--                                    <field name="from_date" string="Start of Validity" required="True"/>-->
+<!--                                    <field name="to_date" string="End of Validity" required="True"/>-->
+<!--                                    <field name="name" string="Comment" />-->
+<!--                                    <field name="page_reference" string="Ref" />-->
+<!--                                    <field name="ad_number" string="Ad No." />-->
+<!--                                </tree>-->
+<!--                            </field>-->
+
+<!--                            <group attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}">-->
+<!--                                <field name="ad_number" attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}"/>-->
+<!--                                <field name="page_reference" attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}"/>-->
+<!--                            </group>-->
+<!--                            <group attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}">-->
+<!--                                <field name="from_date" attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}"/>-->
+<!--                                <field name="to_date" attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}"/>-->
+<!--                            </group>-->
+<!--                        </group>-->
+<!--                        <group>-->
+<!--                            <group>-->
+<!--                                <separator string="Layout Remark" colspan="2"/>-->
+<!--                                <field name="layout_remark" colspan="2" nolabel="1"/>-->
+<!--                            </group>-->
+<!--                            <group>-->
+<!--                                <separator string="Description" colspan="2"/>-->
+<!--                                <field name="name" colspan="2" nolabel="1"/>-->
+<!--                            </group>-->
+<!--                        </group>-->
+<!--                        <div groups="base.group_no_one">-->
+<!--                            <label for="invoice_lines"/>-->
+<!--                            <field name="invoice_lines"/>-->
+<!--                        </div>-->
+<!--                        <field name="state" invisible="1"/>-->
+<!--                    </form&ndash;&gt;-->
+<!--                </field>-->
+<!--        </record>-->
+
+        <!--
+                Order Line (Adv /To Invoice)
+                Form: (Redefined)
+        -->
+    <record model="ir.ui.view" id="view_adv_order_line_form">
+        <field name="name">sale.order.line.form.to.invoice</field>
+        <field name="model">sale.order.line</field>
+        <field name="arch" type="xml">
+            <form string="Sales Order Lines" create="0" edit="0" delete="0">
+                <header>
+                    <field name="invoice_status" widget="statusbar" statusbar_visible="invoiced,to invoice,no"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="display_name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group name="sale_header">
+                        <group name="sh1">
+                            <field name="order_partner_id" readonly="0" required="True"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}" />
+                            <field name="order_advertiser_id" required="True"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}" />
+                        </group>
+                        <group name="sh2">
+                            <field name="order_id" readonly="1" required="1"
+                                   options="{'no_create': True, 'no_create_edit': True}" />
+                            <field name="order_pricelist_id" invisible="1"/>
+                            <field name="company_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group name="prod_section">
+                            <field name="medium" required="True"
+                                   domain="[('parent_id','=', %(sale_advertising_order.advertising_category)d)]"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
+                            <field name="ad_class" required="True"
+                                   domain="[('id','child_of', medium)]"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
+                            <field name="title" string="Title" invisible="1"/>
+                            <field name="title_ids" string="Title(s)"
+                                   widget="many2many_tags"
+                                   domain="[('parent_id','=', False), ('medium','child_of', medium)]"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
+                                   context="{'active_test': False, 'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
+                                             'tree_view_ref':'sale_advertising_order.advertising_issue_titles_tree' }">
+                            </field>
+                            <field name="from_date"
+                                   attrs="{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')]}"/>
+                            <field name="to_date"
+                                   attrs="{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')]}"/>
+                            <field name="deadline_offset" invisible="1" groups="base.group_no_one"/>
+                            <field name="deadline_passed" invisible="1" />
+                            <field name="deadline" invisible="0" />
+                             <field name="adv_issue_ids" string="Advertising Issue(s)"
+                                   widget="many2many_tags"
+                                   attrs="{'readonly': [('issue_product_ids','!=', [])]}"
+                                   domain="[('parent_id','in', title_ids),
+                                            '|','|',('deadline','&gt;=', deadline_offset),('deadline','=', False),
+                                                    ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
+                                   context="{'active_test': False, 'search_view_ref':'sale_advertising_order.view_advertising_issue_filter',
+                                             'tree_view_ref':'sale_advertising_order.advertising_issue_ids_tree' }">
+                            </field>
+
+                            <field name="issue_date" invisible="1"/>
+                            <field name="domain4prod_ids" invisible="1"/>
+                            <field name="product_template_id"
+                                   context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': company_id}"
+                                   attrs="{'readonly': ['|',('qty_invoiced', '&gt;', 0), ('deadline_passed','=', True)]}"
+                                   domain="[('id','in', domain4prod_ids)]"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}" required="1"/>
+
+                            <field name="product_id" readonly="1" groups="base.group_no_one"
+                                   context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': company_id}"
+                                   attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
+                                   domain="['|','&amp;',('categ_id','=', ad_class),('product_template_attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id)]"
+                                   options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
+
+                            <field name="booklet_surface_area" readonly="1"/>
+                            <!--<field name="layout_category_id" groups="sale.group_sale_layout"/>-->
+                            <field name="nett_nett" />
+                            <field name="multi_line" invisible="0" groups="base.group_no_one"/>
+                            <field name="multi_line_number" invisible="0" readonly="True" groups="base.group_no_one"/>
+
+                        </group>
+                        <group name="price_section">
+                            <label for="customer_lead" groups="base.group_no_one"/>
+                            <div groups="base.group_no_one">
+                                <field name="customer_lead" class="oe_inline" groups="base.group_no_one"/> days
+                            </div>
+                            <field name="qty_to_invoice" invisible="1"/>
+                            <field name="qty_delivered_manual" invisible="1"/>
+                            <!--<field name="procurement_ids" invisible="1"/>-->
+                            <label for="product_uom_qty" string="Ordered Quantity"/>
+                            <div>
+                                <field name="product_uom_qty" class="oe_inline"
+                                       context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id,
+                                                    'uom':product_uom, 'uom_qty_change':True, 'company_id': company_id}"
+                                       attrs="{'readonly': [('deadline_passed','=', True)]}"/>
+                                <field name="product_uom" groups="uom.group_uom" class="oe_inline oe_no_button"
+                                       readonly="True"/>
+                            </div>
+                            <label for="qty_delivered" string="Delivered Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>
+                            <div invisible="context.get('hide_sale')" groups="base.group_no_one">
+                                <field name="qty_delivered" attrs="{'readonly': [('qty_delivered_manual', '=', False)]}"/>
+                            </div>
+                            <label for="qty_invoiced" string="Invoiced Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>
+                            <div invisible="context.get('hide_sale')" groups="base.group_no_one">
+                                <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
+                            </div>
+                            <field name="adv_issue" invisible="1"/>
+                            <field name="tax_id" widget="many2many_tags" options="{'no_create': True}" context="{'search_view_ref': 'account.account_tax_view_search'}"
+                                   domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
+                                    attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
+                                    groups="sale_advertising_order.group_ads_traffic_user"/>
+                            <field name="price_edit" invisible="1"/>
+                            <field name="price_unit" readonly="0" attrs="{'invisible': [('price_edit','!=', True)]}"
+                                   widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="price_unit_dummy" readonly="1" attrs="{'invisible': [('multi_line','!=', False),('price_edit','=', True)]}"
+                            widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="comb_list_price" readonly="True" attrs="{'invisible': [('multi_line','=', False)]}"
+                                    widget="monetary" options="{'currency_field': 'currency_id'}"/>
 <!--                                <field name="color_surcharge" /> deprecated-->
 <!--                                <field name="color_surcharge_amount" attrs="{'invisible': [('color_surcharge','=', False)]}"/> deprecated-->
-                                <field name="actual_unit_price" attrs="{'invisible': [('multi_line','=', True)]}"/>
-                                <label for="computed_discount" groups="product.group_discount_per_so_line"/>
-                                    <div name="computed_discount" groups="product.group_discount_per_so_line">
-                                        <field name="computed_discount" class="oe_inline"/> %%
-                                    </div>
-                                <field name="discount_reason_id" attrs="{'invisible': [('computed_discount','=', 0.0)],'required': [('computed_discount','!=', 0.0)]}"/>
-                                <field name="subtotal_before_agency_disc" readonly="False"/>
-                                <label for="discount" string="Agency Commission" groups="product.group_discount_per_so_line"/>
-                                    <div name="discount" groups="product.group_discount_per_so_line">
-                                        <field name="discount" invisible="1"/>
-                                        <field name="discount_dummy" class="oe_inline"/> %%
-                                    </div>
-                                <field name="price_subtotal" readonly="True" />
-                                <field name="date_type" invisible="True"/>
-                                <label for="customer_lead" groups="base.group_no_one"/>
-                                <div groups="base.group_no_one">
-                                    <field name="customer_lead" class="oe_inline" groups="base.group_no_one"/> days
+                            <field name="actual_unit_price" attrs="{'invisible': [('multi_line','=', True)]}"
+                                    widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <label for="computed_discount" groups="product.group_discount_per_so_line"/>
+                                <div name="computed_discount" groups="product.group_discount_per_so_line">
+                                    <field name="computed_discount" class="oe_inline"/> %%
                                 </div>
-                                <field name="page_class_domain" invisible="1"/>
-                                <label for="analytic_tag_ids" string="Page Category"/>
-                                <div>
-                                    <field name="analytic_tag_ids"
-                                           string="Page Category"
-                                           widget="many2many_tags"
-                                           domain="page_class_domain"
-                                           attrs="{'readonly': [('deadline_passed','=', True)]}"/>
+                            <field name="discount_reason_id" attrs="{'invisible': [('computed_discount','=', 0.0)],'required': [('computed_discount','!=', 0.0)]}"/>
+                            <field name="subtotal_before_agency_disc" readonly="False"/>
+                            <label for="discount" string="Agency Commission" groups="product.group_discount_per_so_line"/>
+                                <div name="discount" groups="product.group_discount_per_so_line">
+                                    <field name="discount" invisible="1"/>
+                                    <field name="discount_dummy" class="oe_inline"/> %%
                                 </div>
-<!--                                <field name="proof_number_adv_customer" /> deprecated -->
-                                <field name="proof_number_adv_customer" string="Proof Number Advertising Customer" domain="[('is_customer', '=', True)]" context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
-                                <field name="proof_number_payer" />
-                                <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
+                            <field name="price_subtotal" readonly="True" widget="monetary"
+                                        options="{'currency_field': 'currency_id'}" />
+                            <field name="date_type" invisible="True"/>
+                            <field name="currency_id" invisible="1"/>
                             </group>
                         </group>
+                       <notebook>
+                           <page string="Page &amp; Proof Number">
+                               <group>
+                                   <group>
+                                       <field name="proof_number_adv_customer" string="Proof Number Advertising Customer" domain="[('is_customer', '=', True)]" context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
+                                       <field name="proof_number_payer" />
+                                       <field name="proof_number_amt_adv_customer" attrs="{'invisible':[('proof_number_amt_adv_customer','=', 0)],'required':[('proof_number_adv_customer','!=', False)]}"/>
+                                   </group>
+                                   <group>
+                                       <field name="page_class_domain" invisible="1"/>
+                                       <label for="analytic_tag_ids" string="Page Category"/>
+                                       <div>
+                                           <field name="analytic_tag_ids"
+                                               string="Page Category"
+                                               widget="many2many_tags"
+                                               domain="page_class_domain"
+                                               attrs="{'readonly': [('deadline_passed','=', True)]}"/>
+                                       </div>
+                                       <field name="ad_number" attrs="{'invisible':[('multi_line','!=', False)]}"/>
+                                       <field name="page_reference" attrs="{'invisible':[('multi_line','!=', False)]}"/>
+                                       <field name="url_to_material" attrs="{'invisible':[('multi_line','!=', False)]}"/>
+                                   </group>
+                               </group>
+                           </page>
+                           <page string="Adv.Issues with Products and Prices"
+                                attrs="{'invisible':['|',('issue_product_ids','=',[]),('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}">
+                                <field name="issue_product_ids" nolabel="1" string="Adv.Issues with Products and Prices"
+                                       attrs="{'invisible':['|',('issue_product_ids','=',[]),('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
+                                       options="{'no_create': True, 'no_create_edit': True}" readonly="0">
+                                    <tree string="Issues Products Prices" editable="bottom">
+                                        <field name="adv_issue_id" string="Issue" force_save="1" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
+                                        <field name="product_attribute_value_id" force_save="1" invisible="True" />
+                                        <field name="product_id" string="Product" force_save="1" domain="[('product_tmpl_id','=', parent.product_template_id), ('product_template_attribute_value_ids','in', product_attribute_value_id)]"/>
+                                        <field name="price_unit" force_save="1" string="Unit Price"/>
+                                        <field name="qty" force_save="1" string="Qty"/>
+                                        <field name="price" force_save="1" string="Price"/>
+                                        <field name="page_reference" string="Ref" />
+                                        <field name="ad_number" string="Ad No." />
+                                        <field name="url_to_material" string="URL Ad Material" />
+                                    </tree>
+                                </field>
+                           </page>
+                           <page string="Other">
+                               <group>
+                                   <group>
+                                        <separator string="Material Remarks" colspan="2"/>
+                                        <field name="layout_remark" colspan="2" nolabel="1"/>
+                                    </group>
+                                   <group>
+                                       <separator string="Description" colspan="2"/>
+                                       <field name="name" colspan="2" nolabel="1"/>
+                                   </group>
+                                   <group>
+                                       <separator string="Migration Remarks" colspan="2"/>
+                                       <field name="mig_remark" colspan="2" nolabel="1"/>
+                                   </group>
+                               </group>
+                               <div groups="base.group_no_one">
+                                    <label for="invoice_lines"/>
+                                    <field name="invoice_lines"/>
+                               </div>
+                           </page>
+                       </notebook>
+
+
                         <group>
 <!--                            <field name="dates" string="Advertising Dates" colspan="4"-->
 <!--                               attrs="{'invisible':['|','|',('adv_issue','=',False),('title','=',False),('date_type','!=','date')]}">-->
@@ -1072,182 +1480,21 @@
 <!--                                    <field name="ad_number" string="Ad No." />-->
 <!--                                </tree>-->
 <!--                            </field>-->
-                            <field name="issue_product_ids" string="Adv.Issues with Products and Prices"
-                                   attrs="{'invisible':['|',('issue_product_ids','=',[]),('medium','!=', %(sale_advertising_order.newspaper_advertising_category)d)]}"
-                                   options="{'no_create': True, 'no_create_edit': True}" readonly="0">
-                                <tree string="Issues Products Prices" editable="bottom">
-                                    <field name="adv_issue_id" string="Issue" force_save="1" domain="[('parent_id','in', parent.title_ids and parent.title_ids[0][2])]"/>
-                                    <field name="product_attribute_value_id" force_save="1" invisible="True" />
-                                    <field name="product_id" string="Product" force_save="1" domain="[('product_tmpl_id','=', parent.product_template_id), ('product_template_attribute_value_ids','in', product_attribute_value_id)]"/>
-                                    <field name="price_unit" force_save="1" string="Unit Price"/>
-                                    <field name="qty" force_save="1" string="Qty"/>
-                                    <field name="price" force_save="1" string="Price"/>
-                                    <field name="page_reference" string="Ref" />
-                                    <field name="ad_number" string="Ad No." />
-                                    <field name="url_to_material" string="URL Ad Material" />
-                                </tree>
-                            </field>
 
-                            <group name="ad_refs" attrs="{'invisible':[('multi_line','!=', False)]}">
-                                <field name="ad_number"/>
-                                <field name="page_reference"/>
-                                <field name="url_to_material" />
-                            </group>
-                            <group attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')]}">
-                                <field name="from_date"
-                                       attrs="{'invisible':['|',('multi_line','!=', False),('date_type','!=','validity')], 'required': [('date_type','=','validity')]}"/>
-                                <field name="to_date"
-                                       attrs="{'invisible':['|',('multi_line','!=', False), ('date_type','!=','validity')], 'required': [('date_type','=','validity')]}"/>
-                            </group>
-                        </group>
-                        <group>
-                            <group>
-                                <separator string="Material Remarks" colspan="2"/>
-                                <field name="layout_remark" colspan="2" nolabel="1"/>
-                            </group>
-                            <group>
-                                <separator string="Description" colspan="2"/>
-                                <field name="name" colspan="2" nolabel="1"/>
-                            </group>
-                            <group>
-                                <separator string="Migration Remarks" colspan="2"/>
-                                <field name="mig_remark" colspan="2" nolabel="1"/>
-                            </group>
-                        </group>
-                        <div groups="base.group_no_one">
-                            <label for="invoice_lines"/>
-                            <field name="invoice_lines"/>
-                        </div>
-                        <field name="state" invisible="1"/>
-                    </form>
-                    <!--form string="Sales Order Lines">
-                        <group>
-                            <group>
-                                <field name="title" string="Title" domain="[('child_ids','!=', False)]" required="True"
-                                       options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                                <field name="medium" invisible="1" />
-                                <field name="ad_class"  required="1"
-                                       domain="[('type','!=', 'view'), ('id','child_of', medium)]" options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                                <field name="product_id"
-                                       context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
-                                       attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"
-                                       domain="[('categ_id','=', ad_class)]"
-                                       options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                                <field name="layout_category_id" groups="sale.group_sale_layout"/>
-                                <field name="invoice_status" invisible="1"/>
-                                <field name="qty_to_invoice" invisible="1"/>
-                                <field name="qty_delivered_manual" invisible="1"/>
-                                <field name="procurement_ids" invisible="1"/>
-                                <field name="price_subtotal" invisible="1"/>
-                                <label for="product_uom_qty" string="Ordered Quantity"/>
-                                <div>
-                                    <field
-                                        context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"
-                                        name="product_uom_qty" class="oe_inline"/>
-                                    <field name="product_uom" groups="uom.group_uom" class="oe_inline oe_no_button"
-                                        attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
-                                        invisible="1"/>
-                                </div>
-                                <label for="qty_delivered" string="Delivered Quantity" invisible="context.get('hide_sale')"/>
-                                <div invisible="context.get('hide_sale')">
-                                    <field name="qty_delivered" attrs="{'readonly': [('qty_delivered_manual', '=', False)]}"/>
-                                </div>
-                                <label for="qty_invoiced" string="Invoiced Quantity" invisible="context.get('hide_sale')"/>
-                                <div invisible="context.get('hide_sale')">
-                                    <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
-                                </div>
-                                <field name="adv_issue" domain="[('parent_id','=', title)]" attrs="{'invisible':['|',('adv_issue','=',False),('title','=',False)]}"
-                                       options="{'limit': 10, 'create': false, 'create_edit': false}"/>
-                                <field name="adv_issue_ids" string="Advertising Issues"
-                                       domain="[('id','child_of', title)]"
-                                       options="{'limit': 10, 'create': false, 'create_edit': false}">
-                                        <tree >
-                                            <field name="name" string="Name"/>
-                                        </tree>
-                                </field>
-                            </group>
-                            <group>
-                                <field name="tax_id" widget="many2many_tags"
-                                    domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
-                                    groups="sale_advertising_order.group_traffic_user"
-                                    attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
-                                <field name="price_unit" readonly="True" />
-                                <field name="actual_unit_price" />
-                                <label for="computed_discount" groups="product.group_discount_per_so_line"/>
-                                    <div name="computed_discount" groups="product.group_discount_per_so_line">
-                                        <field name="computed_discount" class="oe_inline"/> %%
-                                    </div>
-                                <field name="subtotal_before_agency_disc" readonly="False"/>
-                                <label for="discount" string="Agency Commission" groups="product.group_discount_per_so_line"/>
-                                    <div name="discount" groups="product.group_discount_per_so_line">
-                                        <field name="discount" invisible="1"/>
-                                        <field name="discount_dummy" class="oe_inline"/> %%
-                                    </div>
-                                <field name="price_subtotal" readonly="True" />
-                                <field name="date_type" invisible="True"/>
-                                <label for="customer_lead"/>
-                                <div>
-                                    <field name="customer_lead" class="oe_inline"/> days
-                                </div>
-                                <label for="analytic_tag_ids"/>
-                                <div>
-                                    <field name="analytic_tag_ids" widget="many2many_tags"/>
-                                </div>
-                            </group>
-                        </group>
-                        <group>
-                            <field name="dates" string="Advertising Dates" colspan="4"
-                               attrs="{'invisible':['|','|',('adv_issue','=',False),('title','=',False),('date_type','!=','date')]}">
-                                <tree string="Ad Dates" editable="bottom">
-                                    <field name="sequence" widget="handle" />
-                                    <field name="issue_date" string="Ad Date" required="True" />
-                                    <field name="name" string="Comment" />
-                                    <field name="page_reference" string="Ref" />
-                                    <field name="ad_number" string="Ad No." />
-                                </tree>
-                            </field>
-                            <field name="dateperiods" string="Advertising Periods" colspan="4"
-                                attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','!=','validity')]}">
-                                <tree string="Ad Periods" editable="bottom">
-                                    <field name="sequence" widget="handle" />
-                                    <field name="from_date" string="Start of Validity" required="True"/>
-                                    <field name="to_date" string="End of Validity" required="True"/>
-                                    <field name="name" string="Comment" />
-                                    <field name="page_reference" string="Ref" />
-                                    <field name="ad_number" string="Ad No." />
-                                </tree>
-                            </field>
 
-                            <group attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}">
-                                <field name="ad_number" attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}"/>
-                                <field name="page_reference" attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}"/>
-                            </group>
-                            <group attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}">
-                                <field name="from_date" attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}"/>
-                                <field name="to_date" attrs="{'invisible':['|','|',('adv_issue','=',False), ('title','=',False),('date_type','in',['date','validity'])]}"/>
-                            </group>
                         </group>
-                        <group>
-                            <group>
-                                <separator string="Layout Remark" colspan="2"/>
-                                <field name="layout_remark" colspan="2" nolabel="1"/>
-                            </group>
-                            <group>
-                                <separator string="Description" colspan="2"/>
-                                <field name="name" colspan="2" nolabel="1"/>
-                            </group>
-                        </group>
-                        <div groups="base.group_no_one">
-                            <label for="invoice_lines"/>
-                            <field name="invoice_lines"/>
-                        </div>
+
                         <field name="state" invisible="1"/>
-                    </form-->
-                </field>
+                    </sheet>
+                </form>
+            </field>
         </record>
 
 
-
+        <!--
+                Order Line (To Invoice)
+                Form: (Traffic User)
+        -->
         <record id="view_adv_order_line_form_editable" model="ir.ui.view">
             <field name="name">sale.adv.order.line.form.edit</field>
             <field name="model">sale.order.line</field>
