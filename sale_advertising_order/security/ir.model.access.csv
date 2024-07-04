@@ -1,6 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_sale_advertising_issue,sale.advertising.issue,model_sale_advertising_issue,group_ads_sales_user,1,1,1,0
 access_sale_advertising_issue_manager,sale.advertising.issue,model_sale_advertising_issue,group_ads_sales_manager,1,1,1,1
+access_sale_advertising_issue_all,sale.advertising.issue,model_sale_advertising_issue,,1,0,0,0
 access_sale_advertising_proof,sale.advertising.proof,model_sale_advertising_proof,group_ads_sales_user,1,0,0,0
 access_sale_advertising_proof_manager,sale.advertising.proof,model_sale_advertising_proof,group_ads_sales_manager,1,1,1,1
 access_sale_order_line_date,sale.order.line.date,model_sale_order_line_date,group_ads_sales_user,1,1,1,1
@@ -8,6 +9,7 @@ access_sale_order_line_dateperiod,sale.order.line.dateperiod,model_sale_order_li
 access_sale_order_line_issues_products,sale.order.line.issues.products,model_sale_order_line_issues_products,group_ads_sales_user,1,1,1,1
 access_sale_advertising_available,sale.advertising.available,model_sale_advertising_available,group_ads_sales_user,1,1,1,1
 access_sale_advertising_available_traffic,sale.advertising.available,model_sale_advertising_available,group_ads_traffic_user,1,1,1,1
+access_sale_advertising_available_all,sale.advertising.available,model_sale_advertising_available,,1,0,0,0
 access_sale_advertising_page,sale.advertising.page,model_sale_advertising_page,group_ads_sales_user,1,0,0,0
 access_sale_advertising_page_traffic,sale.advertising.page,model_sale_advertising_page,group_ads_traffic_user,1,1,1,1
 access_discount_reason,discount.reason,model_discount_reason,group_ads_sales_user,1,0,0,0
