@@ -99,9 +99,6 @@
                 <menuitem id="menu_discount_reason2" name="Discount Reasons"
                       parent="menu_adverstising_subconfig" action="action_discount_reason" sequence="5"/>
 
-<!--                <menuitem id="menu_sale_advertising_proof2" name="Proof"-->
-<!--                      parent="menu_adverstising_subconfig" action="action_sale_advertising_proof" groups="base.group_no_one" sequence="6"/>-->
-
             <menuitem id="menu_products_subconfig" name="Products"
                   parent="menu_advertising_config" sequence="3"/>
 

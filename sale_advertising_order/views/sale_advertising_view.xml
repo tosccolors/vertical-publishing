@@ -1471,48 +1471,6 @@
 			<field name="view_id" ref="discount_reason_tree"/>
 		</record>
 
-        <!-- sale.advertising.proof
-        TODO:deprecated
-         -->
-<!--		<record model="ir.ui.view" id="sale_advertising_proof_form">-->
-<!--			<field name="name">sale.advertising.proof.form</field>-->
-<!--			<field name="type">form</field>-->
-<!--			<field name="model">sale.advertising.proof</field>-->
-<!--			<field name="arch" type="xml">-->
-<!--				<form string="Advertising proof">-->
-<!--					<sheet>-->
-<!--						<group>-->
-<!--							<field name="name" />-->
-<!--							<field name="address_id" />-->
-<!--							<field name="number" />-->
-<!--							<field name="target_id" />-->
-<!--						</group>-->
-<!--					</sheet>-->
-<!--				</form>-->
-<!--			</field>-->
-<!--		</record>-->
-
-<!--		<record model="ir.ui.view" id="sale_advertising_proof_tree">-->
-<!--			<field name="name">sale.advertising.proof.tree</field>-->
-<!--			<field name="type">tree</field>-->
-<!--			<field name="model">sale.advertising.proof</field>-->
-<!--			<field name="arch" type="xml">-->
-<!--				<tree string="Advertising proof">-->
-<!--						<field name="name"/>-->
-<!--						<field name="number"/>-->
-<!--						<field name="target_id"/>-->
-<!--				</tree>-->
-<!--			</field>-->
-<!--		</record>-->
-
-<!--		<record model="ir.actions.act_window" id="action_sale_advertising_proof">-->
-<!--			<field name="name">Advertising Proof</field>-->
-<!--			<field name="type">ir.actions.act_window</field>-->
-<!--			<field name="res_model">sale.advertising.proof</field>-->
-<!--			<field name="view_mode">tree,form</field>-->
-<!--			<field name="view_id" ref="sale_advertising_proof_tree"/>-->
-<!--		</record>-->
-
         <!-- FIXME: Is these necessary?? [START]       -->
         <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
             <field name="domain">[('state','in',('draft','sent','cancel')),('advertising','=',False)]</field>
