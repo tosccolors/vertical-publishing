@@ -9,14 +9,6 @@
                     <group>
                         <field name="invoice_date" string="Invoice Date"/>
                         <field name="posting_date" string="Posting Date"/>
-
-<!--                        deprecated-->
-<!--                        <field name="job_queue" string="Via Job Queue"/> deprecated -->
-<!--                        <field name="chunk_size" string="Chunk Size Job Queue"-->
-<!--                               attrs="{'required':[('job_queue','=',True)],-->
-<!--                                       'invisible': [('job_queue','!=', True)]}"/>-->
-<!--                        <field name="execution_datetime"-->
-<!--                               attrs="{'invisible': [('job_queue','!=', True)]}"/>-->
                     </group>
                     <p class="oe_grey">
                         All selected and eligible order lines will be invoiced.
@@ -55,27 +47,6 @@
                 </form>
             </field>
         </record>
-
-    <!--      deep:  Incompatible / Irrelevant Actions -->
-<!--        <record id="action_view_ad_order_line_make_invoice" model="ir.actions.act_window">-->
-<!--            <field name="name">Make Invoices</field>-->
-<!--            <field name="type">ir.actions.act_window</field>-->
-<!--            <field name="res_model">ad.order.line.make.invoice</field>-->
-<!--            <field name="view_mode">form</field>-->
-<!--            <field name="view_id" ref="view_ad_order_line_make_invoice"/>-->
-<!--            <field name="target">new</field>-->
-<!--            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>-->
-<!--        </record>-->
-<!--        <record id="action_view_ad_order_make_invoice" model="ir.actions.act_window">-->
-<!--            <field name="name">Make Invoices</field>-->
-<!--            <field name="type">ir.actions.act_window</field>-->
-<!--            <field name="res_model">ad.order.make.invoice</field>-->
-<!--            <field name="view_mode">form</field>-->
-<!--            <field name="view_id" ref="view_ad_order_make_invoice"/>-->
-<!--            <field name="target">new</field>-->
-<!--            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>-->
-<!--        </record>-->
-
 
         <!--
         Sales Order Line (Advertising > Order lines to Invoice ) > list

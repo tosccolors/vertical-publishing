@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-	<data>
-        <!-- add css / js -->
-        <!--<template id="assets_backend" name="sales_advertising_dashboard assets" inherit_id="web.assets_backend">
-            <xpath expr="." position="inside">
-                <script type="text/javascript" src="/sale_advertising_order/static/src/js/sales_team_dashboard.js"></script>
-                <script type="text/javascript" src="/sale_advertising_order/static/src/js/sale.js"></script>
-            </xpath>
-        </template>-->
-    </data>
 
     <record id="view_task_search_form_sale_advertising" model="ir.ui.view">
             <field name="name">project.task.search.form</field>

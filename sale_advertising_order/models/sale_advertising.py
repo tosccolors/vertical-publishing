@@ -1647,15 +1647,15 @@ class OrderLineDateperiod(models.Model):
     page_reference = fields.Char('Page Preference', size=64)
     ad_number = fields.Char('External Reference', size=50)
 
-
-class AdvertisingProof(models.Model):
-    _name = "sale.advertising.proof"
-    _description="Sale Advertising Proof"
-
-    name = fields.Char('Name', size=32, required=True)
-    address_id = fields.Many2one('res.partner','Delivery Address', required=True)
-    number = fields.Integer('Number of Copies', required=True, default=1)
-    target_id = fields.Many2one('sale.order','Target', required=True)
+# Deprecated
+# class AdvertisingProof(models.Model):
+#     _name = "sale.advertising.proof"
+#     _description="Sale Advertising Proof"
+#
+#     name = fields.Char('Name', size=32, required=True)
+#     address_id = fields.Many2one('res.partner','Delivery Address', required=True)
+#     number = fields.Integer('Number of Copies', required=True, default=1)
+#     target_id = fields.Many2one('sale.order','Target', required=True)
 
 class DiscountReason(models.Model):
     _name = "discount.reason"
