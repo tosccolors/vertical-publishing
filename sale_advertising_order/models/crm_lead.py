@@ -89,24 +89,24 @@ class Lead(models.Model):
     #     for lead in self:
     #         lead.activities_count = self.env['crm.activity.report'].search_count([('lead_id', '=', lead.id), ('subtype_id','not in', ('Lead Created','Stage Changed','Opportunity Won','Discussions','Note','Lead aangemaakt','Fase gewijzigd','Prospect gewonnen','Discussies','Notitie')), ('subtype_id','!=',False)])
 
-    # TODO: Need this?
-    @api.model
-    def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
-        ctx = self.env.context
-        if 'params' in ctx and 'action' in ctx['params']:
-            if ctx['params']['action'] == self.env.ref("crm.crm_case_tree_view_oppor").id:
-                if groupby and groupby[0] == "stage_id":
-                    stage_logged = self.env.ref("sale_advertising_order.stage_logged")
-                    states_read = self.env['crm.stage'].search_read([('id', '!=', stage_logged.id)], ['name'])
-                    states = [(state['id'], state['name']) for state in states_read]
-                    read_group_res = super(Lead, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby)
-                    result = []
-                    for state_value, state_name in states:
-                        res = filter(lambda x: x['stage_id'] == (state_value, state_name), read_group_res)
-                        res[0]['stage_id'] = [state_value, state_name]
-                        result.append(res[0])
-                    return result
-        return super(Lead, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby)
+    # TODO: Need this? best to deprecate
+    # @api.model
+    # def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
+    #     ctx = self.env.context
+    #     if 'params' in ctx and 'action' in ctx['params']:
+    #         if ctx['params']['action'] == self.env.ref("crm.crm_case_tree_view_oppor").id:
+    #             if groupby and groupby[0] == "stage_id":
+    #                 stage_logged = self.env.ref("sale_advertising_order.stage_logged")
+    #                 states_read = self.env['crm.stage'].search_read([('id', '!=', stage_logged.id)], ['name'])
+    #                 states = [(state['id'], state['name']) for state in states_read]
+    #                 read_group_res = super(Lead, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby)
+    #                 result = []
+    #                 for state_value, state_name in states:
+    #                     res = filter(lambda x: x['stage_id'] == (state_value, state_name), read_group_res)
+    #                     res[0]['stage_id'] = [state_value, state_name]
+    #                     result.append(res[0])
+    #                 return result
+    #     return super(Lead, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby)
 
     # deprecated to adapt Standard CRM functionality
     # @api.onchange('user_id')
@@ -351,7 +351,6 @@ class Lead(models.Model):
             partner_match_domain.append(('email_from', '=ilike', email))
         if partnerDict:
             partner_match_domain.append(('partner_id', '=', partnerDict['partner_id']))
-            # partner_match_domain.append(('published_customer', '=', partnerDict['advertiser'])) --deprecated
         partner_match_domain = ['|'] * (len(partner_match_domain) - 1) + partner_match_domain
         if not partner_match_domain:
             return []
@@ -362,6 +361,7 @@ class Lead(models.Model):
         return self.search(domain)
 
 
+    # FIXME: no longer needed !!
     @api.model
     def _get_partnerDetails(self, partnerID=False):
 
@@ -390,81 +390,84 @@ class Lead(models.Model):
 
         return res
 
-    @api.model
-    def retrieve_sales_dashboard(self):
-        result = super(Lead, self).retrieve_sales_dashboard()
-        tasks = self.env['project.task'].search([('user_id', '=', self._uid)])
-        result['task'] = {
-            'today' :0,
-            'next_7_days' :0,
-        }
-        for task in tasks:
-            if task.date_assign and task.date_assign:
-                date_assign = fields.Date.from_string(task.date_assign)
-                if date_assign == date.today():
-                    result['task']['today'] += 1
-                if task.date_deadline:
-                    date_deadline = fields.Date.from_string(task.date_deadline)
-                    if date.today() <= date_deadline <= date.today() + timedelta(days=7):
-                        result['task']['next_7_days'] += 1
+    # FIXME: Need? NTD?
+    # @api.model
+    # def retrieve_sales_dashboard(self):
+    #     result = super(Lead, self).retrieve_sales_dashboard()
+    #     tasks = self.env['project.task'].search([('user_id', '=', self._uid)])
+    #     result['task'] = {
+    #         'today' :0,
+    #         'next_7_days' :0,
+    #     }
+    #     for task in tasks:
+    #         if task.date_assign and task.date_assign:
+    #             date_assign = fields.Date.from_string(task.date_assign)
+    #             if date_assign == date.today():
+    #                 result['task']['today'] += 1
+    #             if task.date_deadline:
+    #                 date_deadline = fields.Date.from_string(task.date_deadline)
+    #                 if date.today() <= date_deadline <= date.today() + timedelta(days=7):
+    #                     result['task']['next_7_days'] += 1
+    #
+    #     current_datetime = datetime.now()
+    #     result['sale_confirmed'] = {
+    #         'this_month': 0,
+    #         'last_month': 0,
+    #     }
+    #     sale_order_domain = [
+    #         ('state', 'in', ['sale', 'done']),
+    #         ('user_id', '=', self.env.uid),
+    #     ]
+    #     sale_data = self.env['sale.order'].search_read(sale_order_domain, ['confirmation_date', 'amount_untaxed'])
+    #
+    #     for sale in sale_data:
+    #         if sale['confirmation_date']:
+    #             sale_date = fields.Datetime.from_string(sale['confirmation_date'])
+    #             if sale_date <= current_datetime and sale_date >= current_datetime.replace(day=1):
+    #                 result['sale_confirmed']['this_month'] += sale['amount_untaxed']
+    #             elif sale_date < current_datetime.replace(day=1) and sale_date >= current_datetime.replace(day=1) - relativedelta(months=+1):
+    #                 result['sale_confirmed']['last_month'] += sale['amount_untaxed']
+    #     result['invoiced']['target'] = self.env.user.target_sales_invoiced
+    #     result['reg_quotes'] = {'overdue': 0}
+    #     result['adv_quotes'] = {'overdue': 0}
+    #     quote_domain = [
+    #         ('state', 'not in', ['sale', 'done']),
+    #         ('user_id', '=', self.env.uid),
+    #         ('validity_date', '<', fields.Date.to_string(date.today())),
+    #     ]
+    #     quote_data = self.env['sale.order'].search(quote_domain)
+    #     for quote in quote_data:
+    #         if quote.advertising == False:
+    #             result['reg_quotes']['overdue'] += 1
+    #         elif quote.advertising == True:
+    #             result['adv_quotes']['overdue'] += 1
+    #     return result
 
-        current_datetime = datetime.now()
-        result['sale_confirmed'] = {
-            'this_month': 0,
-            'last_month': 0,
-        }
-        sale_order_domain = [
-            ('state', 'in', ['sale', 'done']),
-            ('user_id', '=', self.env.uid),
-        ]
-        sale_data = self.env['sale.order'].search_read(sale_order_domain, ['confirmation_date', 'amount_untaxed'])
 
-        for sale in sale_data:
-            if sale['confirmation_date']:
-                sale_date = fields.Datetime.from_string(sale['confirmation_date'])
-                if sale_date <= current_datetime and sale_date >= current_datetime.replace(day=1):
-                    result['sale_confirmed']['this_month'] += sale['amount_untaxed']
-                elif sale_date < current_datetime.replace(day=1) and sale_date >= current_datetime.replace(day=1) - relativedelta(months=+1):
-                    result['sale_confirmed']['last_month'] += sale['amount_untaxed']
-        result['invoiced']['target'] = self.env.user.target_sales_invoiced
-        result['reg_quotes'] = {'overdue': 0}
-        result['adv_quotes'] = {'overdue': 0}
-        quote_domain = [
-            ('state', 'not in', ['sale', 'done']),
-            ('user_id', '=', self.env.uid),
-            ('validity_date', '<', fields.Date.to_string(date.today())),
-        ]
-        quote_data = self.env['sale.order'].search(quote_domain)
-        for quote in quote_data:
-            if quote.advertising == False:
-                result['reg_quotes']['overdue'] += 1
-            elif quote.advertising == True:
-                result['adv_quotes']['overdue'] += 1
-        return result
+    # # TODO: Need this? Best to deprecate
+    # @api.model
+    # def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+    #     res = super(Lead, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+    #
+    #     if view_type == 'form':
+    #         ctx = self.env.context
+    #         if 'params' in ctx and 'action' in ctx['params']:
+    #             doc = etree.XML(res['arch'])
+    #             if ctx['params']['action'] == self.env.ref("crm.crm_case_tree_view_oppor").id and doc.xpath("//field[@name='stage_id']"):
+    #                 stage = doc.xpath("//field[@name='stage_id']")[0]
+    #                 stage_logged = self.env.ref("sale_advertising_order.stage_logged")
+    #                 stage.set('domain', "['|', ('team_id', '=', team_id), ('team_id', '=', False), ('id', '!=', %d)]" %(stage_logged.id))
+    #
+    #             res['arch'] = etree.tostring(doc)
+    #     return res
 
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        res = super(Lead, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-
-        if view_type == 'form':
-            ctx = self.env.context
-            if 'params' in ctx and 'action' in ctx['params']:
-                doc = etree.XML(res['arch'])
-                if ctx['params']['action'] == self.env.ref("crm.crm_case_tree_view_oppor").id and doc.xpath("//field[@name='stage_id']"):
-                    stage = doc.xpath("//field[@name='stage_id']")[0]
-                    stage_logged = self.env.ref("sale_advertising_order.stage_logged")
-                    stage.set('domain', "['|', ('team_id', '=', team_id), ('team_id', '=', False), ('id', '!=', %d)]" %(stage_logged.id))
-
-                res['arch'] = etree.tostring(doc)
-        return res
-
-    # TODO: Need this?
-    def action_set_lost(self):
-        lead = super(Lead, self).action_set_lost()
-        for rec in self:
-            stage_lost = rec.env.ref("sale_advertising_order.stage_lost")
-            rec.write({'stage_id': stage_lost.id, 'active': True})
-        return lead
+    # # TODO: Need this? Best to deprecate
+    # def action_set_lost(self):
+    #     lead = super(Lead, self).action_set_lost()
+    #     for rec in self:
+    #         stage_lost = rec.env.ref("sale_advertising_order.stage_lost")
+    #         rec.write({'stage_id': stage_lost.id, 'active': True})
+    #     return lead
 
     #Overridden:
     def action_new_quotation(self):
@@ -479,15 +482,16 @@ class Lead(models.Model):
 class Team(models.Model):
     _inherit = ['crm.team']
 
-    def _compute_invoiced(self):
-        for team in self:
-            confirmed_sales = self.env['sale.order'].search([
-                ('state', 'in', ['sale', 'done']),
-                ('team_id', '=', team.id),
-                ('confirmation_date', '<=', datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-                ('confirmation_date', '>=', datetime.now().replace(day=1).strftime('%Y-%m-%d %H:%M:%S')),
-            ])
-            team.invoiced = sum(confirmed_sales.mapped('amount_untaxed'))
+    # FIXME: Need?
+    # def _compute_invoiced(self):
+    #     for team in self:
+    #         confirmed_sales = self.env['sale.order'].search([
+    #             ('state', 'in', ['sale', 'done']),
+    #             ('team_id', '=', team.id),
+    #             ('confirmation_date', '<=', datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
+    #             ('confirmation_date', '>=', datetime.now().replace(day=1).strftime('%Y-%m-%d %H:%M:%S')),
+    #         ])
+    #         team.invoiced = sum(confirmed_sales.mapped('amount_untaxed'))
 
 # deprecated to adapt Standard CRM functionality
 #     @api.model

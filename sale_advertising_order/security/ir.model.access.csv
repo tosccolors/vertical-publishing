@@ -102,8 +102,6 @@ access_stock_warehouse_orderpoint_sale_salesman,stock.warehouse.orderpoint,stock
 access_stock_location_sale_manager,stock.location sale manager,stock.model_stock_location,group_ads_sales_manager,1,0,0,0
 access_stock_rule_salemanager,stock_rule salemanager,stock.model_stock_rule,group_ads_sales_manager,1,1,1,1
 access_stock_rule,stock.rule.flow,stock.model_stock_rule,group_ads_sales_user,1,0,0,0
-access_crm_team_user,crm.team.user,sales_team.model_crm_team,group_ads_sales_user,1,0,0,0
-access_crm_team_manager,crm.team.manager,sales_team.model_crm_team,group_ads_sales_manager,1,1,1,1
 access_crm_tag_salesman,crm_tag salesman,sales_team.model_crm_tag,group_ads_sales_user,1,1,1,0
 access_crm_tag_manager,crm_tag manager,sales_team.model_crm_tag,group_ads_sales_manager,1,1,1,1
 access_website_visitor_salesman,access_website_visitor_salesman,website.model_website_visitor,group_ads_sales_user,1,0,0,0
