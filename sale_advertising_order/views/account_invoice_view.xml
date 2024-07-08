@@ -18,12 +18,12 @@
                     <field name="ad" />
                 </field>
                 <xpath expr="//sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='product_id']" position="before">
-                    <field name="sale_order_id" widget="many2one_unclickable" options="{'no_open': True}" context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}"/>
-                    <button type="object" name="open_sale_order" icon="fa-external-link" string="Open SO" class="oe_link btn-link"/>
+                    <field name="sale_order_id" widget="many2one_unclickable" options="{'no_open': True}"
+                            invisible="context.get('default_move_type') in ('in_invoice', 'in_refund')"
+                           context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}" />
+                    <button type="object" name="open_sale_order" icon="fa-external-link" string="Open SO" class="oe_link btn-link"
+                            attrs="{'invisible': [('sale_order_id', '=', False)]}"/>
                 </xpath>
-                <!--<xpath expr="//sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='product_ud']" position="attributes">
-                    <attribute name="invisible" >1</attribute>
-                </xpath>-->
                 <xpath expr="//sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
                     <field name="opportunity_subject" optional="hide"/>
                     <field name="ad_number" optional="hide"/>
