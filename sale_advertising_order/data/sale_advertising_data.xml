@@ -2,6 +2,7 @@
 <odoo>
 	<data noupdate="1">
 
+	<!--	FIXME: Need?		-->
 	<!-- Parameter that determines the end of discount-price iteration in order line-->
 		<record id="ir_config_parameter_fraction" model="ir.config_parameter">
 			<field name="key">sale_advertising_order.fraction</field>
@@ -17,7 +18,6 @@
 		<record id="advertising_category" model="product.category">
 			<field name="name">Ads</field>
 			<field name="date_type">date</field>
-<!--			<field name="adv_parent">True</field>-->
 		</record>
 
 		<record id="newspaper_advertising_category" model="product.category">

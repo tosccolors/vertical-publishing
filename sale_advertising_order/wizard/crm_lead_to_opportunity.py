@@ -29,11 +29,6 @@ class Lead2OpportunityPartner(models.TransientModel):
     def _get_partner(self):
         self.partner_dummy = self.partner_id.id
 
-    # action = fields.Selection([
-    #         ('exist', 'Link to an existing customer'),
-    #         ('nothing', 'Do not link to a customer')
-    #     ], 'Related Customer', required=True, default='nothing')
-
     agent = fields.Many2one('res.partner', 'Agency')
     advertiser = fields.Many2one('res.partner', 'Advertiser')
     partner_id = fields.Many2one('res.partner', 'Payer')

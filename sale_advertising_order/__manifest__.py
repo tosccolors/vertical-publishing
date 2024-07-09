@@ -21,7 +21,7 @@
 ##############################################################################
 {
     'name': 'Sale Advertising Order',
-    'version': '14.0.11.6',
+    'version': '14.0.12.0',
     'category': 'Sale',
     'description': """
 This module allows you to use both CRM and Sales Management to run your advertising sales
@@ -66,7 +66,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
              "views/product_view.xml",
              "views/account_invoice_view.xml",
 
-             "views/sale_dashboard_view.xml",
+             # "views/sale_dashboard_view.xml",  --deprecated
              "views/sale_advertising_view.xml",
              "views/proof_delivery_list_view.xml",
              "views/res_partner_view.xml",
@@ -74,7 +74,6 @@ This module allows you to use both CRM and Sales Management to run your advertis
              "views/sale_config_settings.xml"
              ],
     'qweb': [
-        # "static/src/xml/sales_team_dashboard.xml",
     ],
     'demo': ['demo/sale_advertising_demo.xml'],
     'installable': True

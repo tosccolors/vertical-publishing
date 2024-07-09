@@ -70,14 +70,10 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     @api.model
     def _prepare_invoice(self, keydict, lines, invoice_date, posting_date):
         ref = self.env.ref
-#        self.ensure_one()
-#        line_ids = [x.id for x in lines['lines']]
-
         partner = keydict['partner_id']
         published_customer = keydict['published_customer']
         payment_mode = keydict['payment_mode_id']
         operating_unit = keydict['operating_unit_id']
-        # journal_id = self.env['account.move'].default_get(['journal_id'])['journal_id']
         journal_id = self.env['account.move'].with_context(default_move_type='out_invoice')._get_default_journal().id
         if not journal_id:
             raise UserError(_('Please define an accounting sale journal for this company.'))
@@ -85,7 +81,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'invoice_date': invoice_date,
             'date': posting_date or False,
             'move_type': 'out_invoice',
-            # 'account_id': partner.property_account_receivable_id.id, # deprecated
             'partner_id': partner.id,
             'published_customer': published_customer.id,
             'invoice_line_ids': lines['lines'],
@@ -280,14 +275,13 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         res = {
             'name': line.title.name or "/",
             'sequence': line.sequence,
-            # 'origin': line.order_id.name, -- deprecated; perhaps we could use ref instead?
+            # 'origin': line.order_id.name, -- deprecated; perhaps we could use ref instead? FIXME
             'account_id': account.id,
             'price_unit': line.actual_unit_price,
             'quantity': line.product_uom_qty,
             'discount': line.discount,
             'product_uom_id': line.product_uom.id,
             'product_id': line.product_id and line.product_id.id or False,
-            # 'layout_category_id': line.layout_category_id and line.layout_category_id.id or False,
             'tax_ids': [(6, 0, line.tax_id.ids or [])],
             'analytic_account_id': line.adv_issue.analytic_account_id and line.adv_issue.analytic_account_id.id or False,
             'analytic_tag_ids': [(6, 0, line.analytic_tag_ids.ids or [])],
