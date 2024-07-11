@@ -28,13 +28,15 @@ class Partner(models.Model):
 
     agency_discount = fields.Float('Agency Discount (%)', digits=(16, 2), default=0.0)
     is_ad_agency = fields.Boolean('Agency', default=False)
-    adv_sale_order_count = fields.Integer(compute='_compute_adv_sale_order_count', string='# of Sales Order')
-    total_sales_order = fields.Integer(compute='_compute_total_sales_order', string='# of Total Sales Order')
-    adv_opportunity_count = fields.Integer("Opportunity", compute='_compute_adv_opportunity_count')
-    next_activities_count = fields.Integer(compute='_compute_next_activities_count', string='Next Activities')
-    activities_report_count = fields.Integer(compute='_compute_activities_report_count', string='Activities Report')
-    quotation_count = fields.Integer(compute='_compute_quotation_count', string='# of Quotations')
-    adv_quotation_count = fields.Integer(compute='_compute_adv_quotation_count', string='# of Advertising Quotations')
+
+    # deprecated -- deepa
+    # adv_sale_order_count = fields.Integer(compute='_compute_adv_sale_order_count', string='# of Sales Order')
+    # total_sales_order = fields.Integer(compute='_compute_total_sales_order', string='# of Total Sales Order')
+    # adv_opportunity_count = fields.Integer("Opportunity", compute='_compute_adv_opportunity_count')
+    # next_activities_count = fields.Integer(compute='_compute_next_activities_count', string='Next Activities')
+    # activities_report_count = fields.Integer(compute='_compute_activities_report_count', string='Activities Report')
+    # quotation_count = fields.Integer(compute='_compute_quotation_count', string='# of Quotations')
+    # adv_quotation_count = fields.Integer(compute='_compute_adv_quotation_count', string='# of Advertising Quotations')
 
 
     @api.model
@@ -45,75 +47,72 @@ class Partner(models.Model):
         return res
 
 
-    def _compute_activities_count(self):
-        activity_data = self.env['crm.activity.report'].read_group([('partner_id', 'in', self.ids),('subtype_id','not in', ('Lead Created','Stage Changed','Opportunity Won','Discussions','Note','Lead aangemaakt','Fase gewijzigd','Prospect gewonnen','Discussies','Notitie')), ('subtype_id','!=',False)], ['partner_id'], ['partner_id'])
-        mapped_data = {act['partner_id'][0]: act['partner_id_count'] for act in activity_data}
-        for partner in self:
-            partner.activities_count = mapped_data.get(partner.id, 0)
-
-    def _compute_adv_sale_order_count(self):
-        for partner in self:
-            operator = 'child_of' if partner.is_company else '='  # the adv sales order count should counts the adv sales order of this company and all its contacts
-            partner.adv_sale_order_count = self.env['sale.order'].search_count(['|', ('published_customer', operator, partner.id), ('partner_id', operator, partner.id), ('state','in',('sale','done')), ('advertising','=',True)])
-
-    
-    def _compute_total_sales_order(self):
-        for partner in self:
-            partner.total_sales_order = partner.sale_order_count + partner.adv_sale_order_count
-
-    
-    def _compute_adv_opportunity_count(self):
-        for partner in self:
-            operator = 'child_of' if partner.is_company else '='  # the opportunity count should counts the opportunities of this company and all its contacts
-            partner.adv_opportunity_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('type', '=', 'opportunity'), ('partner_id', operator, partner.id), ('stage_id.name','not in',('Won','Logged','Lost'))])
-
-    
-    def _compute_next_activities_count(self):
-        for partner in self:
-            operator = 'child_of' if partner.is_company else '='  # the activity count should counts the activities of this company and all its contacts
-            partner.next_activities_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('stage_id.name','!=','Logged')])
-
-    
-    def _compute_activities_report_count(self):
-        for partner in self:
-            operator = 'child_of' if partner.is_company else '='  # the activity count should counts the activities of this company and all its contacts
-            partner.activities_report_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('stage_id.name','!=','Qualified'), ('stage_id.name','!=','Proposition')])
-
-    
-    def _compute_opportunity_count(self):
-        for partner in self:
-            partner.opportunity_count = partner.adv_opportunity_count + partner.next_activities_count + partner.activities_report_count
-
-    def _compute_quotation_count(self):
-        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','not in',('sale','done','cancel')), ('advertising','=',False)],
-                                                      fields=['partner_id'], groupby=['partner_id'])
-        # read to keep the child/parent relation while aggregating the read_group result in the loop
-        partner_child_ids = self.read(['child_ids'])
-        mapped_data = dict([(m['partner_id'][0], m['partner_id_count']) for m in sale_data])
-        for partner in self:
-            # let's obtain the partner id and all its child ids from the read up there
-            partner_ids = list(filter(lambda r: r['id'] == partner.id, partner_child_ids))[0]
-            partner_ids = [partner_ids.get('id')] + partner_ids.get('child_ids')
-            # then we can sum for all the partner's child
-            partner.quotation_count = sum(mapped_data.get(child, 0) for child in partner_ids)
-
-    def _compute_adv_quotation_count(self):
-        for partner in self:
-            operator = 'child_of' if partner.is_company else '='  # the adv quotation count should counts the adv quotations of this company and all its contacts
-            partner.adv_quotation_count = self.env['sale.order'].search_count(['|', ('published_customer', operator, partner.id), ('partner_id', operator, partner.id), ('state','not in',('sale','done','cancel')), ('advertising','=',True)])
-
-    def _compute_sale_order_count(self):
-        sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','in',('sale','done')), ('advertising','=',False)],
-                                                      fields=['partner_id'], groupby=['partner_id'])
-        # read to keep the child/parent relation while aggregating the read_group result in the loop
-        partner_child_ids = self.read(['child_ids'])
-        mapped_data = dict([(m['partner_id'][0], m['partner_id_count']) for m in sale_data])
-        for partner in self:
-            # let's obtain the partner id and all its child ids from the read up there
-            partner_ids = list(filter(lambda r: r['id'] == partner.id, partner_child_ids))[0]
-            partner_ids = [partner_ids.get('id')] + partner_ids.get('child_ids')
-            # then we can sum for all the partner's child
-            partner.sale_order_count = sum(mapped_data.get(child, 0) for child in partner_ids)
+    # Following are deprecated -- deepa
+    # def _compute_activities_count(self):
+    #     activity_data = self.env['crm.activity.report'].read_group([('partner_id', 'in', self.ids),('subtype_id','not in', ('Lead Created','Stage Changed','Opportunity Won','Discussions','Note','Lead aangemaakt','Fase gewijzigd','Prospect gewonnen','Discussies','Notitie')), ('subtype_id','!=',False)], ['partner_id'], ['partner_id'])
+    #     mapped_data = {act['partner_id'][0]: act['partner_id_count'] for act in activity_data}
+    #     for partner in self:
+    #         partner.activities_count = mapped_data.get(partner.id, 0)
+    #
+    # def _compute_adv_sale_order_count(self):
+    #     for partner in self:
+    #         operator = 'child_of' if partner.is_company else '='  # the adv sales order count should counts the adv sales order of this company and all its contacts
+    #         partner.adv_sale_order_count = self.env['sale.order'].search_count(['|', ('published_customer', operator, partner.id), ('partner_id', operator, partner.id), ('state','in',('sale','done')), ('advertising','=',True)])
+    #
+    # def _compute_total_sales_order(self):
+    #     for partner in self:
+    #         partner.total_sales_order = partner.sale_order_count + partner.adv_sale_order_count
+    #
+    # def _compute_adv_opportunity_count(self):
+    #     for partner in self:
+    #         operator = 'child_of' if partner.is_company else '='  # the opportunity count should counts the opportunities of this company and all its contacts
+    #         partner.adv_opportunity_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('type', '=', 'opportunity'), ('partner_id', operator, partner.id), ('stage_id.name','not in',('Won','Logged','Lost'))])
+    #
+    # def _compute_next_activities_count(self):
+    #     for partner in self:
+    #         operator = 'child_of' if partner.is_company else '='  # the activity count should counts the activities of this company and all its contacts
+    #         partner.next_activities_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('stage_id.name','!=','Logged')])
+    #
+    # def _compute_activities_report_count(self):
+    #     for partner in self:
+    #         operator = 'child_of' if partner.is_company else '='  # the activity count should counts the activities of this company and all its contacts
+    #         partner.activities_report_count = self.env['crm.lead'].with_context({'lang':'en_US'}).search_count([('partner_id', operator, partner.id), ('type', '=', 'opportunity'), ('stage_id.name','!=','Qualified'), ('stage_id.name','!=','Proposition')])
+    #
+    #
+    # def _compute_opportunity_count(self):
+    #     for partner in self:
+    #         partner.opportunity_count = partner.adv_opportunity_count + partner.next_activities_count + partner.activities_report_count
+    #
+    # def _compute_quotation_count(self):
+    #     sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','not in',('sale','done','cancel')), ('advertising','=',False)],
+    #                                                   fields=['partner_id'], groupby=['partner_id'])
+    #     # read to keep the child/parent relation while aggregating the read_group result in the loop
+    #     partner_child_ids = self.read(['child_ids'])
+    #     mapped_data = dict([(m['partner_id'][0], m['partner_id_count']) for m in sale_data])
+    #     for partner in self:
+    #         # let's obtain the partner id and all its child ids from the read up there
+    #         partner_ids = list(filter(lambda r: r['id'] == partner.id, partner_child_ids))[0]
+    #         partner_ids = [partner_ids.get('id')] + partner_ids.get('child_ids')
+    #         # then we can sum for all the partner's child
+    #         partner.quotation_count = sum(mapped_data.get(child, 0) for child in partner_ids)
+    #
+    # def _compute_adv_quotation_count(self):
+    #     for partner in self:
+    #         operator = 'child_of' if partner.is_company else '='  # the adv quotation count should counts the adv quotations of this company and all its contacts
+    #         partner.adv_quotation_count = self.env['sale.order'].search_count(['|', ('published_customer', operator, partner.id), ('partner_id', operator, partner.id), ('state','not in',('sale','done','cancel')), ('advertising','=',True)])
+    #
+    # def _compute_sale_order_count(self):
+    #     sale_data = self.env['sale.order'].read_group(domain=[('partner_id', 'child_of', self.ids),('state','in',('sale','done')), ('advertising','=',False)],
+    #                                                   fields=['partner_id'], groupby=['partner_id'])
+    #     # read to keep the child/parent relation while aggregating the read_group result in the loop
+    #     partner_child_ids = self.read(['child_ids'])
+    #     mapped_data = dict([(m['partner_id'][0], m['partner_id_count']) for m in sale_data])
+    #     for partner in self:
+    #         # let's obtain the partner id and all its child ids from the read up there
+    #         partner_ids = list(filter(lambda r: r['id'] == partner.id, partner_child_ids))[0]
+    #         partner_ids = [partner_ids.get('id')] + partner_ids.get('child_ids')
+    #         # then we can sum for all the partner's child
+    #         partner.sale_order_count = sum(mapped_data.get(child, 0) for child in partner_ids)
 
     def name_get_custom(self, partner_ids):
         if not partner_ids:

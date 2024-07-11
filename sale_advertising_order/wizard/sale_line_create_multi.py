@@ -105,7 +105,6 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                  'title_ids': [(6, 0, [ad_issue.parent_id.id])],
                  'adv_issue_ids': [(6, 0, [ad_issue.id])],
                  'product_id': ad_iss.product_id.id,
-                 # 'name': ol.order_id.name or False,
                  'price_unit': ad_iss.price_unit,
                  'issue_product_ids': False,
                  'color_surcharge_amount': csa,

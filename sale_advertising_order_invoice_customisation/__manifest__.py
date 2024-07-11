@@ -25,7 +25,7 @@
     'category': 'Generic Modules',
     'description': """
 This module improves the integration between sale advertising orders and advertising invoices generated from sale advertising orders.
-============================================================================================================
+======================================================================================================================================
 
 
     """,

@@ -85,4 +85,19 @@
                     </xpath>
             </field>
         </record>
+
+
+    <!--  OrderLine (To Invoice)
+            (Form)
+     -->
+    <record id="view_adv_order_line_form_package" model="ir.ui.view">
+        <field name="name">sale.order.form.advertising.package</field>
+        <field name="model">sale.order.line</field>
+        <field name="inherit_id" ref="sale_advertising_order.view_adv_order_line_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_id']" position="after">
+              <field name="invoicing_property_id"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>
