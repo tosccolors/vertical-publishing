@@ -76,7 +76,6 @@ msgstr "Groeperen per adverteerder"
 #: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_group_by_edition
 msgid "Group by Edition"
 msgstr "Groeperen per editie"
-
 #. module: publishing_invoicing
 #: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_group_by_month
 msgid "Group by Month"
@@ -173,26 +172,11 @@ msgid "Invoicing date"
 msgstr "Factureerdatum"
 
 #. module: publishing_invoicing
-#: model:ir.ui.view,arch_db:publishing_invoicing.view_invoicing_property_form
-msgid "Invoicing Layout"
-msgstr "Factuur Layout"
-
-#. module: publishing_invoicing
 #: model:ir.actions.act_window,name:publishing_invoicing.action_invoicing_property
 #: model:ir.ui.menu,name:publishing_invoicing.menu_invoicing_property
 #: model:ir.ui.view,arch_db:publishing_invoicing.view_nsm_res_partner_invoicing_form2
 msgid "Invoicing Properties"
 msgstr "Invoicing Properties"
-
-#. module: publishing_invoicing
-#: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property_name
-#: model:ir.model.fields,field_description:publishing_invoicing.field_res_partner_invoicing_property_id
-#: model:ir.model.fields,field_description:publishing_invoicing.field_res_users_invoicing_property_id
-#: model:ir.model.fields,field_description:publishing_invoicing.field_sale_order_invoicing_property_id
-#: model:ir.model.fields,field_description:publishing_invoicing.field_sale_order_line_invoicing_property_id
-#: model:ir.ui.view,arch_db:publishing_invoicing.view_invoicing_property_form
-msgid "Invoicing Property"
-msgstr "Invoicing Property"
 
 #. module: publishing_invoicing
 #: model:ir.model.fields,field_description:publishing_invoicing.field_invoicing_property___last_update
@@ -235,6 +219,7 @@ msgstr "Reguliere Invoicing Properties"
 msgid "Sales Order"
 msgstr "Verkooporder"
 
+
 #. module: publishing_invoicing
 #: model:ir.model,name:publishing_invoicing.model_sale_order_line
 msgid "Sales Order Line"
@@ -250,6 +235,7 @@ msgstr "Search Invoicing Property"
 msgid "Set attribute to Invoicing date field"
 msgstr "Set attribute to Invoicing date field"
 
+
 #. module: publishing_invoicing
 #: model:ir.model.fields,field_description:publishing_invoicing.field_sale_order_inv_package_bool
 msgid "Set attribute to Package"
@@ -259,21 +245,6 @@ msgstr "Set attribute to Package"
 #: model:ir.model.fields,field_description:publishing_invoicing.field_sale_order_terms_cond_bool
 msgid "Set attribute to Terms & condition field"
 msgstr "Set attribute to Terms & condition field"
-
-#. module: publishing_invoicing
-#: model:ir.ui.view,arch_db:publishing_invoicing.view_invoicing_property_form
-msgid "Special Invoice Properties"
-msgstr "Overige Facturatie Methoden"
-
-#. module: publishing_invoicing
-#: model:ir.ui.view,arch_db:publishing_invoicing.publishing_invoicing_sales_order_line_filter_view
-msgid "To be invoiced as Package Deal"
-msgstr "Te factureren als package deal"
-
-#. module: publishing_invoicing
-#: model:ir.ui.view,arch_db:publishing_invoicing.publishing_invoicing_sales_order_line_filter_view
-msgid "To be invoiced in terms"
-msgstr "Te factureren in termijnen"
 
 #. module: publishing_invoicing
 #: model:ir.ui.view,arch_db:publishing_invoicing.view_invoicing_property_tree
