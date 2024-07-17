@@ -21,7 +21,7 @@
 ##############################################################################
 {
     'name': 'Sale Advertising Order',
-    'version': '16.0.0.0',
+    'version': '16.0.1.0',
     'category': 'Sale',
     'description': """
 This module allows you to use both CRM and Sales Management to run your advertising sales
@@ -34,7 +34,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
     'depends': [
                 'sale', 'sale_crm',
         # 'sale_operating_unit', FIXME
-        'account',
+        'account', 'account_analytic_tag',
                 # 'product_variant_template_categ_id',FIXME
         'project',
                 'web_domain_field','account_payment_sale',
