@@ -275,7 +275,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         res = {
             'name': line.title.name or "/",
             'sequence': line.sequence,
-            # 'origin': line.order_id.name, -- deprecated; perhaps we could use ref instead? FIXME
+            # 'origin': line.order_id.name, -- deprecated; perhaps we could use ref instead? FIXME [14]
             'account_id': account.id,
             'price_unit': line.actual_unit_price,
             'quantity': line.product_uom_qty,

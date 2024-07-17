@@ -78,7 +78,7 @@
 		   	<field name="name">product.template.product.tree</field>
 		   	<field name="model">product.template</field>
 		   	<field name="inherit_id" ref="product.product_template_tree_view"/>
-			<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>
+<!--	FIXME		<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>-->
 		   	<field name="arch" type="xml">
 			  	<field name="categ_id" position="after">
 				 	<field name="height"/>
@@ -96,7 +96,7 @@
 		   	<field name="model">product.template</field>
 			<field name="priority">12</field>
 		   	<field name="inherit_id" ref="product.product_template_only_form_view"/>
-			<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>
+<!--	FIXME		<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>-->
 		   	<field name="arch" type="xml">
 			  	<field name="categ_id" position="after">
 					<field name="is_ads_products" invisible="1"/>
@@ -117,7 +117,7 @@
 		   	<field name="model">product.product</field>
 			<field name="priority">12</field>
 		   	<field name="inherit_id" ref="product.product_normal_form_view"/>
-			<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>
+<!--	FIXME		<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>-->
 		   	<field name="arch" type="xml">
 				<field name="categ_id" position="after">
 				 	<field name="height"/>
@@ -131,7 +131,7 @@
 			<field name="model">product.template</field>
 			<field name="priority">13</field>
 			<field name="inherit_id" ref="account.product_template_form_view"/>
-			<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>
+<!--	FIXME		<field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>-->
 			<field name="arch" type="xml">
 				<page name="invoicing" position="attributes">
 					<attribute name="groups">account.group_account_invoice,sale_advertising_order.group_ads_traffic_user</attribute>
@@ -195,17 +195,18 @@
             </field>
         </record>
 
-        <record id="product_product_tree_view" model="ir.ui.view">
-			<field name="name">product.product.tree.inherit</field>
-			<field name="model">product.product</field>
-			<field name="inherit_id" ref="product.product_product_tree_view" />
-			<field name="arch" type="xml">
-				<xpath expr="//field[@name='product_template_attribute_value_ids']" position="after">
-					<field name="height" />
-					<field name="width" />
-				</xpath>
-			</field>
-		</record>
+<!--        FIXME: groups conflict -->
+<!--		<record id="product_product_tree_view" model="ir.ui.view">-->
+<!--			<field name="name">product.product.tree.inherit</field>-->
+<!--			<field name="model">product.product</field>-->
+<!--			<field name="inherit_id" ref="product.product_product_tree_view" />-->
+<!--			<field name="arch" type="xml">-->
+<!--				<xpath expr="//field[@name='product_template_attribute_value_ids']" position="after">-->
+<!--					<field name="height" />-->
+<!--					<field name="width" />-->
+<!--				</xpath>-->
+<!--			</field>-->
+<!--		</record>-->
 
 	</data>
 </odoo>

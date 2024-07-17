@@ -78,8 +78,8 @@
         <menuitem id="menu_advertising_config" name="Configuration" parent="advertising_sale_menu_root"
                 groups="group_ads_traffic_user"  sequence="10"/>
 
-            <menuitem id="sales_team_config3"  name="Sales Teams"
-                      parent="menu_advertising_config" action="sales_team.sales_team_config_action" sequence="1"/>
+<!--    FIXME        <menuitem id="sales_team_config3"  name="Sales Teams"-->
+<!--                      parent="menu_advertising_config" action="sales_team.sales_team_config_action" sequence="1"/>-->
 
             <menuitem id="menu_adverstising_subconfig" name="Advertising"
                   parent="menu_advertising_config" sequence="2"/>

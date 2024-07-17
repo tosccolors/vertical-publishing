@@ -21,7 +21,7 @@
 ##############################################################################
 {
     'name': 'Sale Advertising Order',
-    'version': '14.0.12.0',
+    'version': '16.0.0.0',
     'category': 'Sale',
     'description': """
 This module allows you to use both CRM and Sales Management to run your advertising sales
@@ -32,8 +32,11 @@ This module allows you to use both CRM and Sales Management to run your advertis
     'author': 'Deepa, Willem Hulshof, The Open Source Company (TOSC)',
     'website': 'http://www.tosc.nl',
     'depends': [
-                'sale', 'sale_crm', 'sale_operating_unit', 'account',
-                'product_variant_template_categ_id','project',
+                'sale', 'sale_crm',
+        # 'sale_operating_unit', FIXME
+        'account',
+                # 'product_variant_template_categ_id',FIXME
+        'project',
                 'web_domain_field','account_payment_sale',
                 'web_tree_many2one_clickable', 'crm_industry',
                 'sale_order_type', 'base_address_extended',
@@ -52,7 +55,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
              "security/security.xml",
              "security/ir.model.access.csv",
 
-             "report/proof_number_delivery_list_xslx.xml",
+             # "report/proof_number_delivery_list_xslx.xml", FIXME
              "report/report_external_views.xml",
              "report/invoice_report_template.xml",
              "report/sale_report_template.xml",
@@ -66,7 +69,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
              "views/product_view.xml",
              "views/account_invoice_view.xml",
 
-             # "views/sale_dashboard_view.xml",  --deprecated
+             # "views/sale_dashboard_view.xml",  --deprecated [14]
              "views/sale_advertising_view.xml",
              "views/proof_delivery_list_view.xml",
              "views/res_partner_view.xml",

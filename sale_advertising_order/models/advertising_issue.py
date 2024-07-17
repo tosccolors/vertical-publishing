@@ -79,7 +79,7 @@ class AdvertisingIssue(models.Model):
         # --@sushma: deprecated compute method is always for multi record
         # self.ensure_one()
         qty = 0
-        for line in self.available_ids: # FIXME: this doesn't look right
+        for line in self.available_ids: # FIXME [14]: this doesn't look right
             qty += line.available_qty
         self.amount_total = qty
 

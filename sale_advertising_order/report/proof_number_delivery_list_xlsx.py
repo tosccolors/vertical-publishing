@@ -2,7 +2,7 @@
 import logging
 
 from odoo import models
-from odoo.tools.translate import translate
+# from odoo.tools.translate import translate FIXME
 
 from odoo.addons.report_xlsx_helper.report.report_xlsx_format import (
     FORMATS,
@@ -39,12 +39,12 @@ class ProofNumberDeliveryListXlsx(models.AbstractModel):
                 "width": 32,
             },
             "initials": {
-                "header": {"value": self._("INITIALS")}, # FIXME -- Needed?
+                "header": {"value": self._("INITIALS")}, # FIXME [14] -- Needed?
                 "lines": {"value": self._render("line.proof_number_payer.id")},
                 "width": 10,
             },
             "infix": {
-                "header": {"value": self._("INFIX")}, # FIXME -- Needed?
+                "header": {"value": self._("INFIX")}, # FIXME [14] -- Needed?
                 "lines": {
                     "value": self._render("line.proof_number_payer.id"),
                 },

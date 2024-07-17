@@ -90,7 +90,8 @@
                             <field name="partner_invoice_id" string="Payer Invoice Address"
                                    context="{'default_type':'invoice', 'show_address': 1, 'show_email':1, 'res_partner_search_mode': 'customer'}" options='{"always_reload": True, "no_create_edit": True}' domain="[('id','child_of',partner_id)]"
                                    attrs="{'readonly':['|',('state','in', ['cancel','done']),('state','in', ['sale']),('invoice_status','not in','not invoiced')]}"
-                                   groups="sale.group_delivery_invoice_address"/>
+                                   />
+<!--        FIXME                    groups="sale.group_delivery_invoice_address"-->
                             <field name="customer_contact" required="False" context="{'default_parent_id': partner_id, 'show_email': 1, 'res_partner_search_mode': 'customer'}"
                                    domain="[('is_company', '=', False),('parent_id', '=', partner_id),('type', '=', 'contact')]"
                                    options='{"always_reload": True, "no_create_edit": True}'
@@ -110,11 +111,11 @@
                             <field name="client_order_ref" string="Client Order Reference"/>
 						    <field name="traffic_employee" invisible="1" string="Traffic Employee" groups="sale_advertising_order.group_ads_traffic_user"/>
                             <field name="traffic_comments" invisible="1" string="Traffic Comments"/>
-                            <field name="pricelist_id" groups="product.group_sale_pricelist"/>
+<!--        FIXME                    <field name="pricelist_id" groups="product.group_sale_pricelist"/>-->
                             <field name="currency_id" invisible="1"/>
-                            <field name="payment_term_id" options="{'no_create': True}"/>
+<!--         FIXME                   <field name="payment_term_id" options="{'no_create': True}"/>-->
                             <field name="payment_mode_id" domain="[('payment_type', '=', 'inbound')]" widget="selection"/>
-                            <field name="operating_unit_id" widget="selection" groups="operating_unit.group_multi_operating_unit"/>
+<!--        FIXME                    <field name="operating_unit_id" widget="selection" groups="operating_unit.group_multi_operating_unit"/>-->
                             <field name="display_discount_to_customer"/>
                         </group>
                     </group>
@@ -161,19 +162,22 @@
                                             <field name="issue_date" invisible="1"/>
                                             <field name="domain4prod_ids" invisible="1"/>
                                             <field name="product_template_id" domain="[('id','in', domain4prod_ids)]"
-                                                   context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
-                                                   attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('deadline_passed','=', True)]}"
+
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}" required="1"/>
+<!--        FIXME                                          context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"-->
+<!--        FIXME                                    attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('deadline_passed','=', True)]}"-->
                                             <field name="product_id" invisible="1" groups="base.group_no_one"
-                                                   context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
-                                                   attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
+
                                                    domain="['|','&amp;',('categ_id','=', ad_class),('product_template_attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
+<!--                FIXME                                 context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"-->
+<!--                   HINT      'product_uom' used in context is restricted to the group(s) uom.group_uom.-->
+<!--                FIXME                            attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"-->
                                             <field name="invoice_status" invisible="1"/>
                                             <field name="qty_to_invoice" invisible="1"/>
-                                            <field name="qty_delivered_manual" invisible="1"/>
+<!--                 FIXME                            <field name="qty_delivered_manual" invisible="1"/>-->
                                             <field name="nett_nett" />
-                                            <field name="multi_line" invisible="0" groups="base.group_no_one"/>
+                                            <field name="multi_line" invisible="1"/>
                                             <field name="multi_line_number" invisible="0" readonly="True" groups="base.group_no_one"/>
 
                                             <field name="adv_issue" invisible="1"/>
@@ -187,24 +191,26 @@
                                             <label for="product_uom_qty" string="Ordered Quantity"/>
                                             <div>
                                                 <field name="product_uom_qty" class="oe_inline"
-                                                       context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id,
-                                                                    'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"
+
                                                        attrs="{'readonly': [('deadline_passed','=', True)]}"/>
+<!--                        FIXME                        context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id,-->
+<!--                                                                    'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"-->
                                                 <field name="product_uom" groups="uom.group_uom" class="oe_inline oe_no_button"
                                                        readonly="True"/>
                                             </div>
                                             <label for="qty_delivered" string="Delivered Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>
                                             <div invisible="context.get('hide_sale')" groups="base.group_no_one">
-                                                <field name="qty_delivered" attrs="{'readonly': [('qty_delivered_manual', '=', False)]}"/>
+<!--                            FIXME                    <field name="qty_delivered" attrs="{'readonly': [('qty_delivered_manual', '=', False)]}"/>-->
+                                                <field name="qty_delivered"/>
                                             </div>
                                             <label for="qty_invoiced" string="Invoiced Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>
                                             <div invisible="context.get('hide_sale')" groups="base.group_no_one">
                                                 <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
                                             </div>
-                                            <field name="tax_id" widget="many2many_tags"
-                                                domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
-                                                groups="sale_advertising_order.group_ads_traffic_user"
-                                                attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
+<!--                    FIXME                        <field name="tax_id" widget="many2many_tags"-->
+<!--                                                groups="sale_advertising_order.group_ads_traffic_user"/>-->
+<!--                    FIXME:                            domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"-->
+<!--                    FIXME:  is restricted to the group(s) base.group_no_one              attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>-->
                                             <field name="price_edit" invisible="1"/>
                                             <field name="price_unit" readonly="0" attrs="{'invisible': ['|',('multi_line','=', True),('price_edit','!=', True)]}"
                                                     widget="monetary" options="{'currency_field': 'currency_id'}" />
@@ -218,7 +224,7 @@
                                                 <div name="computed_discount" groups="product.group_discount_per_so_line">
                                                     <field name="computed_discount" class="oe_inline"/> %%
                                                 </div>
-                                            <field name="discount_reason_id" attrs="{'invisible': [('computed_discount','=', 0.0)],'required': [('computed_discount','!=', 0.0)]}"/>
+                                            <field name="discount_reason_id" attrs="{'invisible': [('computed_discount','=', 0.0)],'required': [('computed_discount','!=', 0.0)]}" groups="product.group_discount_per_so_line"/>
                                             <field name="subtotal_before_agency_disc" readonly="False"/>
                                             <label for="discount" string="Agency Commission" groups="product.group_discount_per_so_line"/>
                                                 <div name="discount" string="Agency Discount (%)" groups="product.group_discount_per_so_line">
@@ -248,14 +254,14 @@
                                                <group>
                                                    <field name="booklet_surface_area" invisible="0"/>
                                                    <field name="page_class_domain" invisible="1"/>
-                                                   <label for="analytic_tag_ids" string="Page Category"/>
-                                                   <div>
-                                                        <field name="analytic_tag_ids"
-                                                               string="Page Category"
-                                                               widget="many2many_tags"
-                                                               domain="page_class_domain"
-                                                               attrs="{'readonly': [('deadline_passed','=', True)]}"/>
-                                                   </div>
+<!--                            FIXME                       <label for="analytic_tag_ids" string="Page Category"/>-->
+<!--                                                   <div>-->
+<!--                                                        <field name="analytic_tag_ids"-->
+<!--                                                               string="Page Category"-->
+<!--                                                               widget="many2many_tags"-->
+<!--                                                               domain="page_class_domain"-->
+<!--                                                               attrs="{'readonly': [('deadline_passed','=', True)]}"/>-->
+<!--                                                   </div>-->
                                                     <field name="ad_number" attrs="{'invisible':[('multi_line','!=', False)]}"/>
                                                     <field name="page_reference" attrs="{'invisible':[('multi_line','!=', False)]}"/>
                                                     <field name="url_to_material" attrs="{'invisible':[('multi_line','!=', False)]}"/>
@@ -319,40 +325,43 @@
                                     <field name="deadline"/>
                                     <field name="ad_class" groups="base.group_no_one" optional="hide"/>
                                     <field name="product_id"
-                                        attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
-                                        context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
+
+
                                        />
+<!--    FIXME                                     attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"-->
+<!--    FIXME                                context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"-->
                                     <field name="name" groups="base.group_no_one" optional="hide"/>
                                     <field name="ad_number" optional="show"/>
                                     <field name="page_reference" optional="show"/>
                                     <field name="qty_invoiced"
                                             invisible="context.get('hide_sale')" groups="base.group_no_one" optional="hide"/>
                                     <field name="qty_to_invoice" invisible="1"/>
-                                    <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting"
-                                           string="Page Category" widget="many2many_tags" optional="hide"/>
+<!--                FIXME                    <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting"-->
+<!--                                           string="Page Category" widget="many2many_tags" optional="hide"/>-->
                                     <field name="price_unit" readonly="1" optional="hide"/>
                                     <field name="actual_unit_price" widget="monetary"/>
                                     <field name="product_uom_qty"/>
                                     <field name="product_uom"
                                             attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"
-                                            context="{'company_id': parent.company_id}"
                                             groups="uom.group_uom" options='{"no_open": True}'/>
+<!--                 FIXME                           context="{'company_id': parent.company_id}"-->
                                     <field name="comb_list_price" widget="monetary" optional="hide"/>
                                     <field name="computed_discount" />
                                     <field name="subtotal_before_agency_disc" widget="monetary" optional="hide"/>
                                     <field name="discount_dummy" optional="hide"/>
-                                    <field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
-                                            attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
-                                            groups="account.group_account_invoice, sale_advertising_order.group_ads_traffic_user"/>
+<!--            FIXME                        <field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"-->
+<!--                                            attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"-->
+<!--                                            groups="account.group_account_invoice,sale_advertising_order.group_ads_traffic_user"/>-->
                                     <field name="discount" groups="product.group_discount_per_so_line" invisible="1"/>
                                     <field name="price_subtotal" widget="monetary" groups="account.group_show_line_subtotals_tax_excluded"/>
                                     <field name="price_total" widget="monetary" groups="account.group_show_line_subtotals_tax_included"/>
-                                    <field name="qty_delivered_manual" invisible="1"/>
+<!--                      FIXME              <field name="qty_delivered_manual" invisible="1"/>-->
                                     <!--<field name="procurement_ids" invisible="1"/>-->
                                     <field name="state" invisible="1"/>
                                     <field name="invoice_status" optional="hide"/>
                                     <field name="customer_lead" invisible="1"/>
                                     <field name="currency_id" invisible="1"/>
+                                    <field name="company_id" invisible="1"/>
                                     <button name="cancel_line" icon="fa-cog" string="Cancel"  type="object"
                                             attrs="{'invisible': [('invoice_status','!=', 'to invoice')]}"
                                             confirm="Are you sure you want to cancel this line?"
@@ -399,22 +408,22 @@
                         <page string="Other Information">
                             <group>
                                 <group string="Sales Information" name="sales_person0">
-                                    <field name="user_id"/>
-                                    <field name="team_id" options="{'no_create': True}"/>
+<!--        FIXME                            <field name="user_id"/>-->
+<!--           FIXME                         <field name="team_id" options="{'no_create': True}"/>-->
 									<field name="tag_ids" widget="many2many_tags"/>
                                     <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
 
                                 </group>
                                 <group string="..." name="sales_person1">
-                                    <field name="type_id" required="1"/>
+<!--        FIXME                            <field name="type_id" required="1"/>-->
                                     <field name="partner_acc_mgr"/>
-                                    <field name="analytic_account_id" attrs="{'invisible':[('state','=','sale'),('published_customer','!=', False)]}"
+<!--        FIXME                            <field name="analytic_account_id" attrs="{'invisible':[('state','=','sale'),('published_customer','!=', False)]}"-->
                                            context="{'default_partner_id':partner_invoice_id, 'default_name':name}" groups="analytic.group_analytic_accounting"/>
                                     <field name="nett_nett"/>
 
                                 </group>
                                 <group name="sale_pay" string="Invoicing">
-                                    <field name="fiscal_position_id" options="{'no_create': True}"/>
+<!--            FIXME                        <field name="fiscal_position_id" options="{'no_create': True}"/>-->
                                     <field name="invoice_status"
                                         attrs="{'invisible': [('state', 'not in', ('sale','done'))]}"/>
                                     <field name="advertising" invisible="1"/>
@@ -424,7 +433,7 @@
 									<field name="campaign_id" />
 									<field name="medium_id" />
 									<field name="source_id" />
-									<field name="opportunity_id" help="Log in the chatter from which opportunity the order originates" />
+<!--			FIXME						<field name="opportunity_id" help="Log in the chatter from which opportunity the order originates" />-->
                                 </group>
 								<group string="Shipping Information" name="sale_shipping" groups="base.group_no_one">
 								</group>
@@ -457,24 +466,24 @@
             <field name="name">sale.order.form.advertising.ndl</field>
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
-            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_no_deadline_check'))]"/>
+<!--    FIXME        <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_no_deadline_check'))]"/>-->
             <field name="arch" type="xml">
                 <field name="adv_issue_ids" position="attributes">
                      <attribute name="string">Advertising Issue</attribute>
                      <attribute name="domain" >[('parent_id','in', title_ids)]</attribute>
                 </field>
-                <field name="product_template_id" position="attributes">
-                     <attribute name="attrs" >{'readonly': [('qty_invoiced', '&gt;', 0)]}</attribute>
-                </field>
+<!--    FIXME            <field name="product_template_id" position="attributes">-->
+<!--                     <attribute name="attrs" >{'readonly': [('qty_invoiced', '&gt;', 0)]}</attribute>-->
+<!--                </field>-->
                 <field name="product_uom_qty" position="attributes">
                      <attribute name="readonly" >False</attribute>
                 </field>
                 <field name="product_uom" position="attributes">
                      <attribute name="attrs" >{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}</attribute>
                 </field>
-                <field name="analytic_tag_ids" position="attributes">
-                    <attribute name="attrs" ></attribute>
-                </field>
+<!--    FIXME            <field name="analytic_tag_ids" position="attributes">-->
+<!--                    <attribute name="attrs" ></attribute>-->
+<!--                </field>-->
             </field>
         </record>
 
@@ -482,7 +491,7 @@
             <field name="name">sale.order.form.advertising.traffic</field>
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
-            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_traffic_user'))]"/>
+<!--    FIXME        <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_traffic_user'))]"/>-->
             <field name="arch" type="xml">
                 <xpath expr="//page[@name='order_line']/field[@name='order_line']" position="attributes">
                      <attribute name="attrs" >{'readonly': [('state', 'in', ['done','cancel'])]}</attribute>
@@ -503,10 +512,10 @@
                     <field name="published_customer"/>
                     <field name="advertising_agency"/>
                     <field name="partner_acc_mgr"/>
-                    <field name="user_id" optional="show" widget="many2one_avatar_user"/>
-                    <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>
+<!--    FIXME                <field name="user_id" optional="show" widget="many2one_avatar_user"/>-->
+<!--    FIXME                <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>-->
                     <field name="activity_ids" widget="list_activity" optional="show"/>
-                    <field name="team_id" optional="hide"/>
+<!--    FIXME                <field name="team_id" optional="hide"/>-->
                     <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>
                     <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>
                     <field name="amount_total" sum="Total Tax Included" widget="monetary" decoration-bf="1" optional="show"/>
@@ -527,7 +536,7 @@
                 <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
                     <separator/>
                     <filter string="Sales" name="sales" domain="[('state','in',('sale','done'))]"/>
-                    <filter name="department" string="Department" domain="[]" groups="operating_unit.group_multi_operating_unit" context="{'group_by':'operating_unit_id'}"/>
+<!--        FIXME            <filter name="department" string="Department" domain="[]" groups="operating_unit.group_multi_operating_unit" context="{'group_by':'operating_unit_id'}"/>-->
                     <filter name="accmgr_sale_orders_filter" string="My Sales Orders (Account Manager)"
                             domain="[('partner_acc_mgr','=',uid)]" help="My Advertising Sales Orders as Account manager"/>
                     <field name="partner_acc_mgr"/>
@@ -541,14 +550,14 @@
                     <filter string="Sales Mgr Approved" name="approved1" domain="[('state','=','approved1')]" groups="sale_advertising_order.group_ads_sales_manager"/>
                 </xpath>
 
-                <field name="partner_id" position="after">
-                    <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>
-                </field>
+<!--    FIXME            <field name="partner_id" position="after">-->
+<!--                    <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>-->
+<!--                </field>-->
 
-                <field name="analytic_account_id" position="after">
-                    <field name="date_from" string="Order Date From" filter_domain="[('date_order','&gt;=',self)]"/>
-                    <field name="date_to" string="Order Date To" filter_domain="[('date_order','&lt;=',self)]"/>
-                </field>
+<!--    FIXME            <field name="analytic_account_id" position="after">-->
+<!--                    <field name="date_from" string="Order Date From" filter_domain="[('date_order','&gt;=',self)]"/>-->
+<!--                    <field name="date_to" string="Order Date To" filter_domain="[('date_order','&lt;=',self)]"/>-->
+<!--                </field>-->
                 <xpath expr="." position="inside">
                     <filter string="Account Manager" name="acc_manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
                 </xpath>
@@ -642,10 +651,10 @@
                     <field name="published_customer"/>
                     <field name="advertising_agency"/>
                     <field name="partner_acc_mgr" optional="show"/>
-                    <field name="user_id" widget="many2one_avatar_user" optional="show"/>
-                    <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>
+<!--     FIXME               <field name="user_id" widget="many2one_avatar_user" optional="show"/>-->
+<!--    FIXME                <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>-->
                     <field name="activity_ids" widget="list_activity" optional="show"/>
-                    <field name="team_id" optional="hide"/>
+<!--    FIXME                <field name="team_id" optional="hide"/>-->
                     <field name="tag_ids" optional="hide" widget="many2many_tags" options="{'color_field': 'color'}"/>
                     <field name="amount_untaxed" sum="Total Tax Excluded" widget="monetary" optional="hide"/>
                     <field name="amount_tax" sum="Tax Total" widget="monetary" optional="hide"/>
@@ -702,10 +711,10 @@
                             help="Show all advertising quotations for which the expiration date is before today"/>
                 </xpath>
 
-                <field name="analytic_account_id" position="after" >
-                    <field name="date_from" string="Order Date From" filter_domain="[('date_order','&gt;=',self)]"/>
-                    <field name="date_to" string="Order Date To" filter_domain="[('date_order','&lt;=',self)]"/>
-                </field>
+<!--    FIXME            <field name="analytic_account_id" position="after" >-->
+<!--                    <field name="date_from" string="Order Date From" filter_domain="[('date_order','&gt;=',self)]"/>-->
+<!--                    <field name="date_to" string="Order Date To" filter_domain="[('date_order','&lt;=',self)]"/>-->
+<!--                </field>-->
                 <xpath expr="." position="inside">
                     <filter string="Account Manager" name="acc_manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
                 </xpath>
@@ -853,12 +862,13 @@
                         <field name="computed_discount" optional="hide"/>
                         <field name="subtotal_before_agency_disc" optional="hide"/>
                         <field name="discount_dummy" optional="hide"/>
-                        <field name="tax_id" optional="hide"/>
+<!--    FIXME                    <field name="tax_id" optional="hide"/>-->
                         <field name="price_subtotal" widget="monetary" groups="account.group_show_line_subtotals_tax_excluded"/>
                         <field name="price_total" widget="monetary" groups="account.group_show_line_subtotals_tax_included"/>
                         <field name="state" invisible="1"/>
                         <field name="invoice_status" />
                         <field name="currency_id" invisible="1"/>
+                        <field name="company_id" invisible="1"/>
                 </tree>
             </field>
         </record>
@@ -927,7 +937,7 @@
                                    attrs="{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')]}"/>
                             <field name="to_date"
                                    attrs="{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')]}"/>
-                            <field name="deadline_offset" invisible="1" groups="base.group_no_one"/>
+                            <field name="deadline_offset" invisible="1"/>
                             <field name="deadline_passed" invisible="1" />
                             <field name="deadline" invisible="0" />
                              <field name="adv_issue_ids" string="Advertising Issue(s)"
@@ -944,19 +954,20 @@
                             <field name="issue_date" invisible="1"/>
                             <field name="domain4prod_ids" invisible="1"/>
                             <field name="product_template_id"
-                                   context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': company_id}"
-                                   attrs="{'readonly': ['|',('qty_invoiced', '&gt;', 0), ('deadline_passed','=', True)]}"
+
                                    domain="[('id','in', domain4prod_ids)]"
                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}" required="1"/>
+<!--        FIXME                      attrs="{'readonly': ['|',('qty_invoiced', '&gt;', 0), ('deadline_passed','=', True)]}"-->
+<!--        FIXME                           context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': company_id}"-->
 
                             <field name="product_id" readonly="1" groups="base.group_no_one"
-                                   context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': company_id}"
-                                   attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
+
                                    domain="['|','&amp;',('categ_id','=', ad_class),('product_template_attribute_value_ids','=', False),('product_tmpl_id','=', product_template_id)]"
                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"/>
-
+<!--            FIXME            attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"-->
+<!--            FIXME                       context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id, 'uom':product_uom, 'company_id': company_id}"-->
                             <field name="nett_nett" />
-                            <field name="multi_line" invisible="0" groups="base.group_no_one"/>
+                            <field name="multi_line" invisible="1"/>
                             <field name="multi_line_number" invisible="0" readonly="True" groups="base.group_no_one"/>
 
                         </group>
@@ -966,30 +977,32 @@
                                 <field name="customer_lead" class="oe_inline" groups="base.group_no_one"/> days
                             </div>
                             <field name="qty_to_invoice" invisible="1"/>
-                            <field name="qty_delivered_manual" invisible="1"/>
+<!--             FIXME               <field name="qty_delivered_manual" invisible="1"/>-->
                             <!--<field name="procurement_ids" invisible="1"/>-->
                             <label for="product_uom_qty" string="Ordered Quantity"/>
                             <div>
-                                <field name="product_uom_qty" class="oe_inline"
-                                       context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id,
-                                                    'uom':product_uom, 'uom_qty_change':True, 'company_id': company_id}"
-                                       attrs="{'readonly': [('deadline_passed','=', True)]}"/>
+                                <field name="product_uom_qty" class="oe_inline"/>
+<!--    FIXME                                   context="{'partner_id':order_partner_id, 'quantity':product_uom_qty, 'pricelist':order_pricelist_id,-->
+<!--                                                    'uom':product_uom, 'uom_qty_change':True, 'company_id': company_id}"-->
+<!--                                       attrs="{'readonly': [('deadline_passed','=', True)]}"-->
                                 <field name="product_uom" groups="uom.group_uom" class="oe_inline oe_no_button"
                                        readonly="True"/>
                             </div>
                             <label for="qty_delivered" string="Delivered Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>
                             <div invisible="context.get('hide_sale')" groups="base.group_no_one">
-                                <field name="qty_delivered" attrs="{'readonly': [('qty_delivered_manual', '=', False)]}"/>
+<!--            FIXME                    <field name="qty_delivered" attrs="{'readonly': [('qty_delivered_manual', '=', False)]}"/>-->
+                                <field name="qty_delivered" />
                             </div>
                             <label for="qty_invoiced" string="Invoiced Quantity" invisible="context.get('hide_sale')" groups="base.group_no_one"/>
                             <div invisible="context.get('hide_sale')" groups="base.group_no_one">
                                 <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
                             </div>
                             <field name="adv_issue" invisible="1"/>
-                            <field name="tax_id" widget="many2many_tags" options="{'no_create': True}" context="{'search_view_ref': 'account.account_tax_view_search'}"
-                                   domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
-                                    attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
-                                    groups="sale_advertising_order.group_ads_traffic_user"/>
+<!--        FIXME                    <field name="tax_id" widget="many2many_tags" options="{'no_create': True}" context="{'search_view_ref': 'account.account_tax_view_search'}"-->
+<!--                                   domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"-->
+
+<!--                                    groups="sale_advertising_order.group_ads_traffic_user"/>-->
+<!--            FIXME                attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"-->
                             <field name="price_edit" invisible="1"/>
                             <field name="price_unit" readonly="0" attrs="{'invisible': [('price_edit','!=', True)]}"
                                    widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -1003,7 +1016,8 @@
                                 <div name="computed_discount" groups="product.group_discount_per_so_line">
                                     <field name="computed_discount" class="oe_inline"/> %%
                                 </div>
-                            <field name="discount_reason_id" attrs="{'invisible': [('computed_discount','=', 0.0)],'required': [('computed_discount','!=', 0.0)]}"/>
+                            <field name="discount_reason_id" />
+<!--        FIXME                    attrs="{'invisible': [('computed_discount','=', 0.0)],'required': [('computed_discount','!=', 0.0)]}"-->
                             <field name="subtotal_before_agency_disc" readonly="False"/>
                             <label for="discount" string="Agency Commission" groups="product.group_discount_per_so_line"/>
                                 <div name="discount" groups="product.group_discount_per_so_line">
@@ -1027,14 +1041,14 @@
                                    <group>
                                        <field name="booklet_surface_area" readonly="1"/>
                                        <field name="page_class_domain" invisible="1"/>
-                                       <label for="analytic_tag_ids" string="Page Category"/>
-                                       <div>
-                                           <field name="analytic_tag_ids"
-                                               string="Page Category"
-                                               widget="many2many_tags"
-                                               domain="page_class_domain"
-                                               attrs="{'readonly': [('deadline_passed','=', True)]}"/>
-                                       </div>
+<!--                FIXME                       <label for="analytic_tag_ids" string="Page Category"/>-->
+<!--                                       <div>-->
+<!--                                           <field name="analytic_tag_ids"-->
+<!--                                               string="Page Category"-->
+<!--                                               widget="many2many_tags"-->
+<!--                                               domain="page_class_domain"-->
+<!--                                               attrs="{'readonly': [('deadline_passed','=', True)]}"/>-->
+<!--                                       </div>-->
                                        <field name="ad_number" attrs="{'invisible':[('multi_line','!=', False)]}"/>
                                        <field name="page_reference" attrs="{'invisible':[('multi_line','!=', False)]}"/>
                                        <field name="url_to_material" attrs="{'invisible':[('multi_line','!=', False)]}"/>
@@ -1095,7 +1109,7 @@
             <field name="name">sale.adv.order.line.form.edit</field>
             <field name="model">sale.order.line</field>
             <field name="inherit_id" ref="view_adv_order_line_form"></field>
-            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_traffic_user'))]"/>
+<!--    FIXME        <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_traffic_user'))]"/>-->
             <field name="arch" type="xml">
                 <xpath expr="//form" position="attributes">
                     <attribute name="create">1</attribute>
@@ -1414,7 +1428,7 @@
 			<field name="type">tree</field>
 			<field name="model">sale.advertising.available</field>
             <field name="inherit_id" ref="sale_advertising_order.sale_advertising_available_tree"/>
-            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_traffic_user'))]"/>
+<!--    FIXME        <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_traffic_user'))]"/>-->
 			<field name="arch" type="xml">
                 <tree name="page_available" position="attributes" >
                     <attribute name="create" >1</attribute>
@@ -1471,7 +1485,7 @@
 			<field name="view_id" ref="discount_reason_tree"/>
 		</record>
 
-        <!-- FIXME: Is these necessary?? [START]       -->
+        <!-- FIXME: [14] Is these necessary?? [START]       -->
         <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
             <field name="domain">[('state','in',('draft','sent','cancel')),('advertising','=',False)]</field>
         </record>
@@ -1491,7 +1505,7 @@
         <record id="sale_crm.sale_action_quotations_new" model="ir.actions.act_window">
             <field name="domain">[('opportunity_id', '=', active_id), ('advertising','=',False)]</field>
         </record>
-        <!-- FIXME: Is these necessary?? [END]       -->
+        <!-- FIXME: [14] Is these necessary?? [END]       -->
 
         <!--
                 Sale Analysis Report
@@ -1537,7 +1551,7 @@
             <field name="help">From this report, you can have an overview of the sale confirmed with your customers. The search tool can also be used to personalise your Sales reports and so, match this analysis to your needs.</field>
         </record>
 
-        <!-- FIXME: Need this? deprecated          -->
+        <!-- FIXME: [14] Need this? deprecated          -->
 <!--        <record id="crm_team_salesteams_view_kanban" model="ir.ui.view">-->
 <!--            <field name="name">crm.team.kanban</field>-->
 <!--            <field name="model">crm.team</field>-->
@@ -1568,7 +1582,7 @@
 <!--            </field>-->
 <!--        </record>-->
 
-        <!-- FIXME: Need this? deprecated          -->
+        <!-- FIXME: [14] Need this? deprecated          -->
         <!-- search view of crm.activity.report inherited-->
 <!--        <record id="crm_activity_report_view_search" model="ir.ui.view">-->
 <!--            <field name="name">crm.activity.report.search</field>-->
@@ -1590,7 +1604,7 @@
 <!--            </field>-->
 <!--        </record>-->
 
-        <!-- FIXME: Need this? deprecated     -->
+        <!-- FIXME: [14] Need this? deprecated     -->
         <!-- tree view of crm.activity.report inherited-->
 <!--        <record id="crm_activity_report_view_tree" model="ir.ui.view">-->
 <!--            <field name="name">crm.activity.report.tree</field>-->
@@ -1604,7 +1618,7 @@
 <!--            </field>-->
 <!--        </record>-->
 
-        <!-- FIXME: Need this?     deprecated      -->
+        <!-- FIXME: [14] Need this?     deprecated      -->
         <!-- action of crm.activity.report tree view-->
 <!--        <record id="crm_activity_report_action_tree" model="ir.actions.act_window">-->
 <!--           <field name="name">Activities Log</field>-->
@@ -1640,7 +1654,7 @@
                         <field name="page_reference"/>
                         <field name="layout_remark" optional="hide"/>
                         <field name="name" />
-                        <field name="analytic_tag_ids" optional="hide"/>
+<!--            FIXME            <field name="analytic_tag_ids" optional="hide"/>-->
                 </tree>
             </field>
         </record>

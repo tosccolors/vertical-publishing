@@ -198,7 +198,7 @@ class Lead(models.Model):
         values.update({
             'industry_id': part.industry_id,
             'secondary_industry_ids': [(6, 0, part.secondary_industry_ids.ids)],
-            # 'opt_out': part.opt_out, FIXME: Need?
+            # 'opt_out': part.opt_out, FIXME: [14] Need?
             'partner_name': part.name,
             'partner_contact_id': contact_id,
             'partner_invoice_id': addr['invoice'],
@@ -238,7 +238,7 @@ class Lead(models.Model):
     #     if not team_id:
     #         team_id = self.team_id.id if self.team_id else False
     #
-    #         # 'planned_revenue': self.planned_revenue, FIXME: Check if needed.
+    #         # 'planned_revenue': self.planned_revenue, FIXME: [14] Check if needed.
     #     val = {
     #         'probability': self.probability,
     #         'name': self.name,
@@ -361,7 +361,7 @@ class Lead(models.Model):
         return self.search(domain)
 
 
-    # FIXME: no longer needed !!
+    # FIXME: [14] no longer needed !!
     @api.model
     def _get_partnerDetails(self, partnerID=False):
 
@@ -390,7 +390,7 @@ class Lead(models.Model):
 
         return res
 
-    # FIXME: Need? NTD?
+    # FIXME: [14] Need? NTD?
     # @api.model
     # def retrieve_sales_dashboard(self):
     #     result = super(Lead, self).retrieve_sales_dashboard()
@@ -482,7 +482,7 @@ class Lead(models.Model):
 class Team(models.Model):
     _inherit = ['crm.team']
 
-    # FIXME: Need?
+    # FIXME: [14] Need?
     # def _compute_invoiced(self):
     #     for team in self:
     #         confirmed_sales = self.env['sale.order'].search([

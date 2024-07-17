@@ -32,8 +32,6 @@ access_account_move_line_salesman,account_move_line salesman,account.model_accou
 access_account_partial_reconcile_salesman,account_partial_reconcile salesman,account.model_account_partial_reconcile,group_ads_sales_user,1,0,0,0
 access_account_payment_term_salesman,account_payment_term salesman,account.model_account_payment_term,group_ads_sales_user,1,0,0,0
 access_account_account_tag_sale_salesman,account.account.tag.sale.salesman,account.model_account_account_tag,group_ads_sales_user,1,0,0,0
-access_account_account_type_sale_salesman,account.account.type.sale.salesman,account.model_account_account_type,group_ads_sales_user,1,0,0,0
-access_account_analytic_tag_sale_salesman,account.analytic.tag.sale.salesman,analytic.model_account_analytic_tag,group_ads_sales_user,1,0,0,0
 access_account_analytic_account_salesman,account_analytic_account salesman,analytic.model_account_analytic_account,group_ads_sales_user,1,1,1,0
 access_account_invoice_send_salesman,access.account.invoice.send.salesman,account.model_account_invoice_send,group_ads_sales_user,1,1,1,0
 access_sale_account_journal,account.journal sale order.user,account.model_account_journal,group_ads_sales_user,1,0,0,0
@@ -63,7 +61,6 @@ access_product_product_attribute_custom_value_sale_manager,product.attribute.cus
 access_product_template_attribute_exclusion_sale_manager,product.attribute manager filter line,product.model_product_template_attribute_exclusion,group_ads_traffic_user,1,1,1,1
 access_product_template_attribute_line_sale_manager,product.attribute manager line,product.model_product_template_attribute_line,group_ads_traffic_user,1,1,1,1
 access_mail_activity_type_sale_manager,mail.activity.type.sale.manager,mail.model_mail_activity_type,group_ads_traffic_user,1,1,1,1
-access_report_all_channels_sales,access_report_all_channels_sales,sale.model_report_all_channels_sales,group_ads_traffic_user,1,0,0,0
 access_sale_advance_payment_inv,access.sale.advance.payment.inv,sale.model_sale_advance_payment_inv,group_ads_sales_user,1,1,1,0
 access_sale_order_cancel,access.sale.order.cancel,sale.model_sale_order_cancel,group_ads_sales_user,1,1,1,0
 access_payment_link_wizard_sale,access.payment.link.wizard.sale,sale.model_payment_link_wizard,group_ads_sales_user,1,1,1,0
@@ -104,6 +101,4 @@ access_stock_rule_salemanager,stock_rule salemanager,stock.model_stock_rule,grou
 access_stock_rule,stock.rule.flow,stock.model_stock_rule,group_ads_sales_user,1,0,0,0
 access_crm_tag_salesman,crm_tag salesman,sales_team.model_crm_tag,group_ads_sales_user,1,1,1,0
 access_crm_tag_manager,crm_tag manager,sales_team.model_crm_tag,group_ads_sales_manager,1,1,1,1
-access_website_visitor_salesman,access_website_visitor_salesman,website.model_website_visitor,group_ads_sales_user,1,0,0,0
-access_website_track_salesman,access_website_track_salesman,website.model_website_track,group_ads_sales_user,1,0,0,0
 access_lead2quote_sot,access_lead2quote_sot,model_lead_to_quote_sot,,1,1,1,1

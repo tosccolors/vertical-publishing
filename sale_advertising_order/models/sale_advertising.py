@@ -373,7 +373,7 @@ class SaleOrder(models.Model):
         return True
 
     # overridden: -- added deep
-    # # FIXME: deprecated method:
+    # # FIXME: [14] deprecated method:
     # def print_quotation(self):
     #     self.ensure_one()
     #
@@ -775,7 +775,7 @@ class SaleOrderLine(models.Model):
     title_ids = fields.Many2many('sale.advertising.issue', 'sale_order_line_adv_issue_title_rel', 'order_line_id', 'adv_issue_id', 'Titles')
     adv_issue_ids = fields.Many2many('sale.advertising.issue','sale_order_line_adv_issue_rel', 'order_line_id', 'adv_issue_id',  'Advertising Issues')
     issue_product_ids = fields.One2many('sale.order.line.issues.products', 'order_line_id', 'Adv. Issues with Product Prices')
-    dates = fields.One2many('sale.order.line.date', 'order_line_id', 'Advertising Dates') # FIXME: deprecated
+    dates = fields.One2many('sale.order.line.date', 'order_line_id', 'Advertising Dates') # FIXME: [14] deprecated
     dateperiods = fields.One2many('sale.order.line.dateperiod', 'order_line_id', 'Advertising Date Periods')
     date_type = fields.Selection(related='ad_class.date_type', type='selection',
                    selection=[
@@ -1100,7 +1100,7 @@ class SaleOrderLine(models.Model):
                             values.append((0,0, value))
             if product_id:
                 self.update({
-                    # 'adv_issue_ids': [(6, 0, [])], # FIXME: Need this?
+                    # 'adv_issue_ids': [(6, 0, [])], # FIXME: [14] Need this?
                     'issue_product_ids': values,
                     'product_id': product_id.id,
                     'multi_line_number': issues_count,
@@ -1167,8 +1167,8 @@ class SaleOrderLine(models.Model):
                         [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids.product_attribute_value_id', '=', pav)])
                     if product_id:
                         self.update({
-                            # 'adv_issue_ids': [(6, 0, [])], # FIXME: Need this?
-                            # 'issue_product_ids': [(6, 0, [])], # FIXME: Need this?
+                            # 'adv_issue_ids': [(6, 0, [])], # FIXME: [14] Need this?
+                            # 'issue_product_ids': [(6, 0, [])], # FIXME: [14] Need this?
                             'product_id': product_id.id,
                             'multi_line_number': 1,
                             'multi_line': False,
@@ -1208,12 +1208,12 @@ class SaleOrderLine(models.Model):
                     vals['adv_issue_ids'] = [(6,0,[])]
             elif self.date_type == 'validity':
                 if self.dates:
-                    vals['dates'] = [(6,0,[])] # FIXME: deprecated
+                    vals['dates'] = [(6,0,[])] # FIXME: [14] deprecated
                 if self.adv_issue_ids:
                     vals['adv_issue_ids'] = [(6,0,[])]
             elif self.date_type == 'issue_date':
                 if self.dates:
-                    vals['dates'] = [(6,0,[])] # FIXME: deprecated
+                    vals['dates'] = [(6,0,[])] # FIXME: [14] deprecated
                 if self.dateperiods:
                     vals['dateperiods'] = [(6,0,[])]
         return {'value': vals}
@@ -1327,7 +1327,7 @@ class SaleOrderLine(models.Model):
         ml_qty = 0
         ai = False #self.adv_issue
         ais = self.adv_issue_ids
-        ds = self.dates # FIXME: deprecated
+        ds = self.dates # FIXME: [14] deprecated
         iis = self.issue_product_ids
 
         # Multi Titles & Multi Editions:
@@ -1360,7 +1360,7 @@ class SaleOrderLine(models.Model):
                 ml_qty = 1
         elif ai:
             ml_qty = 1
-        elif ds: # FIXME: deprecated
+        elif ds: # FIXME: [14] deprecated
             if len(ds) >= 1:
                 ml_qty = 1
                 self.product_uom_qty = len(ds)
@@ -1371,7 +1371,7 @@ class SaleOrderLine(models.Model):
             self.multi_line = True
         else:
             self.multi_line = False
-            # if not self.title and self.title_ids: # FIXME: deep
+            # if not self.title and self.title_ids: # FIXME: [14] deep
             #     self.title = self.title_ids[0]
             # elif self.title:
             #     self.title_ids = [(6,0,[])]
@@ -1618,7 +1618,7 @@ class OrderLineAdvIssuesProducts(models.Model):
     url_to_material = fields.Char('URL Material', size=64)
 
 
-# FIXME: deprecated model
+# FIXME: [14] deprecated model
 class OrderLineDate(models.Model):
 
     _name = "sale.order.line.date"

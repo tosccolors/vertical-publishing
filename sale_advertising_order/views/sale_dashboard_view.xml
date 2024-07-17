@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-<!--    &lt;!&ndash; FIXME: this seems irrelevant | deprecated   &ndash;&gt;-->
+<!--    &lt;!&ndash; FIXME: [14] this seems irrelevant | deprecated   &ndash;&gt;-->
 <!--    <record id="view_task_search_form_sale_advertising" model="ir.ui.view">-->
 <!--            <field name="name">project.task.search.form</field>-->
 <!--            <field name="model">project.task</field>-->
@@ -19,7 +19,7 @@
 <!--            </field>-->
 <!--        </record>-->
 
-<!--    &lt;!&ndash; FIXME: this seems irrelevant | deprecated  &ndash;&gt;-->
+<!--    &lt;!&ndash; FIXME: [14] this seems irrelevant | deprecated  &ndash;&gt;-->
 <!--        <record id="action_view_task_sale_advertising" model="ir.actions.act_window">-->
 <!--            <field name="name">Tasks</field>-->
 <!--            <field name="res_model">project.task</field>-->
