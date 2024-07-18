@@ -36,45 +36,6 @@ class productCategory(models.Model):
             result.append((record.id, name))
         return result
 
-    
-    # @api.depends('name', 'parent_id')
-    # def _name_get_fnc(self):
-    #     for rec in self:
-    #         name = rec.name
-    #         if rec.parent_id:
-    #             name = rec.parent_id.name_get()[0][1] + ' / '+name
-    #         rec.complete_name = name
-
-    # def _get_topmost_parent(self):
-    #     adv_parent = False
-    #     parent = self.parent_id
-    #     if parent and parent.parent_id:
-    #         parent_left = self.parent_id.parent_left
-    #         self.env.cr.execute("""
-    #             SELECT adv_parent
-    #             FROM product_category
-    #             WHERE parent_left < %s
-    #             AND parent_right > %s
-    #             AND parent_id IS NULL
-    #
-    #              """, (parent_left, parent_left)
-    #              )
-    #         result = self.env.cr.fetchall()
-    #         adv_parent = result and result[0][0] or False
-    #     elif parent:
-    #         adv_parent = parent.adv_parent
-    #     return adv_parent
-
-    # @api.onchange('parent_id')
-    # def onchange_adv_parent(self):
-        # adv_parent = self._get_topmost_parent()
-        # self.adv_parent = adv_parent
-
-
-
-
-    # complete_name = fields.Char(compute='_name_get_fnc', string='Name') # deepa: In V14.0 This field exists with standard.
-
     date_type = fields.Selection([
             ('validity', 'Validity Date Range'),
             ('date', 'Date of Publication'),
@@ -84,8 +45,6 @@ class productCategory(models.Model):
         ], 'Date Type Advertising products')
     deadline_offset = fields.Integer('Hours offset from Issue Deadline', default=0)
     tag_ids = fields.Many2many('account.analytic.tag', 'product_category_tag_rel', 'categ_id', 'tag_id', string='Analytic Tags', copy=True)
-
-    # adv_parent = fields.Boolean('Advertising Parent Category') # deepa: deprecated, this doesn't have any major impact.
 
 
 

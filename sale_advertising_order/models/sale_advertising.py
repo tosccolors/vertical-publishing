@@ -171,13 +171,11 @@ class SaleOrder(models.Model):
     customer_contact = fields.Many2one('res.partner', 'Payer Contact Person', domain=[('is_customer', '=', True)])
     traffic_employee = fields.Many2one('res.users', 'Traffic Employee',)
     traffic_comments = fields.Text('Traffic Comments')
-    # traffic_appr_date = fields.Date('Traffic Confirmation Date', index=True, help="Date on which sales order is confirmed bij Traffic.") deprecated
     opportunity_subject = fields.Char('Opportunity Subject', size=64,
                           help="Subject of Opportunity from which this Sales Order is derived.")
     partner_acc_mgr = fields.Many2one(related='published_customer.user_id', relation='res.users', string='Account Manager', store=True , readonly=True)
     date_from = fields.Date(compute=lambda *a, **k: {}, string="Date from")
     date_to = fields.Date(compute=lambda *a, **k: {}, string="Date to")
-    # ver_tr_exc = fields.Boolean(string='Verification Treshold', store=True, readonly=True, compute='_amount_all', track_visibility='always') # -- deep: deprecated
     advertising = fields.Boolean('Advertising', default=False)
     max_discount = fields.Integer(compute='_amount_all', track_visibility='always', store=True, string="Maximum Discount")
     display_discount_to_customer = fields.Boolean("Display Discount", default=False)
@@ -359,12 +357,6 @@ class SaleOrder(models.Model):
         orders.write({'state':'approved1'})
         return True
 
-    # deprecated
-    # def action_approve2(self):
-    #     orders = self.filtered(lambda s: s.state in ['approved1', 'submitted'])
-    #     orders.write({'state': 'approved2',
-    #                   'traffic_appr_date': fields.Date.context_today(self)})
-    #     return True
 
     # --added deep
     def action_refuse(self):
@@ -372,22 +364,6 @@ class SaleOrder(models.Model):
         orders.write({'state':'draft'})
         return True
 
-    # overridden: -- added deep
-    # # FIXME: deprecated method:
-    # def print_quotation(self):
-    #     self.ensure_one()
-    #
-    #     orders = self.filtered(lambda s: s.advertising and s.state in ['draft','approved1', 'submitted', 'approved2'])
-    #     for order in orders:
-    #         olines = []
-    #         for line in order.order_line:
-    #             if line.multi_line:
-    #                 olines.append(line.id)
-    #         if not olines == []:
-    #             self.env['sale.order.line.create.multi.lines'].create_multi_from_order_lines(orderlines=olines)
-    #     self._cr.commit()
-    #     orders.write({'state': 'sent'})
-    #     # return super(SaleOrder, self).print_quotation() -- deprecated method.
 
     def action_quotation_send(self):
         '''
@@ -890,104 +866,6 @@ class SaleOrderLine(models.Model):
         if not self.ad_class:
             self.product_template_id = False
 
-        # -- deprecated -- NOT needed anymore
-        # titles = self.title_ids if self.title_ids else self.title or False
-        # domain = []
-        # if titles:
-        #     product_ids = self.env['product.product']
-        #     for title in titles:
-        #         if title.product_attribute_value_id:
-        #             ids = product_ids.search([('product_template_attribute_value_ids', 'in', [title.product_attribute_value_id.id])])
-        #             product_ids += ids
-        #     product_tmpl_ids = product_ids.mapped('product_tmpl_id').ids
-        #     domain = [('id', 'in', product_tmpl_ids)]
-
-        # if self.ad_class:
-        #     product_ids = self.env['product.template'].search(domain+[('categ_id', '=', self.ad_class.id)])
-        #     if product_ids and len(product_ids) == 1:
-        #         vals['product_template_id'] = product_ids[0]
-        #     else:
-        #         vals['product_template_id'] = False
-        #     date_type = self.ad_class.date_type
-        #     if date_type:
-        #         vals['date_type'] = date_type
-        #     else: result = {'title':_('Warning'),
-        #                          'message':_('The Ad Class has no Date Type. You have to define one')}
-        # else:
-        #     vals['product_template_id'] = False
-        #     vals['date_type'] = False
-        # return {'value': vals, 'domain' : data, 'warning': result}
-
-    # @api.onchange('title')
-    # def title_oc(self):
-    #     data, vals = {}, {}
-    #     _logger.info("\n Came inside >>> title_oc [title]")
-    #     if not self.advertising:
-    #         return {'value': vals}
-    #     if self.title:
-    #         adissue_ids = self.title.child_ids.ids
-    #         if len(adissue_ids) == 1:
-    #             vals['adv_issue'] = adissue_ids[0]
-    #             vals['adv_issue_ids'] = [(6, 0, [])]
-    #             vals['product_id'] = False
-    #         else:
-    #             vals['adv_issue'] = False
-    #             vals['product_id'] = False
-    #     else:
-    #         vals['adv_issue'] = False
-    #         vals['product_id'] = False
-    #         vals['adv_issue_ids'] = [(6, 0, [])]
-    #     return {'value': vals, 'domain': data}
-    #
-    # @api.onchange('title_ids')
-    # def title_ids_oc(self):
-    #     _logger.info("\n Came inside >>> title_ids_oc [title_ids]")
-    #     vals = {}
-    #     if not self.advertising:
-    #         return {'value': vals}
-    #     if self.title_ids and self.adv_issue_ids:
-    #         titles = self.title_ids.ids
-    #         issue_ids = self.adv_issue_ids.ids
-    #         adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', issue_ids)])
-    #         issue_parent_ids = [x.parent_id.id for x in adv_issues]
-    #         for title in titles:
-    #             if not (title in issue_parent_ids):
-    #                 raise UserError(_('Not for every selected Title an Issue is selected.'))
-    #         if len(self.title_ids) == 1:
-    #             self.title = self.title_ids[0]
-    #             self.title_ids = [(6, 0, [])]
-    #
-    #     elif self.title_ids and self.issue_product_ids:
-    #         titles = self.title_ids.ids
-    #         adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', [x.adv_issue_id.id for x in self.issue_product_ids])])
-    #         issue_parent_ids = [x.parent_id.id for x in adv_issues]
-    #         back = False
-    #         for title in titles:
-    #             if not (title in issue_parent_ids):
-    #                 back = True
-    #                 break
-    #         if back:
-    #             self.adv_issue_ids = [(6, 0, adv_issues.ids)]
-    #             self.issue_product_ids = [(6, 0, [])]
-    #         if len(self.title_ids) == 1:
-    #             self.title = self.title_ids[0]
-    #             self.title_ids = [(6, 0, [])]
-    #         self.titles_issues_products_price()
-    #
-    #     elif self.title_ids:
-    #         self.product_template_id = False
-    #         self.product_id = False
-    #     else:
-    #         self.adv_issue = False
-    #         self.adv_issue_ids = [(6, 0, [])]
-    #         self.issue_product_ids = [(6, 0, [])]
-    #         self.product_id = False
-    #         self.product_template_id = False
-    #         self.product_uom = False
-
-
-
-
     @api.onchange('title', 'title_ids')
     def onchange_title(self):
         " Merge & Deprecate usage of  field title & adv_issue "
@@ -1273,11 +1151,6 @@ class SaleOrderLine(models.Model):
         result = {}
         if not self.advertising:
             return {'value': result}
-        # if not self.multi_line:
-        #     self.subtotal_before_agency_disc = round((float(self.price_unit) + (float(self.color_surcharge_amount))) *
-        #                                               float(self.product_uom_qty) * float(1.0 - self.computed_discount / 100.0), 2)
-        # else:
-        #     self.subtotal_before_agency_disc = round((float(self.comb_list_price) + float(self.color_surcharge_amount)), 2)
 
         if not self.multi_line:
             self.subtotal_before_agency_disc = round(
@@ -1286,37 +1159,6 @@ class SaleOrderLine(models.Model):
         else:
             self.subtotal_before_agency_disc = round(float(self.comb_list_price), 2)
 
-    # deprecated
-    # @api.onchange('color_surcharge' )
-    # def onchange_color(self):
-    #     result = {}
-    #     if not self.advertising:
-    #         return {'value': result}
-    #     pu = self.price_unit
-    #     clp = self.comb_list_price
-    #     if not self.multi_line:
-    #         if self.color_surcharge:
-    #             self.color_surcharge_amount = pu / 2
-    #         else:
-    #             self.color_surcharge_amount = 0.0
-    #     else:
-    #         if self.color_surcharge:
-    #             self.color_surcharge_amount = clp / 2
-    #         else:
-    #             self.color_surcharge_amount = 0.0
-
-    # deprecated
-    # @api.onchange('color_surcharge_amount')
-    # def onchange_csa(self):
-    #     result = {}
-    #     if not self.advertising:
-    #         return {'value': result}
-    #     csa = self.color_surcharge_amount
-    #     if not self.multi_line:
-    #         self.subtotal_before_agency_disc = (self.price_unit + csa) * self.product_uom_qty * (
-    #                     1 - self.computed_discount / 100)
-    #     else:
-    #         self.subtotal_before_agency_disc = (self.comb_list_price + csa) * (1 - self.computed_discount / 100)
 
     # @api.onchange('adv_issue', 'adv_issue_ids','dates','issue_product_ids')
     @api.onchange('adv_issue_ids','issue_product_ids')
@@ -1443,14 +1285,6 @@ class SaleOrderLine(models.Model):
         for line in self.filtered(lambda s: s.state in ['sale'] and s.advertising):
             if 'pubble_sent' in vals:
                 continue
-
-            # deprecated this logic -- Modification of confirmed SO shall no longer be allowed
-            # is_allowed = user.has_group('account.group_account_invoice') or 'allow_user' in self.env.context
-            # if line.invoice_status == 'invoiced' and not (vals.get('product_uom_qty') == 0 and line.qty_invoiced == 0) \
-            #                                      and not is_allowed \
-            #                                      and not user.id == 1:
-            #     raise UserError(_('You cannot change an order line after it has been fully invoiced. SO: %s , state: %s, allowed: %s vals : %s'%(line.order_id.name, line.invoice_status, is_allowed, vals)))
-
             if not line.multi_line and ('product_id' in vals or 'adv_issue' in vals or 'product_uom_qty' in vals):
                 if line.deadline_check():
                     line.page_qty_check_update()
@@ -1482,11 +1316,9 @@ class SaleOrderLine(models.Model):
         self.ensure_one()
         if not self.product_template_id.page_id:
             return
-        # user = self.env['res.users'].browse(self.env.uid)
         lspace = self.product_uom_qty * self.product_template_id.space
         lpage = self.product_template_id.page_id
         lpage_id = lpage.id
-        # avail = self.adv_issue.calc_page_space(lpage_id)
         vals = {
             'adv_issue_id': self.adv_issue_ids.ids[0],
             'name': 'Afboeking',
@@ -1496,21 +1328,6 @@ class SaleOrderLine(models.Model):
         }
         self.env['sale.advertising.available'].create(vals)
 
-        # --deep deprecated
-        # if lspace > avail and not user.has_group('sale_advertising_order.group_no_availability_check'):
-        #     raise UserError(_('There is not enough availability for this placement in Ordernumber %s line %s on %s in %s. '
-        #                       'Available Capacity is %d and required is %d') % (self.order_id.name, self.id, lpage.name, self.adv_issue.name, avail, lspace))
-        # else:
-        #     vals = {
-        #         'adv_issue_id': self.adv_issue.id,
-        #         'name': 'Afboeking',
-        #         'order_line_id': self.id,
-        #         'page_id': lpage_id,
-        #         'available_qty': - int(lspace)
-        #     }
-        #     self.env['sale.advertising.available'].create(vals)
-
-    
     def page_qty_check_update(self):
         self.ensure_one()
         if not self.product_template_id.page_id:
