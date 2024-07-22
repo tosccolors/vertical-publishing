@@ -21,7 +21,7 @@
 ##############################################################################
 {
     'name': 'Sale Advertising Order',
-    'version': '16.0.0.0',
+    'version': '16.0.0.2',
     'category': 'Sale',
     'description': """
 This module allows you to use Sales Management to run your advertising sales
@@ -37,11 +37,18 @@ This module allows you to use Sales Management to run your advertising sales
 
                 ],
     'data': [
+            "data/product_data.xml",
+            "security/security.xml",
+            "security/ir.model.access.csv",
             "views/partner_views.xml",
+            "views/product_views.xml",
+
+            "views/menu_views.xml",
              ],
     'qweb': [
     ],
     'demo': [],
-    'installable': True
+    'installable': True,
+    'license': 'LGPL-3',
 }
 

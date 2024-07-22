@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<odoo>
+	<data noupdate="1">
+
+		<!-- Attributes -->
+		<record id="attribute_title" model="product.attribute">
+			<field name="name">Title</field>
+			<field name="sequence">1</field>
+		</record>
+
+		<!-- Category -->
+		<record id="advertising_category" model="product.category">
+			<field name="name">Ads</field>
+			<field name="date_type">date</field>
+		</record>
+
+		<record id="newspaper_advertising_category" model="product.category">
+			<field name="name">Newspapers/Specials</field>
+			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
+			<field name="date_type">date</field>
+		</record>
+
+		<record id="magazine_advertising_category" model="product.category">
+			<field name="name">Magazines</field>
+			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
+			<field name="date_type">date</field>
+		</record>
+		<record id="digital_advertising_category" model="product.category">
+			<field name="name">Digital</field>
+			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
+			<field name="date_type">validity</field>
+		</record>
+
+		<record id="other_advertising_category" model="product.category">
+			<field name="name">Other</field>
+			<field name="parent_id" ref="sale_advertising_order.advertising_category"/>
+			<field name="date_type">date</field>
+		</record>
+
+		<record id="interface_portal_category" model="product.category">
+			<field name="name">Interface to Portal</field>
+		</record>
+
+
+    </data>
+</odoo>
