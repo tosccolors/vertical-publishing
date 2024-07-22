@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    Copyright (C) 2004-2016 Magnus (<http://www.magnus.nl>). All Rights Reserved
+#    Copyright (C) 2004-2008 Tiny SPRL (<http://tiny.be>). All Rights Reserved
 #    $Id$
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -19,29 +19,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-{
-    'name': 'Sale Advertising Order',
-    'version': '16.0.0.0',
-    'category': 'Sale',
-    'description': """
-This module allows you to use Sales Management to run your advertising sales
-============================================================================================
 
 
-    """,
-    'author': 'Deepa, Willem Hulshof, The Open Source Company (TOSC)',
-    'website': 'http://www.tosc.nl',
-    'depends': [
-                'sale', 'sale_order_type', 'partner_manual_rank',
-                'account', 'account_analytic_tag',
-
-                ],
-    'data': [
-            "views/partner_views.xml",
-             ],
-    'qweb': [
-    ],
-    'demo': [],
-    'installable': True
-}
+from . import partner
 
