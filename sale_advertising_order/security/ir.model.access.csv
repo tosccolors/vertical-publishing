@@ -1,4 +1,10 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_advertising_issue,sale.advertising.issue,model_sale_advertising_issue,,1,0,0,0
+access_sale_advertising_issue_traffic,sale.advertising.issue,model_sale_advertising_issue,group_ads_traffic_user,1,1,1,1
+access_sale_advertising_available,sale.advertising.available,model_sale_advertising_available,,1,0,0,0
+access_sale_advertising_available_traffic,sale.advertising.available,model_sale_advertising_available,group_ads_traffic_user,1,1,1,1
+access_sale_advertising_page,sale.advertising.page,model_sale_advertising_page,,1,0,0,0
+access_sale_advertising_page_traffic,sale.advertising.page,model_sale_advertising_page,group_ads_traffic_user,1,1,1,1
 access_calendar_event,calendar.event,calendar.model_calendar_event,group_ads_sales_user,1,1,1,0
 access_calendar_event_manager,calendar.event.manager,calendar.model_calendar_event,group_ads_traffic_user,1,1,1,1
 access_calendar_event_type_sale_salesman,calendar.event.type.salesman,calendar.model_calendar_event_type,group_ads_sales_user,1,0,0,0
