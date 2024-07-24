@@ -382,8 +382,6 @@ class SaleOrderLine(models.Model):
 
     product_template_id = fields.Many2one('product.template', string='Product', domain=[('sale_ok', '=', True)],
                                  change_default=True, ondelete='restrict')
-    booklet_surface_area = fields.Float(related='product_template_id.booklet_surface_area', readonly=True,
-                                        string='Booklet Surface Area', digits='Product Unit of Measure')
     domain4prod_ids = fields.Many2many('product.template', string='Domain for Product Template',
                                        compute=_get_prodTemplate2filter)
 

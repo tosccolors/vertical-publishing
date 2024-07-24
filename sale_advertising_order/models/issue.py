@@ -49,11 +49,6 @@ class AdvertisingIssue(models.Model):
             issue.week_number_even = evenwk
 
 
-    @api.depends('available_ids.available_qty')
-    def _availability(self):
-        for rec in self:
-            rec.amount_total = sum(line.available_qty for line in rec.available_ids)
-
     @api.depends('child_ids')
     def _compute_issue_count(self):
         for rec in self:
@@ -77,8 +72,7 @@ class AdvertisingIssue(models.Model):
     medium_domain = fields.Char(compute='_compute_medium_domain', readonly=True, store=False, )
     state = fields.Selection([('open', 'Open'), ('close', 'Close')], 'Status', default='open')
     default_note = fields.Text('Default Note')
-    amount_total = fields.Integer(compute=_availability, string='Available Space', store=True,
-                                  readonly=True)
+
     price_edit = fields.Boolean('Price Editable') # TODO: Check usage!
     active = fields.Boolean('Active', default=True)
     issue_count = fields.Integer("Issue count", compute='_compute_issue_count')

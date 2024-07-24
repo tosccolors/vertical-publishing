@@ -51,17 +51,6 @@
 						<field name="default_note" />
 						<field name="active" widget="boolean_toggle"/>
 					</group>
-						<field name="available_ids" string="Availability" >
-							 <tree string="Availability" editable="top">
-								<field name="name"/>
-								<field name="page_id"/>
-								<field name="order_line_id"/>
-								<field name="available_qty"/>
-							 </tree>
-						</field>
-					<group class="oe_subtotal_footer oe_right">
-						<field name="amount_total" class="oe_subtotal_footer_separator"/>
-					</group>
 				</sheet>
 			</form>
 		</field>

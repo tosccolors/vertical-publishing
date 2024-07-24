@@ -92,10 +92,7 @@
 			  	<field name="categ_id" position="after">
 				 	<field name="height"/>
 				 	<field name="width"/>
-<!--				 	<field name="page_id"/> FIXME-->
-					<field name="space"/>
 					<field name="price_edit"/>
-					<field name="volume_discount"/>
 			  	</field>
 		   	</field>
 		</record>
@@ -116,10 +113,7 @@
 						   attrs="{'invisible':[('is_ads_products','=', True)]}"/>
 				 	<field name="width"
 						   attrs="{'invisible':[('is_ads_products','=', True)]}"/>
-					<field name="space"/>
-<!--				 	<field name="page_id"/> FIXME-->
 					<field name="price_edit"/>
-					<field name="volume_discount"/>
 			  	</field>
 		   	</field>
 		</record>
