@@ -34,7 +34,7 @@
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='inactive']" position="before">
                <separator/>
-               <filter string="Ad Agencies" name="agency" domain="[('is_ad_agency','=',1),('parent_id', '=', False)]" help="Ad Agencies"/>
+               <filter string="Agencies" name="agency" domain="[('is_ad_agency','=',1),('parent_id', '=', False)]" help="Ad Agencies"/>
             </xpath>
         </field>
     </record>

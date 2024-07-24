@@ -9,7 +9,6 @@ class productCategory(models.Model):
 
     date_type = fields.Selection([
             ('validity', 'Validity Date Range'),
-            ('date', 'Date of Publication'),
             ('issue_date', 'Issue Date'),
         ], 'Date Types', help="Date Types for Advertising Products")
     deadline_offset = fields.Integer('Hours offset from Issue Deadline', default=0)
@@ -38,14 +37,7 @@ class productTemplate(models.Model):
 
     height = fields.Integer('Height', help="Height advertising format in mm")
     width = fields.Integer('Width', help="Width advertising format in mm")
-    # page_id = fields.Many2one('sale.advertising.page', string='Issue Page') #FIXME: Need?
-    space = fields.Integer('Space', help="Space taken by ad")
     price_edit = fields.Boolean('Price Editable')
-    booklet_surface_area = fields.Float('Booklet Surface Area', help="Page surface booklet (newspaper) format in cm2",
-                                        digits='Product Unit of Measure')
-    volume_discount = fields.Boolean('Volume Discount', help='Setting this flag makes that price finding in a multi-line '
-                                                             'advertising sale order line, uses the multi_line_number '
-                                                             'instead of product_uom_qty to implement volume discount' )
     is_ads_products = fields.Boolean("Is Ads Products?", compute=_compute_ads_products)
 
     @api.onchange('height', 'width')

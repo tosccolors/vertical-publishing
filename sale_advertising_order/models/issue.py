@@ -8,13 +8,6 @@ from odoo.exceptions import UserError
 from odoo.exceptions import ValidationError
 
 
-class Page(models.Model):
-    _name = "sale.advertising.page"
-    _description="Sale Advertising Pages"
-
-    name = fields.Char('Page Name', size=64, required=True)
-
-
 class AdvertisingIssue(models.Model):
     _name = "sale.advertising.issue"
     _inherits = {
@@ -71,7 +64,6 @@ class AdvertisingIssue(models.Model):
     code = fields.Char('Code', size=16, required=True)
     child_ids = fields.One2many('sale.advertising.issue', 'parent_id', 'Issues'
                                 , index=True)
-    available_ids = fields.One2many('sale.advertising.available', 'adv_issue_id', 'Available') #FIXME: Need?
     parent_id = fields.Many2one('sale.advertising.issue', 'Title', index=True, ondelete='cascade')
     product_attribute_value_id = fields.Many2one('product.attribute.value', string='Variant Title',
                                                  domain=_get_attribute_domain)
@@ -124,28 +116,6 @@ class AdvertisingIssue(models.Model):
     @api.constrains('medium')
     def _check_medium(self):
         self.validate_medium()
-
-
-class IssueAvailability(models.Model):
-    _name = "sale.advertising.available"
-    _description = "Sale Advertising Issue Availability"
-
-    adv_issue_id = fields.Many2one('sale.advertising.issue', string="Issue", ondelete='cascade',
-                                   index=True, help='Advertising Issue Reference')
-    issue_date = fields.Date(related='adv_issue_id.issue_date', string='Issue Date')
-    name = fields.Selection([('Opboeking', 'Opboeking'), ('Afboeking', 'Afboeking')], default='Afboeking',
-                            string='Page Name', required=True)
-    available_qty = fields.Integer('Quantity', help='Available Qty', required=True, default=0)
-    page_id = fields.Many2one('sale.advertising.page', required=True, string='Ad Page', help='Advertising Page')
-    order_line_id = fields.Many2one('sale.order.line', string='Ad Placement', readonly=False)
-
-    @api.constrains('order_line_id')
-    def _check_unique_orderline(self):
-        for rec in self:
-            if rec.order_line_id:
-                if len(self.search([('order_line_id', '=', rec.order_line_id.id),
-                                    ('id', '!=', rec.id)])) > 0:
-                    raise UserError(_('There can only be one Availability posting per order_line'))
 
 
 class DiscountReason(models.Model):

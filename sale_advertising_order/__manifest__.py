@@ -2,7 +2,8 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    Copyright (C) 2004-2016 Magnus (<http://www.magnus.nl>). All Rights Reserved
+#    Copyright (C) 2004-2022 Magnus (<http://www.magnus.nl>). All Rights Reserved
+#    Copyright (C) 2022-2024 TOSC (<http://www.tosc.nl>). All Rights Reserved
 #    $Id$
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -21,7 +22,7 @@
 ##############################################################################
 {
     'name': 'Sale Advertising Order',
-    'version': '16.0.0.3',
+    'version': '16.0.0.4',
     'category': 'Sale',
     'description': """
 This module allows you to use Sales Management to run your advertising sales
@@ -45,6 +46,7 @@ This module allows you to use Sales Management to run your advertising sales
             "views/partner_views.xml",
             "views/product_views.xml",
             "views/issue_views.xml",
+             "views/sale_views.xml",
 
             "views/menu_views.xml",
              ],
