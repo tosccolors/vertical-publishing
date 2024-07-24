@@ -226,6 +226,27 @@
 		<field name="domain">[('parent_id','=', False)]</field>
 	</record>
 
+	<!--
+		Discount.reason
+	-->
+	<record id="discount_reason_tree" model="ir.ui.view" >
+		<field name="name">discount.reason.tree</field>
+		<field name="type">tree</field>
+		<field name="model">discount.reason</field>
+		<field name="arch" type="xml">
+			<tree string="Discount Reasons" editable="top">
+					<field name="name" string="Discount Reason"/>
+			</tree>
+		</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_discount_reason">
+		<field name="name">Discount Reasons</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">discount.reason</field>
+		<field name="view_mode">tree</field>
+		<field name="view_id" ref="discount_reason_tree"/>
+	</record>
 
 </data>
 </odoo>

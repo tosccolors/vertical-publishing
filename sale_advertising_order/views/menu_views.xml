@@ -96,8 +96,8 @@
                 <menuitem id="menu_sale_advertising_available2" name="Page Availability"
                       parent="menu_advertising_subconfig" action="action_sale_advertising_available" sequence="4"/>
 
-<!--                <menuitem id="menu_discount_reason2" name="Discount Reasons"-->
-<!--                      parent="menu_advertising_subconfig" action="action_discount_reason" sequence="5"/>-->
+                <menuitem id="menu_discount_reason2" name="Discount Reasons"
+                      parent="menu_advertising_subconfig" action="action_discount_reason" sequence="5"/>
 
             <menuitem id="menu_products_subconfig" name="Products"
                   parent="menu_advertising_config" sequence="3"/>

@@ -146,3 +146,10 @@ class IssueAvailability(models.Model):
                 if len(self.search([('order_line_id', '=', rec.order_line_id.id),
                                     ('id', '!=', rec.id)])) > 0:
                     raise UserError(_('There can only be one Availability posting per order_line'))
+
+
+class DiscountReason(models.Model):
+    _name = "discount.reason"
+    _description = "Discount Reason"
+
+    name = fields.Char('Name', size=64, required=True)
