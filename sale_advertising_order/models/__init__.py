@@ -24,5 +24,5 @@
 from . import partner
 from . import product
 from . import issue
-from . import sale
+from . import sale_order
 
