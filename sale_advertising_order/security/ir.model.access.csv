@@ -3,6 +3,8 @@ access_sale_advertising_issue,sale.advertising.issue,model_sale_advertising_issu
 access_sale_advertising_issue_traffic,sale.advertising.issue,model_sale_advertising_issue,group_ads_traffic_user,1,1,1,1
 access_discount_reason,discount.reason,model_discount_reason,,1,0,0,0
 access_discount_reason_traffic,discount.reason,model_discount_reason,group_ads_traffic_user,1,1,1,1
+access_sale_order_line_issues_products,sale.order.line.issues.products,model_sale_order_line_issues_products,group_ads_sales_user,1,1,1,1
+access_sale_order_line_issues_products_all,sale.order.line.issues.products,model_sale_order_line_issues_products,,1,0,0,0
 access_calendar_event,calendar.event,calendar.model_calendar_event,group_ads_sales_user,1,1,1,0
 access_calendar_event_manager,calendar.event.manager,calendar.model_calendar_event,group_ads_traffic_user,1,1,1,1
 access_calendar_event_type_sale_salesman,calendar.event.type.salesman,calendar.model_calendar_event_type,group_ads_sales_user,1,0,0,0

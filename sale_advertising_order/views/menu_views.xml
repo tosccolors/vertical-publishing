@@ -19,8 +19,8 @@
         <menuitem id="menu_advertising_order" name="Orders" parent="advertising_sale_menu_root"
                   groups="group_ads_sales_user" sequence="1"/>
 
-<!--            <menuitem id="menu_sale_quotations3" name="Quotations"-->
-<!--                      parent="menu_advertising_order" action="action_quotations_advertising" sequence="1"/>-->
+            <menuitem id="menu_sale_quotations3" name="Quotations"
+                      parent="menu_advertising_order" action="action_quotations_advertising" sequence="1"/>
 
             <menuitem id="menu_sale_order3" name="Orders"
                       parent="menu_advertising_order" action="action_orders_advertising" sequence="2"/>
