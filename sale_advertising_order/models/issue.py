@@ -28,7 +28,7 @@ class AdvertisingIssue(models.Model):
         for rec in self:
             domain = ''
             if rec.parent_id:
-                i2p = self.env.ref('sale_advertising_order.title_pricelist_category').id
+                i2p = self.env.ref('sale_advertising_order.interface_portal_category').id
                 domain = json.dumps(
                     [('parent_id', 'child_of', i2p)]
                 )
