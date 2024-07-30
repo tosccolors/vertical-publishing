@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+<!--        FIXME: check if this can be eliminated -->
         <record id="view_sale_order_line_create_multi" model="ir.ui.view">
             <field name="name">Sale OrderLine Create Multi</field>
             <field name="model">sale.order.line.create.multi.lines</field>

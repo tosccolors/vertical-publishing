@@ -247,6 +247,31 @@
         <field name="mode">primary</field>
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
+            <xpath expr="//button[@id='create_invoice_percentage']" position="after">
+					<button name="action_submit" string="Submit for Approval" states="draft" type="object"
+                            class="oe_highlight" groups="sale_advertising_order.group_ads_sales_user"/>
+
+					<button name="action_approve1" string="Approve Quotation"
+                            states="submitted" type="object" class="oe_highlight"
+							groups="sale_advertising_order.group_ads_sales_manager"/>
+
+					<button name="action_refuse" string="Refuse"
+                            type="object" states="submitted"
+							groups="sale_advertising_order.group_ads_sales_manager"/>
+            </xpath>
+            <xpath expr="//button[@name='action_cancel']" position="after">
+                    <button name="action_cancel"  id="cancel" type="object" string="Cancel"
+                                  states="draft,sent"
+                                  groups="sale_advertising_order.group_ads_sales_user"/>
+                    <button name="action_cancel" id="cancel1" type="object" string="Cancel"
+                                  states="submitted,approved1"
+                                  groups="sale_advertising_order.group_ads_sales_manager"/>
+                    <button name="action_cancel" id="cancel2" type="object" string="Cancel"
+                             states="sale"
+                             groups="sale_advertising_order.group_ads_traffic_user"/>
+            </xpath>
+
+
 
             <xpath expr="//field[@name='tag_ids']" position="after">
                 <field name="advertising" invisible="1"/>
