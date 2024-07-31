@@ -40,11 +40,11 @@
         <!--
                   To Invoice
         -->
-<!--        <menuitem id="menu_advertising_toinvoice"  name="To Invoice"  parent="advertising_sale_menu_root"-->
-<!--                groups="group_ads_sales_user"  sequence="2"/>-->
+        <menuitem id="menu_advertising_toinvoice"  name="To Invoice"  parent="advertising_sale_menu_root"
+                groups="group_ads_sales_user"  sequence="2"/>
 
-<!--            <menuitem id="menu_sale_advertising_order_lines2" name="Order Lines to Invoice"-->
-<!--                  parent="menu_advertising_toinvoice" action="all_advertising_order_lines_action"  sequence="1"/>-->
+            <menuitem id="menu_sale_advertising_order_lines2" name="Order Lines to Invoice"
+                  parent="menu_advertising_toinvoice" action="all_advertising_order_lines_action"  sequence="1"/>
 
         <!--
                  Product

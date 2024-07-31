@@ -37,9 +37,16 @@ class SaleOrder(models.Model):
                 )
 
 
-    state = fields.Selection(selection_add=[
+
+    state = fields.Selection(selection=[
+        ('draft', 'Draft Quotation'),
+        ('sent', 'Quotation Sent'),
         ('submitted', 'Submitted for Approval'),
-        ('approved1', 'Approved by Sales Mgr'),])
+        ('approved1', 'Approved by Sales Mgr'),
+        ('sale', "Sales Order"),
+        ('done', "Locked"),
+        ('cancel', "Cancelled"),
+        ])
 
     published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('is_customer', '=', True)])
     advertising_agency = fields.Many2one('res.partner', 'Advertising Agency', domain=[('is_customer', '=', True)])
@@ -485,8 +492,8 @@ class SaleOrderLine(models.Model):
 
             line.domain4prod_ids = [(6, 0, ptmplIDs)]
 
-    mig_remark = fields.Text('Migration Remark') # FIXME: Remove?
-    layout_remark = fields.Text('Material Remark') # FIXME: Rename?
+    mig_remark = fields.Text('Migration Remark')
+    layout_remark = fields.Text('Material Remark')
     page_class_domain = fields.Char(compute='_compute_tags_domain', readonly=True, store=False,) #FIXME ?
 
     advertising = fields.Boolean(related='order_id.advertising', string='Advertising', store=True)
@@ -521,12 +528,15 @@ class SaleOrderLine(models.Model):
     multi_line = fields.Boolean(string='Multi Line')
     multi_line_number = fields.Integer(compute='_multi_price', string='Number of Lines', store=True)
 
+
     order_partner_id = fields.Many2one(related='order_id.partner_id', string='Customer', store=True)
     order_advertiser_id = fields.Many2one(related='order_id.published_customer',
                                           string='Advertising Customer', store=True)
     order_agency_id = fields.Many2one(related='order_id.advertising_agency',
                                           string='Advertising Agency', store=True)
     order_pricelist_id = fields.Many2one(related='order_id.pricelist_id', string='Pricelist')
+    partner_acc_mgr = fields.Many2one(related='order_id.partner_acc_mgr', store=True, string='Account Manager',
+                                      readonly=True)
 
     price_unit_dummy = fields.Float(related='price_unit', string='Unit Price', readonly=True)
     actual_unit_price = fields.Float(compute='_compute_amount', string='Actual Unit Price', digits='Product Price',
