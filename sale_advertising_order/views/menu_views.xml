@@ -28,8 +28,8 @@
 <!--            <menuitem id="menu_ads_schedule" name="Schedules"-->
 <!--                      parent="menu_advertising_order" action="ads_indeellijst_action" sequence="3"/>-->
 
-<!--            <menuitem id="menu_proof_delivery_list_action" name="Proof Number Delivery List"-->
-<!--                      parent="menu_advertising_order" action="nsm_proof_delivery_list_action" sequence="4"/>-->
+            <menuitem id="menu_proof_delivery_list_action" name="Proof Number Delivery List"
+                      parent="menu_advertising_order" action="nsm_proof_delivery_list_action" sequence="4"/>
 
             <menuitem id="menu_partners3"  name="Customers"
                       parent="menu_advertising_order" action="account.res_partner_action_customer" sequence="5"/>

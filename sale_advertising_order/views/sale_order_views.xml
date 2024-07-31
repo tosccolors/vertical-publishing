@@ -883,7 +883,7 @@
         <field name="res_model">sale.order.line</field>
         <field name="view_mode">tree,form,pivot</field>
         <field name="view_id" ref="view_sao_order_line_form"/>
-        <field name="search_view_id" ref="view_sao_order_line_filter"/>
+        <field name="search_view_id" ref="view_adv_order_line_filter"/>
         <field name="domain"
                eval="[('order_id.type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True),('state','in',('sale','done'))]"
         />

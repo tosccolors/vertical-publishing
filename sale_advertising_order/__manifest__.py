@@ -22,7 +22,7 @@
 ##############################################################################
 {
     'name': 'Sale Advertising Order',
-    'version': '16.0.1.2',
+    'version': '16.0.1.3',
     'category': 'Sale',
     'description': """
 This module allows you to use Sales Management to run your advertising sales
@@ -34,7 +34,8 @@ This module allows you to use Sales Management to run your advertising sales
     'website': 'http://www.tosc.nl',
     'depends': [
                 'sale', 'sale_order_type', 'partner_manual_rank',
-                'account', 'account_analytic_tag',
+                'account', 'account_analytic_tag', 'partner_firstname',
+                'base_address_extended',
 
                 ],
     'data': [
@@ -50,6 +51,7 @@ This module allows you to use Sales Management to run your advertising sales
             "views/product_views.xml",
             "views/issue_views.xml",
             "views/sale_order_views.xml",
+            "views/proof_delivery_list_views.xml",
 
             "views/menu_views.xml",
              ],
