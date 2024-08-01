@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!--
+        Partner: (form)
+    -->
+    <record id="view_partner_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.sao</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field eval="19" name="priority"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='misc']" position="inside">
+                <field name="is_ad_agency"/>
+                <field name="agency_discount" attrs="{'invisible': [('is_ad_agency', '=', False)]}"/>
+            </xpath>
+
+            <xpath expr="//field[@name='child_ids']" position="attributes">
+                <attribute name="context" operation="update">
+                    {"default_is_customer": is_customer, "default_is_supplier": is_supplier}
+                </attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!--
+        Partner: (search)
+    -->
+    <record id="view_res_partner_filter_inherit" model="ir.ui.view">
+        <field name="name">res.partner.view.search.inherit.sao</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']" position="before">
+               <separator/>
+               <filter string="Agencies" name="agency" domain="[('is_ad_agency','=',1),('parent_id', '=', False)]" help="Ad Agencies"/>
+            </xpath>
+        </field>
+    </record>
+</data>
+</odoo>

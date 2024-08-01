@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# Copyright 2017 Willem hulshof - <w.hulshof@magnus.nl>
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
 
 from odoo import api, fields, models, tools
 
@@ -14,8 +17,6 @@ class ProofNumberDeliveryList(models.Model):
             proof_payer = line.proof_number_payer
             line.proof_parent_name = proof_payer.parent_id and proof_payer.parent_id.name or False
             line.proof_parent_name = proof_payer.parent_id and proof_payer.parent_id.name or False
-            line.proof_initials = '' #proof_payer.initials or '' FIXME Check initials app
-            line.proof_infix = '' #proof_payer.infix or '' FIXME Check infix
             line.proof_lastname = proof_payer.lastname or ''
             line.proof_country_code = proof_payer.country_id.code or ''
             line.proof_zip = proof_payer.zip or ''
@@ -38,8 +39,6 @@ class ProofNumberDeliveryList(models.Model):
     adv_issue = fields.Many2one('sale.advertising.issue', 'Advertising Issue', readonly=True)
     issue_date = fields.Date(string='Issue Date', readonly=True)
     proof_parent_name = fields.Char(compute='_get_proof_data', readonly=True, store=False, string="Parent")
-    proof_initials = fields.Char(compute='_get_proof_data', readonly=True, store=False, string="Initials")
-    proof_infix = fields.Char(compute='_get_proof_data', readonly=True, store=False, string="Infix")
     proof_lastname = fields.Char(compute='_get_proof_data', readonly=True, store=False, string="Last Name")
     proof_country_code = fields.Char(compute='_get_proof_data', readonly=True, store=False, string="Country Code")
     proof_zip = fields.Char(compute='_get_proof_data', readonly=True, store=False, string="Zip")
@@ -57,34 +56,33 @@ class ProofNumberDeliveryList(models.Model):
         """ """
         tools.drop_view_if_exists(self.env.cr, 'proof_number_delivery_list')
         self.env.cr.execute("""
-                CREATE OR REPLACE VIEW proof_number_delivery_list AS (   
-                                    
-                   WITH Q11 AS(
-                            SELECT
-                                sol.id as id,sol.proof_number_payer_id as partner , sol.title as title, sol.adv_issue as adv_issue, sol.issue_date as issue_date
-                                , sol.salesman_id as user_id
-                                
-                            FROM
-                                sale_order_line as sol
-                            WHERE
-                                proof_number_payer_id IS NOT NULL AND sol.advertising = TRUE AND sol.state IN ('sale','done')
+            CREATE OR REPLACE VIEW proof_number_delivery_list AS (                                       
+               WITH Q11 AS(
+                        SELECT
+                            sol.id as id,sol.proof_number_payer_id as partner , sol.title as title, sol.adv_issue as adv_issue, sol.issue_date as issue_date
+                            , sol.salesman_id as user_id
+                            
+                        FROM
+                            sale_order_line as sol
+                        WHERE
+                            proof_number_payer_id IS NOT NULL AND sol.advertising = TRUE AND sol.state IN ('sale','done')
 
-                            UNION ALL
+                        UNION ALL
 
-                            SELECT
-                                ppl.line_id as id, ppl.partner_id as partner, sol.title as title, sol.adv_issue as adv_issue, sol.issue_date as issue_date
-                                , sol.salesman_id as user_id
-                            FROM
-                                partner_line_proof_rel as ppl join sale_order_line as sol on (sol.id = ppl.line_id)
-                            WHERE
-                                sol.advertising = TRUE AND sol.state IN ('sale','done')
-                    )
-    
-                  SELECT 
-                      row_number() OVER () AS id, q.id as line_id, q.partner as proof_number_payer, min(q.title) as title, min(q.adv_issue) as adv_issue, min(q.issue_date) as issue_date, q.user_id
-                  FROM Q11 as q
-                  GROUP BY q.partner, q.id, q.user_id
+                        SELECT
+                            ppl.line_id as id, ppl.partner_id as partner, sol.title as title, sol.adv_issue as adv_issue, sol.issue_date as issue_date
+                            , sol.salesman_id as user_id
+                        FROM
+                            partner_line_proof_rel as ppl join sale_order_line as sol on (sol.id = ppl.line_id)
+                        WHERE
+                            sol.advertising = TRUE AND sol.state IN ('sale','done')
                 )
+
+              SELECT 
+                  row_number() OVER () AS id, q.id as line_id, q.partner as proof_number_payer, min(q.title) as title, min(q.adv_issue) as adv_issue, min(q.issue_date) as issue_date, q.user_id
+              FROM Q11 as q
+              GROUP BY q.partner, q.id, q.user_id
+            )
         """)
         
         
