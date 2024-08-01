@@ -1,23 +1,6 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-#
-#    OpenERP, Open Source Management Solution
-#    Copyright (C) 2004-2010 Tiny SPRL (<http://tiny.be>).
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as
-#    published by the Free Software Foundation, either version 3 of the
-#    License, or (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
-#
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-##############################################################################
+# Copyright 2017 Willem hulshof - <w.hulshof@magnus.nl>
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
@@ -27,8 +10,6 @@ class sale_order_line_create_multi_lines(models.TransientModel):
 
     _name = "sale.order.line.create.multi.lines"
     _description = "Sale OrderLine Create Multi"
-
-
     
     def create_multi_lines(self):
         context = self._context
@@ -94,10 +75,8 @@ class sale_order_line_create_multi_lines(models.TransientModel):
     def _prepare_default_vals_copy(self, ol, ad_iss):
         ad_issue = self.env['sale.advertising.issue'].search([
                                 ('id', '=', ad_iss.adv_issue_id.id)])
-        csa = ol.color_surcharge_amount * \
-              (ad_iss.price / ol.comb_list_price) / \
-              ol.product_uom_qty if ol.color_surcharge else 0.0
-        sbad = (ad_iss.price_unit + csa) * \
+
+        sbad = (ad_iss.price_unit) * \
                ol.product_uom_qty * (1 - ol.computed_discount / 100.0)
         aup = sbad / ol.product_uom_qty
         res = {'title': ad_issue.parent_id.id,
@@ -107,7 +86,6 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                  'product_id': ad_iss.product_id.id,
                  'price_unit': ad_iss.price_unit,
                  'issue_product_ids': False,
-                 'color_surcharge_amount': csa,
                  'subtotal_before_agency_disc': sbad,
                  'actual_unit_price': aup,
                  'order_id': ol.order_id.id or False,
@@ -125,4 +103,3 @@ class sale_order_line_create_multi_lines(models.TransientModel):
 
 
 
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

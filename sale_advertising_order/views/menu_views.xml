@@ -78,26 +78,20 @@
         <menuitem id="menu_advertising_config" name="Configuration" parent="advertising_sale_menu_root"
                 groups="group_ads_traffic_user"  sequence="10"/>
 
-            <menuitem id="sales_team_config3"  name="Sales Teams"
-                      parent="menu_advertising_config" action="sales_team.sales_team_config_action" sequence="1"/>
+<!--            <menuitem id="sales_team_config3"  name="Sales Teams"-->
+<!--                      parent="menu_advertising_config" action="sales_team.sales_team_config_action" sequence="1"/>-->
 
-            <menuitem id="menu_adverstising_subconfig" name="Advertising"
+            <menuitem id="menu_advertising_subconfig" name="Advertising"
                   parent="menu_advertising_config" sequence="2"/>
 
                 <menuitem id="menu_sale_advertising_title" name="Title"
-                      parent="menu_adverstising_subconfig" action="action_sale_advertising_issue_title" sequence="1"/>
+                      parent="menu_advertising_subconfig" action="action_sale_advertising_issue_title" sequence="1"/>
 
                 <menuitem id="menu_sale_advertising_issue2" name="Issue"
-                      parent="menu_adverstising_subconfig" action="action_sale_advertising_issue" sequence="2"/>
-
-                <menuitem id="menu_sale_advertising_pages2" name="Pages"
-                      parent="menu_adverstising_subconfig" action="action_sale_advertising_page" sequence="3"/>
-
-                <menuitem id="menu_sale_advertising_available2" name="Page Availability"
-                      parent="menu_adverstising_subconfig" action="action_sale_advertising_available" sequence="4"/>
+                      parent="menu_advertising_subconfig" action="action_sale_advertising_issue" sequence="2"/>
 
                 <menuitem id="menu_discount_reason2" name="Discount Reasons"
-                      parent="menu_adverstising_subconfig" action="action_discount_reason" sequence="5"/>
+                      parent="menu_advertising_subconfig" action="action_discount_reason" sequence="5"/>
 
             <menuitem id="menu_products_subconfig" name="Products"
                   parent="menu_advertising_config" sequence="3"/>

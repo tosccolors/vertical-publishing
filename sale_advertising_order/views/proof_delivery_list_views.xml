@@ -13,8 +13,6 @@
                         <field name="issue_date" />
                         <field name="proof_number_payer" invisible="1"/>
                         <field name="proof_parent_name" />
-                        <field name="proof_initials" />
-                        <field name="proof_infix" />
                         <field name="proof_lastname"/>
                         <field name="proof_country_code"/>
                         <field name="proof_zip"/>
@@ -32,7 +30,7 @@
             <field name="name">proof.number.delivery.list.form</field>
             <field name="model">proof.number.delivery.list</field>
             <field name="arch" type="xml">
-                <form string="Proof Delivery Lists" create="false" edit="false" delete="false">
+                <form string="Proof Delivery Lists">
                     <sheet>
                         <div class="oe_button_box" name="button_box">
                             <field name="line_id" invisible="1"/>
@@ -40,22 +38,24 @@
                                 type="object" icon="fa-usd" String="Order Line" attrs="{'invisible': [('line_id', '=', False)]}">
                             </button>
                         </div>
-                        <group col="4" colspan="4">
+                        <group>
+                            <group>
                                 <field name="proof_number_payer"/>
                                 <field name="title" />
                                 <field name="adv_issue" />
                                 <field name="issue_date" />
                                 <field name="proof_parent_name" />
-                                <field name="proof_initials" />
-                                <field name="proof_infix" />
                                 <field name="proof_lastname"/>
+                                <field name="proof_email"/>
+                            </group>
+                            <group>
                                 <field name="proof_country_code"/>
                                 <field name="proof_zip"/>
                                 <field name="proof_street_number"/>
                                 <field name="proof_street_name"/>
                                 <field name="proof_city" />
                                 <field name="proof_number_amt"/>
-                                <field name="proof_email"/>
+                            </group>
                         </group>
                     </sheet>
                 </form>
