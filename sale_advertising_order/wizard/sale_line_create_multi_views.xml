@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+<!--        FIXME: check if this can be eliminated -->
+        <record id="view_sale_order_line_create_multi" model="ir.ui.view">
+            <field name="name">Sale OrderLine Create Multi</field>
+            <field name="model">sale.order.line.create.multi.lines</field>
+            <field name="arch" type="xml">
+             <form string="Create Multi Lines" version="7.0">
+                <p class="oe_grey">
+                    Multiple Advertising Issues in these Order Lines will be created as separate Order Lines.
+                    The original Order Line will be deleted.
+                </p>
+                <footer>
+                    <button name="create_multi_lines" string="Create Multi Lines" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel" />
+                </footer>
+            </form>
+            </field>
+        </record>
+
+        <record id="action_view_sale_order_line_create_multi" model="ir.actions.act_window">
+            <field name="name">Create Multiple Lines</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order.line.create.multi.lines</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sale_advertising_order.view_sale_order_line_create_multi"/>
+            <field name="target">new</field>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>
+        </record>
+
+
+        <record id="sale_order_line_create_multi" model="ir.actions.act_window">
+            <field name="name">Create Multiple Lines</field>
+            <field name="res_model">sale.order.line</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="sale.model_sale_order_line"/>
+            <field name="binding_view_types">list</field>
+            <field name="view_id" ref="sale_advertising_order.view_sale_order_line_create_multi"/>
+        </record>
+
+        <record id="sale_order_create_multi" model="ir.actions.act_window">
+            <field name="name">Create Multiple Lines</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="sale.model_sale_order"/>
+            <field name="binding_view_types">list</field>
+            <field name="view_id" ref="sale_advertising_order.view_sale_order_line_create_multi"/>
+        </record>
+
+
+
+    </data>
+</openerp>
