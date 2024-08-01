@@ -22,7 +22,7 @@
 ##############################################################################
 {
     'name': 'Sale Advertising Order',
-    'version': '16.0.1.3',
+    'version': '16.0.1.4',
     'category': 'Sale',
     'description': """
 This module allows you to use Sales Management to run your advertising sales
@@ -45,8 +45,9 @@ This module allows you to use Sales Management to run your advertising sales
             "security/security.xml",
             "security/ir.model.access.csv",
 
-            # 'wizard/sale_line_create_multi_view.xml', FIXME: doesnt seem like needed anymore!
-
+            # 'wizard/sale_line_create_multi_views.xml', FIXME: doesnt seem like needed anymore!
+            "wizard/make_invoice_views.xml",
+            
             "views/partner_views.xml",
             "views/product_views.xml",
             "views/issue_views.xml",

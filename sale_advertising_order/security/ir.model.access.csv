@@ -7,6 +7,8 @@ access_sale_order_line_issues_products,sale.order.line.issues.products,model_sal
 access_sale_order_line_issues_products_all,sale.order.line.issues.products,model_sale_order_line_issues_products,,1,0,0,0
 access_sale_order_line_create_multi_lines,sale.order.line.create.multi.lines,model_sale_order_line_create_multi_lines,group_ads_sales_user,1,1,1,1
 access_proof_number_delivery_list_salesman,proof.number.delivery.list,model_proof_number_delivery_list,group_ads_sales_user,1,1,1,0
+access_ad_order_make_invoice,ad.order.make.invoice,model_ad_order_make_invoice,group_ads_sales_user,1,1,1,1
+access_ad_order_line_make_invoice,ad.order.line.make.invoice,model_ad_order_line_make_invoice,group_ads_sales_user,1,1,1,1
 access_calendar_event,calendar.event,calendar.model_calendar_event,group_ads_sales_user,1,1,1,0
 access_calendar_event_manager,calendar.event.manager,calendar.model_calendar_event,group_ads_traffic_user,1,1,1,1
 access_calendar_event_type_sale_salesman,calendar.event.type.salesman,calendar.model_calendar_event_type,group_ads_sales_user,1,0,0,0
