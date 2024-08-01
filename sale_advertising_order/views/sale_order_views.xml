@@ -322,14 +322,9 @@
     </record>
 
 
-
-
-
-
-
-        <!--
-            Sale Order (SAO) - List
-        -->
+    <!--
+        Sale Order (SAO) - List
+    -->
     <record id="view_order_advertising_tree" model="ir.ui.view">
         <field name="name">sale.order.advertising.tree</field>
         <field name="model">sale.order</field>
@@ -359,6 +354,35 @@
         </field>
     </record>
 
+    <!--
+        Sale Order (SAO) - Search
+    -->
+    <record id="view_order_advertising_search_inherit" model="ir.ui.view">
+        <field name="name">sao.sale.order.search.inherit.sale</field>
+        <field name="model">sale.order</field>
+        <field name="mode">primary</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
+                <separator/>
+                <filter string="Sales" name="sales" domain="[('state','in',('sale','done'))]"/>
+                <filter name="accmgr_sale_orders_filter" string="My Sales Orders (Account Manager)"
+                        domain="[('partner_acc_mgr','=',uid)]" help="My Advertising Sales Orders as Account manager"/>
+                <field name="partner_acc_mgr"/>
+                <field name="published_customer"/>
+                <field name="advertising_agency"/>
+                <separator/>
+                <filter string="To Invoice" name="to_invoice" domain="[('invoice_status','=','to_invoice')]"/>
+
+                <separator/>
+                <filter string="Submitted" name="submitted" domain="[('state','=','submitted')]"/>
+                <filter string="Sales Mgr Approved" name="approved1" domain="[('state','=','approved1')]" groups="sale_advertising_order.group_ads_sales_manager"/>
+            </xpath>
+            <xpath expr="." position="inside">
+                <filter string="Account Manager" name="acc_manager" icon="terp-personal" domain="[]" context="{'group_by':'partner_acc_mgr'}"/>
+            </xpath>
+        </field>
+    </record>
 
         <!--
             Sale Order (SAO)
@@ -489,7 +513,7 @@
         <field name="res_model">sale.order</field>
         <field name="view_mode">tree,form,calendar,pivot,graph</field>
         <field name="view_id" ref="sale_order_view_form_sao"/>
-<!--            <field name="search_view_id" ref="advertising_order_view_search_inherit_sale"/>-->
+            <field name="search_view_id" ref="view_order_advertising_search_inherit"/>
         <field name="domain"
                eval="[('type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True), ('state','not in',('draft','sent','cancel'))]"
         />
@@ -531,7 +555,7 @@
         <field name="res_model">sale.order</field>
         <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
         <field name="view_id" ref="sale_order_view_form_sao"/>
-<!--            <field name="search_view_id" ref="advertising_order_view_search_inherit_quotation"/>-->
+            <field name="search_view_id" ref="view_order_advertising_search_inherit"/>
         <field name="domain"
                eval="[('type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True),('state','not in',('sale','done'))]"
         />
@@ -687,7 +711,7 @@
                         <group name="sh2">
                             <field name="order_id" readonly="1" required="1"
                                    options="{'no_create': True, 'no_create_edit': True}"
-                                   context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}"/>
+                                   context="{'form_view_ref': 'sale_advertising_order.sale_order_view_form_sao'}"/>
                             <field name="order_pricelist_id" invisible="1"/>
                             <field name="company_id" invisible="1"/>
                         </group>
@@ -871,9 +895,6 @@
             </field>
         </record>
 
-
-
-
     <!--
         Sale Order Lines / To Invoice
     -->
@@ -910,6 +931,100 @@
         <field name="view_id" ref="view_adv_order_line_form"/>
         <field name="act_window_id" ref="all_advertising_order_lines_action"/>
     </record>
+
+
+    <!--
+            Advertising Schedule (a.k.a Indeellijst)
+    -->
+    <record id="view_indeellijst_list_tree" model="ir.ui.view">
+        <field name="name">sale.order.line.indeellijst.tree</field>
+        <field name="model">sale.order.line</field>
+        <field name="arch" type="xml">
+            <tree string="Schedules" create="false" edit="false" delete="false">
+                    <field name="order_id" widget="many2one_clickable"/>
+                    <field name="id" optional="hide"/>
+                    <field name="order_advertiser_id" />
+                    <field name="adv_issue" />
+                    <field name="issue_date"/>
+                    <field name="from_date" />
+                    <field name="to_date" />
+                    <field name="ad_class"/>
+                    <field name="product_template_id"/>
+                    <field name="product_uom_qty" />
+                    <field name="product_width"/>
+                    <field name="product_height"/>
+                    <field name="page_reference"/>
+                    <field name="layout_remark" optional="hide"/>
+                    <field name="name" />
+                    <field name="analytic_tag_ids" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="ads_indeellijst_action">
+        <field name="name">Advertising Schedules</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.order.line</field>
+        <field name="view_mode">tree,form,pivot</field>
+        <field name="search_view_id" ref="sale_advertising_order.view_adv_order_line_filter"/>
+        <field name="domain"
+               eval="[('order_id.type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True),('state','in',('sale','done'))]"
+        />
+    </record>
+
+    <record id="ads_indeellijst_action_tree" model="ir.actions.act_window.view">
+        <field eval="1" name="sequence"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_indeellijst_list_tree"/>
+        <field name="act_window_id" ref="ads_indeellijst_action"/>
+    </record>
+
+
+
+    <!--
+            Sale Analysis Report
+    -->
+    <record model="ir.ui.view" id="view_sale_order_graph2">
+        <field name="name">sale.order.graph</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <graph string="Sales Orders">
+                <field name="partner_id" type="row"/>
+                <field name="date_order" type="col"/>
+                <field name="amount_untaxed" type="measure"/>
+            </graph>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="view_sale_order_pivot2">
+        <field name="name">sale.order.pivot</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <pivot string="Sales Orders">
+                <field name="partner_id" type="row"/>
+                <field name="date_order" type="col"/>
+                <field name="amount_untaxed" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_sale_order_report_all" model="ir.actions.act_window">
+        <field name="name">Sales Analysis</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_id" ref="sale_order_view_form_sao"/>
+        <field name="view_mode">pivot,graph</field>
+        <field name="view_ids"
+           eval="[(5, 0, 0), (0, 0, {'view_mode': 'pivot', 'view_id': ref('sale_advertising_order.view_sale_order_pivot2')}),
+                  (0, 0, {'view_mode': 'graph', 'view_id': ref('sale_advertising_order.view_sale_order_graph2')})]"/>
+        <field name="domain"
+               eval="[('type_id','=', ref('sale_advertising_order.ads_sale_type')), ('advertising','=',True)]"
+        />
+        <field name="context"
+            eval="{'default_type_id': ref('sale_advertising_order.ads_sale_type'), 'search_default_sales':1, 'search_default_my_sale_orders_filter':1}"
+        />
+        <field name="search_view_id" ref="sale_advertising_order.view_order_advertising_search_inherit"/>
+        <field name="help">From this report, you can have an overview of the sale confirmed with your customers. The search tool can also be used to personalise your Sales reports and so, match this analysis to your needs.</field>
+    </record>
+
 
 
 </data>

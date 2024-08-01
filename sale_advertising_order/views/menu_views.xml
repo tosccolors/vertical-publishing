@@ -25,8 +25,8 @@
             <menuitem id="menu_sale_order3" name="Orders"
                       parent="menu_advertising_order" action="action_orders_advertising" sequence="2"/>
 
-<!--            <menuitem id="menu_ads_schedule" name="Schedules"-->
-<!--                      parent="menu_advertising_order" action="ads_indeellijst_action" sequence="3"/>-->
+            <menuitem id="menu_ads_schedule" name="Schedules"
+                      parent="menu_advertising_order" action="ads_indeellijst_action" sequence="3"/>
 
             <menuitem id="menu_proof_delivery_list_action" name="Proof Number Delivery List"
                       parent="menu_advertising_order" action="nsm_proof_delivery_list_action" sequence="4"/>
@@ -65,12 +65,12 @@
         <!--
                  Reporting
         -->
-<!--        <menuitem id="menu_advertising_report" name="Reporting" parent="advertising_sale_menu_root"-->
-<!--                groups="group_ads_sales_manager"  sequence="4"/>-->
+        <menuitem id="menu_advertising_report" name="Reporting" parent="advertising_sale_menu_root"
+                groups="group_ads_sales_manager"  sequence="4"/>
 
-<!--            <menuitem id="menu_action_sale_order_report_all" name="Order Analysis"-->
-<!--                  parent="menu_advertising_report" action="action_sale_order_report_all"-->
-<!--                  groups="group_ads_sales_manager" sequence="1"/>-->
+            <menuitem id="menu_action_sale_order_report_all" name="Order Analysis"
+                  parent="menu_advertising_report" action="action_sale_order_report_all"
+                  groups="group_ads_sales_manager" sequence="1"/>
 
         <!--
                 Configuration
