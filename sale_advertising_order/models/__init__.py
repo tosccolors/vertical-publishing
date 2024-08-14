@@ -8,4 +8,5 @@ from . import product
 from . import issue
 from . import sale_order
 from . import proof_delivery_list
+from . import account_invoice
 
