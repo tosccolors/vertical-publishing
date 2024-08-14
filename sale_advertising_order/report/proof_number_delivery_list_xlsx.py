@@ -39,18 +39,6 @@ class ProofNumberDeliveryListXlsx(models.AbstractModel):
                 "lines": {"value": self._render("line.proof_number_payer.name")},
                 "width": 32,
             },
-            "initials": {
-                "header": {"value": self._("INITIALS")}, # FIXME -- Needed?
-                "lines": {"value": self._render("line.proof_number_payer.id")},
-                "width": 10,
-            },
-            "infix": {
-                "header": {"value": self._("INFIX")}, # FIXME -- Needed?
-                "lines": {
-                    "value": self._render("line.proof_number_payer.id"),
-                },
-                "width": 10,
-            },
             "lastname": {
                 "header": {"value": self._("LAST NAME")},
                 "lines": {

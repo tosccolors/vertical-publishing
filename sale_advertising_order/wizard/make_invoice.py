@@ -54,7 +54,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         partner = keydict['partner_id']
         published_customer = keydict['published_customer']
         # payment_mode = keydict['payment_mode_id'] FIXME: NTD
-        # operating_unit = keydict.get('operating_unit_id', False) FIXME in OU app?
         # journal_id = self.env['account.move'].with_context(default_move_type='out_invoice')._get_default_journal().id
         # if not journal_id:
         #     raise UserError(_('Please define an accounting sale journal for this company.'))
@@ -63,7 +62,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'date': posting_date or False,
             'move_type': 'out_invoice',
             'partner_id': partner.id,
-            # 'published_customer': published_customer.id,
+            'published_customer': published_customer.id,
             'invoice_line_ids': lines['lines'],
             'narration': lines['name'],
             'invoice_payment_term_id': partner.property_payment_term_id.id or False,
@@ -71,7 +70,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'fiscal_position_id': partner.property_account_position_id.id or False,
             'user_id': self.env.user.id,
             'company_id': self.env.user.company_id.id,
-            # 'operating_unit_id': operating_unit.id,
             # 'payment_mode_id': payment_mode.id or False, # FIXME: NTD
             # 'partner_bank_id': payment_mode.fixed_journal_id.bank_account_id.id # FIXME: NTD
             #                    if payment_mode.bank_account_link == 'fixed'
@@ -172,7 +170,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     def make_invoice(self, keydict, lines, inv_date, post_date):
         vals = self._prepare_invoice(keydict, lines, inv_date, post_date)
         invoice = self.env['account.move'].create(vals)
-        # invoice.compute_taxes() --deprecated
         return invoice
 
     # @job
@@ -181,13 +178,12 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         count = 0
         for line in chunk:
             key = (line.order_id.partner_invoice_id, line.order_id.published_customer)
-                   # , line.order_id.payment_mode_id, line.order_id.operating_unit_id)
+                   # , line.order_id.payment_mode_id)
             keydict = {
                 'partner_id': line.order_id.partner_invoice_id,
                 'published_customer': line.order_id.published_customer,
             }
                 # 'payment_mode_id': line.order_id.payment_mode_id,
-                # 'operating_unit_id': line.order_id.operating_unit_id,
             key, keydict = self.modify_key(key, keydict, line)
 
             #if (not line.invoice_lines) and (line.state in ('sale', 'done')) :
