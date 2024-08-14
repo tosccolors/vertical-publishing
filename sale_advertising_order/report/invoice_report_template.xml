@@ -22,8 +22,8 @@
             </thead>
             <tbody>
                 <tr t-foreach="o.invoice_line_ids" t-as="l">
-                    <t t-set="tot_Cdiscount" t-value="l.computed_discount"/>
                     <t t-set="sol" t-value="l.so_line_id or l.sale_line_ids"/>
+                    <t t-set="tot_Cdiscount" t-value="sol.computed_discount"/>
                     <t t-if="o.move_type != 'out_refund'">
                         <td width="10%" t-if="sol.date_type not in ['validity','issue_date']"><span t-field="o.invoice_date"/></td>
                         <t t-if="sol.date_type == 'validity'">
@@ -148,10 +148,10 @@
                         <p class="m-0" t-field="o.partner_id.ref"/>
                     </div>
 
-                    <t t-set="sale_order_line" t-value="o.invoice_line_ids.mapped('sale_order_id')"/>
-                    <div class="col-auto col-3 mw-100 mb-2" t-if="not len(sale_order_line) > 1" name="so_nr">
+                    <t t-set="sale_orders" t-value="o.invoice_line_ids.mapped('sale_order_id')"/>
+                    <div class="col-auto col-3 mw-100 mb-2" t-if="not len(sale_orders) > 1" name="so_nr">
                         <strong>Sale Order nr:</strong>
-                        <p class="m-0" t-esc="sale_order_line.name"/>
+                        <p class="m-0" t-esc="sale_orders.name"/>
                     </div>
                 </div>
 

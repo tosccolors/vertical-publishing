@@ -12,6 +12,8 @@ _logger = logging.getLogger(__name__)
 class Invoice(models.Model):
     _inherit = 'account.move'
 
+    ad = fields.Boolean(related='invoice_line_ids.ad', string='Ad',
+                        help="It indicates that the invoice is an Advertising Invoice.", store=True)
     published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('is_customer', '=', True)])
     invoice_description = fields.Text('Description')
 
@@ -43,19 +45,16 @@ class InvoiceLine(models.Model):
 
             line.subtotal_before_agency_disc = sbad
 
-    date_publish = fields.Date('Publishing Date')
     so_line_id = fields.Many2one('sale.order.line', 'link between Sale Order Line and Invoice Line')
-    computed_discount = fields.Float(string='Discount' )
+    computed_discount = fields.Float(string='Discount' ) #FIXME: seems not needed
     subtotal_before_agency_disc = fields.Float(compute='_compute_price', string='SBAD', readonly=True )
-    # ad_number = fields.Char(string='External Reference', size=50)
     sale_order_id = fields.Many2one(related='so_line_id.order_id', relation='sale.order', store=True, string='Order Nr.')
     ad = fields.Boolean(related='so_line_id.advertising', string='Ad', store=True,
                                 help="It indicates that the invoice line is from an Advertising Invoice.")
 
     
     def open_sale_order(self):
-        # FIXME:
-        view_id = self.env.ref('sale_advertising_order.view_order_form_advertising').id if self.sale_order_id.advertising else self.env.ref('sale.view_order_form').id
+        view_id = self.env.ref('sale_advertising_order.sale_order_view_form_sao').id if self.sale_order_id.advertising else self.env.ref('sale.view_order_form').id
         return {
             'type': 'ir.actions.act_window',
             'name': 'Sale Order',
