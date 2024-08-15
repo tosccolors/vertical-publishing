@@ -723,13 +723,6 @@ class SaleOrderLine(models.Model):
                 line.product_width = prod.width
                 line.product_height = prod.height
 
-    # @api.model
-    # def _get_domain4Titles(self):
-    #     domain = [('parent_id','=', False)] # default
-    #     if self.medium:
-    #         domain += [('medium','child_of', self.medium.id)]
-    #     return domain
-
     @api.model
     def _get_domain4Issues(self):
         domain = []
@@ -1073,7 +1066,7 @@ class SaleOrderLine(models.Model):
         self.name = name
         return result
 
-    @api.onchange('date_type')
+    @api.onchange('date_type', 'issue_date')
     def onchange_date_type(self):
         vals = {}
         if not self.advertising:
@@ -1090,6 +1083,8 @@ class SaleOrderLine(models.Model):
                 if self.adv_issue_ids:
                     vals['adv_issue_ids'] = [(6,0,[])]
             elif self.date_type == 'issue_date':
+                self.from_date = self.issue_date
+                self.to_date = self.issue_date
                 if self.dates:
                     vals['dates'] = [(6,0,[])] # FIXME: deprecated
                 if self.dateperiods:
