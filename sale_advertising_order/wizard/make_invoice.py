@@ -13,9 +13,6 @@ class AdOrderMakeInvoice(models.TransientModel):
 
     invoice_date = fields.Date('Invoice Date', default=fields.Date.today)
     posting_date = fields.Date('Posting Date', default=False)
-    # job_queue = fields.Boolean('Process via Job Queue', default=False)
-    # chunk_size = fields.Integer('Chunk Size Job Queue', default=50)
-    # execution_datetime = fields.Datetime('Job Execution not before', default=fields.Datetime.now())
 
 
     def make_invoices_from_ad_orders(self):
@@ -28,9 +25,6 @@ class AdOrderMakeInvoice(models.TransientModel):
         ctx['active_ids'] = lines.ids
         ctx['invoice_date'] = self.invoice_date
         ctx['posting_date'] = self.posting_date
-        # ctx['chunk_size'] = self.chunk_size
-        # ctx['job_queue'] = self.job_queue
-        # ctx['execution_datetime'] = self.execution_datetime
         his_obj.with_context(ctx).make_invoices_from_lines()
         return True
 
@@ -43,18 +37,12 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     invoice_date = fields.Date('Invoice Date', default=fields.Date.today)
     posting_date = fields.Date('Posting Date', default=False)
 
-    # --- [deprecated] following fields are removed in view level ---
-    # job_queue = fields.Boolean('Process via Job Queue', default=False) # deprecated
-    # chunk_size = fields.Integer('Chunk Size Job Queue', default=50) # deprecated
-    # execution_datetime = fields.Datetime('Job Execution not before', default=fields.Datetime.now()) # deprecated
-
     @api.model
     def _prepare_invoice(self, keydict, lines, invoice_date, posting_date):
         ref = self.env.ref
         partner = keydict['partner_id']
         published_customer = keydict['published_customer']
         # payment_mode = keydict['payment_mode_id'] FIXME: NTD
-        # operating_unit = keydict.get('operating_unit_id', False) FIXME in OU app?
         # journal_id = self.env['account.move'].with_context(default_move_type='out_invoice')._get_default_journal().id
         # if not journal_id:
         #     raise UserError(_('Please define an accounting sale journal for this company.'))
@@ -63,7 +51,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'date': posting_date or False,
             'move_type': 'out_invoice',
             'partner_id': partner.id,
-            # 'published_customer': published_customer.id,
+            'published_customer': published_customer.id,
             'invoice_line_ids': lines['lines'],
             'narration': lines['name'],
             'invoice_payment_term_id': partner.property_payment_term_id.id or False,
@@ -71,7 +59,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'fiscal_position_id': partner.property_account_position_id.id or False,
             'user_id': self.env.user.id,
             'company_id': self.env.user.company_id.id,
-            # 'operating_unit_id': operating_unit.id,
             # 'payment_mode_id': payment_mode.id or False, # FIXME: NTD
             # 'partner_bank_id': payment_mode.fixed_journal_id.bank_account_id.id # FIXME: NTD
             #                    if payment_mode.bank_account_link == 'fixed'
@@ -89,80 +76,21 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         context = self._context
         inv_date = self.invoice_date
         post_date = self.posting_date
-        # size = False
-        # eta  = False
-        # jq   = False
-        # if self.job_queue:
-        #     jq = self.job_queue
-        #     size = self.chunk_size
-        #     eta = fields.Datetime.from_string(self.execution_datetime)
+
         if not context.get('active_ids', []):
             message = 'No ad order lines selected for invoicing.'
-            # if context.get('job_queue') == True :
-            #     return message+"\n"
-            # else :
             raise UserError(_(message))
         else:
             lids = context.get('active_ids', [])
             OrderLines = self.env['sale.order.line'].browse(lids)
             invoice_date_ctx = context.get('invoice_date', False)
             posting_date_ctx = context.get('posting_date', False)
-            # jq_ctx = context.get('job_queue', False)
-            # size_ctx = context.get('chunk_size', False)
-            # eta_ctx = context.get('execution_datetime', False)
         if invoice_date_ctx and not inv_date:
             inv_date = invoice_date_ctx
         if posting_date_ctx and not post_date:
             post_date = posting_date_ctx
-        # if jq_ctx and not jq:
-        #     jq = True
-        #     if len(self) == 1:
-        #         self.job_queue = True
-        #     if size_ctx and not size:
-        #         size = size_ctx
-        #     if eta_ctx and not eta:
-        #         eta = fields.Datetime.from_string(eta_ctx)
-        # if jq:
-        #     description = context.get('job_queue_description', False)
-        #     if description :
-        #         self.with_delay(eta=eta, description=description).make_invoices_split_lines_jq(inv_date, post_date, OrderLines, eta, size)
-        #     else :
-        #         self.with_delay(eta=eta).make_invoices_split_lines_jq(inv_date, post_date, OrderLines, eta, size)
-        #     return "Lines dispatched for async processing. See separate job(s) for result(s).\n"
-        # else:
-
         self.make_invoices_job_queue(inv_date, post_date, OrderLines)
         return "Lines dispatched."
-
-    # @job
-    # def make_invoices_split_lines_jq(self, inv_date, post_date, olines, eta, size):
-    #     partners = olines.mapped('order_id.partner_invoice_id')
-    #     # chunk = False
-    #     for partner in partners:
-    #         lines = olines.filtered(lambda r: r.order_id.partner_invoice_id.id == partner.id)
-    #         if len(lines) > size:
-    #             published_customer = lines.filtered('order_id.published_customer').mapped('order_id.published_customer')
-    #             for pb in published_customer:
-    #                 linespb = lines.filtered(lambda r: r.order_id.published_customer.id == pb.id)
-    #                 chunk = linespb if not chunk else chunk | linespb
-    #                 if len(chunk) < size:
-    #                     continue
-    #                 self.with_delay(eta=eta).make_invoices_job_queue(inv_date, post_date, chunk)
-    #                 chunk = False
-    #             remaining_lines = lines.filtered(lambda r: not r.order_id.published_customer)
-    #             chunk = remaining_lines if not chunk else chunk | remaining_lines
-    #             self.with_delay(eta=eta).make_invoices_job_queue(inv_date, post_date, chunk)
-    #         else:
-    #             chunk = lines if not chunk else chunk | lines
-    #             if len(chunk) < size:
-    #                 continue
-    #             description = "invoicing " + str(len(chunk)) + " orderlines"
-    #             self.with_delay(eta=eta, description=description).make_invoices_job_queue(inv_date, post_date, chunk)
-    #             chunk = False
-    #     if chunk:
-    #             description = "invoicing " + str(len(chunk)) + " orderlines"
-    #             self.with_delay(eta=eta, description=description).make_invoices_job_queue(inv_date, post_date, chunk)
-    #     return "Invoice lines successfully chopped in chunks. Chunks will be processed in separate jobs.\n"
 
     def modify_key(self, key, keydict, line):
         """Hook method to modify grouping key of advertising invoicing"""
@@ -172,7 +100,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
     def make_invoice(self, keydict, lines, inv_date, post_date):
         vals = self._prepare_invoice(keydict, lines, inv_date, post_date)
         invoice = self.env['account.move'].create(vals)
-        # invoice.compute_taxes() --deprecated
         return invoice
 
     # @job
@@ -181,16 +108,14 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         count = 0
         for line in chunk:
             key = (line.order_id.partner_invoice_id, line.order_id.published_customer)
-                   # , line.order_id.payment_mode_id, line.order_id.operating_unit_id)
+                   # , line.order_id.payment_mode_id) #FIXME
             keydict = {
                 'partner_id': line.order_id.partner_invoice_id,
                 'published_customer': line.order_id.published_customer,
             }
                 # 'payment_mode_id': line.order_id.payment_mode_id,
-                # 'operating_unit_id': line.order_id.operating_unit_id,
             key, keydict = self.modify_key(key, keydict, line)
 
-            #if (not line.invoice_lines) and (line.state in ('sale', 'done')) :
             if line.qty_to_invoice > 0 and (line.state in ('sale', 'done')):
                 if not key in invoices:
                     invoices[key] = {'lines':[], 'name': ''}
@@ -201,23 +126,16 @@ class AdOrderLineMakeInvoice(models.TransientModel):
                     invoices[key]['name'] += unidecode(line.name)+' / '
                 count += 1
 
-        if not invoices: # and not self.job_queue:
+        if not invoices:
             raise UserError(_('Invoice cannot be created for this Advertising Order Line due to one of the following reasons:\n'
                               '1.The state of these ad order lines are not "sale" or "done"!\n'
                               '2.The Lines are already Invoiced!\n'))
-        # elif not invoices:
-        #     raise FailedJobError(_('Invoice cannot be created for this Advertising Order Line due to one of the following reasons:\n'
-        #                           '1.The state of these ad order lines are not "sale" or "done"!\n'
-        #                           '2.The Lines are already Invoiced!\n'))
+
         for key, il in invoices.items():
             try:
                 self.make_invoice(invoices[key]['keydict'], il, inv_date, post_date)
             except Exception as e:
-                # if self.job_queue:
-                #     raise FailedJobError(_("The details of the error:'%s' regarding '%s'") % (str(e), il['name'] ))
-                # else:
                 raise UserError(_("The details of the error:'%s' regarding '%s'") % (str(e), il['name'] ))
-        #raise ValidationError(_("Your selection consisted of:'%s' \n The number of succesfully invoiced lines is '%s'") % (len(chunk), len(chunk)))
         return "Invoice(s) successfully made."
 
 
@@ -267,9 +185,8 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'tax_ids': [(6, 0, line.tax_id.ids or [])],
             # 'analytic_account_id': line.adv_issue.analytic_account_id and line.adv_issue.analytic_account_id.id or False,FIXME
             'analytic_tag_ids': [(6, 0, line.analytic_tag_ids.ids or [])],
-            # 'so_line_id': line.id, #FIXME seems unnecessary
+            'so_line_id': line.id,
             # 'computed_discount': line.computed_discount, # FIXME?
-            # 'ad_number': line.ad_number, # FIXME ?
             'sale_line_ids': [(6, 0, [line.id])]
         }
         return res

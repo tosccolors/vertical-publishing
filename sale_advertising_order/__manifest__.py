@@ -22,7 +22,7 @@
 ##############################################################################
 {
     'name': 'Sale Advertising Order',
-    'version': '16.0.1.5',
+    'version': '16.0.2.2',
     'category': 'Sale',
     'description': """
 This module allows you to use Sales Management to run your advertising sales
@@ -35,7 +35,7 @@ This module allows you to use Sales Management to run your advertising sales
     'depends': [
                 'sale', 'sale_order_type', 'partner_manual_rank',
                 'account', 'account_analytic_tag', 'partner_firstname',
-                'base_address_extended',
+                'base_address_extended', 'report_xlsx_helper'
 
                 ],
     'data': [
@@ -45,13 +45,17 @@ This module allows you to use Sales Management to run your advertising sales
             "security/security.xml",
             "security/ir.model.access.csv",
 
-            # 'wizard/sale_line_create_multi_views.xml', FIXME: doesnt seem like needed anymore!
+            "report/invoice_report_template.xml",
+            "report/sale_report_template.xml",
+            "report/proof_number_delivery_list_xslx.xml",
+            "report/report_indeellijst_list_views.xml",
             "wizard/make_invoice_views.xml",
 
             "views/partner_views.xml",
             "views/product_views.xml",
             "views/issue_views.xml",
             "views/sale_order_views.xml",
+            "views/account_invoice_views.xml",
             "views/proof_delivery_list_views.xml",
 
             "views/menu_views.xml",

@@ -36,8 +36,11 @@ class SaleOrder(models.Model):
                     [('is_ad_agency', '!=', True),('parent_id', '=', False), ('is_customer', '=', True)]
                 )
 
+    # backported:
+    amount_by_group = fields.Binary(string="Tax amount by group", compute='_amount_by_group',
+                                    help="type: [(name, amount, base, formated amount, formated base)]")
 
-
+    # overridden:
     state = fields.Selection(selection=[
         ('draft', 'Draft Quotation'),
         ('sent', 'Quotation Sent'),
@@ -48,6 +51,7 @@ class SaleOrder(models.Model):
         ('cancel', "Cancelled"),
         ])
 
+    # new:
     published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('is_customer', '=', True)])
     advertising_agency = fields.Many2one('res.partner', 'Advertising Agency', domain=[('is_customer', '=', True)])
     nett_nett = fields.Boolean('Netto Netto Deal', default=False)
@@ -241,6 +245,47 @@ class SaleOrder(models.Model):
             template = 'sale_advertising_order.report_saleorder_document_sao'
 
         return template
+
+
+    # Backported
+    def _amount_by_group(self):
+        """ ported from v14, for backward compatibility
+        """
+
+        # Advertising Orders Only:
+        for order in self.filtered('advertising'):
+            currency = order.currency_id or order.company_id.currency_id
+            fmt = partial(formatLang, self.with_context(lang=order.partner_id.lang).env, currency_obj=currency)
+            res = {}
+            for line in order.order_line:
+                discount = 0.0
+                # At this point, it will always be Single Edition:
+                nn = True if order.nett_nett or line.nett_nett else False
+                if order.partner_id.is_ad_agency and not nn:
+                    discount = order.partner_id.agency_discount
+
+                price_reduce = line.actual_unit_price * (1.0 - discount / 100.0)
+
+                taxes = line.tax_id.compute_all(price_reduce, quantity=line.product_uom_qty, product=line.product_id, partner=order.partner_shipping_id)['taxes']
+                for tax in line.tax_id:
+                    group = tax.tax_group_id
+                    res.setdefault(group, {'amount': 0.0, 'base': 0.0})
+                    for t in taxes:
+                        if t['id'] == tax.id or t['id'] in tax.children_tax_ids.ids:
+                            res[group]['amount'] += t['amount']
+                            res[group]['base'] += t['base']
+            res = sorted(res.items(), key=lambda l: l[0].sequence)
+
+            # round amount and prevent -0.00
+            for group_data in res:
+                group_data[1]['amount'] = currency.round(group_data[1]['amount']) + 0.0
+                group_data[1]['base'] = currency.round(group_data[1]['base']) + 0.0
+
+            order.amount_by_group = [(
+                l[0].name, l[1]['amount'], l[1]['base'],
+                fmt(l[1]['amount']), fmt(l[1]['base']),
+                len(res),
+            ) for l in res]
 
 
     def action_quotation_send(self):
@@ -846,9 +891,12 @@ class SaleOrderLine(models.Model):
         if not self.advertising:
             return
 
-        if self.date_type:
-            if self.date_type == 'validity':
-                self.adv_issue_ids = [(6, 0, [])]
+        if self.date_type == 'validity':
+            self.adv_issue_ids = [(6, 0, [])]
+
+        elif self.date_type == 'issue_date':
+            self.from_date = self.issue_date
+            self.to_date = self.issue_date
 
     @api.onchange('price_unit')
     def onchange_price_unit(self):
@@ -1028,10 +1076,10 @@ class SaleOrderLine(models.Model):
     def _prepare_invoice_line(self, **optional_values):
         res = super(SaleOrderLine, self)._prepare_invoice_line(**optional_values)
         if self.advertising:
-            res['analytic_account_id'] = self.adv_issue.analytic_account_id.id
+            # res['analytic_account_id'] = self.adv_issue.analytic_account_id.id #FIXME
             res['so_line_id'] = self.id
             res['price_unit'] = self.actual_unit_price
-            res['ad_number'] = self.ad_number
+            # res['ad_number'] = self.ad_number
             res['computed_discount'] = self.computed_discount # FIXME: Need this?
         else:
             res['so_line_id'] = self.id
