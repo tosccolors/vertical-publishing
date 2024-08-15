@@ -60,9 +60,10 @@ class SaleOrderLine(models.Model):
 		for line in self:
 			notDigital = not(line.product_id.categ_id.digital)
 
-			# All order lines after a selected date
-			if line.invoicing_property_id.inv_whole_order_at_once:
+			# All order lines after a selected date OR specified in Order
+			if line.invoicing_property_id.inv_whole_order_at_once or line.invoicing_property_id.inv_manually:
 				cutoff_date = line.order_id.invoicing_date
+
 			# All order lines after placement
 			elif line.invoicing_property_id.inv_whole_order_afterwards:
 				if notDigital:
@@ -96,12 +97,4 @@ class SaleOrderLine(models.Model):
 			line.update({'cutoff_date': cutoff_date})
 		return True
 
-
-	# deep: deprecated
-	# def write(self, vals):
-	# 	user = self.env['res.users'].browse(self.env.uid)
-	# 	ctx = self.env.context.copy()
-	# 	if self.env.user.has_group('publishing_invoicing.advertising_sale_superuser'):
-	# 		ctx.update({'allow_user':True})
-	# 	return super(SaleOrderLine, self.with_context(ctx)).write(vals)
 
