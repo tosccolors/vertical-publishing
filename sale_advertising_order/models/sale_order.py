@@ -891,9 +891,12 @@ class SaleOrderLine(models.Model):
         if not self.advertising:
             return
 
-        if self.date_type:
-            if self.date_type == 'validity':
-                self.adv_issue_ids = [(6, 0, [])]
+        if self.date_type == 'validity':
+            self.adv_issue_ids = [(6, 0, [])]
+
+        elif self.date_type == 'issue_date':
+            self.from_date = self.issue_date
+            self.to_date = self.issue_date
 
     @api.onchange('price_unit')
     def onchange_price_unit(self):
