@@ -28,6 +28,10 @@
             <xpath expr="//field[@name='validity_date']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
+
+            <xpath expr="//field[@name='order_line']/form//field[@name='issue_date']" position="after">
+                <field name="cutoff_date" />
+            </xpath>
         </field>
     </record>
 
