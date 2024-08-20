@@ -20,31 +20,6 @@ class AdvertisingIssue(models.Model):
         id = self.env.ref('sale_advertising_order.attribute_title').id
         return [('attribute_id', '=', id)]
 
-    # deepa: deprecated logic
-    # @api.depends('parent_id')
-    # def _compute_medium_domain(self):
-    #     """
-    #     Compute the domain for the Medium domain.
-    #     """
-    #     for rec in self:
-    #         if rec.parent_id:
-    #             np = self.env.ref('sale_advertising_order.newspaper_advertising_category').id
-    #             mag = self.env.ref('sale_advertising_order.magazine_advertising_category').id
-    #             if rec.parent_id.medium.id in [np, mag]:
-    #                 ads = self.env.ref('sale_advertising_order.title_pricelist_category').id
-    #                 rec.medium_domain = json.dumps(
-    #                                     [('parent_id', '=', ads)]
-    #                 )
-    #             else:
-    #                 ads = [self.env.ref('sale_advertising_order.online_advertising_category').id]
-    #                 rec.medium_domain = json.dumps(
-    #                                     [('id', 'in', ads)]
-    #                 )
-    #         else:
-    #             ads = self.env.ref('sale_advertising_order.advertising_category').id
-    #             rec.medium_domain = json.dumps(
-    #                                 [('parent_id', '=', ads)]
-    #             )
 
     @api.depends('parent_id')
     def _compute_medium_domain(self):
@@ -106,7 +81,6 @@ class AdvertisingIssue(models.Model):
     week_number_even = fields.Boolean(string='Even Week Number', store=True, readonly=True, compute='_week_number' )
     deadline = fields.Datetime('Deadline', help='Closing Time for Sales')
     medium_domain = fields.Char(compute='_compute_medium_domain', readonly=True, store=False,)
-    # medium = fields.Many2one('product.category','Medium', required=True) # deprecated as below
     state = fields.Selection([('open','Open'),('close','Close')], 'State', default='open')
     default_note = fields.Text('Default Note')
     amount_total = fields.Integer(compute=_availability, string='Available Space', store=True, readonly=True,)
@@ -124,26 +98,6 @@ class AdvertisingIssue(models.Model):
         for rec in self:
             rec.issue_count = len(rec.child_ids)
 
-
-
-    # deepa: deprecated logic
-    # @api.onchange('parent_id')
-    # def onchange_parent_id(self):
-    #     domain = {}
-    #     self.medium = False
-    #     if self.parent_id:
-    #         if self.parent_id.medium.id == self.env.ref('sale_advertising_order.newspaper_advertising_category').id:
-    #             ads = self.env.ref('sale_advertising_order.title_pricelist_category').id
-    #             domain['medium'] = [('parent_id', '=', ads)]
-    #         else:
-    #             ads = [self.env.ref('sale_advertising_order.magazine_advertising_category').id]
-    #             ads.append(self.env.ref('sale_advertising_order.online_advertising_category').id)
-    #             domain['medium'] = [('id', 'in', ads)]
-    #
-    #     else:
-    #         ads = self.env.ref('sale_advertising_order.advertising_category').id
-    #         domain['medium'] = [('parent_id', '=', ads)]
-    #     return {'domain': domain }
 
     @api.onchange('parent_id')
     def onchange_parent_id(self):
