@@ -184,6 +184,48 @@ class SaleOrder(models.Model):
                                      'res.company']._company_default_get(
                                      'sale.order'), index=True)
 
+    #Overridden: SOT
+    type_id = fields.Many2one(
+        comodel_name="sale.order.type",
+        string="Type",
+        compute="_compute_sale_type_id",
+        store=True,
+        readonly=True,
+        states={"draft": [("readonly", False)],},
+        ondelete="restrict",
+        copy=True,
+        check_company=True, track_visibility='always'
+    )
+
+
+    @api.depends("partner_id", "company_id")
+    def _compute_sale_type_id(self):
+
+        AdsSOT = self.env.ref('sale_advertising_order.ads_sale_type').id
+        defSOT = self._context.get('default_type_id', False)
+
+        for record in self:
+            # Enforce
+            if record.advertising or (defSOT == AdsSOT):
+                sale_type = AdsSOT
+            else:
+                # Specific partner sale type value
+                sale_type = (
+                    record.partner_id.with_company(record.company_id).sale_type
+                    or record.partner_id.commercial_partner_id.with_company(
+                        record.company_id
+                    ).sale_type
+                )
+
+            # Default user sale type value
+            if not sale_type:
+                sale_type = record.default_get(["type_id"]).get("type_id", False)
+
+            # Get first sale type value
+            if not sale_type:
+                sale_type = record._default_type_id()
+            record.type_id = sale_type
+
     # Overridden: Sale
     def _amount_by_group(self):
         """ Fixme: Overridden from Sale,
