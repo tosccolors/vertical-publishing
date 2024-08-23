@@ -21,7 +21,7 @@
 ##############################################################################
 {
     'name': 'Sale Advertising Order',
-    'version': '14.0.13.4',
+    'version': '14.0.13.5',
     'category': 'Sale',
     'description': """
 This module allows you to use both CRM and Sales Management to run your advertising sales
@@ -38,7 +38,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
                 'web_tree_many2one_clickable', 'crm_industry',
                 'sale_order_type', 'base_address_extended',
                 'partner_firstname', 'report_xlsx_helper',
-                'partner_manual_rank',
+                'partner_manual_rank', 'calendar',
 
                 # Following dependency are for model access only
                 'sale_management', 'sale_stock', 'delivery'
