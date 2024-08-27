@@ -179,6 +179,8 @@ class SaleOrder(models.Model):
         defSOT = self._context.get('default_type_id', False)
 
         for record in self:
+            sale_type = False
+
             # Enforce
             if record.advertising or (defSOT == AdsSOT):
                 sale_type = AdsSOT
