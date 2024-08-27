@@ -124,32 +124,6 @@ class SaleOrder(models.Model):
                     [('is_ad_agency', '!=', True),('parent_id', '=', False), ('is_customer', '=', True)]
                 )
 
-
-    # Overridden:
-    @api.depends("partner_id", "company_id")
-    def _compute_sale_type_id(self):
-        for record in self:
-            # Already set, make no change
-            if record.type_id: continue
-
-            # Specific partner sale type value
-            sale_type = (
-                record.partner_id.with_company(record.company_id).sale_type
-                or record.partner_id.commercial_partner_id.with_company(
-                    record.company_id
-                ).sale_type
-            )
-
-            # Default user sale type value
-            if not sale_type:
-                sale_type = record.default_get(["type_id"]).get("type_id", False)
-
-            # Get first sale type value
-            if not sale_type:
-                sale_type = record._default_type_id()
-            record.type_id = sale_type
-
-
     state = fields.Selection(selection=[
         ('draft', 'Draft Quotation'),
         ('sent', 'Quotation Sent'),
@@ -208,14 +182,14 @@ class SaleOrder(models.Model):
             # Enforce
             if record.advertising or (defSOT == AdsSOT):
                 sale_type = AdsSOT
-            else:
-                # Specific partner sale type value
-                sale_type = (
-                    record.partner_id.with_company(record.company_id).sale_type
-                    or record.partner_id.commercial_partner_id.with_company(
-                        record.company_id
-                    ).sale_type
-                )
+            # else:
+            #     # Specific partner sale type value
+            #     sale_type = (
+            #         record.partner_id.with_company(record.company_id).sale_type
+            #         or record.partner_id.commercial_partner_id.with_company(
+            #             record.company_id
+            #         ).sale_type
+            #     )
 
             # Default user sale type value
             if not sale_type:
