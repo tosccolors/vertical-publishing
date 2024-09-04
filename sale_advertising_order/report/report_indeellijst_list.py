@@ -23,7 +23,8 @@ class IndeellijstListReport(models.AbstractModel):
             sline.append(sol.order_id.name)
             sline.append(sol.order_id.user_id.name)
             sline.append(sol.order_id.id)
-            sline.append(sol.recurring_id.id if sol.recurring_id else sol.id)
+            # sline.append(sol.recurring_id.id if sol.recurring_id else sol.id)
+            sline.append(sol.material_id)
             sline.append(pro_name)
             ref = sol.page_reference or ''
             if sol.layout_remark:
