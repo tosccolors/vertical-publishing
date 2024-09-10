@@ -851,7 +851,7 @@
             <field name="arch" type="xml">
                 <tree string="Sales Order Lines" create="false">
                         <field name="order_id" />
-                        <field name="id" />
+                        <field name="id" optional="hide"/>
                         <field name="order_advertiser_id" />
                         <field name="order_agency_id" />
                         <field name="title" optional="hide"/>
@@ -1571,6 +1571,10 @@
                     <header>
                         <field name="state" widget="statusbar" statusbar_visible="open,close" clickable="True"/>
                     </header>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;" attrs="{'invisible': [('to_update_issdt', '=', False)]}">
+                        You have changed <bold>Issue Date !</bold> If you wish to update the same in existing Sales Order(s).
+                        <button name="%(action_update_orderline)d" string="Click here" type="action"/>
+                    </div>
 
 					<sheet>
                         <div class="oe_button_box" name="button_box">
@@ -1619,6 +1623,7 @@
                         <group class="oe_subtotal_footer oe_right">
                             <field name="amount_total" class="oe_subtotal_footer_separator"/>
                         </group>
+                        <field name="to_update_issdt" invisible="1"/>
 					</sheet>
 				</form>
 			</field>
