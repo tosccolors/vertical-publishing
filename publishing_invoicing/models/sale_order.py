@@ -54,7 +54,7 @@ class SaleOrderLine(models.Model):
 	invoicing_property_id = fields.Many2one('invoicing.property', related='order_id.invoicing_property_id', string="Invoicing Property")
 	cutoff_date = fields.Date(string="Cutoff Date", compute='_calculate_cutoff_date', store=True, readonly=True)
 
-	@api.depends('order_id.invoicing_property_id', 'order_id.invoicing_date', 'product_id')
+	@api.depends('order_id.invoicing_property_id', 'order_id.invoicing_date', 'product_id', 'issue_date', 'from_date', 'to_date')
 	def _calculate_cutoff_date(self):
 		""""Calculates the date after which an order line can be invoiced"""
 		for line in self:
