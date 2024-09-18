@@ -48,6 +48,12 @@ class SaleOrder(models.Model):
 			self.update({'terms_cond_bool': False})
 		return True
 
+	def _prepare_invoice(self):
+		invoice_vals = super(SaleOrder, self)._prepare_invoice()
+		if self.invoicing_date:
+			invoice_vals['invoice_date'] = self.invoicing_date
+		return invoice_vals
+
 class SaleOrderLine(models.Model):
 	_inherit = 'sale.order.line'
 
