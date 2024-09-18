@@ -1246,7 +1246,7 @@ class SaleOrderLine(models.Model):
     #             self.to_date = max(arr_to_dates)
 
     @api.onchange('from_date', 'to_date')
-    def _check_validity_dates(self,):
+    def _check_validity_dates(self):
         "Check correctness of date"
         if self.from_date and self.to_date:
             if (self.from_date > self.to_date):
