@@ -5,8 +5,13 @@
         Report (Sale)
      -->
     <template id="report_saleorder_document_package" inherit_id="sale_advertising_order.report_saleorder_document_sao">
+        <xpath expr="//t[@t-set='information_block']/strong[1]" position="replace">
+            <strong t-if="doc.partner_shipping_id == doc.partner_invoice_id">Invoice Address:</strong>
+        </xpath>
         <xpath expr="//div[@name='order_lines']" position="replace">
             <t t-if="doc.package">
+                <br/>
+                <br/>
                 <div style="text-align:justify;padding-left:70px;padding-right:0px;">
                     <span><strong>Package Description</strong></span><br/>
                     <span t-field="doc.package_description"/><br/><br/>
@@ -17,6 +22,12 @@
                     <t t-call="sale_advertising_order.report_saleorderlines_document_sao"/>
                 </div>
             </t>
+        </xpath>
+        <xpath expr="//div[@id='informations']/div[2]" position="replace">
+            <div t-if="doc.date_order and doc.state not in ['draft','sent']" class="col-auto col-3 mw-100 mb-2">
+                <strong>Order Date:</strong>
+                <p class="m-0" t-field="doc.date_order" t-options='{"widget": "date"}'/>
+            </div>
         </xpath>
     </template>
 
