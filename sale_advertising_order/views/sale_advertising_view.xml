@@ -104,7 +104,7 @@
                             <field name="opportunity_subject" required="True" string="Subject"/>
                         </group>
                         <group>
-                            <field name="date_order" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
+                            <field name="date_order"/>
                             <field name="validity_date" attrs="{'invisible': [('state', 'in', ['sale', 'done'])]}"/>
                             <!--<field name="confirmation_date" attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'cancel'])]}"/>-->
                             <field name="client_order_ref" string="Client Order Reference"/>
@@ -265,7 +265,7 @@
                                     <group string="Proof Numbers">
                                         <group>
                                             <field name="proof_number_adv_customer" string="Proof Number Advertising Customer"
-                                                   domain="['|',('id', '=', parent.published_customer), ('parent_id', '=', parent.published_customer)]"
+                                                   domain="[('is_customer', '=', True)]"
                                                    context="{'default_parent_id': 'parent.partner_id', 'show_email': 1}" options="{'no_create_edit': True}" widget="many2many_tags"/>
                                             <field name="proof_number_payer" />
                                         </group>
