@@ -23,9 +23,8 @@
                            context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}" />
                     <button type="object" name="open_sale_order" icon="fa-external-link" string="Open SO" class="oe_link btn-link"
                             attrs="{'invisible': [('sale_order_id', '=', False)]}"/>
-                    <field name="so_line_id"
+                    <field name="sale_line_id"
                             invisible="context.get('default_move_type') in ('in_invoice', 'in_refund')"
-                            context="{'form_view_ref': 'sale_advertising_order.view_adv_order_line_form'}"
                             optional="show" string="Order Line"/>
                 </xpath>
                 <xpath expr="//sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
