@@ -66,6 +66,7 @@ class InvoiceLine(models.Model):
 
     date_publish = fields.Date('Publishing Date')
     so_line_id = fields.Many2one('sale.order.line', 'link between Sale Order Line and Invoice Line')
+    sale_line_id = fields.Integer(related='so_line_id.id', string='link between Sale Order Line and Invoice Line')
     computed_discount = fields.Float(string='Discount' )
     subtotal_before_agency_disc = fields.Float(compute='_compute_price', string='SBAD', readonly=True )
     ad_number = fields.Char(string='External Reference', size=50)
