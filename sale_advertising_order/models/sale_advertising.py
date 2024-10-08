@@ -822,7 +822,7 @@ class SaleOrderLine(models.Model):
     discount_reason_id = fields.Many2one('discount.reason', 'Discount Reason')
     nett_nett = fields.Boolean(string='Netto Netto Line')
     # proof_number_adv_customer = fields.Boolean('Proof Number Advertising Customer', default=False) #deep: has been overridden to M2M as below
-    proof_number_payer = fields.Boolean('Proof Number Payer', default=False)
+    # proof_number_payer = fields.Boolean('Proof Number Payer', default=False)
     booklet_surface_area = fields.Float(related='product_template_id.booklet_surface_area', readonly=True, string='Booklet Surface Area',digits='Product Unit of Measure')
     domain4prod_ids = fields.Many2many('product.template', string='Domain for Product Template', compute=_get_prodTemplate2filter)
 
