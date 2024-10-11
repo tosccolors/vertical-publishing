@@ -2329,10 +2329,6 @@ msgstr "Bewijsnummer adverteerder"
 msgid "Proof Number Amount"
 msgstr "Bewijsnummer aantal"
 
-#. module: sale_advertising_order
-#: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__proof_number_amt_adv_customer
-msgid "Proof Number Amount Advertising"
-msgstr "Bewijsnummer aantal adverteerder"
 
 #. module: sale_advertising_order
 #: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__proof_number_amt_payer
@@ -2349,9 +2345,9 @@ msgid "Proof Number Delivery List"
 msgstr "Bewijsnummerlijst"
 
 #. module: sale_advertising_order
-#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
-msgid "Proof Number Amount Advertiser"
-msgstr "Bewijsnummer Adverteerder"
+#: model:ir.model.fields,field_description:sale_advertising_order.field_sale_order_line__proof_number_amt_adv_customer
+msgid "Proof Number Amount Advertising"
+msgstr "Bewijsnummer aantal adverteerder"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
