@@ -42,7 +42,8 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         ref = self.env.ref
         partner = keydict['partner_id']
         published_customer = keydict['published_customer']
-        # payment_mode = keydict['payment_mode_id'] FIXME: NTD
+        payment_mode = keydict['payment_mode_id']
+        customer_contact = keydict['customer_contact_id']
         # journal_id = self.env['account.move'].with_context(default_move_type='out_invoice')._get_default_journal().id
         # if not journal_id:
         #     raise UserError(_('Please define an accounting sale journal for this company.'))
@@ -52,6 +53,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'move_type': 'out_invoice',
             'partner_id': partner.id,
             'published_customer': published_customer.id,
+            'customer_contact': customer_contact,
             'invoice_line_ids': lines['lines'],
             'narration': lines['name'],
             'invoice_payment_term_id': partner.property_payment_term_id.id or False,
@@ -59,10 +61,10 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'fiscal_position_id': partner.property_account_position_id.id or False,
             'user_id': self.env.user.id,
             'company_id': self.env.user.company_id.id,
-            # 'payment_mode_id': payment_mode.id or False, # FIXME: NTD
-            # 'partner_bank_id': payment_mode.fixed_journal_id.bank_account_id.id # FIXME: NTD
-            #                    if payment_mode.bank_account_link == 'fixed'
-            #                    else partner.bank_ids and partner.bank_ids[0].id or False,
+            'payment_mode_id': payment_mode.id or False,
+            'partner_bank_id': payment_mode.fixed_journal_id.bank_account_id.id
+                               if payment_mode.bank_account_link == 'fixed'
+                               else partner.bank_ids and partner.bank_ids[0].id or False,
             'sale_type_id': ref('sale_advertising_order.ads_sale_type').id,
         }
         return vals
@@ -94,6 +96,10 @@ class AdOrderLineMakeInvoice(models.TransientModel):
 
     def modify_key(self, key, keydict, line):
         """Hook method to modify grouping key of advertising invoicing"""
+        key = list(key)
+        key.append(line.order_id.customer_contact)
+        key = tuple(key)
+        keydict['customer_contact_id'] = line.order_id.customer_contact.id
         return key, keydict
 
 
@@ -107,13 +113,13 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         invoices = {}
         count = 0
         for line in chunk:
-            key = (line.order_id.partner_invoice_id, line.order_id.published_customer)
-                   # , line.order_id.payment_mode_id) #FIXME
+            key = (line.order_id.partner_invoice_id, line.order_id.published_customer
+                   , line.order_id.payment_mode_id)
             keydict = {
                 'partner_id': line.order_id.partner_invoice_id,
                 'published_customer': line.order_id.published_customer,
+                'payment_mode_id': line.order_id.payment_mode_id,
             }
-                # 'payment_mode_id': line.order_id.payment_mode_id,
             key, keydict = self.modify_key(key, keydict, line)
 
             if line.qty_to_invoice > 0 and (line.state in ('sale', 'done')):
@@ -175,7 +181,6 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         res = {
             'name': line.title.name or "/",
             'sequence': line.sequence,
-            # 'origin': line.order_id.name, -- deprecated; perhaps we could use ref instead? FIXME
             'account_id': account.id,
             'price_unit': line.actual_unit_price,
             'quantity': line.product_uom_qty,

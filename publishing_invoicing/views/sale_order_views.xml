@@ -5,7 +5,7 @@
         <field name="name">sale.order.form</field>
         <field name="model">sale.order</field>
         <field name="type">form</field>
-        <field name="inherit_id" ref="sale_advertising_order.view_order_form_advertising"/>
+        <field name="inherit_id" ref="sale_advertising_order.sale_order_view_form_sao"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="invoicing_property_id" options="{'no_create': True, 'no_edit': True}"/>
@@ -34,7 +34,7 @@
     <record model="ir.ui.view" id="publishing_invoicing_sales_order_line_filter_view">
             <field name="name">publising.sale.order.line.filter.view</field>
             <field name="model">sale.order.line</field>
-            <field name="inherit_id" ref="sale_advertising_order.view_advertising_sales_order_line_filter" />
+            <field name="inherit_id" ref="sale_advertising_order.view_adv_order_line_filter" />
             <field name="arch" type="xml">
                 <xpath expr="//filter[@name='from_date_sale_orders_filter']" position="after">
                     <filter name="pay_in_terms_bool" string="To be invoiced in terms" domain="[('order_id.terms_cond_bool','=', True),('qty_to_invoice','&lt;&gt;', 0)]" />
@@ -64,7 +64,7 @@
     <record id="view_advertising_sales_order_line_filter_publishing_invoicing" model="ir.ui.view">
             <field name="name">adv.sale.order.line.select</field>
             <field name="model">sale.order.line</field>
-            <field name="inherit_id" ref="sale_advertising_order.view_advertising_sales_order_line_filter" />
+            <field name="inherit_id" ref="sale_advertising_order.view_adv_order_line_filter" />
             <field name="arch" type="xml">
                 <xpath expr="/search/filter[1]" position="after">
                     <separator/>
@@ -80,9 +80,13 @@
             <field name="model">sale.order.line</field>
             <field name="inherit_id" ref="sale_advertising_order.view_adv_order_line_tree" />
             <field name="arch" type="xml">
-                    <xpath expr="//field[@name='price_subtotal']" position="after">
-                        <field name="invoicing_property_id" invisible="0"/>
-                    </xpath>
+                <xpath expr="//field[@name='price_subtotal']" position="after">
+                    <field name="invoicing_property_id" invisible="0"/>
+                </xpath>
+
+                <xpath expr="//field[@name='to_date']" position="after">
+                  <field name="cutoff_date"/>
+                </xpath>
             </field>
         </record>
 
@@ -98,6 +102,11 @@
             <xpath expr="//field[@name='order_id']" position="after">
               <field name="invoicing_property_id"/>
             </xpath>
+
+            <xpath expr="//field[@name='issue_date']" position="after">
+              <field name="cutoff_date"/>
+            </xpath>
+
         </field>
     </record>
 </odoo>

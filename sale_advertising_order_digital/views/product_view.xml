@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <record id="product_category_form_view_digital" model="ir.ui.view">
+      <field name="name">product.category.form.digital</field>
+      <field name="model">product.category</field>
+      <field name="inherit_id" ref="sale_advertising_order.product_category_form_view_inherit"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='date_type']" position="before">
+          <field name="digital"/>
+          <!--<field name="adv_class_issue_ids" widget="many2many_tags" options='{"no_open": True, "no_create": True}'/>-->
+        </xpath>
+      </field>
+    </record>
+
+    </data>
+</odoo>

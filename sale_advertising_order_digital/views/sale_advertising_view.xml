@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <record model="ir.ui.view" id="sale_advertising_issue_form_digital">
+        <field name="name">sale.advertising.issue.form</field>
+        <field name="type">form</field>
+        <field name="model">sale.advertising.issue</field>
+        <field name="inherit_id" ref="sale_advertising_order.sale_advertising_issue_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='medium']" position="after">
+                <field name="digital"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_order_form_advertising_digital_domain" model="ir.ui.view">
+        <field name="name">sale.order.form.advertising.digital.domain</field>
+        <field name="model">sale.order.line</field>
+        <field name="inherit_id" ref="sale_advertising_order.view_sao_order_line_form"/>
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <field name="adv_issue" position="after">
+                <field name="ad_class_digital" invisible="1"/>
+                <field name="adv_class_issue_ids" invisible="1" widget="many2many_tags"/>
+            </field>
+            <field name="adv_issue_ids" position="attributes">
+                <attribute name="domain">[('parent_id','in', title_ids),('digital','=', ad_class_digital), '|','|',('deadline','&gt;=', deadline_offset), ('deadline','=', False), ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')), ('id', 'in', adv_class_issue_ids)]</attribute>
+            </field>
+            <field name="deadline" position="after">
+                <field name="show_issue_date_filter" invisible="1"/>
+                <field name="issue_date_filter" attrs="{'invisible':[('show_issue_date_filter', '=', False), '|', ('title', '=', False), ('title_ids', '=', [])]}"/>
+            </field>
+        </field>
+    </record>
+
+    <!--No Deadline Check User group views-->
+    <record id="view_order_form_advertising_digital_domain_no_deadline_check" model="ir.ui.view">
+        <field name="name">sale.order.form.advertising.digital.domain</field>
+        <field name="model">sale.order.line</field>
+        <field name="inherit_id" ref="sale_advertising_order.view_sao_order_line_form"/>
+        <field name="priority" eval="21"/>
+<!--   FIXME: v16     <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_no_deadline_check'))]"/>-->
+        <field name="arch" type="xml">
+            <field name="adv_issue_ids" position="attributes">
+                <attribute name="domain">[('parent_id','in', title_ids),('digital','=', ad_class_digital), ('id', 'in', adv_class_issue_ids)]</attribute>
+            </field>
+        </field>
+    </record>
+
+  </data>
+</odoo>

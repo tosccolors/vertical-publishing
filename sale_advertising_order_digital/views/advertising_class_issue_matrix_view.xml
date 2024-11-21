@@ -1,0 +1,41 @@
+<odoo>
+  <data>
+      <record model="ir.ui.view" id="advertising_class_issue_matrix_form">
+          <field name="name">advertising.class.issue.matrix.form</field>
+          <field name="type">form</field>
+          <field name="model">advertising.class.issue.matrix</field>
+          <field name="arch" type="xml">
+              <form string="Advertising Class issue Matrix">
+                  <sheet>
+                      <group>
+                          <field name="name"/>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+      <record model="ir.ui.view" id="advertising_class_issue_matrix_tree">
+          <field name="name">advertising.class.issue.matrix.tree</field>
+          <field name="type">tree</field>
+          <field name="model">advertising.class.issue.matrix</field>
+          <field name="arch" type="xml">
+              <tree string="Advertising Product Matrix">
+                  <field name="name"/>
+              </tree>
+          </field>
+      </record>
+
+      <record model="ir.actions.act_window" id="action_advertising_class_issue_matrix">
+			<field name="name">Advertising Class Issue matrix</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">advertising.class.issue.matrix</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="advertising_class_issue_matrix_tree"/>
+      </record>
+
+      <menuitem name="Advertising Class Issue matrix" id="menu_advertising_class_issue_matrix" parent="sale.menu_sale_config"
+                  action="action_advertising_class_issue_matrix"/>
+
+  </data>
+</odoo>

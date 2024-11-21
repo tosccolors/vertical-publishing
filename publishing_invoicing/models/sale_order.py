@@ -48,41 +48,49 @@ class SaleOrder(models.Model):
 			self.update({'terms_cond_bool': False})
 		return True
 
+	def _prepare_invoice(self):
+		invoice_vals = super(SaleOrder, self)._prepare_invoice()
+		if self.invoicing_date:
+			invoice_vals['invoice_date'] = self.invoicing_date
+		return invoice_vals
+
 class SaleOrderLine(models.Model):
 	_inherit = 'sale.order.line'
 
 	invoicing_property_id = fields.Many2one('invoicing.property', related='order_id.invoicing_property_id', string="Invoicing Property")
 	cutoff_date = fields.Date(string="Cutoff Date", compute='_calculate_cutoff_date', store=True, readonly=True)
 
-	@api.depends('order_id.invoicing_property_id', 'order_id.invoicing_date')
+	@api.depends('order_id.invoicing_property_id', 'order_id.invoicing_date', 'product_id', 'issue_date', 'from_date', 'to_date')
 	def _calculate_cutoff_date(self):
 		""""Calculates the date after which an order line can be invoiced"""
 		for line in self:
-			line_print = not(line.product_id.categ_id.digital)
-			# All order lines after a selected date
-			if line.invoicing_property_id.inv_whole_order_at_once:
+			notDigital = not(line.product_id.categ_id.digital)
+
+			# All order lines after a selected date OR specified in Order
+			if line.invoicing_property_id.inv_whole_order_at_once or line.invoicing_property_id.inv_manually:
 				cutoff_date = line.order_id.invoicing_date
+
 			# All order lines after placement
 			elif line.invoicing_property_id.inv_whole_order_afterwards:
-				if line_print:
+				if notDigital:
 					cutoff_date = line.issue_date
 				else:
 					cutoff_date = line.from_date
 			# All order lines end date
 			elif line.invoicing_property_id.inv_whole_order_enddate:
-				if line_print:
+				if notDigital:
 					cutoff_date = line.issue_date
 				else:
 					cutoff_date = line.to_date
 			# Print after selected date, online after placement
 			elif line.invoicing_property_id.inv_per_line_adv_print:
-				if line_print:
+				if notDigital:
 					cutoff_date = line.order_id.invoicing_date
 				else:
 					cutoff_date = line.from_date
 			# Online after selected date, print after placement
 			elif line.invoicing_property_id.inv_per_line_adv_online:
-				if not line_print:
+				if not notDigital:
 					cutoff_date = line.order_id.invoicing_date
 				else:
 					cutoff_date = line.issue_date

@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<odoo>
+<data noupdate="1">
+
+	<!-- Parameter that determines the end of discount-price iteration in order line-->
+    <record id="ir_config_parameter_fraction" model="ir.config_parameter">
+        <field name="key">sale_advertising_order.fraction</field>
+        <field name="value">10000</field>
+    </record>
+</data>
+</odoo>

@@ -56,3 +56,4 @@ access_mail_activity_type_sale_manager,mail.activity.type.sale.manager,mail.mode
 access_sale_advance_payment_inv,access.sale.advance.payment.inv,sale.model_sale_advance_payment_inv,group_ads_sales_user,1,1,1,0
 access_sale_order_cancel,access.sale.order.cancel,sale.model_sale_order_cancel,group_ads_sales_user,1,1,1,0
 access_payment_link_wizard_sale,access.payment.link.wizard.sale,sale.model_payment_link_wizard,group_ads_sales_user,1,1,1,0
+access_update_orderline,update.order.line,model_update_order_line,group_ads_sales_user,1,1,1,1

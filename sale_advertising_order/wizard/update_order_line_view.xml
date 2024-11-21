@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+               Update Sale Order line
+       -->
+        <record id="view_update_orderline_form" model="ir.ui.view">
+            <field name="name">update.orderline.form</field>
+            <field name="model">update.order.line</field>
+            <field name="arch" type="xml">
+                <form string="Update Sale Orders">
+                    <p class="oe_grey">
+                        Update the new Issue Date for the following Sale Order Line(s)
+                    </p>
+                    <group>
+                        <field name='issue_id' invisible="1"/>
+                        <field name='issue_date' readonly="1" force_save="1"/>
+                    </group>
+                    <group>
+                        <field name="line_ids" nolabel="1"
+                               context="{'tree_view_ref': 'sale_advertising_order.view_adv_order_line_tree'}"/>
+                    </group>
+                    <footer>
+                        <button string="Confirm" name="action_confirm" type="object" default_focus="1" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_update_orderline" model="ir.actions.act_window">
+            <field name="name">Update Sale Orders</field>
+            <field name="res_model">update.order.line</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+    </data>
+</odoo>

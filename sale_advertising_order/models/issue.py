@@ -76,6 +76,7 @@ class AdvertisingIssue(models.Model):
     price_edit = fields.Boolean('Price Editable') # TODO: Check usage!
     active = fields.Boolean('Active', default=True)
     issue_count = fields.Integer("Issue count", compute='_compute_issue_count')
+    to_update_issdt = fields.Boolean("To Update Issue Date", default=False, copy=False)
 
     medium = fields.Many2many('product.category', 'adv_issue_categ_rel', 'adv_issue_id', 'category_id', 'Medium',
                               required=True)
@@ -110,6 +111,11 @@ class AdvertisingIssue(models.Model):
     @api.constrains('medium')
     def _check_medium(self):
         self.validate_medium()
+
+    @api.onchange('issue_date')
+    def _onchange_issue_date(self):
+        if self.ids:
+            self.to_update_issdt = True
 
 
 class DiscountReason(models.Model):

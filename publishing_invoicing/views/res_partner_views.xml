@@ -24,7 +24,7 @@
         <field name="model">res.partner</field>
         <field name="type">form</field>
         <field name="priority">40</field>
-        <field name="inherit_id" ref="sale_advertising_order.view_partner_form"/>
+        <field name="inherit_id" ref="sale_advertising_order.view_partner_form_inherit"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='agency_discount']" position="after">
                 <field name ="customer_rank" invisible="1"/>

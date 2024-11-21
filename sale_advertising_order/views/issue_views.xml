@@ -14,6 +14,10 @@
 				<header>
 					<field name="state" widget="statusbar" statusbar_visible="open,close" clickable="True"/>
 				</header>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:0px;" attrs="{'invisible': [('to_update_issdt', '=', False)]}">
+                        You have changed <bold>Issue Date !</bold> If you wish to update the same in existing Sales Order(s).
+                        <button name="%(action_update_orderline)d" string="Click here" type="action"/>
+                    </div>
 
 				<sheet>
 					<div class="oe_button_box" name="button_box">
@@ -50,6 +54,7 @@
 						<field name="deadline"/>
 						<field name="default_note" />
 						<field name="active" widget="boolean_toggle"/>
+                        <field name="to_update_issdt" invisible="1"/>
 					</group>
 				</sheet>
 			</form>

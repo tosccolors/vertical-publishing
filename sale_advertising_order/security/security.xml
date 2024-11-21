@@ -32,6 +32,12 @@
         </record>
 
 
+    <record id="group_ads_contact_person" model="res.groups">
+        <field name="name">Customer Contact Person</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+
+
         <!--
             Extra Access Groups
         -->

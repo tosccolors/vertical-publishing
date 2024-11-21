@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_advertising_class_issue_matrix,advertising.class.issue.matrix,model_advertising_class_issue_matrix,,1,1,1,1

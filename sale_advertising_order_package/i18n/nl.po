@@ -1,0 +1,61 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* sale_advertising_order_package
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-04-29 03:01+0000\n"
+"PO-Revision-Date: 2024-04-29 03:01+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sale_advertising_order_package
+#: model_terms:ir.ui.view,arch_db:sale_advertising_order_package.report_invoice_document_account_package
+#: model_terms:ir.ui.view,arch_db:sale_advertising_order_package.report_saleorder_document_package
+msgid "<span><strong>Package Description</strong></span><br/>"
+msgstr "<span><strong>Package omschrijving</strong></span><br/>"
+
+#. module: sale_advertising_order_package
+#: model:ir.model.fields,field_description:sale_advertising_order_package.field_sale_order__display_name
+#: model:ir.model.fields,field_description:sale_advertising_order_package.field_sale_order_line__display_name
+msgid "Display Name"
+msgstr "Weergave naam"
+
+#. module: sale_advertising_order_package
+#: model:ir.model.fields,field_description:sale_advertising_order_package.field_sale_order__id
+#: model:ir.model.fields,field_description:sale_advertising_order_package.field_sale_order_line__id
+msgid "ID"
+msgstr ""
+
+#. module: sale_advertising_order_package
+#: model:ir.model.fields,field_description:sale_advertising_order_package.field_sale_order____last_update
+#: model:ir.model.fields,field_description:sale_advertising_order_package.field_sale_order_line____last_update
+msgid "Last Modified on"
+msgstr "Laatst bewerkt op"
+
+#. module: sale_advertising_order_package
+#: model:ir.model.fields,field_description:sale_advertising_order_package.field_sale_order__package
+#: model:ir.model.fields,field_description:sale_advertising_order_package.field_sale_order_line__package
+msgid "Package"
+msgstr ""
+
+#. module: sale_advertising_order_package
+#: model:ir.model.fields,field_description:sale_advertising_order_package.field_sale_order__package_description
+msgid "Package Description"
+msgstr "Package omschrijving"
+
+#. module: sale_advertising_order_package
+#: model:ir.model,name:sale_advertising_order_package.model_sale_order
+msgid "Sales Order"
+msgstr "Verkooporder"
+
+#. module: sale_advertising_order_package
+#: model:ir.model,name:sale_advertising_order_package.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Verkooporderregel"

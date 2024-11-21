@@ -21,20 +21,21 @@ class SaleOrder(models.Model):
     _inherit = ["sale.order"]
 
 
-    @api.depends('agency_is_publish')
-    def _compute_pub_cust_domain(self):
-        """
-        Compute the domain for the published_customer domain.
-        """
-        for rec in self:
-            if rec.agency_is_publish:
-                rec.pub_cust_domain = json.dumps(
-                    [('is_ad_agency', '=', True), ('parent_id', '=', False), ('is_customer', '=', True)]
-                )
-            else:
-                rec.pub_cust_domain = json.dumps(
-                    [('is_ad_agency', '!=', True),('parent_id', '=', False), ('is_customer', '=', True)]
-                )
+    # @api.depends('agency_is_publish')
+    # def _compute_pub_cust_domain(self):
+    #     """
+    #     Compute the domain for the published_customer domain.
+    #     """
+    #     for rec in self:
+    #         rec.pub_cust_domain = [('is_ad_agency', '=', True)] #json.dumps([('is_ad_agency', '=', True)])
+    #         # if rec.agency_is_publish:
+    #         #     rec.pub_cust_domain = json.dumps(
+    #         #         [('is_ad_agency', '=', True), ('parent_id', '=', False), ('is_customer', '=', True)]
+    #         #     )
+    #         # else:
+    #         #     rec.pub_cust_domain = json.dumps(
+    #         #         [('is_ad_agency', '!=', True),('parent_id', '=', False), ('is_customer', '=', True)]
+    #         #     )
 
     # backported:
     amount_by_group = fields.Binary(string="Tax amount by group", compute='_amount_by_group',
@@ -52,17 +53,62 @@ class SaleOrder(models.Model):
         ])
 
     # new:
-    published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('is_customer', '=', True)])
+    # pub_cust_domain = fields.Char(compute=_compute_pub_cust_domain, readonly=True, store=False)  -- deprecated
+    published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('parent_id', '=', False), ('is_customer', '=', True)])
     advertising_agency = fields.Many2one('res.partner', 'Advertising Agency', domain=[('is_customer', '=', True)])
     nett_nett = fields.Boolean('Netto Netto Deal', default=False)
-    pub_cust_domain = fields.Char(compute=_compute_pub_cust_domain, readonly=True, store=False)
     customer_contact = fields.Many2one('res.partner', 'Contact Person', domain=[('is_customer', '=', True)])
     advertising = fields.Boolean('Advertising', default=False)
 
     agency_is_publish = fields.Boolean('Agency is Publishing Customer?', default=False)
-    partner_acc_mgr = fields.Many2one(related='published_customer.user_id', relation='res.users',
+    partner_acc_mgr = fields.Many2one(related='published_customer.user_id',
                                       string='Account Manager', store=True, readonly=True)
     display_discount_to_customer = fields.Boolean("Display Discount", default=False) # TODO: take action later
+
+
+    #Overridden: SOT
+    type_id = fields.Many2one(
+        comodel_name="sale.order.type",
+        string="Type",
+        compute="_compute_sale_type_id",
+        store=True,
+        readonly=True,
+        states={"draft": [("readonly", False)],},
+        ondelete="restrict",
+        copy=True,
+        check_company=True, tracking=True
+    )
+
+
+    @api.depends("partner_id", "company_id")
+    def _compute_sale_type_id(self):
+
+        AdsSOT = self.env.ref('sale_advertising_order.ads_sale_type').id
+        defSOT = self._context.get('default_type_id', False)
+
+        for record in self:
+            sale_type = False
+
+            # Enforce
+            if record.advertising or (defSOT == AdsSOT):
+                sale_type = AdsSOT
+            # else:
+            #     # Specific partner sale type value
+            #     sale_type = (
+            #         record.partner_id.with_company(record.company_id).sale_type
+            #         or record.partner_id.commercial_partner_id.with_company(
+            #             record.company_id
+            #         ).sale_type
+            #     )
+
+            # Default user sale type value
+            if not sale_type:
+                sale_type = record.default_get(["type_id"]).get("type_id", False)
+
+            # Get first sale type value
+            if not sale_type:
+                sale_type = record._default_type_id()
+            record.type_id = sale_type
 
 
     def _ctx_4_action_orders_advertising_smart_button(self):
@@ -119,6 +165,12 @@ class SaleOrder(models.Model):
         return [('type_id','=', ref('sale_advertising_order.ads_sale_type').id), ('opportunity_id', '=', active_id), ('advertising','=',True)]
 
 
+    @api.onchange('agency_is_publish')
+    def _onchange_agencyIspublish(self):
+        if self.agency_is_publish:
+            self.published_customer = False
+
+
     @api.onchange('advertising_agency')
     def _onchange_advertiser(self):
         if self.advertising_agency:
@@ -126,18 +178,31 @@ class SaleOrder(models.Model):
 
     @api.onchange('partner_id')
     def _onchange_partner2(self):
-        contacts = self.partner_id.child_ids.filtered(lambda x: x.id != self.partner_id.id and x.type == 'contact')
-        self.customer_contact = contacts and contacts[0].id or False
+        if not self.partner_id:
+            self.customer_contact = False
 
-        if self.order_line:
+        if self.partner_id.type == 'contact':
+            contact = self.env['res.partner'].search([('is_company','=', False),('type','=', 'contact'),('parent_id','=', self.partner_id.id)])
+            if len(contact) >=1:
+                contact_id = contact[0]
+            else:
+                contact_id = False
+        else:
+            addr = self.partner_id.address_get(['delivery', 'invoice'])
+            contact_id = addr['contact']
+        if not self.partner_id.is_company and not self.partner_id.parent_id:
+            contact_id = self.partner_id
+
+        self.customer_contact = contact_id
+
+        # Existing SAO orderlines
+        if self.order_line and self.advertising:
             warning = {'title': _('Warning'),
                        'message': _('Changing the Customer can have a change in Agency Discount as a result.'
                                     'This change will only show after saving the order!'
                                     'Before saving the order the order lines and the total amounts may therefor'
                                     'show wrong values.')}
             return {'warning': warning}
-
-
 
     def action_submit(self):
         orders = self.filtered(lambda s: s.state in ['draft'])
@@ -232,7 +297,10 @@ class SaleOrder(models.Model):
         """
         invoice_vals = super(SaleOrder, self)._prepare_invoice()
         if self.advertising:
-            invoice_vals['published_customer'] = self.published_customer.id,
+            invoice_vals['published_customer'] = self.published_customer.id
+
+        # Generic
+        invoice_vals['customer_contact'] = self.customer_contact.id
         return invoice_vals
 
 
@@ -918,7 +986,7 @@ class SaleOrderLine(models.Model):
         if comp_discount > 100.0:
             comp_discount = self.computed_discount = 100.0
         price = self.price_unit or 0.0
-        fraction_param = 1 # FIXME int(self.env['ir.config_parameter'].sudo().get_param('sale_advertising_order.fraction'))
+        fraction_param = int(self.env['ir.config_parameter'].sudo().get_param('sale_advertising_order.fraction'))
 
         if self.multi_line:
             clp = self.comb_list_price or 0.0
@@ -957,6 +1025,7 @@ class SaleOrderLine(models.Model):
         ais = self.adv_issue_ids
         # ds = self.dates  # FIXME: deprecated
         iis = self.issue_product_ids
+        user = self.env['res.users'].browse(self.env.uid)
 
         # Multi Titles & Multi Editions:
         if self.title_ids and ais:
@@ -1003,17 +1072,15 @@ class SaleOrderLine(models.Model):
         # Reset
         if len(self.adv_issue_ids) > 1 and not self.issue_product_ids:
             self.product_template_id = False
-        
+
         if user.has_group('sale_advertising_order.group_no_deadline_check'):
             return {}
         for adv_issue in self.adv_issue_ids:
             if adv_issue.deadline and fields.Datetime.from_string(adv_issue.deadline) < datetime.now():
                 warning = {'title': _('Warning'),
-                           'message': _('You are adding an advertising issue after deadline. '
+                           'message': _('You are adding an advertising issue after deadline. '
                                         'Are you sure about this?')}
                 return {'warning': warning}
-         
-        
 
     @api.onchange('proof_number_adv_customer')
     def onchange_proof_number_adv_customer(self):
@@ -1090,7 +1157,7 @@ class SaleOrderLine(models.Model):
             # res['analytic_account_id'] = self.adv_issue.analytic_account_id.id #FIXME
             res['so_line_id'] = self.id
             res['price_unit'] = self.actual_unit_price
-            # res['ad_number'] = self.ad_number
+            res['ad_number'] = self.ad_number
             res['computed_discount'] = self.computed_discount # FIXME: Need this?
         else:
             res['so_line_id'] = self.id

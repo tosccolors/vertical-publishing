@@ -4,3 +4,4 @@
 
 from . import sale_line_create_multi
 from . import make_invoice
+from . import update_order_line

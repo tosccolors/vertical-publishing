@@ -16,6 +16,7 @@ class Invoice(models.Model):
                         help="It indicates that the invoice is an Advertising Invoice.", store=True)
     published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('is_customer', '=', True)])
     invoice_description = fields.Text('Description')
+    customer_contact = fields.Many2one('res.partner', 'Contact Person', domain=[('is_customer', '=', True)])
 
 
     def _get_name_invoice_report(self):
@@ -48,7 +49,8 @@ class InvoiceLine(models.Model):
     so_line_id = fields.Many2one('sale.order.line', 'link between Sale Order Line and Invoice Line')
     computed_discount = fields.Float(string='Discount' ) #FIXME: seems not needed
     subtotal_before_agency_disc = fields.Float(compute='_compute_price', string='SBAD', readonly=True )
-    sale_order_id = fields.Many2one(related='so_line_id.order_id', relation='sale.order', store=True, string='Order Nr.')
+    ad_number = fields.Char(string='External Reference', size=50)
+    sale_order_id = fields.Many2one(related='so_line_id.order_id', store=True, string='Order Nr.')
     ad = fields.Boolean(related='so_line_id.advertising', string='Ad', store=True,
                                 help="It indicates that the invoice line is from an Advertising Invoice.")
 
