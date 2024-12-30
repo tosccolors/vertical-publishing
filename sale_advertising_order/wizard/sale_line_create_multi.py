@@ -119,6 +119,8 @@ class sale_order_line_create_multi_lines(models.TransientModel):
                                    ol.page_reference or False,
                  'url_to_material': ad_iss.url_to_material or
                                     ol.url_to_material or False,
+               'from_date': ol.date_type == 'issue_date' and ad_issue.issue_date or ol.from_date,
+               'to_date': ol.date_type == 'issue_date' and ad_issue.issue_date or ol.to_date,
          }
 
         return res

@@ -193,6 +193,9 @@ class SaleOrder(models.Model):
             #         ).sale_type
             #     )
 
+            elif record.type_id:
+                sale_type = record.type_id
+
             # Default user sale type value
             if not sale_type:
                 sale_type = record.default_get(["type_id"]).get("type_id", False)
@@ -200,6 +203,7 @@ class SaleOrder(models.Model):
             # Get first sale type value
             if not sale_type:
                 sale_type = record._default_type_id()
+
             record.type_id = sale_type
 
     # Overridden: Sale

@@ -233,12 +233,12 @@
                                                     widget="monetary" options="{'currency_field': 'currency_id'}" />
                                             <field name="actual_unit_price" attrs="{'invisible': [('multi_line','=', True)]}" widget="monetary"
                                                     options="{'currency_field': 'currency_id'}" />
-                                            <field name="price_unit" readonly="0" attrs="{'invisible': ['|',('multi_line','=', True),('price_edit','!=', True)]}"/>
-                                            <field name="price_unit_dummy" readonly="1" attrs="{'invisible': ['|',('multi_line','=', True),('price_edit','=', True)]}"/>
-                                            <field name="comb_list_price" readonly="True" attrs="{'invisible': [('multi_line','=', False)]}"/>
-<!--                                            <field name="color_surcharge" /> deprecated-->
-<!--                                            <field name="color_surcharge_amount" attrs="{'invisible': [('color_surcharge','=', False)]}"/> deprecated-->
-                                            <field name="actual_unit_price" attrs="{'invisible': [('multi_line','=', True)]}"/>
+<!--                                            <field name="price_unit" readonly="0" attrs="{'invisible': ['|',('multi_line','=', True),('price_edit','!=', True)]}"/>-->
+<!--                                            <field name="price_unit_dummy" readonly="1" attrs="{'invisible': ['|',('multi_line','=', True),('price_edit','=', True)]}"/>-->
+<!--                                            <field name="comb_list_price" readonly="True" attrs="{'invisible': [('multi_line','=', False)]}"/>-->
+<!--&lt;!&ndash;                                            <field name="color_surcharge" /> deprecated&ndash;&gt;-->
+<!--&lt;!&ndash;                                            <field name="color_surcharge_amount" attrs="{'invisible': [('color_surcharge','=', False)]}"/> deprecated&ndash;&gt;-->
+<!--                                            <field name="actual_unit_price" attrs="{'invisible': [('multi_line','=', True)]}"/>-->
 
                                             <label for="computed_discount" groups="product.group_discount_per_so_line"/>
                                                 <div name="computed_discount" groups="product.group_discount_per_so_line">
