@@ -86,7 +86,7 @@ class AdOrderLineMakeInvoice(models.TransientModel):
             'published_customer': published_customer.id,
             'invoice_line_ids': lines['lines'],
             'narration': lines['name'],
-            'invoice_payment_term_id': invoice_payment_term_id or partner.property_payment_term_id.id or False,
+            'invoice_payment_term_id': invoice_payment_term_id,
             'journal_id': journal_id,
             'fiscal_position_id': partner.property_account_position_id.id or False,
             'user_id': self.env.user.id,
@@ -200,13 +200,13 @@ class AdOrderLineMakeInvoice(models.TransientModel):
         count = 0
         for line in chunk:
             key = (line.order_id.partner_invoice_id, line.order_id.published_customer, line.order_id.payment_mode_id,
-                   line.order_id.operating_unit_id)
+                   line.order_id.operating_unit_id, line.order_id.payment_term_id.id)
             keydict = {
                 'partner_id': line.order_id.partner_invoice_id,
                 'published_customer': line.order_id.published_customer,
                 'payment_mode_id': line.order_id.payment_mode_id,
                 'operating_unit_id': line.order_id.operating_unit_id,
-                'payment_term_id': line.order_id.payment_term_id and line.order_id.payment_term_id.id or False,
+                'payment_term_id': line.order_id.payment_term_id.id,
             }
             key, keydict = self.modify_key(key, keydict, line)
 
