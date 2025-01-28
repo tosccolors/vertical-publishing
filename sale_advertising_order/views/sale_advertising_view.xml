@@ -26,7 +26,7 @@
                             attrs="{'invisible': ['|',('invoice_status', '!=', 'no'), ('state', '!=', 'sale')]}"
                             groups="sale_advertising_order.group_ads_traffic_user"/>
 
-					<button name="action_submit" string="Submit for Approval" states="draft" type="object"
+					<button name="action_submit" string="Submit for Approval" states="draft,sent" type="object"
                             class="oe_highlight" groups="sale_advertising_order.group_ads_sales_user"/>
 
 					<button name="action_approve1" string="Approve Quotation"
