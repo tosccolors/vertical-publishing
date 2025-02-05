@@ -1,0 +1,33 @@
+# Composition for development
+
+version: "2"
+
+services:
+  odoo:
+    tty: true
+    stdin_open: true
+    build: .
+    ports:
+      - 8069
+    depends_on:
+      - db
+    environment:
+      - DB_USER=odoo
+      - DB_PASS=odoo
+      - DB_NAME=odoodb
+      - ADMIN_PASSWD=none
+      - RUNNING_ENV=dev
+      - LOG_HANDLER=:WARN
+
+  db:
+    image: postgres:16
+    ports:
+      - 5432
+    environment:
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+    volumes:
+      - "data-db:/var/lib/postgresql/data"
+
+volumes:
+  data-db:

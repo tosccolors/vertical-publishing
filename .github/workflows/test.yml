@@ -1,0 +1,38 @@
+name: tests
+
+on:
+  pull_request:
+    branches:
+      - "16.0*"
+  push:
+    branches:
+      - "16.0"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build docker image
+        run: |
+          git config --global init.defaultBranch main
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          pip install git-aggregator
+          cd _docker
+          mkdir -p  odoo/local-src odoo/external-src data songs
+          cp -r $(find .. -maxdepth 2 -mindepth 2 -name __manifest__.py -printf '%h ') odoo/local-src
+          cd odoo/external-src
+          gitaggregate -c ../../../repos.yml
+          cd ../..
+          cp ../requirements.txt .
+          docker compose build || true
+      - name: Run tests
+        run: |
+          cd _docker
+          docker compose run --name odoo_runtests odoo sh -c "runtests && coverage xml"
+          docker cp odoo_runtests:/odoo/coverage.xml ..
+      - uses: codecov/codecov-action@v3
+        with:
+          files: coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}

@@ -1,0 +1,123 @@
+account-analytic:
+  remotes:
+    oca: https://github.com/OCA/account-analytic
+  merges:
+    - oca 16.0
+account-closing:
+  remotes:
+    oca: https://github.com/OCA/account-closing
+  merges:
+    - oca 16.0
+account-financial-tools:
+  remotes:
+    oca: https://github.com/OCA/account-financial-tools
+  merges:
+    - oca 16.0
+account-invoicing:
+  remotes:
+    oca: https://github.com/OCA/account-invoicing
+  merges:
+    - oca 16.0
+account-payment:
+  remotes:
+    oca: https://github.com/OCA/account-payment
+  merges:
+    - oca 16.0
+bank-payment:
+  remotes:
+    oca: https://github.com/OCA/bank-payment
+  merges:
+    - oca 16.0
+community-data-files:
+  remotes:
+    oca: https://github.com/OCA/community-data-files
+  merges:
+    - oca 16.0
+contract:
+  remotes:
+    oca: https://github.com/OCA/contract
+  merges:
+    - oca 16.0
+crm:
+  remotes:
+    oca: https://github.com/OCA/crm
+  merges:
+    - oca 16.0
+edi:
+  remotes:
+    oca: https://github.com/OCA/edi
+  merges:
+    - oca 16.0
+    - oca refs/pull/1091/head
+hr:
+  remotes:
+    oca: https://github.com/OCA/hr
+  merges:
+    - oca 16.0
+operating-unit:
+  remotes:
+    oca: https://github.com/OCA/operating-unit
+  merges:
+    - oca 16.0
+partner-contact:
+  remotes:
+    oca: https://github.com/OCA/partner-contact
+  merges:
+    - oca 16.0
+project:
+  remotes:
+    oca: https://github.com/OCA/project
+  merges:
+    - oca 16.0
+queue:
+  remotes:
+    oca: https://github.com/OCA/queue
+  merges:
+    - oca 16.0
+reporting-engine:
+  remotes:
+    oca: https://github.com/OCA/reporting-engine
+  merges:
+    - oca 16.0
+sale-workflow:
+  remotes:
+    oca: https://github.com/OCA/sale-workflow
+  merges:
+    - oca 16.0
+server-backend:
+  remotes:
+    oca: https://github.com/OCA/server-backend
+  merges:
+    - oca 16.0
+server-tools:
+  remotes:
+    oca: https://github.com/OCA/server-tools
+  merges:
+    - oca 16.0
+server-ux:
+  remotes:
+    oca: https://github.com/OCA/server-ux
+  merges:
+    - oca 16.0
+timesheet:
+  remotes:
+    oca: https://github.com/OCA/timesheet
+  merges:
+    - oca 16.0
+web:
+  remotes:
+    oca: https://github.com/OCA/web
+  merges:
+    - oca 16.0
+misc:
+  remotes:
+    tosccolors: https://github.com/tosccolors/misc
+  merges:
+    - tosccolors 16.0
+../src:
+  defaults:
+    depth: 1
+  remotes:
+    oca: https://github.com/OCA/ocb
+  merges:
+    - oca 16.0
