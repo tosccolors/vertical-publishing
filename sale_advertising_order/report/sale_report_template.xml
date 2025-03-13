@@ -17,9 +17,12 @@
       class="table table-sm o_main_table table-borderless mt-4"
       t-attf-style="{{ small_font and 'font-size: smaller' }}"
     >
-      <thead style="display: table-row-group">
+      <thead
+        style="display: table-row-group"
+        t-attf-style="{{ small_font and 'font-size: smaller' }}"
+      >
         <tr>
-          <th name="th_date" class="text-center">
+          <th name="th_date" class="text-start">
             <strong>Date</strong>
           </th>
           <th name="th_adv_issue" class="text-start">
@@ -60,7 +63,10 @@
         </tr>
       </thead>
 
-      <tbody class="sale_tbody">
+      <tbody
+        class="sale_tbody"
+        t-attf-style="{{ small_font and 'font-size: smaller' }}"
+      >
         <t t-foreach="doc._sao_get_lines_for_report()" t-as="l">
           <tr>
             <td t-if="l.ad_class.date_type == 'validity'">
