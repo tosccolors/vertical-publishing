@@ -113,7 +113,7 @@ msgstr ""
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorderlines_document_sao
-msgid "<strong>Actual Unit Price</strong>"
+msgid "<strong>Unit Price</strong>"
 msgstr "<strong>Stuksprijs</strong>"
 
 #. module: sale_advertising_order
@@ -260,8 +260,8 @@ msgstr "<strong>Totaal</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorderlines_document_sao
-msgid "<strong>Unit Price</strong>"
-msgstr "<strong>Stuksprijs</strong>"
+msgid "<strong>List Price</strong>"
+msgstr "<strong>Lijstprijs</strong>"
 
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_saleorderlines_document_sao

@@ -8,7 +8,15 @@
       t-set="display_deadline"
       t-value="any(l.state in ('done','sale') for l in doc.order_line)"
     />
-    <table class="table table-sm o_main_table table-borderless mt-4">
+    <!-- use smaller font when the conditions to show more than three extra columns are met -->
+    <t
+      t-set="small_font"
+      t-value="len(list(filter(None, [display_deadline, not doc.advertising_agency and doc.company_id.show_actual_unit_price, doc.display_discount_to_customer, doc.advertising_agency]))) &gt; 2"
+    />
+    <table
+      class="table table-sm o_main_table table-borderless mt-4"
+      t-attf-style="{{ small_font and 'font-size: smaller' }}"
+    >
       <thead style="display: table-row-group">
         <tr>
           <th name="th_date" class="text-center">
@@ -27,14 +35,14 @@
             <strong>Quantity</strong>
           </th>
           <th name="th_price_unit" class="text-end">
-            <strong>Unit Price</strong>
+            <strong>List Price</strong>
           </th>
           <th
             name="th_actprice_unit"
             class="text-end"
             t-if="not doc.advertising_agency and doc.company_id.show_actual_unit_price"
           >
-            <strong>Actual Unit Price</strong>
+            <strong>Unit Price</strong>
           </th>
           <th
             name="th_comdisc"
