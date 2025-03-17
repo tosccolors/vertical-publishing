@@ -430,8 +430,8 @@ class SaleOrder(models.Model):
         order_key = self.sudo().company_id.sao_orderline_order_field_id.name
         if order_key and SaleOrderLine._fields[order_key].type == "date":
 
-            def order_key(x):
-                return x or date.min
+            def order_key(x, field_name=order_key):
+                return x[field_name] or date.min
 
         return sum(
             (

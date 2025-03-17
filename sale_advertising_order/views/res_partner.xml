@@ -30,7 +30,7 @@
           groups="sale_advertising_order.group_ads_sales_user"
           icon="fa-book"
         >
-          <field string="Ad Orders" name="sao_order_count" widget="statinfo" />
+          <field string="Ad Sales" name="sao_order_count" widget="statinfo" />
         </button>
       </button>
     </field>
