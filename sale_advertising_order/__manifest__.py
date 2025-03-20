@@ -41,7 +41,8 @@ This module allows you to use both CRM and Sales Management to run your advertis
                 'partner_manual_rank', 'calendar',
 
                 # Following dependency are for model access only
-                'sale_management', 'sale_stock', 'delivery'
+                'sale_management', 'sale_stock', 'delivery',
+                'base_view_inheritance_extension',
                 ],
     'data': [
              "data/sale_advertising_data.xml",
