@@ -860,7 +860,7 @@
             <field name="model">sale.order.line</field>
             <field name="arch" type="xml">
                 <tree string="Sales Order Lines" create="false">
-                        <field name="order_id" />
+                        <field name="order_id" context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}" />
                         <field name="id" optional="hide"/>
                         <field name="order_advertiser_id" />
                         <field name="order_agency_id" />
@@ -1615,7 +1615,7 @@
             <field name="model">sale.order.line</field>
             <field name="arch" type="xml">
                 <tree string="Schedules" create="false" edit="false" delete="false">
-                        <field name="order_id" widget="many2one_clickable"/>
+                        <field name="order_id" widget="many2one_clickable" context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}" />
                         <field name="id" optional="hide"/>
                         <field name="order_advertiser_id" />
                         <field name="adv_issue" />
@@ -1650,6 +1650,13 @@
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
             <field name="view_id" ref="view_indeellijst_list_tree"/>
+            <field name="act_window_id" ref="ads_indeellijst_action"/>
+        </record>
+
+        <record id="ads_indeellijst_action_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_adv_order_line_form"/>
             <field name="act_window_id" ref="ads_indeellijst_action"/>
         </record>
 
