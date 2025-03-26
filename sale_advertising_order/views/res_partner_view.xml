@@ -149,6 +149,9 @@
                             key="default_is_supplier"
                         >is_supplier</attribute>
                     </field>
+                    <button name="action_view_sale_order" position="attributes">
+                        <attribute name="attrs">{'invisible': [('sale_order_count', '=', 0)]}</attribute>
+                    </button>
                     <button name="action_view_sale_order" position="after">
                     <button
                       class="oe_stat_button"
