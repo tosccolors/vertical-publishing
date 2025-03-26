@@ -44,6 +44,22 @@ class Invoice(models.Model):
             return 'sale_advertising_order.report_invoice_document_sao'
         return super()._get_name_invoice_report()
 
+    def _post(self, soft=True):
+        """
+        Assign start/end date of ad issue belonging to the selected analytic account, if any
+        """
+        for line in self.line_ids:
+            if line.from_date or not line.analytic_account_id:
+                continue
+            issue = self.env['sale.advertising.issue'].search([
+                ('analytic_account_id', '=', line.analytic_account_id.id),
+                ('parent_id', '!=', False),
+            ], limit=1)
+            if not issue:
+                continue
+            line.from_date = issue.issue_date
+        return super()._post(soft=soft)
+
 
 class InvoiceLine(models.Model):
     """ Inherits invoice.line and adds advertising order line id and publishing date to invoice """
