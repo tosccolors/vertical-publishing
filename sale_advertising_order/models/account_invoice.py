@@ -45,6 +45,32 @@ class Invoice(models.Model):
         return super()._get_name_invoice_report()
 
 
+    @api.model
+    def _get_invoice_key_cols_out(self):
+        res = super()._get_invoice_key_cols_out()
+        res.append('sale_type_id')
+        return res
+
+    @api.model
+    def _get_invoice_key_cols_in(self):
+        res = super()._get_invoice_key_cols_in()
+        res.append('sale_type_id')
+        return res
+
+    @api.model
+    def _get_invoice_line_key_cols(self):
+        res = super()._get_invoice_line_key_cols()
+        saoln = ['ad_number', 'issue_date', 'from_date', 'to_date']
+        res2 = res + saoln
+        return res2
+
+    @api.model
+    def _get_first_invoice_fields(self, invoice):
+        res = super()._get_first_invoice_fields(invoice)
+        res.update({'sale_type_id': invoice.sale_type_id.id,})
+        return res
+
+
 class InvoiceLine(models.Model):
     """ Inherits invoice.line and adds advertising order line id and publishing date to invoice """
     _inherit = 'account.move.line'
@@ -79,7 +105,6 @@ class InvoiceLine(models.Model):
     from_date = fields.Date('Start of Validity')
     to_date = fields.Date('End of Validity')
     issue_date = fields.Date('Issue Date')
-
 
     
     def open_sale_order(self):
