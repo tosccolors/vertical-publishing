@@ -149,6 +149,20 @@
                             key="default_is_supplier"
                         >is_supplier</attribute>
                     </field>
+                    <button name="action_view_sale_order" position="attributes">
+                        <attribute name="attrs">{'invisible': [('sale_order_count', '=', 0)]}</attribute>
+                    </button>
+                    <button name="action_view_sale_order" position="after">
+                    <button
+                      class="oe_stat_button"
+                      type="object"
+                      name="action_view_sao_order"
+                      groups="sale_advertising_order.group_ads_sales_user"
+                      icon="fa-book"
+                    >
+                      <field string="Ad Sales" name="sao_order_count" widget="statinfo" />
+                    </button>
+                    </button>
                 </data>
             </field>
         </record>
