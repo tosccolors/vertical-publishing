@@ -757,7 +757,8 @@ class SaleOrderLine(models.Model):
                     prodTmpls = self.env['product.product'].search(
                         [('sale_ok', '=', True),
                          ('categ_id', '=', line.ad_class.id),
-                         ('product_template_attribute_value_ids.product_attribute_value_id', 'in', ATpavIds)]).mapped('product_tmpl_id')
+                         ('product_template_attribute_value_ids.product_attribute_value_id', 'in', ATpavIds),
+                         ('active', '=', True)]).mapped('product_tmpl_id')
 
                     # Ensure all Title's PAV combination exists:
                     for pt in prodTmpls:
