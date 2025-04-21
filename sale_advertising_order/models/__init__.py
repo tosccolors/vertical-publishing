@@ -30,6 +30,7 @@ from . import account_invoice
 from . import sale_config_settings
 from . import company
 from . import proof_delivery_list
+from . import res_partner
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

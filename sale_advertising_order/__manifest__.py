@@ -41,7 +41,8 @@ This module allows you to use both CRM and Sales Management to run your advertis
                 'partner_manual_rank', 'calendar',
 
                 # Following dependency are for model access only
-                'sale_management', 'sale_stock', 'delivery'
+                'sale_management', 'sale_stock', 'delivery',
+                'base_view_inheritance_extension',
                 ],
     'data': [
              "data/sale_advertising_data.xml",
@@ -71,7 +72,7 @@ This module allows you to use both CRM and Sales Management to run your advertis
              "views/proof_delivery_list_view.xml",
              "views/res_partner_view.xml",
              "views/menu_views.xml",
-             "views/sale_config_settings.xml"
+             "views/sale_config_settings.xml",
              ],
     'qweb': [
     ],

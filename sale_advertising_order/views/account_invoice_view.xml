@@ -31,8 +31,8 @@
                     <field name="opportunity_subject" optional="hide"/>
                     <field name="ad_number" optional="hide"/>
                     <field name="issue_date" optional="hide"/>
-                    <field name="from_date" optional="hide"/>
-                    <field name="to_date" optional="hide"/>
+                    <field name="from_date" optional="show"/>
+                    <field name="to_date" optional="show"/>
                 </xpath>
                 <xpath expr="//sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="after">
                     <field name="computed_discount" invisible="1"/>
