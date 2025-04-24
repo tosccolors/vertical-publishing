@@ -899,6 +899,7 @@ class SaleOrderLine(models.Model):
             vals['ad_class'] = False
             vals['title'] = False
             vals['title_ids'] = [(6, 0, [])]
+            vals['ad_class'] = False
             data = {'ad_class': []}
         return {'value': vals, 'domain': data }
 
@@ -910,7 +911,14 @@ class SaleOrderLine(models.Model):
 
         # Reset
         if not self.ad_class:
+            self.product_id = False
             self.product_template_id = False
+            self.title = False
+            self.title_ids = [(6, 0, [])]
+            self.adv_issue_ids = [(6, 0, [])]
+            self.issue_product_ids = [(6, 0, [])]
+            self.from_date = False
+            self.to_date = False
 
     @api.onchange('title', 'title_ids')
     def onchange_title(self):
@@ -1266,8 +1274,11 @@ class SaleOrderLine(models.Model):
             # elif self.title:
             #     self.title_ids = [(6,0,[])]
         self.multi_line_number = ml_qty
+
         # Reset
         if len(self.adv_issue_ids) > 1 and not self.issue_product_ids:
+            self.product_template_id = False
+        elif not self.adv_issue_ids:
             self.product_template_id = False
 
         if self.env.user.has_group('sale_advertising_order.group_no_deadline_check'):
