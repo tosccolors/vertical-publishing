@@ -313,7 +313,7 @@
                                                 <field name="analytic_tag_ids"
                                                        string="Page Category"
                                                        widget="many2many_tags"
-                                                       domain="page_class_domain"
+                                                       domain="page_class_domain" options="{'no_create': True, 'no_open': True}"
                                                        attrs="{'readonly': [('deadline_passed','=', True)]}"/>
                                             </div>
                                             <field name="ad_number"/>
@@ -1063,7 +1063,7 @@
                                        <div>
                                             <field name="analytic_tag_ids"
                                                    string="Page Category"
-                                                   widget="many2many_tags"
+                                                   widget="many2many_tags" options="{'no_create': True, 'no_open': True}"
                                                    domain="page_class_domain"
                                                    attrs="{'readonly': [('deadline_passed','=', True)]}"/>
                                        </div>
@@ -1092,7 +1092,7 @@
                                            <field name="analytic_tag_ids"
                                                string="Page Category"
                                                widget="many2many_tags"
-                                               domain="page_class_domain"
+                                               domain="page_class_domain" options="{'no_create': True, 'no_open': True}"
                                                attrs="{'readonly': [('deadline_passed','=', True)]}"/>
                                        </div>
                                        <field name="ad_number" attrs="{'invisible':[('multi_line','!=', False)]}"/>
