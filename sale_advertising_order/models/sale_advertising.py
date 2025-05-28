@@ -364,18 +364,24 @@ class SaleOrder(models.Model):
                                              'show wrong values.')}
             return {'warning': warning}
 
+    def _check_archivedIssue(self):
+        for o in self:
+            archived = any(not ol.adv_issue.active for ol in o.order_line)
+            if archived:
+                raise UserError(_('Cannot process! One or more lines contains archived Advertising Issue in this Order [%s]')%(o.name))
 
-    
     def action_submit(self):
         orders = self.filtered(lambda s: s.state in ['draft'])
         for o in orders:
             if not o.order_line:
                 raise UserError(_('You cannot submit a quotation/sales order which has no line.'))
+        orders._check_archivedIssue()
         return self.write({'state': 'submitted'})
 
     # --added deep
     def action_approve1(self):
         orders = self.filtered(lambda s: s.state in ['submitted'])
+        orders._check_archivedIssue()
         orders.write({'state':'approved1'})
         return True
 
@@ -475,7 +481,8 @@ class SaleOrder(models.Model):
 
     
     def action_confirm(self):
-        for order in self.filtered('advertising'):
+        adsOrders = self.filtered('advertising')
+        for order in adsOrders:
             olines = []
             for line in order.order_line:
                 if line.multi_line:
@@ -490,6 +497,8 @@ class SaleOrder(models.Model):
                 for newline in newlines:
                     if newline.deadline_check():
                         newline.page_qty_check_create()
+
+        adsOrders._check_archivedIssue()
         #@by Sushma: context no_checks always by pass order comparision with verify_discount_setting & verify_order_setting
         # return super(SaleOrder, self.with_context(no_checks=True)).action_confirm()
         return super(SaleOrder, self).action_confirm()
