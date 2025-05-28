@@ -704,6 +704,26 @@ msgstr "Geannuleerde FACTUUR"
 #: code:addons/sale_advertising_order/models/sale_advertising.py:0
 #, python-format
 msgid ""
+"Cannot process! One or more lines contains archived Advertising Issue in "
+"this Order [%s]"
+msgstr ""
+"Deze order bevat één of meerdere orderregels met een gearchiveerde advertentie editie en kan hierdoor niet verwerkt worden. "
+"Pas de gearchiveerde editie aan alvorens verder te gaan [%s]."
+
+#. module: sale_advertising_order
+#: code:addons/sale_advertising_order/models/sale_advertising.py:0
+#, python-format
+msgid ""
+"Cannot process! One or more lines contains archived Product in this Order "
+"[%s]"
+msgstr ""
+"Deze order bevat één of meerdere orderregels met een gearchiveerd product en kan hierdoor niet verwerkt worden. "
+"Pas het gearchiveerde product aan alvorens verder te gaan [%s]."
+
+#. module: sale_advertising_order
+#: code:addons/sale_advertising_order/models/sale_advertising.py:0
+#, python-format
+msgid ""
 "Changing the Customer can have a change in Agency Discount as a result.This "
 "change will only show after saving the order!Before saving the order the "
 "order lines and the total amounts may thereforshow wrong values."
