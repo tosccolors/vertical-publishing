@@ -21,7 +21,7 @@
 ##############################################################################
 {
     "name": "Sale Advertising Order",
-    "version": "16.0.9.3.0",
+    "version": "16.0.9.4.0",
     "category": "Sale",
     "author": "Deepa Venkatesh (DK), " "Willem Hulsof, The Open Source Company (TOSC)",
     "website": "https://github.com/OCA/l10n-netherlands",
