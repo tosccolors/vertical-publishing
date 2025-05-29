@@ -236,6 +236,15 @@ class SaleOrder(models.Model):
             }
             return {"warning": warning}
 
+
+    def _check_archivedIssue(self):
+        "Check for any archived Adv Issues used in Order"
+        for o in self:
+            archived = any(not ol.adv_issue.active for ol in o.order_line)
+            if archived:
+                raise UserError(_('Cannot process! One or more lines contains archived Advertising Issue in this Order [%s]')%(o.name))
+
+
     def action_submit(self):
         orders = self.filtered(lambda s: s.state in ["draft"])
         for o in orders:
@@ -243,11 +252,13 @@ class SaleOrder(models.Model):
                 raise UserError(
                     _("You cannot submit a quotation/sales order which has no line.")
                 )
+        orders._check_archivedIssue()
         return self.write({"state": "submitted"})
 
     # --added deep
     def action_approve1(self):
         orders = self.filtered(lambda s: s.state in ["submitted"])
+        orders._check_archivedIssue()
         orders.write({"state": "approved1"})
         return True
 
@@ -282,6 +293,11 @@ class SaleOrder(models.Model):
             else:
                 self -= postedInv
         return super(SaleOrder, self)._action_cancel()
+
+    def action_confirm(self):
+        adsOrders = self.filtered('advertising')
+        adsOrders._check_archivedIssue()
+        return super(SaleOrder, self).action_confirm()
 
     @api.model
     def create(self, vals):
