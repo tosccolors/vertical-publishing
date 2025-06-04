@@ -259,7 +259,7 @@ class SaleOrderLine(models.Model):
                                     "in",
                                     ATpavIds,
                                 ),
-                                ('active', '=', True),
+                                ("active", "=", True),
                             ]
                         )
                         .mapped("product_tmpl_id")
@@ -518,7 +518,7 @@ class SaleOrderLine(models.Model):
             vals["ad_class"] = False
             vals["title"] = False
             vals["title_ids"] = [(6, 0, [])]
-            vals['ad_class'] = False
+            vals["ad_class"] = False
             data = {"ad_class": []}
         return {"value": vals, "domain": data}
 
