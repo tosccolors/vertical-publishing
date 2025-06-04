@@ -23,7 +23,8 @@
         <field
           name="analytic_tag_ids"
           groups="analytic.group_analytic_accounting"
-          string="Page Category" options="{'no_create': True, 'no_open': True}"
+          string="Page Category"
+          options="{'no_create': True, 'no_open': True}"
           widget="many2many_tags"
           optional="hide"
         />
@@ -276,7 +277,8 @@
                   <field
                     name="analytic_tag_ids"
                     string="Page Category"
-                    widget="many2many_tags" options="{'no_create': True, 'no_open': True}"
+                    widget="many2many_tags"
+                    options="{'no_create': True, 'no_open': True}"
                     domain="[('id', 'in', ad_class_tags_ids)]"
                     attrs="{'readonly': [('deadline_passed','=', True)]}"
                   />
