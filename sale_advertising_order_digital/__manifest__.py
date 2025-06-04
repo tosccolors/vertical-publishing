@@ -5,7 +5,7 @@
     "author": "The Open Source Company (TOSC)",
     "website": "https://github.com/OCA/l10n-netherlands",
     "category": "Sale",
-    "version": "16.0.3.0",
+    "version": "16.0.3.0.0",
     "license": "AGPL-3",
     "depends": ["sale_advertising_order"],
     "data": [
