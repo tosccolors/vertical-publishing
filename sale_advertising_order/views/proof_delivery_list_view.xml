@@ -37,7 +37,7 @@
                         <div class="oe_button_box" name="button_box">
                             <field name="line_id" invisible="1"/>
                             <button class="oe_stat_button" name="action_view_order_line"
-                                type="object" icon="fa-usd" String="Order Line" attrs="{'invisible': [('line_id', '=', False)]}">
+                                type="object" icon="fa-usd" string="Order Line" attrs="{'invisible': [('line_id', '=', False)]}">
                             </button>
                         </div>
                         <group col="4" colspan="4">
