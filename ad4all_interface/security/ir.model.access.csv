@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_soline_from_odooto_ad4all,sale.order.line.ad4all,model_sale_order_line_ad4all,sale_advertising_order.group_ads_sales_user,1,1,1,1
+access_ad4all_config,ad4all_config,model_ad4all_config,base.group_system,1,1,1,1
+access_sale_order_ad4all,access.sale.order.ad4all,model_sale_order_ad4all,sale_advertising_order.group_ads_traffic_user,1,1,1,1

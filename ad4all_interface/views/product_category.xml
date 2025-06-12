@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <record id="product_category_tree_view_ad4all" model="ir.ui.view">
+    <field name="model">product.category</field>
+    <field
+      name="inherit_id"
+      ref="sale_advertising_order.product_category_tree_view_inh"
+    />
+    <field name="arch" type="xml">
+      <field name="date_type" position="after">
+        <field name="ad4all" groups="sale_advertising_order.group_ads_traffic_user" />
+      </field>
+    </field>
+  </record>
+
+  <record id="product_category_form_view_ad4all" model="ir.ui.view">
+    <field name="model">product.category</field>
+    <field
+      name="inherit_id"
+      ref="sale_advertising_order.product_category_form_view_inherit"
+    />
+    <field name="arch" type="xml">
+      <field name="deadline_offset" position="after">
+        <field name="ad4all" groups="sale_advertising_order.group_ads_traffic_user" />
+        <field
+          name="ad4all_material_type"
+          attrs="{'invisible': [('ad4all','!=', True)],'required': [('ad4all','=', True)]}"
+          groups="sale_advertising_order.group_ads_traffic_user"
+        />
+      </field>
+    </field>
+  </record>
+</odoo>
