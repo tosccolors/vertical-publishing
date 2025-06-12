@@ -366,14 +366,14 @@ class SaleOrder(models.Model):
 
     def _check_archivedIssue(self):
         "Check for any archived Adv Issues used in Order"
-        for o in self:
+        for o in self.filtered('advertising'):
             archived = any(not ol.adv_issue.active for ol in o.order_line)
             if archived:
                 raise UserError(_('Cannot process! One or more lines contains archived Advertising Issue in this Order [%s]')%(o.name))
 
     def _check_archivedProduct(self):
         "Check for any archived products used in Order"
-        for o in self:
+        for o in self.filtered('advertising'):
             archived = any(not ol.product_id.active for ol in o.order_line)
             if archived:
                 raise UserError(_('Cannot process! One or more lines contains archived Product in this Order [%s]')%(o.name))
