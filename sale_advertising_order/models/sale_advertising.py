@@ -366,14 +366,14 @@ class SaleOrder(models.Model):
 
     def _check_archivedIssue(self):
         "Check for any archived Adv Issues used in Order"
-        for o in self:
+        for o in self.filtered('advertising'):
             archived = any(not ol.adv_issue.active for ol in o.order_line)
             if archived:
                 raise UserError(_('Cannot process! One or more lines contains archived Advertising Issue in this Order [%s]')%(o.name))
 
     def _check_archivedProduct(self):
         "Check for any archived products used in Order"
-        for o in self:
+        for o in self.filtered('advertising'):
             archived = any(not ol.product_id.active for ol in o.order_line)
             if archived:
                 raise UserError(_('Cannot process! One or more lines contains archived Product in this Order [%s]')%(o.name))
@@ -910,7 +910,6 @@ class SaleOrderLine(models.Model):
             titles = self.env['sale.advertising.issue'].search([('parent_id','=', False),('medium', 'child_of', self.medium.id)]).ids
             if titles and len(titles) == 1:
                 vals['title'] = titles[0]
-                # vals['title_ids'] = [(6, 0, [])]
                 vals['title_ids'] = [(6, 0, titles)]
             else:
                 vals['title'] = False
@@ -925,7 +924,7 @@ class SaleOrderLine(models.Model):
 
     @api.onchange('ad_class')
     def onchange_ad_class(self):
-        vals, data, result = {}, {}, {}
+        vals = {}
         if not self.advertising:
             return {'value': vals}
 
@@ -968,9 +967,6 @@ class SaleOrderLine(models.Model):
             for title in titles:
                 if not (title in issue_parent_ids):
                     raise UserError(_('Not for every selected Title an Issue is selected.'))
-            # if len(self.title_ids) == 1:
-            #     self.title = self.title_ids[0]
-            #     self.title_ids = [(6, 0, [])]
 
         elif self.title_ids and self.issue_product_ids:
             titles = self.title_ids.ids
@@ -984,9 +980,7 @@ class SaleOrderLine(models.Model):
             if back:
                 self.adv_issue_ids = [(6, 0, adv_issues.ids)]
                 self.issue_product_ids = [(6, 0, [])]
-            # if len(self.title_ids) == 1:
-            #     self.title = self.title_ids[0]
-            #     self.title_ids = [(6, 0, [])]
+
             self.titles_issues_products_price()
 
         elif self.title_ids:
@@ -1000,7 +994,6 @@ class SaleOrderLine(models.Model):
             self.product_template_id = False
             self.product_uom = False
 
-        # return {'domain': {'adv_issue_ids': self._get_domain4Issues()}}
 
     @api.onchange('product_template_id')
     def titles_issues_products_price(self):
