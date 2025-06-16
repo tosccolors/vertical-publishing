@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <menuitem
+    id="menu_ad4all"
+    parent="sale_advertising_order.advertising_sale_menu_root"
+    name="Ad4all Interface"
+    groups="sale_advertising_order.group_ads_traffic_user"
+    sequence="5"
+  />
+
+  <record id="view_sofrom_odooto_ad4all_line_form" model="ir.ui.view">
+    <field name="name">view_sofrom_odooto_line_ad4all_form</field>
+    <field name="model">sale.order.line.ad4all</field>
+    <field name="arch" type="xml">
+      <form create="false" edit="false" delete="true" copy="false">
+        <header>
+          <field
+            name="status"
+            widget="statusbar"
+            statusbar_visible="draft,successful,failed"
+            statusbar_colors='{"draft":"blue","successful":"blue", "failed":"red"}'
+          />
+        </header>
+        <sheet string="SO to Ad4all">
+          <h1 class="mt0">
+            <label string="Sale Order :" for="adgr_orde_id" />
+            <field
+              name="adgr_orde_id"
+              context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}"
+            />
+          </h1>
+          <group name="header_details">
+            <group>
+              <field name="ad4all_environment" />
+              <field name="ad4all_response" />
+            </group>
+            <group>
+              <field name="order_name" />
+              <field name="reference" />
+              <!--<field name="date_sent_ad4all"/>-->
+            </group>
+          </group>
+          <group name="customer_details">
+            <group>
+              <field name="customer_id" />
+              <field name="customer_name" />
+              <field name="customer_address_street" />
+              <field name="customer_address_zip" />
+              <field name="customer_address_city" />
+            </group>
+            <group>
+              <field name="customer_contacts_contact_email" />
+              <field name="customer_contacts_contact_id" />
+              <field name="customer_contacts_contact_name" />
+            </group>
+          </group>
+          <group name="agency_details">
+            <group>
+              <field name="agency" />
+              <field name="media_agency_code" />
+              <field name="media_agency_email" />
+              <field name="media_agency_name" />
+              <field name="media_agency_phone" />
+              <field name="media_agency_language" />
+              <field name="media_agency_contacts_contact_id" />
+              <field name="media_agency_contacts_contact_name" />
+              <field name="media_agency_contacts_contact_email" />
+              <field name="media_agency_contacts_contact_phone" />
+            </group>
+            <group>
+              <field name="media_agency_contacts_contact_type" />
+              <field name="media_agency_contacts_contact_language" />
+              <field name="media_agency_contacts_contact2_id" />
+              <field name="media_agency_contacts_contact2_name" />
+              <field name="media_agency_contacts_contact2_email" />
+              <field name="media_agency_contacts_contact2_phone" />
+              <field name="media_agency_contacts_contact2_type" />
+              <field name="media_agency_contacts_contact2_language" />
+            </group>
+          </group>
+          <group name="customer2_details">
+            <group>
+              <field name="customer_contacts_contact2_id" />
+              <field name="customer_contacts_contact2_name" />
+              <field name="customer_contacts_contact2_email" />
+            </group>
+            <group>
+              <field name="customer_contacts_contact2_phone" />
+              <field name="customer_contacts_contact2_type" />
+              <field name="customer_contacts_contact2_language" />
+            </group>
+          </group>
+          <group name="creative_agency_details">
+            <group>
+              <field name="creative_agency_code" />
+              <field name="creative_agency_name" />
+              <field name="creative_agency_email" />
+              <field name="creative_agency_phone" />
+              <field name="creative_agency_language" />
+              <field name="creative_agency_contacts_contact_id" />
+            </group>
+            <group>
+              <field name="creative_agency_contacts_contact_name" />
+              <field name="creative_agency_contacts_contact_email" />
+              <field name="creative_agency_contacts_contact_phone" />
+              <field name="creative_agency_contacts_contact_type" />
+              <field name="creative_agency_contacts_contact_language" />
+            </group>
+          </group>
+
+          <group name="line_info">
+            <group>
+              <field name="sale_line_id" />
+              <field name="mat_id" />
+              <field name="cancelled" />
+              <field name="herplaats" />
+              <field name="sales" />
+              <field name="sales_mail" />
+              <field name="format_id" />
+              <field name="format_height" />
+              <field name="format_width" />
+              <field name="format_trim_height" />
+            </group>
+            <group>
+              <field name="format_trim_width" />
+              <field name="format_spread" />
+              <field name="paper_pub_date" />
+              <field name="paper_id" />
+              <field name="paper_name" />
+              <field name="paper_issuenumber" />
+              <field name="placement_adclass" />
+              <field name="placement_notice" />
+              <field name="placement_description" />
+              <field name="placement_position" />
+            </group>
+          </group>
+          <group name="line_info2">
+            <group>
+              <!--                            <field name="line_ad4all_allow"/> FIXME: Can be deprecated-->
+              <field name="not_applicable" />
+              <!--                            <field name="ad4all_sent"/> FIXME: Can be deprecated-->
+              <field name="no_copy_chase" />
+              <field name="portal" />
+              <field name="deliverer" />
+              <!--<field name="order_code"/>-->
+            </group>
+            <group>
+              <field name="advert_id" />
+              <field name="paper_deadline" />
+              <field name="adkind" />
+              <field name="adstatus" />
+              <field name="materialtype" />
+              <field name="reminder" />
+            </group>
+          </group>
+
+          <notebook>
+            <page name="xml_msg" string="XML Message">
+              <field name="json_message" />
+            </page>
+            <page name="reply_msg" string="Reply Message">
+              <field name="reply_message" />
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_sofrom_odooto_ad4all_line_tree" model="ir.ui.view">
+    <field name="name">view_sofrom_odooto_line_ad4all_tree</field>
+    <field name="model">sale.order.line.ad4all</field>
+    <field name="arch" type="xml">
+      <tree
+        create="false"
+        edit="false"
+        delete="true"
+        duplicate="false"
+        decoration-muted="status=='na'"
+        decoration-info="status == 'draft'"
+        decoration-danger="status == 'failed'"
+      >
+        <field
+          name="adgr_orde_id"
+          context="{'form_view_ref': 'sale_advertising_order.view_order_form_advertising'}"
+        />
+        <field name="seq_adgr_orde_id" />
+        <field name="sale_line_id" />
+        <field name="advert_id" />
+        <field name="mat_id" />
+        <!--                    <field name="line_ad4all_allow"/> FIXME: can be deprecated -->
+        <!--                    <field name="ad4all_sent"/> FIXME: Can be deprecated-->
+        <field name="no_copy_chase" />
+        <field name="cancelled" />
+        <field name="customer_name" />
+        <field name="media_agency_name" />
+        <field name="create_date" string="Creation Date" />
+        <field name="ad4all_response" />
+        <field name="paper_name" />
+        <field name="paper_issuenumber" />
+        <field name="placement_adclass" />
+        <field name="adkind" />
+        <field name="status" />
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_sofrom_odooto_ad4all_line_filter" model="ir.ui.view">
+    <field name="name">view_sofrom_odooto_ad4all_line_filter</field>
+    <field name="model">sale.order.line.ad4all</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="adgr_orde_id" />
+        <field name="customer_name" />
+        <field name="media_agency_name" />
+        <separator />
+        <filter name="failed" string="Failed" domain="[('status', '=', 'failed')]" />
+        <filter name="draft" string="Draft" domain="[('status', '=', 'draft')]" />
+        <filter name="na" string="Not Applicable" domain="[('status', '=', 'na')]" />
+        <filter
+          name="success"
+          string="Success"
+          domain="[('status','=','successful')]"
+        />
+        <separator />
+        <field
+          name="paper_name"
+          filter_domain="[('paper_name', 'ilike', self)]"
+          string="Advertising Title Name"
+        />
+        <field
+          name="placement_adclass"
+          filter_domain="[('placement_adclass', 'ilike', self)]"
+          string="Advertising Class Name"
+        />
+        <field
+          name="paper_issuenumber"
+          filter_domain="[('paper_issuenumber', 'ilike', self)]"
+          string="Advertising  Issue Name"
+        />
+        <field
+          name="adkind"
+          filter_domain="[('adkind', 'ilike', self)]"
+          string="Advertising Type"
+        />
+        <field
+          name="seq_adgr_orde_id"
+          string="Ad4all Order Seq. ID"
+          filter_domain="['|', ('seq_adgr_orde_id', 'ilike', self), ('seq_adgr_orde_id', '=', self)]"
+        />
+        <filter
+          name="cancelled"
+          domain="[('cancelled', '=', False)]"
+          string="Cancelled"
+        />
+
+        <group expand="0" string="Group By">
+          <filter
+            name="create_date"
+            string="Date"
+            context="{'group_by':'create_date'}"
+          />
+          <filter
+            name="grp_paper_name"
+            string="Advertising Title Name"
+            context="{'group_by':'paper_name'}"
+          />
+          <filter
+            name="grp_placement_adclass"
+            string="Advertising Class Name"
+            context="{'group_by':'placement_adclass'}"
+          />
+          <filter
+            name="grp_paper_issuenumber"
+            string="Advertising Issue Name"
+            context="{'group_by':'paper_issuenumber'}"
+          />
+          <filter
+            name="grp_adkind"
+            string="Advertising Type"
+            context="{'group_by':'adkind'}"
+          />
+          <separator />
+          <filter
+            name="grp_so"
+            string="Sale Order"
+            context="{'group_by':'adgr_orde_id'}"
+          />
+          <filter name="grp_mat" string="Material ID" context="{'group_by':'mat_id'}" />
+          <filter
+            name="grp_advert"
+            string="Line ID"
+            context="{'group_by':'advert_id'}"
+          />
+          <separator />
+          <filter name="grp_status" string="Status" context="{'group_by':'status'}" />
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_staged_line_ad4all" model="ir.actions.act_window">
+    <field name="name">Ad4all Order Lines</field>
+    <field name="res_model">sale.order.line.ad4all</field>
+    <field name="view_mode">tree,form</field>
+    <field name="search_view_id" ref="view_sofrom_odooto_ad4all_line_filter" />
+    <field name="context">{'search_default_exceptions':1}</field>
+  </record>
+
+  <menuitem
+    id="menu_action_staged_line_ad4all"
+    name="Staged Ad4all Order Line"
+    parent="menu_ad4all"
+    action="action_staged_line_ad4all"
+    sequence="2"
+  />
+</odoo>

@@ -1,0 +1,14 @@
+<odoo>
+  <record
+    id="sale_advertising_order.product_category_ads_digital1"
+    model="product.category"
+  >
+    <field name="ad4all" eval="True" />
+  </record>
+  <record
+    id="sale_advertising_order.digital_advertising_category"
+    model="product.category"
+  >
+    <field name="ad4all" eval="True" />
+  </record>
+</odoo>

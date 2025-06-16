@@ -1,0 +1,55 @@
+<odoo>
+  <record id="sale_order_to_ad4all_view" model="ir.ui.view">
+    <field name="model">sale.order.ad4all</field>
+    <field
+      name="groups_id"
+      eval="[(4, ref('sale_advertising_order.group_ads_traffic_user'))]"
+    />
+    <field name="arch" type="xml">
+      <form string="Update Sale Orders to Ad4all">
+        <p class="oe_grey">
+          Selected Sales Orders will be sent to Ad4all if order_ad4all_allowed and/or
+            ad4all_sent are True.
+        </p>
+        <footer>
+          <button
+            string="Update Orders Portal Ad4all"
+            name="sale_order_update_ad4all"
+            type="object"
+            default_focus="1"
+            class="btn-primary"
+          />
+          <button string="Cancel" class="btn-default" special="cancel" />
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_view_sale_order_portal" model="ir.actions.act_window">
+    <field name="name">Sale Orders to Portal</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">sale.order.ad4all</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+    <field name="binding_model_id" ref="sale.model_sale_order" />
+    <field name="binding_view_types">list</field>
+    <field
+      name="groups_id"
+      eval="[(4, ref('sale_advertising_order.group_ads_traffic_user'))]"
+    />
+  </record>
+
+  <record id="action_view_sale_order_line_portal" model="ir.actions.act_window">
+    <field name="name">Sale Order Lines to Portal</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">sale.order.ad4all</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+    <field name="binding_model_id" ref="sale.model_sale_order_line" />
+    <field name="binding_view_types">list</field>
+    <field
+      name="groups_id"
+      eval="[(4, ref('sale_advertising_order.group_ads_traffic_user'))]"
+    />
+  </record>
+</odoo>

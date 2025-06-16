@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <record id="view_ad4all_config_form" model="ir.ui.view">
+    <field name="name">ad4all.config.form</field>
+    <field name="model">ad4all.config</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <field name="host" />
+            <field name="company_id" />
+          </group>
+          <group>
+            <field name="username" />
+            <field name="password" password="True" />
+          </group>
+          <group>
+            <field name="portal" required="1" />
+            <field name="deliverer" required="1" />
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record model="ir.ui.view" id="view_ad4all_config_tree">
+    <field name="name">ad4all.config.tree</field>
+    <field name="model">ad4all.config</field>
+    <field name="type">tree</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="username" />
+        <field name="host" />
+        <field name="company_id" />
+      </tree>
+    </field>
+  </record>
+
+  <record model="ir.actions.act_window" id="action_ad4all_config">
+    <field name="name">Ad4all Settings</field>
+    <field name="res_model">ad4all.config</field>
+    <field name="view_mode">tree,form</field>
+    <field name="view_id" ref="view_ad4all_config_tree" />
+  </record>
+
+  <menuitem
+    id="ad4all_config_menu"
+    parent="menu_ad4all"
+    action="action_ad4all_config"
+    sequence="10"
+  />
+</odoo>
