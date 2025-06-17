@@ -18,7 +18,7 @@ class Partner(models.Model):
         for this in self:
             this.sao_order_count = SaleOrder.search_count(
                 [
-                    ("partner_id", "=", this.id),
+                    ("partner_id", "child_of", this.id),
                     ("type_id", "=", sao_type.id),
                 ]
             )
@@ -60,7 +60,7 @@ class Partner(models.Model):
         )
         sao_type = self._sao_type()
         result["domain"] = [
-            ("partner_id", "in", self.ids),
+            ("partner_id", "child_of", self.ids),
             ("type_id", "=", sao_type.id),
         ]
         result["context"] = dict(
