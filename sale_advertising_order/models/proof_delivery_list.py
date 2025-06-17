@@ -102,5 +102,6 @@ class ProofNumberDeliveryList(models.Model):
             'res_id': self.line_id.id or False,
             'res_model': action.res_model,
             'domain': [('id', '=', self.line_id.id)],
+            'views': [(self.env.ref('sale_advertising_order.view_adv_order_line_form').id, 'form')],
         }
 
