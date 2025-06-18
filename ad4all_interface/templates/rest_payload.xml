@@ -1,0 +1,95 @@
+<odoo>
+  <template id="rest_payload">
+    <root>
+      <advert_id t-out="line.advert_id" />
+      <id t-out="line.mat_id" />
+      <adgr_orde_id t-out="line.seq_adgr_orde_id" />
+      <adkind t-out="line.adkind" />
+      <adstatus t-out="line.adstatus" />
+      <cancelled t-out="'Yes' if line.cancelled else 'No'" />
+      <herplaats t-out="'Yes' if line.herplaats else 'No'" />
+      <materialtype t-out="line.materialtype or 'UNKNOWN'" />
+      <sales t-out="line.sales" />
+      <sales_mail t-out="line.sales_mail" />
+      <reminder t-out="'Yes' if line.reminder else 'No'" />
+      <format>
+        <id t-out="line.format_id" />
+        <height t-out="line.format_height" />
+        <width t-out="line.format_width" />
+        <trim_height t-out="line.format_trim_height" />
+        <trim_width t-out="line.format_trim_width" />
+        <spread t-out="'Yes' if line.format_spread else 'No'" />
+      </format>
+      <paper>
+        <pub_date
+          t-out="line.paper_pub_date.strftime('%Y%m%d') if line.paper_pub_date else ''"
+        />
+        <deadline
+          t-out="line.paper_deadline.strftime('%Y%m%d') if line.paper_deadline else ''"
+        />
+        <id t-out="line.paper_id" />
+        <name t-out="line.paper_name" />
+        <issuenumber t-out="line.paper_issuenumber" />
+      </paper>
+      <placement>
+        <adclass t-out="line.placement_adclass" />
+        <description t-out="line.placement_description" />
+        <notice t-out="line.placement_notice" />
+        <position t-out="line.placement_position" />
+      </placement>
+      <customer>
+        <id t-out="line.customer_id" />
+        <name t-out="line.customer_name" />
+        <address>
+          <street t-out="line.customer_address_street" />
+          <zip t-out="line.customer_address_zip" />
+          <city t-out="line.customer_address_city" />
+          <phone t-out="line.customer_address_phone" />
+        </address>
+        <contacts>
+          <contact t-if="line.customer_contacts_contact_id">
+            <id t-out="line.customer_contacts_contact_id" />
+            <name t-out="line.customer_contacts_contact_name" />
+            <email t-out="line.customer_contacts_contact_email" />
+            <phone t-out="line.customer_contacts_contact_phone" />
+            <type t-out="line.customer_contacts_contact_type" />
+            <language t-out="line.customer_contacts_contact_language" />
+          </contact>
+          <contact t-if="line.customer_contacts_contact2_id">
+            <id t-out="line.customer_contacts_contact2_id" />
+            <name t-out="line.customer_contacts_contact2_name" />
+            <email t-out="line.customer_contacts_contact2_email" />
+            <phone t-out="line.customer_contacts_contact2_phone" />
+            <type t-out="line.customer_contacts_contact2_type" />
+            <language t-out="line.customer_contacts_contact2_language" />
+          </contact>
+        </contacts>
+      </customer>
+      <media_agency t-if="line.agency">
+        <code t-out="line.media_agency_code" />
+        <name t-out="line.media_agency_name" />
+        <email t-out="line.media_agency_email" />
+        <phone t-out="line.media_agency_phone" />
+        <language t-out="line.media_agency_language" />
+        <contacts>
+          <contact t-if="line.media_agency_contacts_contact_id">
+            <id t-out="line.media_agency_contacts_contact_id" />
+            <name t-out="line.media_agency_contacts_contact_name" />
+            <email t-out="line.media_agency_contacts_contact_email" />
+            <phone t-out="line.media_agency_contacts_contact_phone" />
+            <type t-out="line.media_agency_contacts_contact_type" />
+            <language t-out="line.media_agency_contacts_contact_language" />
+          </contact>
+          <contact t-if="line.media_agency_contacts_contact2_id">
+            <id t-out="line.media_agency_contacts_contact2_id" />
+            <name t-out="line.media_agency_contacts_contact2_name" />
+            <email t-out="line.media_agency_contacts_contact2_email" />
+            <phone t-out="line.media_agency_contacts_contact2_phone" />
+            <type t-out="line.media_agency_contacts_contact2_type" />
+            <language t-out="line.media_agency_contacts_contact2_language" />
+          </contact>
+        </contacts>
+      </media_agency>
+    </root>
+  </template>
+</odoo>

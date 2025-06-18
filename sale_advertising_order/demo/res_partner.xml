@@ -1,9 +1,21 @@
 <odoo>
   <record id="partner_ad_agency" model="res.partner">
     <field name="name">Ad agency</field>
+    <field name="ref">ad_agency</field>
+    <field name="email">mail@ad-agency</field>
+    <field name="phone">12345678</field>
     <field name="is_company" eval="True" />
     <field name="is_customer" eval="True" />
     <field name="is_ad_agency" eval="True" />
     <field name="agency_discount">42</field>
+  </record>
+  <record id="partner_ad_agency_contact" model="res.partner">
+    <field name="name">Ad agency contact person</field>
+    <field name="ref">ad_agency_contact</field>
+    <field name="email">contact@ad-agency</field>
+    <field name="phone">12345678</field>
+    <field name="is_company" eval="False" />
+    <field name="is_customer" eval="True" />
+    <field name="parent_id" ref="partner_ad_agency" />
   </record>
 </odoo>

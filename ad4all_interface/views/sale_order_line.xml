@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+  <record model="ir.ui.view" id="view_adv_order_line_filter">
+    <field name="model">sale.order.line</field>
+    <field name="inherit_id" ref="sale_advertising_order.view_adv_order_line_filter" />
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='issue_date']" position="after">
+        <field name="publog_id" />
+      </xpath>
+      <xpath expr="//filter[@name='from_date_sale_orders_filter']" position="after">
+        <filter
+          string="Ad4all to be updated"
+          name="ad4all_tbu"
+          domain="[('ad4all_tbu','=',True)]"
+        />
+        <filter
+          string="Sent to Ad4all"
+          name="ad4all_sent"
+          domain="[('ad4all_sent','=',True)]"
+        />
+        <separator />
+        <filter
+          string="Ad4all Successful"
+          name="success"
+          domain="[('publog_id.status','=','successful')]"
+        />
+        <filter
+          name="draft"
+          string="Ad4all Draft"
+          domain="[('publog_id.status','=','draft')]"
+        />
+        <filter
+          name="failed"
+          string="Ad4all Failed"
+          domain="[('publog_id.status','=','failed')]"
+        />
+        <separator />
+      </xpath>
+    </field>
+  </record>
+
+  <record model="ir.ui.view" id="view_sao_order_line_form">
+    <field name="model">sale.order.line</field>
+    <field name="inherit_id" ref="sale_advertising_order.view_sao_order_line_form" />
+    <field name="arch" type="xml">
+      <field name="proof_number_amt_adv_customer" position="after">
+        <field name="recurring" groups="ad4all_interface.group_ad4all_portal_user" />
+
+        <field
+          name="recurring_id"
+          attrs="{'invisible': [('recurring','!=', True)]}"
+          domain="[('order_advertiser_id','=', parent.published_customer),('recurring','=', False)]"
+          context="{'show_material_ref': True}"
+          groups="ad4all_interface.group_ad4all_portal_user"
+        />
+      </field>
+      <xpath expr="//notebook[last()]" position="inside">
+        <page
+          name="ad4all"
+          string="Ad4all"
+          groups="ad4all_interface.group_ad4all_portal_user"
+        >
+          <group>
+            <group cols="4">
+              <field
+                name="no_copy_chase"
+                attrs="{'invisible': [('line_ad4all_allow','=', False),('multi_line','=', False)]}"
+              />
+              <field name="line_ad4all_allow" readonly="1" />
+              <field name="ad4all_sent" readonly="1" />
+            </group>
+            <group cols="4">
+              <field name="date_sent_ad4all" readonly="1" />
+              <field name="ad4all_sent" readonly="1" />
+              <field name="advert_id" />
+              <field name="material_id" />
+              <field name="publog_id" string="Ad4all Log" readonly="1" />
+            </group>
+          </group>
+        </page>
+      </xpath>
+      <xpath expr="//group[1]" position="before">
+        <header groups="ad4all_interface.group_ad4all_portal_user">
+          <field name="line_ad4all_allow" invisible="1" />
+          <button
+            name="action_ad4all_xml"
+            type="object"
+            class="oe_highlight"
+            string="Send Order Line To Portal"
+            attrs="{'invisible': ['|',('line_ad4all_allow','=', False),('state','!=','sale')]}"
+          />
+        </header>
+      </xpath>
+    </field>
+  </record>
+
+  <record model="ir.ui.view" id="view_sao_order_line_tree">
+    <field name="model">sale.order.line</field>
+    <field name="inherit_id" ref="sale_advertising_order.view_sao_order_line_tree" />
+    <field name="arch" type="xml">
+      <field name="adv_issue_ids" position="after">
+        <field name="advert_id" />
+        <field name="material_id" />
+      </field>
+    </field>
+  </record>
+
+  <record id="view_indeellijst_list_tree_inherit" model="ir.ui.view">
+    <field name="name">sale.order.line.indeellijst.tree.inherit</field>
+    <field name="model">sale.order.line</field>
+    <field name="inherit_id" ref="sale_advertising_order.view_indeellijst_list_tree" />
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='id']" position="after">
+        <field name="advert_id" />
+        <field name="material_id" />
+        <field name="mig_mat_id" optional="hide" />
+        <field name="publog_id" optional="hide" />
+      </xpath>
+    </field>
+  </record>
+</odoo>

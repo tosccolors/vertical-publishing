@@ -1,0 +1,554 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="root">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="advert_id">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="255"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="id">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="255"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="adgr_orde_id">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="255"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="adkind">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="255"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="adstatus">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="Aangemaakt"/>
+							<xs:enumeration value="BOO"/>
+							<!-- Geboekt -->
+							<xs:enumeration value="WFM"/>
+							<!-- Wacht op materiaal -->
+							<xs:enumeration value="CHE"/>
+							<!-- Goedgekeurd -->
+							<xs:enumeration value="EXP"/>
+							<!-- Geexporteerd -->
+							<xs:enumeration value="ERR"/>
+							<!-- Export error -->
+							<xs:enumeration value="CAN"/>
+							<!-- Geannuleerd -->
+							<xs:enumeration value="PRC"/>
+							<!-- Drukproef, wacht op adverteerder -->
+							<xs:enumeration value="PRS"/>
+							<!-- Drukproef, wacht op traffic -->
+							<xs:enumeration value="PRA"/>
+							<!-- Drukproef akkoord -->
+							<xs:enumeration value="DWN"/>
+							<!-- Gedownload -->
+							<xs:enumeration value="CHF"/>
+							<!-- Afgekeurd, maar toegestaan -->
+							<xs:enumeration value="HLD"/>
+							<!-- Geblokkeerd (tijdelijk) -->
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="cancelled">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="Yes"/>
+							<xs:enumeration value="No"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="herplaats">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="Yes"/>
+							<xs:enumeration value="No"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="material">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="Yes"/>
+							<xs:enumeration value="No"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="materialtype">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="cPDF"/>
+							<xs:enumeration value="PRINT"/>
+							<xs:enumeration value="PART"/>
+							<xs:enumeration value="DEEL"/>
+							<xs:enumeration value="ONLINE"/>
+							<xs:enumeration value="KIES"/>
+							<xs:enumeration value="UNKNOWN"/>
+							<xs:enumeration value="SAMPLE"/>
+							<xs:enumeration value="BUILD"/>
+							<xs:enumeration value="NEWSLETTER"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="sales">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="255"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="sales_mail">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="255"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="reminder">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value=""/>
+							<xs:enumeration value="Yes"/>
+							<xs:enumeration value="No"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="format">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="id">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="height">
+								<xs:simpleType>
+									<xs:restriction base="xs:integer"></xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="width">
+								<xs:simpleType>
+									<xs:restriction base="xs:integer"></xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="trim_height">
+								<xs:simpleType>
+									<xs:restriction base="xs:integer"></xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="trim_width">
+								<xs:simpleType>
+									<xs:restriction base="xs:integer"></xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="spread">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="Yes"/>
+										<xs:enumeration value="No"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="paper">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="pub_date">
+								<xs:simpleType>
+									<xs:restriction base="xs:integer">
+										<!-- Bijv. 20160801 -->
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="deadline">
+								<xs:simpleType>
+									<xs:restriction base="xs:integer">
+										<!-- Bijv. 20160701 -->
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="id">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="name">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="issuenumber">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="placement">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="adclass">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="description">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="notice">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="position">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="customer">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="id">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="name">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="contacts">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="contact">
+											<xs:complexType>
+												<xs:all>
+													<xs:element name="id">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="name">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="email">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="phone">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="type">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:enumeration value="Order"/>
+																<xs:enumeration value="Proof"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="language">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:enumeration value=""/>
+																<xs:enumeration value="en"/>
+																<xs:enumeration value="fr"/>
+																<xs:enumeration value="nl"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:all>
+											</xs:complexType>
+										</xs:element>
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="address">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="street">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="255"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="zip">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="255"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="city">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="255"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="phone">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="255"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="media_agency">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="code">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="name">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="email">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="phone">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="language">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value=""/>
+										<xs:enumeration value="en"/>
+										<xs:enumeration value="fr"/>
+										<xs:enumeration value="nl"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="contacts">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="contact">
+											<xs:complexType>
+												<xs:all>
+													<xs:element name="id">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="name">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="email">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="phone">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="type">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:enumeration value="Order"/>
+																<xs:enumeration value="Proof"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="language">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:enumeration value=""/>
+																<xs:enumeration value="en"/>
+																<xs:enumeration value="fr"/>
+																<xs:enumeration value="nl"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:all>
+											</xs:complexType>
+										</xs:element>
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="creative_agency">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="code">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="name">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="email">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="phone">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="language">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value=""/>
+										<xs:enumeration value="en"/>
+										<xs:enumeration value="fr"/>
+										<xs:enumeration value="nl"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="contacts">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="contact">
+											<xs:complexType>
+												<xs:all>
+													<xs:element name="id">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="name">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="email">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="phone">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="language">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:enumeration value=""/>
+																<xs:enumeration value="en"/>
+																<xs:enumeration value="fr"/>
+																<xs:enumeration value="nl"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:all>
+											</xs:complexType>
+										</xs:element>
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

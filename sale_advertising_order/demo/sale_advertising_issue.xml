@@ -13,6 +13,8 @@
     <field name="medium" eval="[Command.link(ref('product_category_ads_digital1'))]" />
     <field name="analytic_account_id" ref="analytic.analytic_our_super_product" />
     <field name="product_attribute_value_id" ref="attribute_value_title1" />
+    <field name="issue_date">2025-01-01</field>
+    <field name="deadline">2025-01-01</field>
   </record>
   <record id="title2" model="sale.advertising.issue">
     <field name="name">Title 2</field>

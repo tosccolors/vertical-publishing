@@ -113,7 +113,7 @@ misc:
   remotes:
     tosccolors: https://github.com/tosccolors/misc
   merges:
-    - tosccolors 16.0
+    - tosccolors 16.0-test
 ../src:
   defaults:
     depth: 1
