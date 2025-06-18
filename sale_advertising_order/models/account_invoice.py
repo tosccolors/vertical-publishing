@@ -65,12 +65,14 @@ class Invoice(models.Model):
     def _get_invoice_key_cols_out(self):
         res = super()._get_invoice_key_cols_out()
         res.append('sale_type_id')
+        res.remove('user_id')
         return res
 
     @api.model
     def _get_invoice_key_cols_in(self):
         res = super()._get_invoice_key_cols_in()
         res.append('sale_type_id')
+        res.remove('user_id')
         return res
 
     @api.model
@@ -83,7 +85,7 @@ class Invoice(models.Model):
     @api.model
     def _get_first_invoice_fields(self, invoice):
         res = super()._get_first_invoice_fields(invoice)
-        res.update({'sale_type_id': invoice.sale_type_id.id,})
+        res.update({'sale_type_id': invoice.sale_type_id.id, 'user_id': False})
         return res
 
 

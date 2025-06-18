@@ -898,8 +898,18 @@ class SaleOrderLine(models.Model):
         vals, data, result = {}, {}, {}
         if not self.advertising:
             return {'value': vals }
+
+        # Unchanged
+        if self._origin.medium == self.medium:
+            data = {'ad_class': [('id', 'child_of', self.medium.id), ('id', '!=', self.medium.id)]}
+            return {'domain': data}
+
+        # Reset
+        if not self.medium:
+            vals['ad_class'] = False
+            data = {'ad_class': []}
+
         if self.medium:
-            # import pdb; pdb.set_trace()
             child_id = [(x.id != self.medium.id) and x.id for x in self.medium.child_id]
 
             if len(child_id) == 1:
@@ -914,12 +924,7 @@ class SaleOrderLine(models.Model):
             else:
                 vals['title'] = False
                 vals['title_ids'] = [(6, 0, [])]
-        else:
-            vals['ad_class'] = False
-            vals['title'] = False
-            vals['title_ids'] = [(6, 0, [])]
-            vals['ad_class'] = False
-            data = {'ad_class': []}
+
         return {'value': vals, 'domain': data }
 
     @api.onchange('ad_class')
@@ -929,13 +934,9 @@ class SaleOrderLine(models.Model):
             return {'value': vals}
 
         # Reset
-        if not self.ad_class:
-            self.product_id = False
-            self.product_template_id = False
+        if self._origin.ad_class != self.ad_class or not self.ad_class:
             self.title = False
             self.title_ids = [(6, 0, [])]
-            self.adv_issue_ids = [(6, 0, [])]
-            self.issue_product_ids = [(6, 0, [])]
             self.from_date = False
             self.to_date = False
 
@@ -946,6 +947,12 @@ class SaleOrderLine(models.Model):
         vals = {}
         if not self.advertising:
             return {'value': vals}
+
+        # Reset
+        if not self.title_ids:
+            self.adv_issue = False
+            self.adv_issue_ids = [(6, 0, [])]
+            self.product_template_id = False
 
         # Single Title: pre-populate Issue if only one present:
         if len(self.title_ids) == 1 and not self.adv_issue_ids:
@@ -964,9 +971,9 @@ class SaleOrderLine(models.Model):
             issue_ids = self.adv_issue_ids.ids
             adv_issues = self.env['sale.advertising.issue'].search([('id', 'in', issue_ids)])
             issue_parent_ids = [x.parent_id.id for x in adv_issues]
-            for title in titles:
-                if not (title in issue_parent_ids):
-                    raise UserError(_('Not for every selected Title an Issue is selected.'))
+            # for title in titles: FIXME: Redundant Trigger !! can be removed
+                # if not (title in issue_parent_ids):
+                #     raise UserError(_('Not for every selected Title an Issue is selected.'))
 
         elif self.title_ids and self.issue_product_ids:
             titles = self.title_ids.ids
@@ -983,26 +990,17 @@ class SaleOrderLine(models.Model):
 
             self.titles_issues_products_price()
 
-        elif self.title_ids:
-            self.product_template_id = False
-            self.product_id = False
-        else:
-            # self.adv_issue = False
-            self.adv_issue_ids = [(6, 0, [])]
-            self.issue_product_ids = [(6, 0, [])]
-            self.product_id = False
-            self.product_template_id = False
-            self.product_uom = False
-
 
     @api.onchange('product_template_id')
     def titles_issues_products_price(self):
         vals = {}
         if not self.advertising:
             return {'value': vals}
-        # import pdb; pdb.set_trace()
-        if not self.product_template_id:
+
+        # Reset
+        if self._origin.product_template_id != self.product_template_id or not self.product_template_id:
             self.issue_product_ids = [(6, 0, [])]
+            # self.product_id = False # Warning: Do not reset here
 
         if self.title_ids and (len(self.adv_issue_ids) == 0):
             raise UserError(_('Please select Advertising Issue(s) to proceed further.'))
@@ -1045,7 +1043,6 @@ class SaleOrderLine(models.Model):
                             values.append((0,0, value))
             if product_id:
                 self.update({
-                    # 'adv_issue_ids': [(6, 0, [])], # FIXME: Need this?
                     'issue_product_ids': values,
                     'product_id': product_id.id,
                     'multi_line_number': issues_count,
@@ -1112,12 +1109,14 @@ class SaleOrderLine(models.Model):
                         [('product_tmpl_id', '=', self.product_template_id.id), ('product_template_attribute_value_ids.product_attribute_value_id', '=', pav)])
                     if product_id:
                         self.update({
-                            # 'adv_issue_ids': [(6, 0, [])], # FIXME: Need this?
-                            # 'issue_product_ids': [(6, 0, [])], # FIXME: Need this?
+                            'issue_product_ids': [(6, 0, [])],
                             'product_id': product_id.id,
                             'multi_line_number': 1,
                             'multi_line': False,
                         })
+
+        elif not self.product_template_id: # Fallback
+            self.product_id = False
 
     
     @api.onchange('product_id')
@@ -1152,19 +1151,18 @@ class SaleOrderLine(models.Model):
                 if self.adv_issue_ids:
                     vals['adv_issue_ids'] = [(6,0,[])]
             elif self.date_type == 'validity':
-                if self.dates:
-                    vals['dates'] = [(6,0,[])] # FIXME: deprecated
+                # if self.dates:
+                #     vals['dates'] = [(6,0,[])] # FIXME: deprecated
                 if self.adv_issue_ids:
                     vals['adv_issue_ids'] = [(6,0,[])]
             elif self.date_type == 'issue_date':
                 self.from_date = self.issue_date
                 self.to_date = self.issue_date
-                if self.dates:
-                    vals['dates'] = [(6,0,[])] # FIXME: deprecated
+                # if self.dates:
+                #     vals['dates'] = [(6,0,[])] # FIXME: deprecated
                 if self.dateperiods:
                     vals['dateperiods'] = [(6,0,[])]
         return {'value': vals}
-
 
 
     @api.onchange('price_unit')
@@ -1229,7 +1227,6 @@ class SaleOrderLine(models.Model):
             self.subtotal_before_agency_disc = round(float(self.comb_list_price), 2)
 
 
-    # @api.onchange('adv_issue', 'adv_issue_ids','dates','issue_product_ids')
     @api.onchange('adv_issue_ids','issue_product_ids')
     def onchange_getQty(self):
         result = {}
@@ -1271,10 +1268,10 @@ class SaleOrderLine(models.Model):
                 ml_qty = 1
         elif ai:
             ml_qty = 1
-        elif ds: # FIXME: deprecated
-            if len(ds) >= 1:
-                ml_qty = 1
-                self.product_uom_qty = len(ds)
+        # elif ds: # FIXME: deprecated
+        #     if len(ds) >= 1:
+        #         ml_qty = 1
+        #         self.product_uom_qty = len(ds)
         elif iis:
             if len(iis) > 1:
                 ml_qty = len(iis)
@@ -1329,6 +1326,7 @@ class SaleOrderLine(models.Model):
                     raise ValidationError(
                         _("Please make sure that the start date is smaller than or equal to the end date '%s'.")
                         % (case.name))
+
 
     def _prepare_invoice_line(self, **optional_values):
         res = super(SaleOrderLine, self)._prepare_invoice_line(**optional_values)
