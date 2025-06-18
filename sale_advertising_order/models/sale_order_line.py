@@ -488,6 +488,17 @@ class SaleOrderLine(models.Model):
         vals, data = {}, {}
         if not self.advertising:
             return {"value": vals}
+
+        # Unchanged
+        if self._origin.medium == self.medium:
+            data = {'ad_class': [('id', 'child_of', self.medium.id), ('id', '!=', self.medium.id)]}
+            return {'domain': data}
+
+        # Reset
+        if not self.medium:
+            vals['ad_class'] = False
+            data = {'ad_class': []}
+
         if self.medium:
             child_id = [(x.id != self.medium.id) and x.id for x in self.medium.child_id]
 
@@ -514,12 +525,7 @@ class SaleOrderLine(models.Model):
             else:
                 vals["title"] = False
                 vals["title_ids"] = [(6, 0, [])]
-        else:
-            vals["ad_class"] = False
-            vals["title"] = False
-            vals["title_ids"] = [(6, 0, [])]
-            vals['ad_class'] = False
-            data = {"ad_class": []}
+
         return {"value": vals, "domain": data}
 
     @api.onchange("ad_class")
@@ -529,13 +535,9 @@ class SaleOrderLine(models.Model):
             return {"value": vals}
 
         # Reset
-        if not self.ad_class:
-            self.product_id = False
-            self.product_template_id = False
+        if self._origin.ad_class != self.ad_class or not self.ad_class:
             self.title = False
             self.title_ids = [(6, 0, [])]
-            self.adv_issue_ids = [(6, 0, [])]
-            self.issue_product_ids = [(6, 0, [])]
             self.from_date = False
             self.to_date = False
 
@@ -544,6 +546,12 @@ class SaleOrderLine(models.Model):
         vals = {}
         if not self.advertising:
             return {"value": vals}
+
+        # Reset
+        if not self.title_ids:
+            self.adv_issue = False
+            self.adv_issue_ids = [(6, 0, [])]
+            self.product_template_id = False
 
         # Single Title: pre-populate Issue if only one present:
         if len(self.title_ids) == 1 and not self.adv_issue_ids:
@@ -584,21 +592,14 @@ class SaleOrderLine(models.Model):
                 self.issue_product_ids = [(6, 0, [])]
             self.titles_issues_products_price()
 
-        elif self.title_ids:
-            self.product_template_id = False
-            self.product_id = False
-        else:
-            self.adv_issue_ids = [(6, 0, [])]
-            self.issue_product_ids = [(6, 0, [])]
-            self.product_id = False
-            self.product_template_id = False
-            self.product_uom = False
 
     @api.onchange("product_template_id")
     def titles_issues_products_price(self):  # noqa: C901
         vals = {}
         if not self.advertising:
             return {"value": vals}
+
+        # Reset
         if not self.product_template_id:
             self.issue_product_ids = [(6, 0, [])]
 
@@ -790,6 +791,9 @@ class SaleOrderLine(models.Model):
                             "multi_line": False,
                         }
                     )
+        elif not self.product_template_id: # Fallback
+            self.product_id = False
+
 
     @api.onchange("product_id")
     def product_id_change(self):
