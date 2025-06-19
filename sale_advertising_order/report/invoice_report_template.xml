@@ -30,58 +30,34 @@
         <tr t-foreach="o.invoice_line_ids" t-as="l">
           <t t-set="sol" t-value="l.so_line_id or l.sale_line_ids" />
           <t t-set="tot_Cdiscount" t-value="sol.computed_discount" />
-          <t t-if="o.move_type != 'out_refund'">
-            <td width="10%" t-if="sol.date_type not in ['validity','issue_date']">
+          <td width="10%" t-if="sol.date_type not in ['validity','issue_date']">
+            <t t-if="o.move_type != 'out_refund'">
               <span t-field="o.invoice_date" />
-            </td>
-            <t t-if="sol.date_type == 'validity'">
-              <td width="10%" t-if="l.from_date">
-                <span t-field="l.from_date" />
-                <span>-</span>
-                <span t-field="l.to_date" />
-              </td>
             </t>
-            <td width="10%" t-if="sol.date_type == 'issue_date'">
-              <span t-field="l.issue_date" />
-            </td>
-            <td width="10%">
-              <span
-                t-if="sol.adv_issue and sol.adv_issue.default_note"
-                t-field="sol.adv_issue.default_note"
-              />
-              <span
-                t-elif="sol.adv_issue and not sol.adv_issue.default_note"
-                t-field="sol.adv_issue.name"
-              />
+            <t t-else="">
+              <span t-field="o.reversed_entry_id.invoice_date" />
+            </t>
+          </td>
+          <t t-if="sol.date_type == 'validity'">
+            <td width="10%" t-if="l.from_date">
+              <span t-field="l.from_date" />
+              <span>-</span>
+              <span t-field="l.to_date" />
             </td>
           </t>
-          <t t-if="o.move_type == 'out_refund'">
-            <td width="10%" t-if="sol.date_type not in ['validity','issue_date']">
-              <span t-field="o.refund_invoice_id.invoice_date" />
-            </td>
-            <t t-if="sol.date_type == 'validity'">
-              <td width="10%" t-if="l.from_date">
-                <span t-esc="l.from_date" />
-                <span>-</span>
-                <span t-esc="l.to_date" t-options='{"widget": "date"}' />
-              </td>
-            </t>
-            <t t-if="sol.date_type == 'issue_date'">
-              <td width="10%">
-                <span t-esc="l.issue_date" t-options='{"widget": "date"}' />
-              </td>
-            </t>
-            <td width="10%">
-              <span
-                t-if="sol.adv_issue and sol.adv_issue.default_note"
-                t-field="sol.adv_issue.default_note"
-              />
-              <span
-                t-elif="sol.adv_issue and not sol.adv_issue.default_note"
-                t-field="sol.adv_issue.name"
-              />
-            </td>
-          </t>
+          <td width="10%" t-if="sol.date_type == 'issue_date'">
+            <span t-field="l.issue_date" />
+          </td>
+          <td width="10%">
+            <span
+              t-if="sol.adv_issue and sol.adv_issue.default_note"
+              t-field="sol.adv_issue.default_note"
+            />
+            <span
+              t-elif="sol.adv_issue and not sol.adv_issue.default_note"
+              t-field="sol.adv_issue.name"
+            />
+          </td>
           <td width="10%">
             <span t-esc="sol.ad_number" />
           </td>
