@@ -206,7 +206,7 @@
                 <t t-set="display_discount" t-value="any(l.discount for l in o.invoice_line_ids)"/>
                 <t t-set="total_before_discount" t-value="sum([l.subtotal_before_agency_disc for l in o.invoice_line_ids])"/>
                 <t t-set="total_discount" t-value="sum([l.subtotal_before_agency_disc - l.price_subtotal for l in o.invoice_line_ids])"/>
-                <t t-set="display_discount" t-value="any([l.discount for l in o.invoice_line_ids])"/>
+<!--                <t t-set="display_discount" t-value="any([l.discount for l in o.invoice_line_ids])"/>-->
                 <t t-set="display_unit_price" t-value="any([l.quantity>1 for l in o.invoice_line_ids])"/>
 
                 <br/>
