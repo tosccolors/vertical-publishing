@@ -1,0 +1,16 @@
+<odoo>
+  <template id="contact_name" inherit_id="base.contact_name">
+    <div position="attributes">
+      <attribute name="t-if" add="and not 'multiline_name' in fields" separator=" " />
+    </div>
+    <div position="after">
+      <div t-if="'multiline_name' in fields">
+        <t t-if="object.parent_name">
+          <span t-esc="object.parent_name" />
+          <br />
+        </t>
+        <span itemprop="name" t-esc="object.name" />
+      </div>
+    </div>
+  </template>
+</odoo>
