@@ -82,6 +82,16 @@ class SaleOrder(models.Model):
         tracking=True,
     )
 
+    @api.depends()
+    def _compute_user_id(self):
+        result = super()._compute_user_id()
+        for this in self:
+            if not this.user_id and self.user_has_groups(
+                "sale_advertising_order.group_ads_sales_user"
+            ):
+                this.user_id = self.env.user
+        return result
+
     @api.depends("partner_id", "company_id")
     def _compute_sale_type_id(self):
 
