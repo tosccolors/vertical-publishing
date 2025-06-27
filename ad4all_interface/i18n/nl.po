@@ -1,0 +1,905 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ad4all_interface
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-13 09:10+0000\n"
+"PO-Revision-Date: 2024-05-13 09:10+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_adv_order_line_form
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_order_form_advertising_ad4all
+msgid "Ad4all"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_line__line_ad4all_allow
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__line_ad4all_allow
+msgid "Ad4all Allowed"
+msgstr "Ad4all Toegestaan"
+
+#. module: ad4all_interface
+#: model:ir.model,name:ad4all_interface.model_ad4all_config
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_ad4all_config_form
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_ad4all_config_tree
+msgid "Ad4all Config"
+msgstr "Ad4all Configuratie"
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__deliverer
+msgid "Ad4all Deliverer"
+msgstr "Ad4all Uitvoerder"
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_advertising_sales_order_line_filter
+msgid "Ad4all Draft"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__ad4all_environment
+msgid "Ad4all Environment"
+msgstr "Ad4all Omgeving"
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_advertising_sales_order_line_filter
+msgid "Ad4all Failed"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.ui.menu,name:ad4all_interface.menu_ad4all
+msgid "Ad4all Interface"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_adv_order_line_form
+msgid "Ad4all Log"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__order_code
+msgid "Ad4all Order Code"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.actions.act_window,name:ad4all_interface.action_staged_line_ad4all
+msgid "Ad4all Order Lines"
+msgstr "Ad4all Orderregels"
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order__seq_adgr_orde_id
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.advertising_order_view_search_ad4all
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.advertising_order_view_search_quotation_ad4all
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_filter
+msgid "Ad4all Order Seq. ID"
+msgstr "Ad4all Order Code"
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__portal
+msgid "Ad4all Portal"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.module.category,name:ad4all_interface.module_ad4all_portal
+#: model:res.groups,name:ad4all_interface.group_ad4all_portal_user
+msgid "Ad4all Portal User"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__ad4all_response
+msgid "Ad4all Response"
+msgstr "Ad4all Antwoord"
+
+#. module: ad4all_interface
+#: model:ir.actions.act_window,name:ad4all_interface.action_ad4all_config
+#: model:ir.ui.menu,name:ad4all_interface.ad4all_config_menu
+msgid "Ad4all Settings"
+msgstr "Ad4all Instellingen"
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_advertising_sales_order_line_filter
+msgid "Ad4all Successful"
+msgstr "Ad4all succesvol"
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_product_category__ad4all_material_type
+msgid "Ad4all Type"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_line__ad4all_tbu
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_advertising_sales_order_line_filter
+msgid "Ad4all to be updated"
+msgstr ""
+
+#. module: ad4all_interface
+#: code:addons/ad4all_interface/models/sale_advertising.py:0
+#, python-format
+msgid "AdPortal required field %s is missing"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_product_category__ad4all
+msgid "Ads to Ad4all"
+msgstr "Advertenties naar Ad4all"
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_address_city
+msgid "Advertiser Address City"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_address_phone
+msgid "Advertiser Address Phone"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_address_street
+msgid "Advertiser Address Street"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_address_zip
+msgid "Advertiser Address Zip Code"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_contacts_contact_email
+msgid "Advertiser Contact Email"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_contacts_contact_id
+msgid "Advertiser Contact ID"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_contacts_contact_language
+msgid "Advertiser Contact Language"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_contacts_contact_name
+msgid "Advertiser Contact Name"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_contacts_contact_phone
+msgid "Advertiser Contact Phone"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_contacts_contact_type
+msgid "Advertiser Contact Type"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_contacts_contact2_email
+msgid "Advertiser Contact2 Email"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_contacts_contact2_id
+msgid "Advertiser Contact2 ID"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_contacts_contact2_language
+msgid "Advertiser Contact2 Language"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_contacts_contact2_name
+msgid "Advertiser Contact2 Name"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_contacts_contact2_phone
+msgid "Advertiser Contact2 Phone"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_contacts_contact2_type
+msgid "Advertiser Contact2 Type"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_name
+msgid "Advertiser Name"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__customer_id
+msgid "Advertiser Number"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_filter
+msgid "Advertising  Issue Name"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__placement_adclass
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_filter
+msgid "Advertising Class Name"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__placement_description
+msgid "Advertising Description"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__paper_issuenumber
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_filter
+msgid "Advertising Issue Name"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__adstatus
+msgid "Advertising Status"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__paper_name
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_filter
+msgid "Advertising Title Name"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__adkind
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_filter
+msgid "Advertising Type"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__agency
+msgid "Agency"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_contacts_contact_email
+msgid "Agency Contact Email"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_contacts_contact_language
+msgid "Agency Contact Language"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_contacts_contact_name
+msgid "Agency Contact Name"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_contacts_contact_id
+msgid "Agency Contact Number"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_contacts_contact_phone
+msgid "Agency Contact Phone"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_contacts_contact_type
+msgid "Agency Contact Type"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_contacts_contact2_email
+msgid "Agency Contact2 Email"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_contacts_contact2_language
+msgid "Agency Contact2 Language"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_contacts_contact2_name
+msgid "Agency Contact2 Name"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_contacts_contact2_id
+msgid "Agency Contact2 Number"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_contacts_contact2_phone
+msgid "Agency Contact2 Phone"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_contacts_contact2_type
+msgid "Agency Contact2 Type"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_email
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_phone
+msgid "Agency Email"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_language
+msgid "Agency Language"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_name
+msgid "Agency Name"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__media_agency_code
+msgid "Agency Number"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order__order_ad4all_allow
+msgid "Allow to Ad4all"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.sale_order_to_ad4all_view
+msgid "Cancel"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__cancelled
+msgid "Cancelled"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_ad4all_config__create_uid
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_ad4all__create_uid
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_ad4all_config__create_date
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_ad4all__create_date
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_tree
+msgid "Creation Date"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__creative_agency_contacts_contact_email
+msgid "Creative Contact Email"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__creative_agency_contacts_contact_language
+msgid "Creative Contact Language"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__creative_agency_contacts_contact_name
+msgid "Creative Contact Name"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__creative_agency_contacts_contact_id
+msgid "Creative Contact Number"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__creative_agency_contacts_contact_phone
+msgid "Creative Contact Phone"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__creative_agency_contacts_contact_type
+msgid "Creative Contact Type"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__creative_agency_email
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__creative_agency_phone
+msgid "Creative Email"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__creative_agency_language
+msgid "Creative Language"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__creative_agency_name
+msgid "Creative Name"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__creative_agency_code
+msgid "Creative Number"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_filter
+msgid "Date"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_line__date_sent_ad4all
+msgid "Datetime Sent to Ad4all"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,help:ad4all_interface.field_sale_order_line__date_sent_ad4all
+msgid "Datetime on which sales order is sent to Ad4all."
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__paper_deadline
+msgid "Deadline Date"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_ad4all_config__deliverer
+msgid "Deliverer"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_ad4all_config__display_name
+#: model:ir.model.fields,field_description:ad4all_interface.field_product_category__display_name
+#: model:ir.model.fields,field_description:ad4all_interface.field_product_template__display_name
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order__display_name
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_ad4all__display_name
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_line__display_name
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__display_name
+msgid "Display Name"
+msgstr "Schermnaam"
+
+#. module: ad4all_interface
+#: model:ir.model.fields.selection,name:ad4all_interface.selection__soline_from_odooto_ad4all__status__draft
+msgid "Draft"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields.selection,name:ad4all_interface.selection__soline_from_odooto_ad4all__status__failed
+msgid "Failed"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_filter
+msgid "Group By"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__herplaats
+msgid "Herplaatsing"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_ad4all_config__id
+#: model:ir.model.fields,field_description:ad4all_interface.field_product_category__id
+#: model:ir.model.fields,field_description:ad4all_interface.field_product_template__id
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order__id
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_ad4all__id
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_line__id
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__id
+msgid "ID"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__paper_pub_date
+msgid "Issue Date"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_ad4all_config____last_update
+#: model:ir.model.fields,field_description:ad4all_interface.field_product_category____last_update
+#: model:ir.model.fields,field_description:ad4all_interface.field_product_template____last_update
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order____last_update
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_ad4all____last_update
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_line____last_update
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all____last_update
+msgid "Last Modified on"
+msgstr "Laatst gewijzigd op"
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_ad4all_config__write_uid
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_ad4all__write_uid
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_ad4all_config__write_date
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_ad4all__write_date
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__advert_id
+msgid "Line ID"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__placement_position
+msgid "Mapping Remarks"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order__material_contact_person
+msgid "Material Contact Person"
+msgstr "Contactpersoon materiaal"
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_line__material_id
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__mat_id
+msgid "Material ID"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__placement_notice
+msgid "Material Remarks"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__materialtype
+msgid "Material Type"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_line__mig_advert_id
+msgid "Migrated Line ID"
+msgstr "Gemigreerd orderregel ID"
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_line__mig_mat_id
+msgid "Migrated Material ID"
+msgstr "Gemigreerd materiaal ID"
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order__mig_adgr_orde_id
+msgid "Migrated Sale Order ID"
+msgstr "Gemigreerd order ID"
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_line__no_copy_chase
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__no_copy_chase
+msgid "No Copy Chasing"
+msgstr "Niet manen"
+
+#. module: ad4all_interface
+#: model:ir.model.fields.selection,name:ad4all_interface.selection__soline_from_odooto_ad4all__status__na
+msgid "Not Applicable"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields.selection,name:ad4all_interface.selection__product_category__ad4all_material_type__online
+msgid "Online"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__order_name
+msgid "Order Description"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__sale_line_id
+msgid "Order Line Reference"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_line__ad4all_sent
+msgid "Order Line sent to Ad4all"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__reference
+msgid "Order Reference"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__ad4all_sent
+msgid "Order successfully sent to Ad4all"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__format_height
+msgid "Page Height mm"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__format_width
+msgid "Page Width mm"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_ad4all_config__password
+msgid "Password"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_ad4all_config__portal
+msgid "Portal"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields.selection,name:ad4all_interface.selection__product_category__ad4all_material_type__print
+msgid "Print"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__format_trim_height
+msgid "Print Height mm"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__format_trim_width
+msgid "Print Width mm"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model,name:ad4all_interface.model_product_category
+msgid "Product Category"
+msgstr "Productcategorie"
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__format_id
+msgid "Product ID"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model,name:ad4all_interface.model_product_template
+msgid "Product Template"
+msgstr "Productsjabloon"
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_line__publog_id
+msgid "Publog"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_line__recurring
+msgid "Recurring Advertisement"
+msgstr "Herplaatsing"
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_line__recurring_id
+msgid "Recurring Order Line"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__reminder
+msgid "Reminder"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_form
+msgid "Reply Message"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__reply_message
+msgid "Reply message"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_form
+msgid "SO to Ad4all"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_form
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_tree
+msgid "SO to Ad4all Line"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_form
+msgid "Sale Order :"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__adgr_orde_id
+msgid "Sale Order ID"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.actions.act_window,name:ad4all_interface.action_sale_order_ad4all
+msgid "Sale Orders to Ad4all"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model,name:ad4all_interface.model_sale_order
+msgid "Sales Order"
+msgstr "Verkooporder"
+
+#. module: ad4all_interface
+#: model:ir.model,name:ad4all_interface.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Verkooporderregel"
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_filter
+msgid "Search Ad4all Line Updates"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.sale_order_to_ad4all_view
+msgid ""
+"Selected Sales Orders will be sent to Ad4all if order_ad4all_allowed and/or "
+"ad4all_sent are True."
+msgstr ""
+
+#. module: ad4all_interface
+#: code:addons/ad4all_interface/wizard/sale_order_state.py:0
+#, python-format
+msgid ""
+"Selected order(s) cannot be updated to Ad4all as they are not in 'Sale', or "
+"'Done' state or they are not Advertising Orders."
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_adv_order_line_form
+msgid "Send Order To Portal"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_advertising_sales_order_line_filter
+msgid "Sent to Ad4all"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__seq_adgr_orde_id
+msgid "Seq Sale Order ID"
+msgstr "Ad4all Order Code"
+
+#. module: ad4all_interface
+#: model:ir.model.fields.selection,name:ad4all_interface.selection__product_category__ad4all_material_type__deel
+msgid "Share"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model,name:ad4all_interface.model_soline_from_odooto_ad4all
+msgid "SoLine Ad4all"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__format_spread
+msgid "Spread"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_product_product__spread
+#: model:ir.model.fields,field_description:ad4all_interface.field_product_template__spread
+msgid "Spread: 2/1"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.ui.menu,name:ad4all_interface.menu_action_staged_line_ad4all
+msgid "Staged Ad4all Order Line"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__status
+msgid "Status"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_filter
+msgid "Success"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields.selection,name:ad4all_interface.selection__soline_from_odooto_ad4all__status__successful
+msgid "Successful"
+msgstr ""
+
+#. module: ad4all_interface
+#: code:addons/ad4all_interface/models/order_ad4all.py:0
+#, python-format
+msgid "This Sale Order already has been succesfully sent to Ad4all."
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,help:ad4all_interface.field_ad4all_config__host
+msgid "This is the URL that the system can be reached at."
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,help:ad4all_interface.field_ad4all_config__password
+msgid ""
+"This is the password that is used for authenticating to this system, if "
+"applicable."
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,help:ad4all_interface.field_ad4all_config__username
+msgid ""
+"This is the username that is used for authenticating to this system, if "
+"applicable."
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__paper_id
+msgid "Title Id"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_ad4all_config__host
+msgid "URL"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.sale_order_to_ad4all_view
+msgid "Update Orders Ad4all"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.sale_order_to_ad4all_view
+msgid "Update Sale Orders to Ad4all"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model,name:ad4all_interface.model_sale_order_ad4all
+msgid "Update the selected sale orders in Ad4all"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__sales_mail
+msgid "User Email"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__sales
+msgid "User Name"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_ad4all_config__username
+msgid "Username"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_sale_order_line__ad4all_write_after_sent
+msgid "Written after transferred to Ad4all"
+msgstr ""
+
+#. module: ad4all_interface
+#: model_terms:ir.ui.view,arch_db:ad4all_interface.view_sofrom_odooto_ad4all_line_form
+msgid "XML Message"
+msgstr ""
+
+#. module: ad4all_interface
+#: model:ir.model.fields,field_description:ad4all_interface.field_soline_from_odooto_ad4all__json_message
+msgid "XML message"
+msgstr ""
+
+#. module: ad4all_interface
+#: code:addons/ad4all_interface/models/sale_advertising.py:0
+#, python-format
+msgid ""
+"You can not remove a sale order line after it has been sent to Ad4all.\n"
+"Discard changes and try setting the quantity to 0."
+msgstr ""
+
+#. module: ad4all_interface
+#: code:addons/ad4all_interface/models/sale_advertising.py:0
+#: code:addons/ad4all_interface/models/sale_advertising.py:0
+#, python-format
+msgid ""
+"You have to fill in a material contact person.\n"
+"Be aware, that the contact must have email and phone filled in."
+msgstr ""

@@ -1,0 +1,7 @@
+<odoo>
+  <record id="sale_advertising_order.partner_ad_agency_contact" model="res.partner">
+    <field name="ref">ref</field>
+    <field name="email">test@test.com</field>
+    <field name="phone">123456</field>
+  </record>
+</odoo>

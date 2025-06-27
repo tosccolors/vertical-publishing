@@ -1,0 +1,18 @@
+<odoo>
+  <record id="ad4all_config_without_company" model="ad4all.config">
+    <field name="host">http://host</field>
+    <field name="username">user</field>
+    <field name="password">pass</field>
+    <field name="portal">portal without company</field>
+    <field name="deliverer">deliverer without company</field>
+    <field name="company_id" eval="False" />
+  </record>
+  <record id="ad4all_config_with_company" model="ad4all.config">
+    <field name="host">http://host</field>
+    <field name="username">user</field>
+    <field name="password">pass</field>
+    <field name="portal">portal with company</field>
+    <field name="deliverer">deliverer with company</field>
+    <field name="company_id" ref="base.main_company" />
+  </record>
+</odoo>
