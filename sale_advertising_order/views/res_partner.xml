@@ -55,4 +55,37 @@
       </xpath>
     </field>
   </record>
+
+  <record id="crm_lead_partner_kanban_view" model="ir.ui.view">
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="sale.crm_lead_partner_kanban_view" />
+    <field name="arch" type="xml">
+      <field name="sale_order_count" position="after">
+        <field
+          name="sao_order_count"
+          groups="sale_advertising_order.group_ads_sales_user"
+        />
+      </field>
+      <xpath expr="//a[@data-name='action_view_sale_order']" position="after">
+        <a
+          t-if="record.sao_order_count.value > 0"
+          data-type="object"
+          data-name="action_view_sao_order"
+          groups="sale_advertising_order.group_ads_sales_user"
+          href="#"
+          class="oe_kanban_action oe_kanban_action_a me-1"
+        >
+          <span class="badge rounded-pill">
+            <i
+              class="fa fa-fw fa-book"
+              role="img"
+              aria-label="Ad Sales"
+              title="Ad Sales"
+            />
+            <t t-out="record.sao_order_count.value" />
+          </span>
+        </a>
+      </xpath>
+    </field>
+  </record>
 </odoo>

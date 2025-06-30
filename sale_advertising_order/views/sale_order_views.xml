@@ -575,6 +575,7 @@
         <!--                    <field name="opportunity_subject" string="Subject"/>-->
         <!--      deprecated          <field name="pub_cust_domain" invisible="1"/>-->
         <field name="published_customer" />
+        <field name="partner_id" />
         <field name="advertising_agency" />
         <!--                    <field name="partner_acc_mgr"/>-->
         <field name="user_id" optional="show" widget="many2one_avatar_user" />
