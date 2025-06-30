@@ -244,6 +244,26 @@
             </field>
         </record>
 
+        <record id="sale.crm_lead_partner_kanban_view" model="ir.ui.view">
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>
+        </record>
+
+        <record id="crm_lead_partner_kanban_view" model="ir.ui.view">
+            <field name="model">res.partner</field>
+            <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_ads_sales_user'))]"/>
+            <field name="inherit_id" ref="sale.crm_lead_partner_kanban_view" />
+            <field name="arch" type="xml">
+                <field name="sale_order_count" position="after">
+                    <field name="sao_order_count" />
+                </field>
+                <xpath expr="//t[@t-esc='record.sale_order_count.value']/.." position="after">
+                    <span t-if="record.sao_order_count.value > 0" class="badge badge-pill">
+                        <i class="fa fa-fw fa-book" role="img" aria-label="Ad Sales" title="Ad Sales"/><t t-esc="record.sao_order_count.value"/>
+                    </span>
+                </xpath>
+            </field>
+        </record>
+
         <!--
                 Customer (account)
                 extended
