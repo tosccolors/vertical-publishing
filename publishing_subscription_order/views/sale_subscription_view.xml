@@ -836,9 +836,6 @@
                 <xpath expr="//page/field[@name='order_line']/form/group/group/field[@name='product_template_id']" position="attributes">
                     <attribute name="domain">[('categ_id','=', ad_class),('subscription_product','=',False)]</attribute>
                 </xpath>
-                <!--<xpath expr="//page/field[@name='order_line']/form/group/group/field[@name='title']" position="attributes">
-                    <attribute name="domain">[('parent_id','=', False),('medium','child_of', medium), ('subscription_title','=', False)]</attribute>
-                </xpath>-->
             </field>
         </record>
 
@@ -853,9 +850,6 @@
                 <xpath expr="//field[@name='product_template_id']" position="attributes">
                     <attribute name="domain">[('categ_id','=', ad_class),('subscription_product','=',False)]</attribute>
                 </xpath>
-                <!--<xpath expr="//field[@name='title']" position="attributes">-->
-                    <!--<attribute name="domain">[('parent_id','=', False),('medium','child_of', medium), ('subscription_title','=', False)]</attribute>-->
-                <!--</xpath>-->
             </field>
         </record>
 
