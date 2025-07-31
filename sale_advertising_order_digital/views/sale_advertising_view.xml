@@ -9,8 +9,7 @@
         <field name="inherit_id" ref="sale_advertising_order.sale_advertising_issue_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='medium']" position="after">
-                <field name="digital"/>
-                <!--<field name="adv_class_issue_id" options='{"no_open": True, "no_create": True}'/>-->
+                <field name="digital" />
             </xpath>
         </field>
     </record>
@@ -25,15 +24,13 @@
                 <field name="ad_class_digital" invisible="1"/>
                 <field name="adv_class_issue_ids" invisible="1" widget="many2many_tags"/>
             </field>
-<!--            <field name="adv_issue" position="attributes">-->
-<!--                <attribute name="domain">['&amp;', ('parent_id','!=', False), '&amp;', ('parent_id','=', title),('digital','=', ad_class_digital), '|','|',('deadline','&gt;=', deadline_offset), ('deadline','=', False), ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')), ('id', 'in', adv_class_issue_ids)]</attribute>-->
-<!--            </field>-->
             <field name="adv_issue_ids" position="attributes">
                 <attribute name="domain">[('parent_id','in', title_ids),('digital','=', ad_class_digital), '|','|',('deadline','&gt;=', deadline_offset), ('deadline','=', False), ('issue_date','&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')), ('id', 'in', adv_class_issue_ids)]</attribute>
             </field>
             <field name="deadline" position="after">
                 <field name="show_issue_date_filter" invisible="1"/>
-                <field name="issue_date_filter" attrs="{'invisible':[('show_issue_date_filter', '=', False), '|', ('title', '=', False), ('title_ids', '=', [])]}"/>
+                <field name="issue_date_filter"
+                       attrs="{'invisible':[('show_issue_date_filter', '=', False), '|', ('title', '=', False), ('title_ids', '=', [])], 'readonly': [('invoice_status', '=', 'invoiced')]}"/>
             </field>
         </field>
     </record>
@@ -46,9 +43,6 @@
         <field name="priority" eval="21"/>
         <field name="groups_id" eval="[(4, ref('sale_advertising_order.group_no_deadline_check'))]"/>
         <field name="arch" type="xml">
-<!--            <field name="adv_issue" position="attributes">-->
-<!--                <attribute name="domain">['&amp;', ('parent_id','!=', False), '&amp;', ('parent_id','=', title),('digital','=', ad_class_digital),  ('id', 'in', adv_class_issue_ids)]</attribute>-->
-<!--            </field>-->
             <field name="adv_issue_ids" position="attributes">
                 <attribute name="domain">[('parent_id','in', title_ids),('digital','=', ad_class_digital), ('id', 'in', adv_class_issue_ids)]</attribute>
             </field>
