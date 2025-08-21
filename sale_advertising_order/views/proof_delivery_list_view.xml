@@ -6,7 +6,7 @@
             <field name="name">proof.number.delivery.list.tree</field>
             <field name="model">proof.number.delivery.list</field>
             <field name="arch" type="xml">
-                <tree string="Proof Delivery Lists" create="false" edit="false" delete="false">
+                <tree string="Proof Delivery Lists" delete="false">
                         <field name="line_id" groups="base.group_no_one" context="{'form_view_ref': 'sale_advertising_order.view_adv_order_line_form'}"/>
                         <field name="title" />
                         <field name="adv_issue" />
