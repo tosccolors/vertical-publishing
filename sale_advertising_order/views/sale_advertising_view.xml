@@ -156,8 +156,7 @@
                                                    attrs="{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')], 'readonly': [('invoice_status', '=', 'invoiced')]}"/>
                                             <field name="deadline_offset" invisible="1" />
                                             <field name="deadline_passed" invisible="1" />
-                                            <field name="deadline" invisible="0"
-                                                   attrs="{'readonly': [('invoice_status', '=', 'invoiced')]}"/>
+                                            <field name="deadline" readonly="1"/>
                                             <field name="adv_issue_ids" string="Advertising Issue(s)"
                                                    widget="many2many_tags"
                                                    attrs="{'readonly': ['|',('issue_product_ids','!=', []), ('invoice_status', '=', 'invoiced')]}"
@@ -975,7 +974,7 @@
                                    attrs="{'invisible':[('date_type','!=','validity')], 'required':[('date_type','=','validity')], 'readonly': [('invoice_status', '=', 'invoiced')]}"/>
                             <field name="deadline_offset" invisible="1" groups="base.group_no_one"/>
                             <field name="deadline_passed" invisible="1" />
-                            <field name="deadline" invisible="0" attrs="{'readonly': [('invoice_status', '=', 'invoiced')]}"/>
+                            <field name="deadline" readonly="1"/>
                              <field name="adv_issue_ids" string="Advertising Issue(s)"
                                    widget="many2many_tags"
                                    attrs="{'readonly': ['|', ('issue_product_ids','!=', []), ('invoice_status', '=', 'invoiced')]}"
@@ -1318,7 +1317,7 @@
 							<field name="analytic_account_id" string="Related Analytic Account"/>
 							<field name="issue_date" string="Issue Date"/>
                             <field name="issue_week_number" string="Week Number"/>
-                            <field name="deadline" string="Deadline"/>
+                            <field name="deadline" string="Deadline" readonly="1"/>
 							<field name="default_note" string="Default Note" />
                             <field name="active" widget="boolean_toggle"/>
                         </group>
