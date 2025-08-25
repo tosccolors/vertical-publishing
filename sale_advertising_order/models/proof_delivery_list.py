@@ -52,6 +52,47 @@ class ProofNumberDeliveryList(models.Model):
 
     user_id = fields.Many2one('res.users', string='Salesperson')
 
+    @api.model
+    def _select_SOL1(self):
+        return '''
+            SELECT  sol.id as id
+                   , sol.proof_number_payer_id as partner
+                   , sol.title as title
+                   , sol.adv_issue as adv_issue
+                   , sol.issue_date as issue_date
+                   , sol.salesman_id as user_id
+                '''
+
+
+    @api.model
+    def _select_SOL2(self):
+        return '''
+            SELECT  ppl.line_id as id
+                  , ppl.partner_id as partner
+                  , sol.title as title
+                  , sol.adv_issue as adv_issue
+                  , sol.issue_date as issue_date
+                  , sol.salesman_id as user_id
+                '''
+
+
+    @api.model
+    def _select(self):
+        return '''
+            SELECT row_number() OVER () AS id
+                 , q.id as line_id
+                 , q.partner as proof_number_payer
+                 , min(q.title) as title
+                 , min(q.adv_issue) as adv_issue
+                 , min(q.issue_date) as issue_date
+                 , q.user_id
+                '''
+
+
+    @api.model
+    def _groupby(self):
+        return ''' q.partner, q.id, q.user_id
+        '''
 
     def init(self):
         """ """
@@ -60,10 +101,7 @@ class ProofNumberDeliveryList(models.Model):
                 CREATE OR REPLACE VIEW proof_number_delivery_list AS (   
                                     
                    WITH Q11 AS(
-                            SELECT
-                                sol.id as id,sol.proof_number_payer_id as partner , sol.title as title, sol.adv_issue as adv_issue, sol.issue_date as issue_date
-                                , sol.salesman_id as user_id
-                                
+                            %s                                
                             FROM
                                 sale_order_line as sol
                             WHERE
@@ -71,21 +109,18 @@ class ProofNumberDeliveryList(models.Model):
 
                             UNION ALL
 
-                            SELECT
-                                ppl.line_id as id, ppl.partner_id as partner, sol.title as title, sol.adv_issue as adv_issue, sol.issue_date as issue_date
-                                , sol.salesman_id as user_id
+                            %s
                             FROM
                                 partner_line_proof_rel as ppl join sale_order_line as sol on (sol.id = ppl.line_id)
                             WHERE
                                 sol.advertising = TRUE AND sol.state IN ('sale','done')
                     )
-    
-                  SELECT 
-                      row_number() OVER () AS id, q.id as line_id, q.partner as proof_number_payer, min(q.title) as title, min(q.adv_issue) as adv_issue, min(q.issue_date) as issue_date, q.user_id
+
+                  %s
                   FROM Q11 as q
-                  GROUP BY q.partner, q.id, q.user_id
+                  GROUP BY %s
                 )
-        """)
+        """%(self._select_SOL1(), self._select_SOL2(), self._select(), self._groupby()))
         
         
     

@@ -172,6 +172,16 @@ msgid "<strong>Quotation Date:</strong>"
 msgstr "<strong>Offertedatum:</strong>"
 
 #. module: sale_advertising_order
+#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
+msgid "Quotation Date"
+msgstr "Offertedatum"
+
+#. module: sale_advertising_order
+#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_order_form_advertising
+msgid "Order Date"
+msgstr "Orderdatum"
+
+#. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.report_invoice_document_sao
 msgid "<strong>Receipt Date:</strong>"
 msgstr "<strong>Ontvangstdatum:</strong>"
