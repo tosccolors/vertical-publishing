@@ -3238,3 +3238,38 @@ msgstr "titel"
 #, python-format
 msgid "You are adding an advertising issue after deadline. Are you sure about this?"
 msgstr "Je boekt een editie in waarvan de deadline reeds verstreken is. Weet je het zeker?"
+
+
+#. module: sale_advertising_order
+#: model:ir.actions.act_window,name:sale_advertising_order.action_update_orderline
+#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_update_orderline_form
+msgid "Update Sale Orders"
+msgstr "Update Verkooporders"
+
+#. module: sale_advertising_order
+#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_update_orderline_form
+msgid "Update the new Issue Date for the following Sale Order Line(s)."
+msgstr "Update de nieuwe editiedatum voor de volgende verkooporderregels."
+
+#. module: sale_advertising_order
+#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_update_orderline_form
+msgid "Note: All records having Issue date today and later than will be fetched."
+msgstr "Opmerking: Alle regels met een editiedatum groter of gelijk aan vandaag worden opgehaald."
+
+
+#. module: sale_advertising_order
+#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_update_orderline_form
+msgid "Found"
+msgstr "Gevonden"
+
+
+#. module: sale_advertising_order
+#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_update_orderline_form
+msgid "Sale Order Line(s)."
+msgstr "Verkooporderregels"
+
+#. module: sale_advertising_order
+#: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_update_orderline_form
+msgid "No records found!"
+msgstr "Geen regels gevonden"
+
