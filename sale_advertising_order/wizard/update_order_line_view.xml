@@ -10,15 +10,26 @@
             <field name="model">update.order.line</field>
             <field name="arch" type="xml">
                 <form string="Update Sale Orders">
-                    <p class="oe_grey">
-                        Update the new Issue Date for the following Sale Order Line(s)
+                    <p>
+                        Update the new Issue Date for the following Sale Order Line(s).
+                    </p>
+                    <p>
+                        Note: All records having Issue date today and later than will be fetched.
                     </p>
                     <group>
                         <field name='issue_id' invisible="1"/>
                         <field name='issue_date' readonly="1" force_save="1"/>
+                        <field name='lines_domain' invisible="1"/>
                     </group>
+                    <p class="oe_grey" attrs="{'invisible': [('line_count','=', 0)]}">
+                        Found <field name='line_count' class="oe_inline" readonly="1"/> Sale Order Line(s).
+                    </p>
+                    <p class="oe_red" attrs="{'invisible': [('line_count','!=', 0)]}">
+                        No records found!
+                    </p>
                     <group>
-                        <field name="line_ids" nolabel="1"
+                        <field name="line_ids" nolabel="1" domain="lines_domain"
+                               attrs="{'invisible': [('line_count','=', 0)]}"
                                context="{'tree_view_ref': 'sale_advertising_order.view_adv_order_line_tree'}"/>
                     </group>
                     <footer>
