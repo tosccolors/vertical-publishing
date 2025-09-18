@@ -140,6 +140,22 @@ class AdvertisingIssue(models.Model):
         if self.ids:
             self.to_update_issdt = True
 
+    def write(self, vals):
+        result = super().write(vals)
+
+        if 'issue_date' in vals:
+            lines = self.env['sale.order.line'].search([
+                ('issue_date', '>=', fields.Date.today()),
+                ('adv_issue', 'in', self.ids),
+            ])
+            for line in lines:
+                line._compute_Issuedt()
+                onchange = line.onchange_date_type()
+                vals = (onchange or {}).get('vals')
+                if vals:
+                    line.write(vals)
+
+        return result
 
 class AdvertisingIssueAvailability(models.Model):
     _name = "sale.advertising.available"

@@ -1157,6 +1157,7 @@ class SaleOrderLine(models.Model):
                 if self.adv_issue_ids:
                     vals['adv_issue_ids'] = [(6,0,[])]
             elif self.date_type == 'issue_date':
+                self.to_date = False
                 self.from_date = self.issue_date
                 self.to_date = self.issue_date
                 # if self.dates:
