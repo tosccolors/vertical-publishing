@@ -238,7 +238,7 @@ class SaleOrder(models.Model):
 
     def _check_archivedIssue(self):
         "Check for any archived Adv Issues used in Order"
-        for o in self.filtered('advertising'):
+        for o in self.filtered("advertising"):
             archived = any(not ol.adv_issue.active for ol in o.order_line)
             if archived:
                 raise UserError(
@@ -251,7 +251,7 @@ class SaleOrder(models.Model):
 
     def _check_archivedProduct(self):
         "Check for any archived products used in Order"
-        for o in self.filtered('advertising'):
+        for o in self.filtered("advertising"):
             archived = any(not ol.product_id.active for ol in o.order_line)
             if archived:
                 raise UserError(
