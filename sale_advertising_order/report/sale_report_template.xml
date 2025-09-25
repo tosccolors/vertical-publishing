@@ -10,9 +10,9 @@
             <table class="table table-condensed">
                 <thead>
                     <tr>
-                        <th width="10%">Date</th>
+                        <th width="15%">Date</th>
                         <t><th width="15%">Advertising issue</th></t>
-                        <t><th width="10%">Deadline</th></t>
+                        <t><th width="15%">Deadline</th></t>
                         <th width="10%">Product</th>
                         <th width="10%" class="text-right">Volume</th>
                         <th width="10%" t-if="doc.display_discount_to_customer" class="text-right">Unit price</th>
@@ -27,7 +27,8 @@
                     <t t-foreach="doc.order_line" t-as="l">
                         <tr>
                             <td t-if="l.ad_class.date_type == 'validity'">
-                                <span t-field="l.from_date"/><span> - </span><span t-field="l.to_date"/>
+                                <span t-field="l.from_date"/><span> - </span>
+                                <span t-field="l.to_date"/>
                             </td>
                             <td t-if="l.ad_class.date_type != 'validity'">
                                 <span t-field="l.issue_date"/></td>
