@@ -1281,7 +1281,7 @@
                         <field name="state" widget="statusbar" statusbar_visible="open,close" clickable="True"/>
                     </header>
                     <div class="alert alert-info" role="alert" style="margin-bottom:0px;" attrs="{'invisible': [('to_update_issdt', '=', False)]}">
-                        You have changed <bold>Issue Date !</bold> If you wish to update the same in existing Sales Order(s).
+                        You have changed the issue date. If you wish to send an update to Ad4all for the orderlines containing this issue:
                         <button name="%(action_update_orderline)d" string="Click here" type="action"/>
                     </div>
 
