@@ -3,7 +3,7 @@
     <root>
       <advert_id t-out="line.advert_id" />
       <id t-out="line.mat_id" />
-      <adgr_orde_id t-out="line.seq_adgr_orde_id" />
+      <adgr_orde_id t-out="line.sale_line_id.order_id.name" />
       <adkind t-out="line.adkind" />
       <adstatus t-out="line.adstatus" />
       <cancelled t-out="'Yes' if line.cancelled else 'No'" />
