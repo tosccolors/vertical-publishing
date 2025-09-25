@@ -3,8 +3,9 @@
 
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 
+import pytz
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.float_utils import float_is_zero, float_round
@@ -203,10 +204,14 @@ class SaleOrderLine(models.Model):
                 line.deadline = line.adv_issue.deadline
             elif line.date_type == "validity" and line.from_date:
                 deadline_dt = (
-                    datetime.strptime(str(line.from_date), "%Y-%m-%d")
-                    + timedelta(hours=3, minutes=30)
+                    datetime.combine(line.from_date, time(hour=11))
                 ) - timedelta(days=14)
-                line.deadline = deadline_dt
+                line.deadline = (
+                    pytz.timezone(user.tz)
+                    .localize(deadline_dt)
+                    .astimezone(pytz.utc)
+                    .replace(tzinfo=None)
+                )
             if line.ad_class:
                 if not user.has_group("sale_advertising_order.group_no_deadline_check"):
                     dt_offset = timedelta(hours=line.ad_class.deadline_offset or 0)
