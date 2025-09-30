@@ -86,7 +86,7 @@ class SaleOrder(models.Model):
             })
 
     @api.depends('state', 'order_line.invoice_status')
-    def _get_invoiced(self):
+    def _get_invoice_status(self):
         """
         Compute the invoice status of a SO. Possible statuses:
         - no: if the SO is not in status 'sale' or 'done', we consider that there is nothing to
@@ -100,7 +100,7 @@ class SaleOrder(models.Model):
         for possible refunds created directly from existing invoices. This is necessary since such a
         refund is not directly linked to the SO.
         """
-        super(SaleOrder, self)._get_invoiced()
+        super(SaleOrder, self)._get_invoice_status()
         for order in self.filtered('advertising'):
             line_invoice_status = [line.invoice_status for line in order.order_line]
 
@@ -136,7 +136,8 @@ class SaleOrder(models.Model):
         # ('approved2', 'Approved by Traffic'), -- deprecated
     invoice_status = fields.Selection(selection_add=[
         ('not invoiced', 'Nothing Invoiced Yet')
-        ])
+        ], string='Invoice Status', compute='_get_invoice_status', store=True, readonly=True)
+
     published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('is_customer', '=', True)])
     advertising_agency = fields.Many2one('res.partner', 'Advertising Agency', domain=[('is_customer', '=', True)])
     nett_nett = fields.Boolean('Netto Netto Deal', default=False)

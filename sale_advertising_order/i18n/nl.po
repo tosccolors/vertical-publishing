@@ -3262,7 +3262,6 @@ msgstr "Opmerking: Alle regels met een editiedatum groter of gelijk aan vandaag 
 msgid "Found"
 msgstr "Gevonden"
 
-
 #. module: sale_advertising_order
 #: model_terms:ir.ui.view,arch_db:sale_advertising_order.view_update_orderline_form
 msgid "Sale Order Line(s)."
@@ -3273,3 +3272,15 @@ msgstr "Verkooporderregels"
 msgid "No records found!"
 msgstr "Geen regels gevonden"
 
+#. module: sale_advertising_order
+#: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_issue_form
+msgid ""
+"You have changed the issue date. If you wish to send an update to Ad4all for"
+" the orderlines containing this issue:"
+msgstr ""
+"Je hebt de editiedatum gewijzigd. Om een update naar Ad4all te versturen voor de orderregels die deze editie bevatten:"
+
+#. module: sale_advertising_order
+#: model_terms:ir.ui.view,arch_db:sale_advertising_order.sale_advertising_issue_form
+msgid "Click here"
+msgstr "Klik hier"
