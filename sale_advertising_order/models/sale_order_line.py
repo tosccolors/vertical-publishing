@@ -491,13 +491,18 @@ class SaleOrderLine(models.Model):
 
         # Unchanged
         if self._origin.medium == self.medium:
-            data = {'ad_class': [('id', 'child_of', self.medium.id), ('id', '!=', self.medium.id)]}
-            return {'domain': data}
+            data = {
+                "ad_class": [
+                    ("id", "child_of", self.medium.id),
+                    ("id", "!=", self.medium.id),
+                ]
+            }
+            return {"domain": data}
 
         # Reset
         if not self.medium:
-            vals['ad_class'] = False
-            data = {'ad_class': []}
+            vals["ad_class"] = False
+            data = {"ad_class": []}
 
         if self.medium:
             child_id = [(x.id != self.medium.id) and x.id for x in self.medium.child_id]
@@ -590,7 +595,6 @@ class SaleOrderLine(models.Model):
                 self.adv_issue_ids = [(6, 0, adv_issues.ids)]
                 self.issue_product_ids = [(6, 0, [])]
             self.titles_issues_products_price()
-
 
     @api.onchange("product_template_id")
     def titles_issues_products_price(self):  # noqa: C901
@@ -790,9 +794,8 @@ class SaleOrderLine(models.Model):
                             "multi_line": False,
                         }
                     )
-        elif not self.product_template_id: # Fallback
+        elif not self.product_template_id:  # Fallback
             self.product_id = False
-
 
     @api.onchange("product_id")
     def product_id_change(self):

@@ -21,7 +21,7 @@
 ##############################################################################
 {
     "name": "Sale Advertising Order",
-    "version": "16.0.11.0",
+    "version": "16.0.11.0.0",
     "category": "Sale",
     "author": "Deepa Venkatesh (DK), " "Willem Hulsof, The Open Source Company (TOSC)",
     "website": "https://github.com/OCA/l10n-netherlands",
@@ -56,6 +56,7 @@
         "views/res_config_views.xml",
         "views/res_partner.xml",
         "views/product_views.xml",
+        "views/ir_qweb_widget_templates.xml",
         "views/issue_views.xml",
         "views/sale_order_views.xml",
         "views/account_invoice_views.xml",
