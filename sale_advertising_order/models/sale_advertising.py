@@ -536,6 +536,17 @@ class SaleOrder(models.Model):
 
     
     def write(self, vals):
+
+        traffic_user = self.env.ref('sale_advertising_order.group_ads_traffic_user')
+        advertising_type = self.env.ref('sale_advertising_order.ads_sale_type')
+        advertising_orders = self.filtered(lambda x: x.type_id == advertising_type)
+        if traffic_user not in self.env.user.groups_id and 'sale' in advertising_orders.mapped('state') and not all(
+                # this check is necessary because above code writes self.invoice_state in the
+                # computation function of invoice_count
+                self._fields[field_name].compute for field_name in vals
+        ):
+            raise UserError(_('Only members of group %s can do that') % traffic_user.name)
+
         result = super(SaleOrder, self).write(vals)
 
         # orders = self.filtered(lambda s: s.state in ['sale'] and s.advertising and not s.env.context.get('no_checks'))
