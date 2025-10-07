@@ -100,7 +100,6 @@
     <field name="arch" type="xml">
       <field name="adv_issue_ids" position="after">
         <field name="advert_id" />
-        <field name="material_id" />
       </field>
     </field>
   </record>
@@ -112,8 +111,6 @@
     <field name="arch" type="xml">
       <xpath expr="//field[@name='id']" position="after">
         <field name="advert_id" />
-        <field name="material_id" />
-        <field name="mig_mat_id" optional="hide" />
         <field name="publog_id" optional="hide" />
       </xpath>
     </field>

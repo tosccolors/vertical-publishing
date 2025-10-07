@@ -17,12 +17,7 @@ class SaleOrderLine(models.Model):
         store=True,
         copy=False,
     )
-    recurring = fields.Boolean("Recurring Advertisement")
     no_copy_chase = fields.Boolean("No Copy Chasing", default=False)
-    recurring_id = fields.Many2one(
-        "sale.order.line",
-        string="Recurring Order Line",
-    )
 
     date_sent_ad4all = fields.Datetime(
         "Datetime Sent to Ad4all",
@@ -42,11 +37,6 @@ class SaleOrderLine(models.Model):
         string="Ad4all to be updated", default=False, copy=False
     )
     publog_id = fields.Many2one("sale.order.line.ad4all", copy=False)
-    material_id = fields.Integer(
-        compute="_compute_material_id", store=True, string="Material ID"
-    )
-    mig_advert_id = fields.Integer(string="Migrated Line ID", copy=False)
-    mig_mat_id = fields.Integer(string="Migrated Material ID", copy=False)
     advert_id = fields.Integer(
         compute="_compute_advert_id", store=True, string="Line ID"
     )
@@ -76,24 +66,7 @@ class SaleOrderLine(models.Model):
                     order.date_sent_ad4all < order.write_date
                 )
 
-    @api.depends("state", "line_ad4all_allow", "recurring_id", "mig_mat_id")
-    def _compute_material_id(self):
-        for line in self:
-            MaterialID = False
-
-            if line.advertising:
-                if line.mig_mat_id:  # Migrated
-                    MaterialID = line.mig_mat_id
-
-                elif line.recurring_id:  # Recurring
-                    MaterialID = line.recurring_id.material_id
-
-                else:  # Set Seq
-                    MaterialID = line.seq_mat_id
-
-            line.material_id = MaterialID
-
-    @api.depends("publog_id", "line_ad4all_allow", "mig_advert_id", "seq_advert_id")
+    @api.depends("publog_id", "line_ad4all_allow", "seq_advert_id")
     def _compute_advert_id(self):
         for line in self:
             AdvertID = False
@@ -102,13 +75,8 @@ class SaleOrderLine(models.Model):
                 # Last sent Line ID
                 if line.publog_id:
                     AdvertID = line.publog_id.advert_id
-
-                elif not line.publog_id:
-                    if line.mig_advert_id:  # Migrated (Initial ID)
-                        AdvertID = line.mig_advert_id
-
-                    else:  # Reset Seq
-                        AdvertID = line.seq_advert_id
+                else:
+                    AdvertID = line.seq_advert_id
 
             line.advert_id = AdvertID
 
