@@ -1063,8 +1063,10 @@ class SaleOrderLine(models.Model):
             currency=self.order_id.currency_id,
             product=self.product_id,
             taxes=self.tax_id,
-            price_unit=self.actual_unit_price,
-            quantity=self.product_uom_qty,
+            price_unit=self.actual_unit_price
+            if not self.multi_line
+            else self.price_subtotal,
+            quantity=self.product_uom_qty if not self.multi_line else 1,
             discount=self.discount,
             price_subtotal=self.price_subtotal,
         )
@@ -1129,7 +1131,9 @@ class SaleOrderLine(models.Model):
                     split_line_default = MultiLineWizard._prepare_default_vals_copy(
                         this, issue_product
                     )
-                    yield self.new(this.copy_data(default=split_line_default)[0])
+                    new_record = self.new(this.copy_data(default=split_line_default)[0])
+                    new_record._compute_amount()
+                    yield new_record
 
     def _compute_can_edit(self):
         for this in self:
