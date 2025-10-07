@@ -88,7 +88,6 @@ class AdvertisingIssue(models.Model):
     active = fields.Boolean('Active', default=True)
 
     issue_count = fields.Integer("Issue count", compute='_compute_issue_count')
-    to_update_issdt = fields.Boolean("To Update Issue Date", default=False, copy=False)
 
     # Ported from nsm_sale_advertising_order:
     medium = fields.Many2many('product.category', 'adv_issue_categ_rel', 'adv_issue_id', 'category_id', 'Medium',
@@ -135,11 +134,22 @@ class AdvertisingIssue(models.Model):
     def _check_medium(self):
         self.validate_medium()
 
-    @api.onchange('issue_date')
-    def _onchange_issue_date(self):
-        if self.ids:
-            self.to_update_issdt = True
+    def write(self, vals):
+        result = super().write(vals)
 
+        if 'issue_date' in vals:
+            lines = self.env['sale.order.line'].search([
+                ('issue_date', '>=', fields.Date.today()),
+                ('adv_issue', 'in', self.ids),
+            ])
+            for line in lines:
+                line._compute_Issuedt()
+                onchange = line.onchange_date_type()
+                vals = (onchange or {}).get('vals')
+                if vals:
+                    line.write(vals)
+
+        return result
 
 class AdvertisingIssueAvailability(models.Model):
     _name = "sale.advertising.available"
