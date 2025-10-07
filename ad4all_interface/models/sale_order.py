@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 class SaleOrder(models.Model):
     _inherit = ["sale.order"]
 
-    seq_adgr_orde_id = fields.Integer(string="Ad4all Order Seq. ID", copy=False)
+    seq_adgr_orde_id = fields.Integer(string="Ad4all Order Code", copy=False)
     mig_adgr_orde_id = fields.Integer(string="Migrated Sale Order ID", copy=False)
 
     order_ad4all_allow = fields.Boolean(
@@ -107,7 +107,7 @@ class SaleOrder(models.Model):
         access_rights_uid=None,
     ):
         for index, item in enumerate(args):
-            if "seq_adgr_orde_id" in item:
+            if "seq_adgr_orde_id" in item and isinstance(args[index][2], str):
                 vals = args[index][2].replace(",", "")
                 args[index][2] = vals
         return super()._search(

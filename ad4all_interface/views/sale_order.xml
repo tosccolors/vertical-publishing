@@ -4,6 +4,14 @@
     <field name="model">sale.order</field>
     <field name="inherit_id" ref="sale_advertising_order.sale_order_view_form_sao" />
     <field name="arch" type="xml">
+      <field name="agency_is_publish" position="before">
+        <field
+          name="seq_adgr_orde_id"
+          attrs="{'invisible': ['|', ('order_ad4all_allow','=', False), '&amp;', ('order_ad4all_allow','=', True), ('seq_adgr_orde_id', '=', 0)]}"
+          readonly="1"
+          groups="ad4all_interface.group_ad4all_portal_user,sale_advertising_order.group_ads_traffic_user"
+        />
+      </field>
       <button name="action_cancel" position="before">
         <field name="order_ad4all_allow" invisible="1" />
         <button
@@ -16,13 +24,6 @@
       </button>
       <xpath expr="//field[@name='display_discount_to_customer']" position="after">
         <field name="order_ad4all_allow" invisible="1" />
-        <field
-          name="seq_adgr_orde_id"
-          string="Ad4all Order Code"
-          attrs="{'invisible': ['|', ('order_ad4all_allow','=', False), '&amp;', ('order_ad4all_allow','=', True), ('seq_adgr_orde_id', '=', 0)]}"
-          readonly="1"
-          groups="ad4all_interface.group_ad4all_portal_user,sale_advertising_order.group_ads_traffic_user"
-        />
         <field
           name="mig_adgr_orde_id"
           string="Migrated Ad4all Order Code"
@@ -41,6 +42,19 @@
       <xpath expr="//field[@name='name']" position="after">
         <field name="seq_adgr_orde_id" optional="hide" />
       </xpath>
+    </field>
+  </record>
+
+  <record id="view_order_advertising_search_inherit" model="ir.ui.view">
+    <field name="model">sale.order</field>
+    <field
+      name="inherit_id"
+      ref="sale_advertising_order.view_order_advertising_search_inherit"
+    />
+    <field name="arch" type="xml">
+      <field name="name" position="after">
+        <field name="seq_adgr_orde_id" />
+      </field>
     </field>
   </record>
 </odoo>
