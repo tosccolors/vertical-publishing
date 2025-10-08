@@ -234,13 +234,13 @@ class SaleOrderLineAd4all(models.Model):
         }
 
         try:
-            response = requests.post(
-                url, json=data, auth=(user, pwd), timeout=60
-            ).json()
+            response = requests.post(url, json=data, auth=(user, pwd), timeout=60)
+            response.raise_for_status()
+            response = response.json()
             self.write(
                 {
                     "ad4all_response": response.get("code"),
-                    "json_message": xml_data,
+                    "json_message": str(xml_data),
                     "reply_message": response.get("message"),
                     "portal": config.portal,
                     "deliverer": config.deliverer,
@@ -252,6 +252,7 @@ class SaleOrderLineAd4all(models.Model):
             self.write(
                 {
                     "reply_message": str(e),
+                    "json_message": str(xml_data),
                     "portal": config.portal,
                     "deliverer": config.deliverer,
                 }
