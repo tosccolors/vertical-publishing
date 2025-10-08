@@ -535,6 +535,12 @@ class SaleOrderLine(models.Model):
             else:
                 vals["title"] = False
                 vals["title_ids"] = [(6, 0, [])]
+        else:
+            vals["ad_class"] = False
+            vals["title"] = False
+            vals["title_ids"] = [(6, 0, [])]
+            vals["ad_class"] = False
+            data = {"ad_class": []}
         return {"value": vals, "domain": data}
 
     @api.onchange("ad_class")

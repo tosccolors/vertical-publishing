@@ -157,6 +157,7 @@
           :
           <span t-field="doc.partner_id.vat" />
         </p>
+        <p t-if="doc.customer_contact" t-out="doc.customer_contact.name" />
       </t>
       <t t-if="doc.partner_invoice_id != doc.partner_id">
         <t t-set="information_block">
