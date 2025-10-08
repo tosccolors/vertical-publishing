@@ -61,6 +61,15 @@
         <field name="currency_id" invisible="1" />
         <field name="company_id" invisible="1" />
         <button
+          name="copy"
+          icon="fa-clone"
+          string="Copy"
+          type="object"
+          context="{'default_order_id': parent.id}"
+          confirm="Are you sure you want to copy this line?"
+          attrs="{'invisible': ['|', ('parent.id', '=', False), ('id', '=', False)]}"
+        />
+        <button
           name="cancel_line"
           icon="fa-cog"
           string="Cancel"
