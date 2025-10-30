@@ -61,7 +61,7 @@
                         <t>
                             <tr t-if="l.ad_number">
                                 <td></td>
-                                <td colspan="2" style="font-size:11px;font-style:italic;"><span style="font-weight:bold;">Reference : </span><span t-field="l.ad_number"/></td>
+                                <td colspan="2" style="font-style:italic;"><span style="font-weight:bold;">Reference : </span><span t-field="l.ad_number"/></td>
                             </tr>
                         </t>
                     </t>
@@ -95,12 +95,12 @@
                     <strong t-if="doc.partner_shipping_id != doc.partner_invoice_id">Invoicing Address:</strong>
                     <div t-field="doc.partner_invoice_id"
                     t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
-                    <t t-if="doc.partner_shipping_id != doc.partner_invoice_id">
-                        <strong>Shipping Address:</strong>
-                        <div t-field="doc.partner_shipping_id"
-                            t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
-                        <br/>
-                    </t>
+<!--                    <t t-if="doc.partner_shipping_id != doc.partner_invoice_id">-->
+<!--                        <strong>Shipping Address:</strong>-->
+<!--                        <div t-field="doc.partner_shipping_id"-->
+<!--                            t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>-->
+<!--                        <br/>-->
+<!--                    </t>-->
                 </t>
             </t>
             <div class="page" >
