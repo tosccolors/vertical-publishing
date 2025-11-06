@@ -1340,6 +1340,13 @@ class SaleOrderLine(models.Model):
                         _("Please make sure that the start date is smaller than or equal to the end date '%s'.")
                         % (case.name))
 
+    @api.constrains('proof_number_payer_id', 'proof_number_adv_customer')
+    def _check_proof_number_payer_id(self):
+        for this in self:
+            if any(not partner.email for partner in (this.proof_number_payer_id + this.proof_number_adv_customer)):
+                raise ValidationError(
+                    _("Enter a valid email address in the customer record of the selected 'Proof Number Advertiser' and/or 'Proof Number Payer' to be able to save the order line.")
+                )
 
     def _prepare_invoice_line(self, **optional_values):
         res = super(SaleOrderLine, self)._prepare_invoice_line(**optional_values)

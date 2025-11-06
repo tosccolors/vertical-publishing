@@ -734,6 +734,14 @@ msgstr ""
 #: code:addons/sale_advertising_order/models/sale_advertising.py:0
 #, python-format
 msgid ""
+"Enter a valid email address in the customer record of the selected 'Proof Number Advertiser' and/or 'Proof Number Payer' to be able to save the order line."
+msgstr ""
+"Bewijsnummer Adverteerder' en/of 'Bewijsnummer Opdrachtgever' om de orderregel op te kunnen slaan."
+
+#. module: sale_advertising_order
+#: code:addons/sale_advertising_order/models/sale_advertising.py:0
+#, python-format
+msgid ""
 "Changing the Customer can have a change in Agency Discount as a result.This "
 "change will only show after saving the order!Before saving the order the "
 "order lines and the total amounts may thereforshow wrong values."
