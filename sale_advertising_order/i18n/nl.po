@@ -736,7 +736,7 @@ msgstr ""
 msgid ""
 "Enter a valid email address in the customer record of the selected 'Proof Number Advertiser' and/or 'Proof Number Payer' to be able to save the order line."
 msgstr ""
-"Bewijsnummer Adverteerder' en/of 'Bewijsnummer Opdrachtgever' om de orderregel op te kunnen slaan."
+"Voer een geldig e-mailadres in in de klantkaart van de geselecteerde 'Bewijsnummer Adverteerder' en/of 'Bewijsnummer Opdrachtgever' om de orderregel op te kunnen slaan."
 
 #. module: sale_advertising_order
 #: code:addons/sale_advertising_order/models/sale_advertising.py:0
