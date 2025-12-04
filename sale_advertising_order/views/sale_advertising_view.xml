@@ -131,6 +131,7 @@
                                    attrs="{'readonly': [('state', 'in', ['sale','done','cancel'])]}"
                                    context="{'customer_contact': customer_contact}">
                                 <form string="Sales Order Lines">
+                                    <field name="order_partner_id" invisible="1" readonly="1" />
                                     <group>
                                         <group>
                                             <field name="product_uom_category_id" invisible="1"/>
@@ -287,7 +288,7 @@
                                         <group>
                                             <field name="proof_number_payer_id" domain="[('type', '=', 'contact'),('id','child_of',parent.partner_id)]"
                                                    attrs="{'required': [('proof_number_amt_payer', '>', 0)]}"
-                                                   context="{'default_parent_id': 'order_partner_id', 'show_address': 1}"
+                                                   context="{'default_parent_id': order_partner_id, 'show_address': 1}"
                                                    options="{'no_create_edit': True, 'always_reload': True}"
                                                    string="Proof Number Payer"/>
                                             <field name="proof_number_amt_payer"
