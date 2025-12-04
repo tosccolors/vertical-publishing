@@ -80,7 +80,7 @@ class SaleOrderLine(models.Model):
 
             line.advert_id = AdvertID
 
-    def transfer_order_to_ad4all(self, arg):
+    def transfer_order_to_ad4all(self, arg):  # noqa: C901
         self.ensure_one()
         order = self.order_id
 
@@ -138,7 +138,7 @@ class SaleOrderLine(models.Model):
             res = self.env["sale.order.line.ad4all"].sudo().create(vals)
 
         else:
-            if not order.material_contact_person:
+            if not order.material_contact_person_ids:
                 raise UserError(
                     _(
                         "You have to fill in a material contact person.\n"
@@ -168,17 +168,7 @@ class SaleOrderLine(models.Model):
                 "customer_address_zip": order.published_customer.zip or "",
                 "customer_address_city": order.published_customer.city or "",
                 "customer_address_phone": order.published_customer.phone or "",
-                "customer_contacts_contact_id": order.material_contact_person.ref
-                or False,
-                "customer_contacts_contact_name": order.material_contact_person.name
-                or False,
-                "customer_contacts_contact_email": order.material_contact_person.email
-                or False,
-                "customer_contacts_contact_phone": order.material_contact_person.phone
-                or order.material_contact_person.mobile
-                or False,
-                "customer_contacts_contact_type": "",
-                "customer_contacts_contact_language": "NL",
+                "customer_contacts": [],
                 "media_agency_contacts_contact2_language": lang_code,
                 "status": "draft",
                 "paper_pub_date": self.issue_date or self.from_date or False,
@@ -190,22 +180,47 @@ class SaleOrderLine(models.Model):
                 "placement_position": unidecode(self.page_reference or ""),
             }
 
+            for partner in order.material_contact_person_ids:
+                partner_vals = {
+                    "id": str(partner.id),
+                    "name": partner.name or False,
+                    "email": partner.email or False,
+                    "phone": partner.phone or partner.mobile or False,
+                    "type": "",
+                    "language": "NL",
+                }
+                for key, field_name in {
+                    "id": _("Reference"),
+                    "email": _("Email"),
+                    "phone": _("Phone or Mobile"),
+                }.items():
+                    if not partner_vals[key]:
+                        raise UserError(
+                            _(
+                                "Material contact person %(partner)s required field "
+                                "%(field)s is missing"
+                            )
+                            % {
+                                "partner": partner.name,
+                                "field": field_name,
+                            }
+                        )
+
+                vals["customer_contacts"].append(partner_vals)
+
             adportal_required_dict = {
-                "customer_id": "Advertiser Reference",
-                "customer_address_street": "Advertiser Street",
-                "customer_address_zip": "Advertiser Zip",
-                "customer_address_city": "Advertiser City",
-                "customer_address_phone": "Advertiser Phone",
-                "customer_contacts_contact_id": "Material Contact Person Reference",
-                "customer_contacts_contact_email": "Material Contact Person Email",
-                "customer_contacts_contact_phone": "Material Contact Person Phone or "
-                "Material Contact Person Mobile",
-                "paper_pub_date": "Issue Date or From Date",
-                "paper_deadline": "Issue Deadline Or Line Deadline",
+                "customer_id": _("Advertiser Reference"),
+                "customer_address_street": _("Advertiser Street"),
+                "customer_address_zip": _("Advertiser Zip"),
+                "customer_address_city": _("Advertiser City"),
+                "customer_address_phone": _("Advertiser Phone"),
+                "customer_contacts": _("Material Contact Person"),
+                "paper_pub_date": _("Issue Date or From Date"),
+                "paper_deadline": _("Issue Deadline Or Line Deadline"),
             }
 
             for key, value in vals.items():
-                if value is False:
+                if key in adportal_required_dict and not value:
                     raise UserError(
                         _("AdPortal required field %s is missing")
                         % (adportal_required_dict.get(key, key))

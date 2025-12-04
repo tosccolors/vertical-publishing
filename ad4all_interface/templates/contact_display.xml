@@ -1,0 +1,17 @@
+<odoo>
+  <template id="contact_display">
+    <table t-if="contacts" class="table table-condensed">
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+      </tr>
+      <tr t-foreach="contacts" t-as="contact">
+        <td t-out="contact['id']" />
+        <td t-out="contact['name']" />
+        <td t-out="contact['email']" />
+      </tr>
+    </table>
+    <div t-else="">No contacts</div>
+  </template>
+</odoo>

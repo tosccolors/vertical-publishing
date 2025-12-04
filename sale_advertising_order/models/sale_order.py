@@ -61,11 +61,10 @@ class SaleOrder(models.Model):
     display_discount_to_customer = fields.Boolean(
         "Display Discount", default=False
     )  # TODO: take action later
-
-    material_contact_person = fields.Many2one(
-        "res.partner", domain=[("customer", "=", True)]
+    material_contact_person_ids = fields.Many2many(
+        "res.partner",
+        relation="sale_order_material_contact_person_rel",
     )
-
     # Overridden: SOT
     type_id = fields.Many2one(
         comodel_name="sale.order.type",

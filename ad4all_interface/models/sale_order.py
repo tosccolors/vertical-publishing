@@ -12,7 +12,6 @@ class SaleOrder(models.Model):
 
     seq_adgr_orde_id = fields.Integer(string="Ad4all Order Code", copy=False)
     mig_adgr_orde_id = fields.Integer(string="Migrated Sale Order ID", copy=False)
-
     order_ad4all_allow = fields.Boolean(
         compute="_compute_order_ad4all_allow",
         default=False,
@@ -48,7 +47,7 @@ class SaleOrder(models.Model):
         orders = self.filtered(lambda s: s.state in ["draft"])
         for o in orders:
             if o.order_line.filtered(lambda s: s.line_ad4all_allow):
-                if not o.material_contact_person:
+                if not o.material_contact_person_ids:
                     raise UserError(
                         _(
                             "You have to fill in a material contact person.\n"
