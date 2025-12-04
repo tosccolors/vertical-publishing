@@ -36,13 +36,13 @@ class TestAd4allInterface(common.CommonSaleAdvertisingOrder):
             "sale_advertising_order.partner_ad_agency_contact"
         )
 
-        email = self.order.material_contact_person.email
-        self.order.material_contact_person.email = False
+        ref = self.order.material_contact_person.ref
+        self.order.material_contact_person.ref = False
 
         with self.assertRaisesRegex(exceptions.UserError, "missing"):
             wizard.sale_order_update_ad4all()
 
-        self.order.material_contact_person.email = email
+        self.order.material_contact_person.ref = ref
         requests = self.patch_requests()
         requests.side_effect = lambda *args, **kwargs: Mock(
             json=lambda: {"code": "200"}
