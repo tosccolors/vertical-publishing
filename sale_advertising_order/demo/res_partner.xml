@@ -8,6 +8,9 @@
     <field name="is_customer" eval="True" />
     <field name="is_ad_agency" eval="True" />
     <field name="agency_discount">42</field>
+    <field name="street">Test street</field>
+    <field name="city">Test city</field>
+    <field name="zip">4242AB</field>
   </record>
   <record id="partner_ad_agency_contact" model="res.partner">
     <field name="name">Ad agency contact person</field>

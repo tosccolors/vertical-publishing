@@ -32,21 +32,22 @@ class TestAd4allInterface(common.CommonSaleAdvertisingOrder):
         with self.assertRaisesRegex(exceptions.UserError, "material contact person"):
             wizard.sale_order_update_ad4all()
 
-        self.order.material_contact_person = self.env.ref(
+        self.order.material_contact_person_ids = self.env.ref(
             "sale_advertising_order.partner_ad_agency_contact"
         )
 
-        ref = self.order.material_contact_person.ref
-        self.order.material_contact_person.ref = False
+        email = self.order.material_contact_person_ids.email
+        self.order.material_contact_person_ids.email = False
 
         with self.assertRaisesRegex(exceptions.UserError, "missing"):
             wizard.sale_order_update_ad4all()
 
-        self.order.material_contact_person.ref = ref
+        self.order.material_contact_person_ids.email = email
         requests = self.patch_requests()
         requests.side_effect = lambda *args, **kwargs: Mock(
             json=lambda: {"code": "200"}
         )
+
         wizard.sale_order_update_ad4all()
         self.assertEqual(self.order.order_line.publog_id.status, "successful")
         self.assertEqual(

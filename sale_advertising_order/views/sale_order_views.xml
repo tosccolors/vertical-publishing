@@ -523,7 +523,8 @@
           context="{'res_partner_search_mode': 'customer'}"
         />
         <field
-          name="material_contact_person"
+          name="material_contact_person_ids"
+          widget="many2many_tags"
           domain="[('is_customer', '=', True),('is_company', '!=', True)]"
           context="{'search_default_parent_id': published_customer,'show_email': 1,
                            'res_partner_search_mode': 'customer'}"

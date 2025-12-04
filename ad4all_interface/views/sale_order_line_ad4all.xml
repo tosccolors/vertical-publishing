@@ -49,9 +49,7 @@
               <field name="customer_address_city" />
             </group>
             <group>
-              <field name="customer_contacts_contact_email" />
-              <field name="customer_contacts_contact_id" />
-              <field name="customer_contacts_contact_name" />
+              <field name="customer_contacts_display" />
             </group>
           </group>
           <group name="agency_details">
@@ -76,18 +74,6 @@
               <field name="media_agency_contacts_contact2_phone" />
               <field name="media_agency_contacts_contact2_type" />
               <field name="media_agency_contacts_contact2_language" />
-            </group>
-          </group>
-          <group name="customer2_details">
-            <group>
-              <field name="customer_contacts_contact2_id" />
-              <field name="customer_contacts_contact2_name" />
-              <field name="customer_contacts_contact2_email" />
-            </group>
-            <group>
-              <field name="customer_contacts_contact2_phone" />
-              <field name="customer_contacts_contact2_type" />
-              <field name="customer_contacts_contact2_language" />
             </group>
           </group>
           <group name="creative_agency_details">

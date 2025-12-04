@@ -47,21 +47,13 @@
           <phone t-out="line.customer_address_phone" />
         </address>
         <contacts>
-          <contact t-if="line.customer_contacts_contact_id">
-            <id t-out="line.customer_contacts_contact_id" />
-            <name t-out="line.customer_contacts_contact_name" />
-            <email t-out="line.customer_contacts_contact_email" />
-            <phone t-out="line.customer_contacts_contact_phone" />
-            <type t-out="line.customer_contacts_contact_type" />
-            <language t-out="line.customer_contacts_contact_language" />
-          </contact>
-          <contact t-if="line.customer_contacts_contact2_id">
-            <id t-out="line.customer_contacts_contact2_id" />
-            <name t-out="line.customer_contacts_contact2_name" />
-            <email t-out="line.customer_contacts_contact2_email" />
-            <phone t-out="line.customer_contacts_contact2_phone" />
-            <type t-out="line.customer_contacts_contact2_type" />
-            <language t-out="line.customer_contacts_contact2_language" />
+          <contact t-foreach="line.customer_contacts or []" t-as="contact">
+            <id t-out="contact['id']" />
+            <name t-out="contact['name']" />
+            <email t-out="contact['email']" />
+            <phone t-out="contact['phone']" />
+            <type t-out="contact['type']" />
+            <language t-out="contact['language']" />
           </contact>
         </contacts>
       </customer>

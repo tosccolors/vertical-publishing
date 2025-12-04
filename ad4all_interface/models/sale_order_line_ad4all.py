@@ -12,6 +12,7 @@ class SaleOrderLineAd4all(models.Model):
     _name = "sale.order.line.ad4all"
     _description = "Sale Order Line Ad4all"
     _rec_name = "sale_line_id"
+    _order = "create_date desc"
 
     sale_line_id = fields.Many2one(
         "sale.order.line",
@@ -60,41 +61,9 @@ class SaleOrderLineAd4all(models.Model):
     customer_id = fields.Char(string="Advertiser Number")
     customer_name = fields.Char(string="Advertiser Name", size=64)
 
-    customer_contacts_contact_id = fields.Char(
-        string="Advertiser Contact ID",
-    )
-    customer_contacts_contact_name = fields.Char(
-        string="Advertiser Contact Name", size=64
-    )
-    customer_contacts_contact_email = fields.Char(
-        string="Advertiser Contact Email", size=64
-    )
-    customer_contacts_contact_phone = fields.Char(
-        string="Advertiser Contact Phone", size=64
-    )
-    customer_contacts_contact_type = fields.Char(
-        string="Advertiser Contact Type", size=64
-    )
-    customer_contacts_contact_language = fields.Char(
-        string="Advertiser Contact Language", size=16, default="NL"
-    )
-    customer_contacts_contact2_id = fields.Integer(
-        string="Advertiser Contact2 ID",
-    )
-    customer_contacts_contact2_name = fields.Char(
-        string="Advertiser Contact2 Name", size=64
-    )
-    customer_contacts_contact2_email = fields.Char(
-        string="Advertiser Contact2 Email", size=64
-    )
-    customer_contacts_contact2_phone = fields.Char(
-        string="Advertiser Contact2 Phone", size=64
-    )
-    customer_contacts_contact2_type = fields.Char(
-        string="Advertiser Contact2 Type", size=64
-    )
-    customer_contacts_contact2_language = fields.Char(
-        string="Advertiser Contact2 Language", size=16, default="NL"
+    customer_contacts = fields.Json(string="Customer Contacts storage")
+    customer_contacts_display = fields.Html(
+        compute="_compute_customer_contacts_display", string="Customer Contacts"
     )
     customer_address_street = fields.Char(string="Advertiser Address Street", size=64)
     customer_address_zip = fields.Char(string="Advertiser Address Zip Code", size=32)
@@ -185,6 +154,13 @@ class SaleOrderLineAd4all(models.Model):
         store=True,
         compute="_compute_response",
     )
+
+    @api.depends("customer_contacts")
+    def _compute_customer_contacts_display(self):
+        for this in self:
+            this.customer_contacts_display = self.env["ir.qweb"]._render(
+                "ad4all_interface.contact_display", {"contacts": this.customer_contacts}
+            )
 
     @api.depends("ad4all_response")
     def _compute_response(self):

@@ -3,7 +3,7 @@
 
 {
     "name": "Ad4all REST Interface",
-    "version": "16.0.1.0.0",
+    "version": "16.0.1.0.1",
     "author": "The Open Source Company (TOSC)",
     "website": "https://github.com/OCA/l10n-netherlands",
     "license": "AGPL-3",
@@ -15,6 +15,7 @@
         "security/ir.model.access.csv",
         "security/security.xml",
         "templates/rest_payload.xml",
+        "templates/contact_display.xml",
         "data/ir_sequence_data.xml",
         "views/sale_order.xml",
         "views/sale_order_line.xml",
