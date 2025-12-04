@@ -46,7 +46,7 @@ class SaleOrderLine(models.Model):
     )
     seq_mat_id = fields.Integer(string="Seq Material ID", copy=False)
 
-    @api.depends("ad_class", "adv_issue_ids.medium")
+    @api.depends("ad_class.ad4all", "adv_issue_ids.medium.ad4all")
     def _compute_line_ad4all_allow(self):
         for line in self.filtered("advertising"):
             res = False
