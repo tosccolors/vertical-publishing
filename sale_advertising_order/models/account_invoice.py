@@ -34,6 +34,7 @@ class Invoice(models.Model):
     published_customer = fields.Many2one('res.partner', 'Advertiser', domain=[('is_customer', '=', True)])
 
     invoice_description = fields.Text('Description')
+    has_failed2confirm = fields.Boolean('Failed to auto-validate', default=False, copy=False)
 
 
     def _get_name_invoice_report(self):
@@ -87,6 +88,55 @@ class Invoice(models.Model):
         res = super()._get_first_invoice_fields(invoice)
         res.update({'sale_type_id': invoice.sale_type_id.id, 'user_id': False})
         return res
+
+
+    def _do_invoice_sent_wizard(self):
+        self.ensure_one()
+        wiz_send_invoice = self.env['account.invoice.send']
+        ctx = dict(self.env.context)
+
+        if self.is_move_sent:
+            return _("This invoice has already been sent.")
+
+        res = self.action_invoice_sent()
+        ctx = res["context"] or {}
+        ctx["active_model"] = self._name
+        ctx["active_ids"] = self.ids
+
+        wsi_vals = wiz_send_invoice.with_context(ctx).default_get(['template_id', 'partner_ids'])
+        wiz = self.env["account.invoice.send"].with_context(**ctx).create(wsi_vals)
+        wiz.write({
+            "is_print": False,
+            "is_email": True,
+            'auto_delete': False,
+            "composition_mode": "mass_mail",
+        })
+        return wiz.send_and_print_action()
+
+
+
+    def _cron_auto_validate_invoices(self):
+        "Called from Cron, to validate Out-Invoices which are in draft status."
+
+        draftInvoices = self.search([('move_type', '=', 'out_invoice'), ('state', 'in', ('draft', 'sent'))], order='id, invoice_date', limit=2)
+
+        for invoice in draftInvoices:
+            try:
+                invoice.action_post()
+                invoice.has_failed2confirm = False
+                invoice.message_post(body=_(
+                    'This invoice has been auto validated.'))
+
+                # Send Email: Check Amount & Transmission Method
+                if invoice.amount_total > 0 and invoice.transmit_method_id.id != self.env.ref('sale_advertising_order.no_send_mail').id:
+                    invoice._do_invoice_sent_wizard()
+
+            except Exception as e:
+                invoice.has_failed2confirm = True
+                invoice.message_post(body=_(
+                    'Unable to auto validate this invoice;  %s.')
+                                 % (str(e)))
+
 
 
 class InvoiceLine(models.Model):

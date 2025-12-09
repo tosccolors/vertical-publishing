@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo noupdate="1">
+    <record id="no_send_mail" model="transmit.method">
+        <field name="code">no-send-mail</field>
+        <field name="name">Do not send invoice</field>
+    </record>
+</odoo>
