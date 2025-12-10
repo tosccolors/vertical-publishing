@@ -21,7 +21,7 @@
 ##############################################################################
 {
     'name': 'Sale Advertising Order',
-    'version': '14.0.34.0',
+    'version': '14.0.35.0',
     'category': 'Sale',
     'description': """
 This module allows you to use both CRM and Sales Management to run your advertising sales
@@ -49,8 +49,6 @@ This module allows you to use both CRM and Sales Management to run your advertis
              "data/crm_stage_data.xml",
              "data/mail_template_data.xml",
              "data/sale_order_type.xml",
-             "data/ir_cron.xml",
-             "data/transmit_method.xml",
 
              "security/security.xml",
              "security/ir.model.access.csv",

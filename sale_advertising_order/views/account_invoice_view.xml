@@ -16,7 +16,6 @@
                 </field>
                 <field name="invoice_payment_term_id" position="after">
                     <field name="ad" />
-                    <field name="has_failed2confirm" invisible="1"/>
                 </field>
                 <xpath expr="//sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='product_id']" position="before">
                     <field name="sale_order_id" widget="many2one_unclickable" options="{'no_open': True}"
@@ -93,20 +92,6 @@
                 </field>
             </field>
         </record>
-
-
-        <record id="view_account_invoice_filter_inherit" model="ir.ui.view">
-              <field name="name">account.invoice.select</field>
-              <field name="model">account.move</field>
-              <field name="inherit_id" ref="account.view_account_invoice_filter"/>
-              <field name="arch" type="xml">
-                    <xpath expr="//search/field[@name='partner_id']" position="after">
-                        <field name="has_failed2confirm"/>
-                        <filter name="f2confirm" string="Failed to Auto-Validate"
-                            domain="[('has_failed2confirm','=',True)]"/>
-                    </xpath>
-              </field>
-            </record>
 
 
     </data>
