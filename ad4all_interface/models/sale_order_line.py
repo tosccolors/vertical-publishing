@@ -145,13 +145,12 @@ class SaleOrderLine(models.Model):
                         "Be aware, that the contact must have email and phone filled in."
                     )
                 )
-            lang_code = "NL"
-            if order.published_customer:
-                partner = order.published_customer
-                if partner.lang:
-                    lang_code = partner.lang.split("_")[1]
-                    if lang_code == "US":
-                        lang_code = "EN"
+
+            def partner_lang(partner):
+                lang = (partner.lang or "nl_NL").split("_")[0]
+                if lang in ("en", "fr", "nl"):
+                    return lang
+                return "nl"
 
             vals = {
                 "sale_line_id": self.id,
@@ -169,7 +168,9 @@ class SaleOrderLine(models.Model):
                 "customer_address_city": order.published_customer.city or "",
                 "customer_address_phone": order.published_customer.phone or "",
                 "customer_contacts": [],
-                "media_agency_contacts_contact2_language": lang_code,
+                "media_agency_contacts_contact2_language": partner_lang(
+                    order.published_customer
+                ),
                 "status": "draft",
                 "paper_pub_date": self.issue_date or self.from_date or False,
                 "paper_deadline": self.adv_issue.deadline or self.deadline or False,
@@ -187,7 +188,7 @@ class SaleOrderLine(models.Model):
                     "email": partner.email or False,
                     "phone": partner.phone or partner.mobile or False,
                     "type": "",
-                    "language": "NL",
+                    "language": partner_lang(partner),
                 }
                 for key, field_name in {
                     "id": _("Reference"),
