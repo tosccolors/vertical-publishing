@@ -162,7 +162,7 @@ class SaleOrderLine(models.Model):
                 + "\n"
                 + "Order Nr.:"
                 + unidecode(order.name or ""),
-                "customer_id": order.published_customer.ref,
+                "customer_id": order.published_customer.id,
                 "customer_name": order.published_customer.name,
                 "customer_address_street": order.published_customer.street or "",
                 "customer_address_zip": order.published_customer.zip or "",
@@ -281,7 +281,7 @@ class SaleOrderLine(models.Model):
             if order.advertising_agency:
                 vals.update(
                     {
-                        "media_agency_code": order.advertising_agency.ref,
+                        "media_agency_code": str(order.advertising_agency.id),
                         "media_agency_name": order.advertising_agency.name,
                         "media_agency_email": order.advertising_agency.email,
                         "media_agency_phone": order.advertising_agency.phone
@@ -348,11 +348,9 @@ class SaleOrderLine(models.Model):
                 if title_lists:
                     titles = ", ".join(map(lambda l: l.name, title_lists))
                     name += "(%s)" % titles
-                if so_line.order_partner_id.ref:
-                    name = "%s (%s)" % (name, so_line.order_partner_id.ref)
+                name = "%s (%s)" % (name, so_line.order_partner_id.id)
             else:
                 name = "%s - %s" % (so_line.order_id.name, so_line.product_id.name)
-                if so_line.order_partner_id.ref:
-                    name = "%s (%s)" % (name, so_line.order_partner_id.ref)
+                name = "%s (%s)" % (name, so_line.order_partner_id.id)
             result.append((so_line.id, name))
         return result
