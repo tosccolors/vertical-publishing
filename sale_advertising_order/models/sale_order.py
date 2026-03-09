@@ -485,3 +485,12 @@ class SaleOrder(models.Model):
             ),
             SaleOrderLine,
         ).sorted(key=order_key or None)
+
+    def _prepare_confirmation_values(self):
+        """
+        Don't set new date_order if there's already one set
+        """
+        result = super()._prepare_confirmation_values()
+        if all(self.mapped("date_order")):
+            result.pop("date_order")
+        return result
