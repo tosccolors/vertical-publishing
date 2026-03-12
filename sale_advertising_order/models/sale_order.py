@@ -80,6 +80,7 @@ class SaleOrder(models.Model):
         check_company=True,
         tracking=True,
     )
+    was_confirmed_before = fields.Boolean()
 
     @api.depends()
     def _compute_user_id(self):
@@ -491,6 +492,7 @@ class SaleOrder(models.Model):
         Don't set new date_order if there's already one set
         """
         result = super()._prepare_confirmation_values()
-        if all(self.mapped("date_order")):
+        result["was_confirmed_before"] = True
+        if all(self.mapped("was_confirmed_before")):
             result.pop("date_order")
         return result
