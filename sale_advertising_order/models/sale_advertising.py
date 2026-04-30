@@ -824,10 +824,12 @@ class SaleOrderLine(models.Model):
 
     mig_remark = fields.Text('Migration Remark')
     layout_remark = fields.Text('Material Remark')
-    title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)])
+    title = fields.Many2one('sale.advertising.issue', 'Title', domain=[('child_ids','<>', False)], context={'active_test': False})
     page_class_domain = fields.Char(compute='_compute_tags_domain', readonly=True, store=False,)
-    title_ids = fields.Many2many('sale.advertising.issue', 'sale_order_line_adv_issue_title_rel', 'order_line_id', 'adv_issue_id', 'Titles')
-    adv_issue_ids = fields.Many2many('sale.advertising.issue','sale_order_line_adv_issue_rel', 'order_line_id', 'adv_issue_id',  'Advertising Issues')
+    title_ids = fields.Many2many('sale.advertising.issue', 'sale_order_line_adv_issue_title_rel', 'order_line_id', 'adv_issue_id'
+                                 , 'Titles', context={'active_test': False})
+    adv_issue_ids = fields.Many2many('sale.advertising.issue','sale_order_line_adv_issue_rel', 'order_line_id', 'adv_issue_id'
+                                     ,  'Advertising Issues', context={'active_test': False})
     issue_product_ids = fields.One2many('sale.order.line.issues.products', 'order_line_id', 'Adv. Issues with Product Prices')
     dates = fields.One2many('sale.order.line.date', 'order_line_id', 'Advertising Dates') # FIXME: deprecated
     dateperiods = fields.One2many('sale.order.line.dateperiod', 'order_line_id', 'Advertising Date Periods')
@@ -839,7 +841,7 @@ class SaleOrderLine(models.Model):
                         ('online', 'Online'),
                         ('issue_date', 'Issue Date'),
                    ], relation='product.category', string='Date Type', readonly=True)
-    adv_issue = fields.Many2one('sale.advertising.issue','Advertising Issue')
+    adv_issue = fields.Many2one('sale.advertising.issue','Advertising Issue', context={'active_test': False})
     issue_date = fields.Date(compute='_compute_Issuedt', string='Issue Date', store=True)
     medium = fields.Many2one('product.category', string='Medium')
     ad_class = fields.Many2one('product.category', 'Advertising Class', domain=_get_adClass_domain)
@@ -847,7 +849,7 @@ class SaleOrderLine(models.Model):
     deadline = fields.Datetime(compute='_compute_deadline', string='Deadline', store=False)
     deadline_offset = fields.Datetime(compute='_compute_deadline', store=False)
     product_template_id = fields.Many2one('product.template', string='Product', domain=[('sale_ok', '=', True)],
-                                 change_default=True, ondelete='restrict')
+                                 change_default=True, ondelete='restrict', context={'active_test': False})
     page_reference = fields.Char('Page Preference', size=32)
     ad_number = fields.Char('External Reference', size=50)
     url_to_material = fields.Char('URL Material')
