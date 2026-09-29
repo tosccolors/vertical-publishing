@@ -1312,7 +1312,7 @@
 							<field name="analytic_account_id" string="Related Analytic Account"/>
 							<field name="issue_date" string="Issue Date"/>
                             <field name="issue_week_number" string="Week Number"/>
-                            <field name="deadline" string="Deadline" readonly="1"/>
+                            <field name="deadline" string="Deadline" readonly="0"/>
 							<field name="default_note" string="Default Note" />
                             <field name="active" widget="boolean_toggle"/>
                         </group>
