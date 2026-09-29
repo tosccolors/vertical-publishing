@@ -1016,8 +1016,12 @@ class SaleOrderLine(models.Model):
             self.issue_product_ids = [(6, 0, [])]
             # self.product_id = False # Warning: Do not reset here
 
-        if self.title_ids and (len(self.adv_issue_ids) == 0):
-            raise UserError(_('Please select Advertising Issue(s) to proceed further.'))
+        if self.title_ids and (len(self.adv_issue_ids) == 0) and self.product_template_id:
+            return {"warning": {
+                    "title": _("Warning"),
+                    "message": _('Please select Advertising Issue(s) to proceed further.'),
+                }
+            }
 
         volume_discount = self.product_template_id.volume_discount
         if self.product_template_id and self.adv_issue_ids and len(self.adv_issue_ids) > 1:
@@ -1302,8 +1306,6 @@ class SaleOrderLine(models.Model):
 
         # Reset
         if len(self.adv_issue_ids) > 1 and not self.issue_product_ids:
-            self.product_template_id = False
-        elif not self.adv_issue_ids:
             self.product_template_id = False
 
         if self.env.user.has_group('sale_advertising_order.group_no_deadline_check'):

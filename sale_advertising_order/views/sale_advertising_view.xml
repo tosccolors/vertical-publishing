@@ -138,10 +138,12 @@
                                             <field name="medium" required="True"
                                                    domain="[('parent_id','=', %(sale_advertising_order.advertising_category)d)]"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                                   attrs="{'readonly': [('invoice_status', '=', 'invoiced')]}"/>
+                                                   attrs="{'readonly': ['|', ('invoice_status', '=', 'invoiced'), ('product_template_id', '!=', False)]}"/>
+                                            <field name="medium" invisible="1" />
                                             <field name="ad_class" required="True"
                                                    options="{'no_open': True,'no_create': True, 'no_create_edit': True}"
-                                                   attrs="{'readonly': [('invoice_status', '=', 'invoiced')]}"/>
+                                                   attrs="{'readonly': ['|', ('invoice_status', '=', 'invoiced'), ('product_template_id', '!=', False)]}"/>
+                                            <field name="ad_class" invisible="1" />
                                             <field name="title" string="Title" invisible="1"/>
                                             <field name="title_ids" string="Title(s)"
                                                    widget="many2many_tags"
